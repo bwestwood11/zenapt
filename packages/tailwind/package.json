@@ -1,0 +1,12 @@
+{
+  "name": "@repo/tailwind",
+  "version": "1.0.0",
+  "description": "",
+  "private":true,
+  "author": "",
+  "license": "ISC",
+  "exports":{
+    ".": "./index.css",
+    "./postcss":"./postcss.config.mjs"
+  }
+}
