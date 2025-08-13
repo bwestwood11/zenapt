@@ -57,17 +57,15 @@ export default function SignUpPage() {
             <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center mr-3">
               <div className="w-4 h-4 bg-white rounded-sm"></div>
             </div>
-            <span className="text-xl font-semibold text-gray-900">
-              ZenApt
-            </span>
+            <span className="text-xl font-semibold text-gray-900">ZenApt</span>
           </div>
 
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              The Booking Management 
+              The Booking Management Software for Luxury Med Spas
             </h1>
             <p className="text-gray-600">
-              Sign up to start your 30 days free trial
+              Create your account to get started with ZenApt.
             </p>
           </div>
 
