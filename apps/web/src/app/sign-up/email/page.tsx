@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 
 const formSchema = z
   .object({
@@ -66,8 +67,8 @@ export default function SignUpPage() {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               The Booking Management 
             </h1>
-            <p className="text-gray-600">
-              Sign up to start your 30 days free trial
+            <p className="text-foreground">
+              Create your account to get started with ZenApt.
             </p>
           </div>
 
@@ -194,15 +195,15 @@ export default function SignUpPage() {
 
           <div className="mt-6 text-center text-sm text-gray-600">
             Already have an account?{" "}
-            <a href="#" className="font-medium text-gray-900 hover:underline">
+            <Link href="/sign-in/email" className="font-medium text-gray-900 hover:underline">
               Login Here
-            </a>
+            </Link>
           </div>
         </div>
       </div>
 
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-400/90 via-purple-500/90 to-purple-600/90"></div>
+      <div className="hidden lg:flex flex-1 bg-primary relative overflow-hidden">
+        <div className="absolute inset-0 bg-primary"></div>
 
         <div className="relative z-10 flex flex-col justify-center items-center p-12 space-y-6">
           <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 w-80 shadow-xl">
