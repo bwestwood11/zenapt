@@ -58,13 +58,13 @@ export default function SignUpPage() {
               <div className="w-4 h-4 bg-white rounded-sm"></div>
             </div>
             <span className="text-xl font-semibold text-gray-900">
-              Basement
+              ZenApt
             </span>
           </div>
 
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Keep your online business organized
+              The Booking Management 
             </h1>
             <p className="text-gray-600">
               Sign up to start your 30 days free trial

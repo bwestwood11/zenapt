@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Playfair_Display } from "next/font/google";
 import "@repo/tailwind";
 import Providers from "@/components/providers";
-import Header from "@/components/header";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-playfair-display",
 });
 
 export const metadata: Metadata = {
@@ -27,12 +21,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${playfairDisplay.variable} ${playfairDisplay.className} antialiased`}
       >
         <Providers>
-          <div className="grid grid-rows-[auto_1fr] h-svh">
-            {children}
-          </div>
+          <div className="h-svh">{children}</div>
         </Providers>
       </body>
     </html>
