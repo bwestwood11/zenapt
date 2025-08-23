@@ -1,19 +1,26 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export function middleware() {
-  const res = NextResponse.next()
+export function middleware(req: NextRequest) {
+  const allowedOrigins = (process.env.CORS_ORIGINS || "")
+    .split(",")
+    .map((o) => o.trim())
+    .filter(Boolean);
 
-  res.headers.append('Access-Control-Allow-Credentials', "true")
-  res.headers.append('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || "")
-  res.headers.append('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+  const res = NextResponse.next();
+  const origin = req.headers.get("origin") || "";
+  res.headers.append("Access-Control-Allow-Credentials", "true");
+  if (allowedOrigins.includes(origin)) {
+    res.headers.set("Access-Control-Allow-Origin", origin);
+  }
+  res.headers.append("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.headers.append(
-    'Access-Control-Allow-Headers',
-    'Content-Type, Authorization'
-  )
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization"
+  );
 
-  return res
+  return res;
 }
 
 export const config = {
-  matcher: '/:path*',
-}
+  matcher: "/:path*",
+};

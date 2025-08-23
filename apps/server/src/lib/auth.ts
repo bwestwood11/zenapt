@@ -4,18 +4,13 @@ import prisma from "../../prisma";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
-    provider: "postgresql"
-    
-    
-    
+    provider: "postgresql",
   }),
-  trustedOrigins: [
-    process.env.CORS_ORIGIN || "",
-  ],
+  trustedOrigins: (process.env.CORS_ORIGINS || "")
+    .split(",")
+    .map((o) => o.trim())
+    .filter(Boolean),
   emailAndPassword: {
     enabled: true,
-  }
+  },
 });
-
-
-
