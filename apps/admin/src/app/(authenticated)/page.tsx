@@ -14,12 +14,28 @@ import {
 } from "@/components/ui/card";
 import { Mail, Send } from "lucide-react";
 import { useAdminSession } from "@/hooks/useSession";
+import { useMutation } from "@tanstack/react-query";
+import { trpc } from "../../utils/trpc";
+import { toast } from "sonner";
+import { z } from "zod";
 
 export default function InvitePage() {
   const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const { session, isLoading: sessionIsLoading } = useAdminSession();
+  const { isLoading: sessionIsLoading } = useAdminSession();
+
+  const { mutate: sendInvitation, isPending: isLoading } = useMutation(
+    trpc.admin.inviteUser.mutationOptions({
+      onSuccess() {
+        setMessage("Sent Successfully");
+        toast.success("Invitation Sent Successfully");
+      },
+      onError() {
+        setMessage("Something went wrong");
+        toast.error("An Error Occurred");
+      },
+    })
+  );
 
   if (sessionIsLoading) {
     return (
@@ -28,34 +44,15 @@ export default function InvitePage() {
       </div>
     );
   }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!email) {
-      setMessage("Please enter an email address");
+    if (!z.email().safeParse(email).success) {
+      setMessage("Invalid Email Use real email");
       return;
     }
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setMessage("Please enter a valid email address");
-      return;
-    }
-
-    setIsLoading(true);
-    setMessage("");
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setMessage("Invite sent successfully!");
-      setEmail("");
-    } catch (error) {
-      setMessage("Failed to send invite. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+    sendInvitation({ email });
   };
 
   return (
