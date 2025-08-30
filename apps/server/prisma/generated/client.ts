@@ -52,6 +52,36 @@ export type Admin = Prisma.AdminModel
  */
 export type User = Prisma.UserModel
 /**
+ * Model Subscription
+ * 
+ */
+export type Subscription = Prisma.SubscriptionModel
+/**
+ * Model Organization
+ * 
+ */
+export type Organization = Prisma.OrganizationModel
+/**
+ * Model ManagementMembership
+ * 
+ */
+export type ManagementMembership = Prisma.ManagementMembershipModel
+/**
+ * Model Location
+ * 
+ */
+export type Location = Prisma.LocationModel
+/**
+ * Model LocationEmployee
+ * 
+ */
+export type LocationEmployee = Prisma.LocationEmployeeModel
+/**
+ * Model ActivityLog
+ * 
+ */
+export type ActivityLog = Prisma.ActivityLogModel
+/**
  * Model Session
  * 
  */
@@ -72,4 +102,8 @@ export type Verification = Prisma.VerificationModel
  */
 export type DemoRequest = Prisma.DemoRequestModel
 
+export type OrgRole = $Enums.OrgRole
+export const OrgRole = $Enums.OrgRole
 
+export type EmployeeRole = $Enums.EmployeeRole
+export const EmployeeRole = $Enums.EmployeeRole

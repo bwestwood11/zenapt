@@ -29,9 +29,10 @@
     "lint-staged": "^16.1.2",
     "turbo": "^2.5.4"
   },
-    "overrides": {
+  "overrides": {
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "effect": "3.17.7"
   },
   "lint-staged": {
     "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [

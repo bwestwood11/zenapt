@@ -18,6 +18,8 @@ import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
 import { trpc } from "../utils/trpc";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const formSchema = z
   .object({
@@ -44,7 +46,7 @@ export default function SignUpForm({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { mutate: signUp } = useMutation(trpc.auth.signUp.mutationOptions());
-
+  const router = useRouter();
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,13 +58,18 @@ export default function SignUpForm({
   });
 
   const onSubmit = (data: FormData) => {
-    console.log("Form submitted:", data);
-    signUp({
-      name: data.name,
-      email: data.email,
-      password: data.password,
-      token: token,
-    });
+    try {
+      signUp({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        token: token,
+      });
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Sign-up failed:", error);
+      toast.error("Sign-up failed. Please try again.");
+    }
   };
 
   return (

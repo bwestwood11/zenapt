@@ -9,6 +9,12 @@
  */
 export type * from './models/Admin'
 export type * from './models/User'
+export type * from './models/Subscription'
+export type * from './models/Organization'
+export type * from './models/ManagementMembership'
+export type * from './models/Location'
+export type * from './models/LocationEmployee'
+export type * from './models/ActivityLog'
 export type * from './models/Session'
 export type * from './models/Account'
 export type * from './models/Verification'

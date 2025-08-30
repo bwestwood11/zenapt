@@ -1,17 +1,180 @@
 model User {
-  id            String    @id @map("_id")
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  token         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
+  id                String                 @id @map("_id")
+  name              String
+  email             String
+  emailVerified     Boolean
+  image             String?
+  token             String?
+  createdAt         DateTime
+  updatedAt         DateTime
+  sessions          Session[]
+  accounts          Account[]
+  management        ManagementMembership[]
+  locationEmployees LocationEmployee[]
+  // customer Customer?
+  AuditLog          ActivityLog[]
 
   @@unique([email])
   @@map("user")
+}
+
+enum OrgRole {
+  OWNER
+  ADMIN
+  ANALYST
+}
+
+model Subscription {
+  id                   String    @id @default(cuid()) @map("_id")
+  organizationId       String    @unique
+  maximumLocations     Int
+  usedTexts            Int       @default(0)
+  usedEmails           Int       @default(0)
+  maximumTexts         Int
+  maximumEmails        Int
+  amountPaid           Int       @default(0)
+  stripeCustomerId     String
+  stripeSubscriptionId String
+  status               String
+  lastPaid             DateTime?
+  priceId              String
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([stripeSubscriptionId])
+}
+
+model Organization {
+  id              String                 @id @default(cuid()) @map("_id")
+  name            String                  
+  description     String?
+  companySize     String?    @default("1-10")
+  businessWebsite String?
+  logo            String?
+  slug            String                 @unique
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  management      ManagementMembership[]
+  subscription    Subscription?
+  locations       Location[]
+  activityLogs    ActivityLog[]
+}
+
+model ManagementMembership {
+  id             String   @id @default(cuid()) @map("_id")
+  userId         String
+  role           OrgRole  @default(ADMIN)
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Location {
+  id             String             @id @default(cuid()) @map("_id")
+  name           String
+  organizationId String
+  address        String?
+  city           String?
+  state          String?
+  country        String?
+  zipCode        String?
+  timeZone       String?
+  email          String?
+  phoneNumber    String?
+  // services       Service[]
+  // customers      Customer[]
+  // appointments   Appointment[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  employees      LocationEmployee[]
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  // Nameless       Nameless[]
+
+  @@unique([name, organizationId])
+}
+
+enum EmployeeRole {
+  LOCATION_ADMIN
+  LOCATION_FRONT_DESK
+  LOCATION_SPECIALIST
+}
+
+model LocationEmployee {
+  id         String       @id @default(cuid()) @map("_id")
+  userId     String
+  locationId String
+  role       EmployeeRole @default(LOCATION_FRONT_DESK)
+  name       String
+  email      String
+  // services Service[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Nameless Nameless[]
+
+  @@unique([userId, locationId])
+}
+
+// model Service {
+//   id           String  @id @default(cuid()) @map("_id")
+//   name         String
+//   description  String?
+//   minimumPrice Int
+
+//   // Nameless Nameless[]
+// }
+
+// model Nameless {
+//   id                 String            @id @default(cuid()) @map("_id")
+//   service            Service           @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+//   serviceId          String
+//   location           Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
+//   locationId         String
+//   price              Int
+//   duration           Int
+//   locationEmployee   LocationEmployee? @relation(fields: [locationEmployeeId], references: [id], onDelete: Cascade)
+//   locationEmployeeId String?
+//   createdAt          DateTime          @default(now())
+//   updatedAt          DateTime          @updatedAt
+// }
+
+// model Customer {
+//   id           String    @id @default(cuid()) @map("_id")
+//   locationId   String
+//   firstName    String
+//   lastName     String
+//   email        String?
+//   phoneNumber  String?
+//   dateOfBirth  DateTime?
+//   notes        String?
+//   createdAt    DateTime  @default(now())
+//   updatedAt    DateTime  @updatedAt
+//   // appointments Appointment[]
+//   location     Location  @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+//   @@unique([email, locationId])
+// }
+
+model ActivityLog {
+  id             String   @id @default(cuid()) @map("_id")
+  userId         String
+  organizationId String
+  action         String
+  description    String?
+  createdAt      DateTime @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model Session {

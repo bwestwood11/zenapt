@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "../../prisma";
 import { createAuthMiddleware, APIError } from "better-auth/api";
 import { verifyInvitationToken } from "./invitationToken";
+import { nextCookies } from "better-auth/next-js";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -12,6 +13,7 @@ export const auth = betterAuth({
     .split(",")
     .map((o) => o.trim())
     .filter(Boolean),
+  plugins: [nextCookies()],
   hooks: {
     before: createAuthMiddleware(async (ctx) => {
       if (ctx.path !== "/sign-up/email") {
@@ -29,7 +31,7 @@ export const auth = betterAuth({
 
       try {
         const tokenPayload = verifyInvitationToken(token);
-        console.log(tokenPayload)
+        console.log(tokenPayload);
         if (!tokenPayload) throw new Error("malformed token");
       } catch (error) {
         throw new APIError("BAD_REQUEST", {
