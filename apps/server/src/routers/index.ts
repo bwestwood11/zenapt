@@ -6,7 +6,7 @@ import { organizationRouter } from "./organization";
 import { paymentRouter } from "./payments";
 
 export const appRouter = router({
-  healthCheck: publicProcedure.query(() => {
+  healthCheck: protectedProcedure.query(() => {
     return "OK";
   }),
   admin: adminRouter,

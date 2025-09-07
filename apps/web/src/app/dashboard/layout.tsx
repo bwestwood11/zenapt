@@ -1,4 +1,5 @@
 import { getSession } from "@/lib/auth/session";
+import { getSubscription } from "@/lib/payments/subscriptions";
 import { redirect } from "next/navigation";
 
 const DashboardLayout = async ({
@@ -17,7 +18,10 @@ const DashboardLayout = async ({
     return redirect("/dashboard/onboarding");
   }
   // Check if he paid
-
+  const subscription = await getSubscription();
+  if (!subscription?.isActive) {
+    return redirect("/checkout");
+  }
   return <div>{children}</div>;
 };
 

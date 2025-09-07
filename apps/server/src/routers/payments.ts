@@ -6,6 +6,7 @@ import { stripe, syncStripeCustomer } from "../lib/stripe/server-stripe";
 import z, { number } from "zod";
 import { redirect } from "next/navigation";
 import Stripe from "stripe";
+import { validateSubscription } from "../lib/subscription/subscription";
 
 const initializePayment = protectedProcedure.mutation(async ({ ctx }) => {
   const { session } = ctx;
@@ -224,9 +225,36 @@ const getSessionDetails = protectedProcedure
     };
   });
 
+  const getSubscriptionDetails = protectedProcedure.query(async ({ ctx }) => {
+    if (!ctx.session.user.organizationId) {
+      throw new TRPCError({
+        message: "You are not allowed",
+        code: "FORBIDDEN",
+      });
+    }
+    const organization = await prisma.organization.findUnique({
+      where: {
+        id: ctx.session.user.organizationId,
+      },
+      include: {
+        subscription: true,
+      },
+    });
+
+    if (!organization || !organization.subscription?.stripeCustomerId) {
+      return {isActive: false}
+    }
+
+    const {isActive} = validateSubscription(organization.subscription)
+
+    return {isActive, ...organization.subscription, organization: {...organization, subscription: undefined}}
+
+  })
+
 export const paymentRouter = router({
   initializePayment: initializePayment,
   priceDetails: priceDetails,
   getCheckoutSession: getCheckoutSession,
   getSessionDetails: getSessionDetails,
+  getSubscriptionDetails: getSubscriptionDetails,
 });
