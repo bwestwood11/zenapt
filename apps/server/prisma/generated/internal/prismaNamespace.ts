@@ -1386,6 +1386,8 @@ export const SubscriptionScalarFieldEnum = {
   usedEmails: 'usedEmails',
   maximumTexts: 'maximumTexts',
   maximumEmails: 'maximumEmails',
+  cardBrand: 'cardBrand',
+  cardLast4: 'cardLast4',
   amountPaid: 'amountPaid',
   stripeCustomerId: 'stripeCustomerId',
   stripeSubscriptionId: 'stripeSubscriptionId',

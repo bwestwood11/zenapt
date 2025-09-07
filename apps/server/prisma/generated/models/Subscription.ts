@@ -51,6 +51,8 @@ export type SubscriptionMinAggregateOutputType = {
   usedEmails: number | null
   maximumTexts: number | null
   maximumEmails: number | null
+  cardBrand: string | null
+  cardLast4: string | null
   amountPaid: number | null
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
@@ -72,6 +74,8 @@ export type SubscriptionMaxAggregateOutputType = {
   usedEmails: number | null
   maximumTexts: number | null
   maximumEmails: number | null
+  cardBrand: string | null
+  cardLast4: string | null
   amountPaid: number | null
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
@@ -93,6 +97,8 @@ export type SubscriptionCountAggregateOutputType = {
   usedEmails: number
   maximumTexts: number
   maximumEmails: number
+  cardBrand: number
+  cardLast4: number
   amountPaid: number
   stripeCustomerId: number
   stripeSubscriptionId: number
@@ -134,6 +140,8 @@ export type SubscriptionMinAggregateInputType = {
   usedEmails?: true
   maximumTexts?: true
   maximumEmails?: true
+  cardBrand?: true
+  cardLast4?: true
   amountPaid?: true
   stripeCustomerId?: true
   stripeSubscriptionId?: true
@@ -155,6 +163,8 @@ export type SubscriptionMaxAggregateInputType = {
   usedEmails?: true
   maximumTexts?: true
   maximumEmails?: true
+  cardBrand?: true
+  cardLast4?: true
   amountPaid?: true
   stripeCustomerId?: true
   stripeSubscriptionId?: true
@@ -176,6 +186,8 @@ export type SubscriptionCountAggregateInputType = {
   usedEmails?: true
   maximumTexts?: true
   maximumEmails?: true
+  cardBrand?: true
+  cardLast4?: true
   amountPaid?: true
   stripeCustomerId?: true
   stripeSubscriptionId?: true
@@ -279,19 +291,21 @@ export type SubscriptionGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 export type SubscriptionGroupByOutputType = {
   id: string
   organizationId: string
-  maximumLocations: number
-  usedTexts: number
-  usedEmails: number
-  maximumTexts: number
-  maximumEmails: number
-  amountPaid: number
+  maximumLocations: number | null
+  usedTexts: number | null
+  usedEmails: number | null
+  maximumTexts: number | null
+  maximumEmails: number | null
+  cardBrand: string | null
+  cardLast4: string | null
+  amountPaid: number | null
   stripeCustomerId: string
-  stripeSubscriptionId: string
-  status: string
+  stripeSubscriptionId: string | null
+  status: string | null
   lastPaid: Date | null
-  priceId: string
-  currentPeriodStart: Date
-  currentPeriodEnd: Date
+  priceId: string | null
+  currentPeriodStart: Date | null
+  currentPeriodEnd: Date | null
   cancelAtPeriodEnd: boolean
   createdAt: Date
   updatedAt: Date
@@ -323,19 +337,21 @@ export type SubscriptionWhereInput = {
   NOT?: Prisma.SubscriptionWhereInput | Prisma.SubscriptionWhereInput[]
   id?: Prisma.StringFilter<"Subscription"> | string
   organizationId?: Prisma.StringFilter<"Subscription"> | string
-  maximumLocations?: Prisma.IntFilter<"Subscription"> | number
-  usedTexts?: Prisma.IntFilter<"Subscription"> | number
-  usedEmails?: Prisma.IntFilter<"Subscription"> | number
-  maximumTexts?: Prisma.IntFilter<"Subscription"> | number
-  maximumEmails?: Prisma.IntFilter<"Subscription"> | number
-  amountPaid?: Prisma.IntFilter<"Subscription"> | number
+  maximumLocations?: Prisma.IntNullableFilter<"Subscription"> | number | null
+  usedTexts?: Prisma.IntNullableFilter<"Subscription"> | number | null
+  usedEmails?: Prisma.IntNullableFilter<"Subscription"> | number | null
+  maximumTexts?: Prisma.IntNullableFilter<"Subscription"> | number | null
+  maximumEmails?: Prisma.IntNullableFilter<"Subscription"> | number | null
+  cardBrand?: Prisma.StringNullableFilter<"Subscription"> | string | null
+  cardLast4?: Prisma.StringNullableFilter<"Subscription"> | string | null
+  amountPaid?: Prisma.IntNullableFilter<"Subscription"> | number | null
   stripeCustomerId?: Prisma.StringFilter<"Subscription"> | string
-  stripeSubscriptionId?: Prisma.StringFilter<"Subscription"> | string
-  status?: Prisma.StringFilter<"Subscription"> | string
+  stripeSubscriptionId?: Prisma.StringNullableFilter<"Subscription"> | string | null
+  status?: Prisma.StringNullableFilter<"Subscription"> | string | null
   lastPaid?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
-  priceId?: Prisma.StringFilter<"Subscription"> | string
-  currentPeriodStart?: Prisma.DateTimeFilter<"Subscription"> | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFilter<"Subscription"> | Date | string
+  priceId?: Prisma.StringNullableFilter<"Subscription"> | string | null
+  currentPeriodStart?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
+  currentPeriodEnd?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFilter<"Subscription"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
@@ -345,19 +361,21 @@ export type SubscriptionWhereInput = {
 export type SubscriptionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
-  maximumLocations?: Prisma.SortOrder
-  usedTexts?: Prisma.SortOrder
-  usedEmails?: Prisma.SortOrder
-  maximumTexts?: Prisma.SortOrder
-  maximumEmails?: Prisma.SortOrder
-  amountPaid?: Prisma.SortOrder
+  maximumLocations?: Prisma.SortOrderInput | Prisma.SortOrder
+  usedTexts?: Prisma.SortOrderInput | Prisma.SortOrder
+  usedEmails?: Prisma.SortOrderInput | Prisma.SortOrder
+  maximumTexts?: Prisma.SortOrderInput | Prisma.SortOrder
+  maximumEmails?: Prisma.SortOrderInput | Prisma.SortOrder
+  cardBrand?: Prisma.SortOrderInput | Prisma.SortOrder
+  cardLast4?: Prisma.SortOrderInput | Prisma.SortOrder
+  amountPaid?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
-  stripeSubscriptionId?: Prisma.SortOrder
-  status?: Prisma.SortOrder
+  stripeSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  status?: Prisma.SortOrderInput | Prisma.SortOrder
   lastPaid?: Prisma.SortOrderInput | Prisma.SortOrder
-  priceId?: Prisma.SortOrder
-  currentPeriodStart?: Prisma.SortOrder
-  currentPeriodEnd?: Prisma.SortOrder
+  priceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  currentPeriodStart?: Prisma.SortOrderInput | Prisma.SortOrder
+  currentPeriodEnd?: Prisma.SortOrderInput | Prisma.SortOrder
   cancelAtPeriodEnd?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -367,44 +385,48 @@ export type SubscriptionOrderByWithRelationInput = {
 export type SubscriptionWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   organizationId?: string
+  stripeCustomerId?: string
   stripeSubscriptionId?: string
   AND?: Prisma.SubscriptionWhereInput | Prisma.SubscriptionWhereInput[]
   OR?: Prisma.SubscriptionWhereInput[]
   NOT?: Prisma.SubscriptionWhereInput | Prisma.SubscriptionWhereInput[]
-  maximumLocations?: Prisma.IntFilter<"Subscription"> | number
-  usedTexts?: Prisma.IntFilter<"Subscription"> | number
-  usedEmails?: Prisma.IntFilter<"Subscription"> | number
-  maximumTexts?: Prisma.IntFilter<"Subscription"> | number
-  maximumEmails?: Prisma.IntFilter<"Subscription"> | number
-  amountPaid?: Prisma.IntFilter<"Subscription"> | number
-  stripeCustomerId?: Prisma.StringFilter<"Subscription"> | string
-  status?: Prisma.StringFilter<"Subscription"> | string
+  maximumLocations?: Prisma.IntNullableFilter<"Subscription"> | number | null
+  usedTexts?: Prisma.IntNullableFilter<"Subscription"> | number | null
+  usedEmails?: Prisma.IntNullableFilter<"Subscription"> | number | null
+  maximumTexts?: Prisma.IntNullableFilter<"Subscription"> | number | null
+  maximumEmails?: Prisma.IntNullableFilter<"Subscription"> | number | null
+  cardBrand?: Prisma.StringNullableFilter<"Subscription"> | string | null
+  cardLast4?: Prisma.StringNullableFilter<"Subscription"> | string | null
+  amountPaid?: Prisma.IntNullableFilter<"Subscription"> | number | null
+  status?: Prisma.StringNullableFilter<"Subscription"> | string | null
   lastPaid?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
-  priceId?: Prisma.StringFilter<"Subscription"> | string
-  currentPeriodStart?: Prisma.DateTimeFilter<"Subscription"> | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFilter<"Subscription"> | Date | string
+  priceId?: Prisma.StringNullableFilter<"Subscription"> | string | null
+  currentPeriodStart?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
+  currentPeriodEnd?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFilter<"Subscription"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
-}, "id" | "organizationId" | "stripeSubscriptionId">
+}, "id" | "organizationId" | "stripeCustomerId" | "stripeSubscriptionId">
 
 export type SubscriptionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
-  maximumLocations?: Prisma.SortOrder
-  usedTexts?: Prisma.SortOrder
-  usedEmails?: Prisma.SortOrder
-  maximumTexts?: Prisma.SortOrder
-  maximumEmails?: Prisma.SortOrder
-  amountPaid?: Prisma.SortOrder
+  maximumLocations?: Prisma.SortOrderInput | Prisma.SortOrder
+  usedTexts?: Prisma.SortOrderInput | Prisma.SortOrder
+  usedEmails?: Prisma.SortOrderInput | Prisma.SortOrder
+  maximumTexts?: Prisma.SortOrderInput | Prisma.SortOrder
+  maximumEmails?: Prisma.SortOrderInput | Prisma.SortOrder
+  cardBrand?: Prisma.SortOrderInput | Prisma.SortOrder
+  cardLast4?: Prisma.SortOrderInput | Prisma.SortOrder
+  amountPaid?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
-  stripeSubscriptionId?: Prisma.SortOrder
-  status?: Prisma.SortOrder
+  stripeSubscriptionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  status?: Prisma.SortOrderInput | Prisma.SortOrder
   lastPaid?: Prisma.SortOrderInput | Prisma.SortOrder
-  priceId?: Prisma.SortOrder
-  currentPeriodStart?: Prisma.SortOrder
-  currentPeriodEnd?: Prisma.SortOrder
+  priceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  currentPeriodStart?: Prisma.SortOrderInput | Prisma.SortOrder
+  currentPeriodEnd?: Prisma.SortOrderInput | Prisma.SortOrder
   cancelAtPeriodEnd?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -421,19 +443,21 @@ export type SubscriptionScalarWhereWithAggregatesInput = {
   NOT?: Prisma.SubscriptionScalarWhereWithAggregatesInput | Prisma.SubscriptionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
   organizationId?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
-  maximumLocations?: Prisma.IntWithAggregatesFilter<"Subscription"> | number
-  usedTexts?: Prisma.IntWithAggregatesFilter<"Subscription"> | number
-  usedEmails?: Prisma.IntWithAggregatesFilter<"Subscription"> | number
-  maximumTexts?: Prisma.IntWithAggregatesFilter<"Subscription"> | number
-  maximumEmails?: Prisma.IntWithAggregatesFilter<"Subscription"> | number
-  amountPaid?: Prisma.IntWithAggregatesFilter<"Subscription"> | number
+  maximumLocations?: Prisma.IntNullableWithAggregatesFilter<"Subscription"> | number | null
+  usedTexts?: Prisma.IntNullableWithAggregatesFilter<"Subscription"> | number | null
+  usedEmails?: Prisma.IntNullableWithAggregatesFilter<"Subscription"> | number | null
+  maximumTexts?: Prisma.IntNullableWithAggregatesFilter<"Subscription"> | number | null
+  maximumEmails?: Prisma.IntNullableWithAggregatesFilter<"Subscription"> | number | null
+  cardBrand?: Prisma.StringNullableWithAggregatesFilter<"Subscription"> | string | null
+  cardLast4?: Prisma.StringNullableWithAggregatesFilter<"Subscription"> | string | null
+  amountPaid?: Prisma.IntNullableWithAggregatesFilter<"Subscription"> | number | null
   stripeCustomerId?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
-  stripeSubscriptionId?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
-  status?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
+  stripeSubscriptionId?: Prisma.StringNullableWithAggregatesFilter<"Subscription"> | string | null
+  status?: Prisma.StringNullableWithAggregatesFilter<"Subscription"> | string | null
   lastPaid?: Prisma.DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
-  priceId?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
-  currentPeriodStart?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
-  currentPeriodEnd?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
+  priceId?: Prisma.StringNullableWithAggregatesFilter<"Subscription"> | string | null
+  currentPeriodStart?: Prisma.DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
+  currentPeriodEnd?: Prisma.DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolWithAggregatesFilter<"Subscription"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
@@ -441,19 +465,21 @@ export type SubscriptionScalarWhereWithAggregatesInput = {
 
 export type SubscriptionCreateInput = {
   id?: string
-  maximumLocations: number
-  usedTexts?: number
-  usedEmails?: number
-  maximumTexts: number
-  maximumEmails: number
-  amountPaid?: number
+  maximumLocations?: number | null
+  usedTexts?: number | null
+  usedEmails?: number | null
+  maximumTexts?: number | null
+  maximumEmails?: number | null
+  cardBrand?: string | null
+  cardLast4?: string | null
+  amountPaid?: number | null
   stripeCustomerId: string
-  stripeSubscriptionId: string
-  status: string
+  stripeSubscriptionId?: string | null
+  status?: string | null
   lastPaid?: Date | string | null
-  priceId: string
-  currentPeriodStart: Date | string
-  currentPeriodEnd: Date | string
+  priceId?: string | null
+  currentPeriodStart?: Date | string | null
+  currentPeriodEnd?: Date | string | null
   cancelAtPeriodEnd?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -463,19 +489,21 @@ export type SubscriptionCreateInput = {
 export type SubscriptionUncheckedCreateInput = {
   id?: string
   organizationId: string
-  maximumLocations: number
-  usedTexts?: number
-  usedEmails?: number
-  maximumTexts: number
-  maximumEmails: number
-  amountPaid?: number
+  maximumLocations?: number | null
+  usedTexts?: number | null
+  usedEmails?: number | null
+  maximumTexts?: number | null
+  maximumEmails?: number | null
+  cardBrand?: string | null
+  cardLast4?: string | null
+  amountPaid?: number | null
   stripeCustomerId: string
-  stripeSubscriptionId: string
-  status: string
+  stripeSubscriptionId?: string | null
+  status?: string | null
   lastPaid?: Date | string | null
-  priceId: string
-  currentPeriodStart: Date | string
-  currentPeriodEnd: Date | string
+  priceId?: string | null
+  currentPeriodStart?: Date | string | null
+  currentPeriodEnd?: Date | string | null
   cancelAtPeriodEnd?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -483,19 +511,21 @@ export type SubscriptionUncheckedCreateInput = {
 
 export type SubscriptionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  maximumLocations?: Prisma.IntFieldUpdateOperationsInput | number
-  usedTexts?: Prisma.IntFieldUpdateOperationsInput | number
-  usedEmails?: Prisma.IntFieldUpdateOperationsInput | number
-  maximumTexts?: Prisma.IntFieldUpdateOperationsInput | number
-  maximumEmails?: Prisma.IntFieldUpdateOperationsInput | number
-  amountPaid?: Prisma.IntFieldUpdateOperationsInput | number
+  maximumLocations?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  usedTexts?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  usedEmails?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maximumTexts?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maximumEmails?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cardBrand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountPaid?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastPaid?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  priceId?: Prisma.StringFieldUpdateOperationsInput | string
-  currentPeriodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  priceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -505,19 +535,21 @@ export type SubscriptionUpdateInput = {
 export type SubscriptionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  maximumLocations?: Prisma.IntFieldUpdateOperationsInput | number
-  usedTexts?: Prisma.IntFieldUpdateOperationsInput | number
-  usedEmails?: Prisma.IntFieldUpdateOperationsInput | number
-  maximumTexts?: Prisma.IntFieldUpdateOperationsInput | number
-  maximumEmails?: Prisma.IntFieldUpdateOperationsInput | number
-  amountPaid?: Prisma.IntFieldUpdateOperationsInput | number
+  maximumLocations?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  usedTexts?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  usedEmails?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maximumTexts?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maximumEmails?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cardBrand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountPaid?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastPaid?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  priceId?: Prisma.StringFieldUpdateOperationsInput | string
-  currentPeriodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  priceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -526,19 +558,21 @@ export type SubscriptionUncheckedUpdateInput = {
 export type SubscriptionCreateManyInput = {
   id?: string
   organizationId: string
-  maximumLocations: number
-  usedTexts?: number
-  usedEmails?: number
-  maximumTexts: number
-  maximumEmails: number
-  amountPaid?: number
+  maximumLocations?: number | null
+  usedTexts?: number | null
+  usedEmails?: number | null
+  maximumTexts?: number | null
+  maximumEmails?: number | null
+  cardBrand?: string | null
+  cardLast4?: string | null
+  amountPaid?: number | null
   stripeCustomerId: string
-  stripeSubscriptionId: string
-  status: string
+  stripeSubscriptionId?: string | null
+  status?: string | null
   lastPaid?: Date | string | null
-  priceId: string
-  currentPeriodStart: Date | string
-  currentPeriodEnd: Date | string
+  priceId?: string | null
+  currentPeriodStart?: Date | string | null
+  currentPeriodEnd?: Date | string | null
   cancelAtPeriodEnd?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -546,19 +580,21 @@ export type SubscriptionCreateManyInput = {
 
 export type SubscriptionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  maximumLocations?: Prisma.IntFieldUpdateOperationsInput | number
-  usedTexts?: Prisma.IntFieldUpdateOperationsInput | number
-  usedEmails?: Prisma.IntFieldUpdateOperationsInput | number
-  maximumTexts?: Prisma.IntFieldUpdateOperationsInput | number
-  maximumEmails?: Prisma.IntFieldUpdateOperationsInput | number
-  amountPaid?: Prisma.IntFieldUpdateOperationsInput | number
+  maximumLocations?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  usedTexts?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  usedEmails?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maximumTexts?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maximumEmails?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cardBrand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountPaid?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastPaid?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  priceId?: Prisma.StringFieldUpdateOperationsInput | string
-  currentPeriodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  priceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -567,19 +603,21 @@ export type SubscriptionUpdateManyMutationInput = {
 export type SubscriptionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  maximumLocations?: Prisma.IntFieldUpdateOperationsInput | number
-  usedTexts?: Prisma.IntFieldUpdateOperationsInput | number
-  usedEmails?: Prisma.IntFieldUpdateOperationsInput | number
-  maximumTexts?: Prisma.IntFieldUpdateOperationsInput | number
-  maximumEmails?: Prisma.IntFieldUpdateOperationsInput | number
-  amountPaid?: Prisma.IntFieldUpdateOperationsInput | number
+  maximumLocations?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  usedTexts?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  usedEmails?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maximumTexts?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maximumEmails?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cardBrand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountPaid?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastPaid?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  priceId?: Prisma.StringFieldUpdateOperationsInput | string
-  currentPeriodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  priceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -593,6 +631,8 @@ export type SubscriptionCountOrderByAggregateInput = {
   usedEmails?: Prisma.SortOrder
   maximumTexts?: Prisma.SortOrder
   maximumEmails?: Prisma.SortOrder
+  cardBrand?: Prisma.SortOrder
+  cardLast4?: Prisma.SortOrder
   amountPaid?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrder
@@ -623,6 +663,8 @@ export type SubscriptionMaxOrderByAggregateInput = {
   usedEmails?: Prisma.SortOrder
   maximumTexts?: Prisma.SortOrder
   maximumEmails?: Prisma.SortOrder
+  cardBrand?: Prisma.SortOrder
+  cardLast4?: Prisma.SortOrder
   amountPaid?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrder
@@ -644,6 +686,8 @@ export type SubscriptionMinOrderByAggregateInput = {
   usedEmails?: Prisma.SortOrder
   maximumTexts?: Prisma.SortOrder
   maximumEmails?: Prisma.SortOrder
+  cardBrand?: Prisma.SortOrder
+  cardLast4?: Prisma.SortOrder
   amountPaid?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   stripeSubscriptionId?: Prisma.SortOrder
@@ -671,8 +715,8 @@ export type SubscriptionNullableScalarRelationFilter = {
   isNot?: Prisma.SubscriptionWhereInput | null
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
   increment?: number
   decrement?: number
   multiply?: number
@@ -717,19 +761,21 @@ export type SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput = {
 
 export type SubscriptionCreateWithoutOrganizationInput = {
   id?: string
-  maximumLocations: number
-  usedTexts?: number
-  usedEmails?: number
-  maximumTexts: number
-  maximumEmails: number
-  amountPaid?: number
+  maximumLocations?: number | null
+  usedTexts?: number | null
+  usedEmails?: number | null
+  maximumTexts?: number | null
+  maximumEmails?: number | null
+  cardBrand?: string | null
+  cardLast4?: string | null
+  amountPaid?: number | null
   stripeCustomerId: string
-  stripeSubscriptionId: string
-  status: string
+  stripeSubscriptionId?: string | null
+  status?: string | null
   lastPaid?: Date | string | null
-  priceId: string
-  currentPeriodStart: Date | string
-  currentPeriodEnd: Date | string
+  priceId?: string | null
+  currentPeriodStart?: Date | string | null
+  currentPeriodEnd?: Date | string | null
   cancelAtPeriodEnd?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -737,19 +783,21 @@ export type SubscriptionCreateWithoutOrganizationInput = {
 
 export type SubscriptionUncheckedCreateWithoutOrganizationInput = {
   id?: string
-  maximumLocations: number
-  usedTexts?: number
-  usedEmails?: number
-  maximumTexts: number
-  maximumEmails: number
-  amountPaid?: number
+  maximumLocations?: number | null
+  usedTexts?: number | null
+  usedEmails?: number | null
+  maximumTexts?: number | null
+  maximumEmails?: number | null
+  cardBrand?: string | null
+  cardLast4?: string | null
+  amountPaid?: number | null
   stripeCustomerId: string
-  stripeSubscriptionId: string
-  status: string
+  stripeSubscriptionId?: string | null
+  status?: string | null
   lastPaid?: Date | string | null
-  priceId: string
-  currentPeriodStart: Date | string
-  currentPeriodEnd: Date | string
+  priceId?: string | null
+  currentPeriodStart?: Date | string | null
+  currentPeriodEnd?: Date | string | null
   cancelAtPeriodEnd?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -773,19 +821,21 @@ export type SubscriptionUpdateToOneWithWhereWithoutOrganizationInput = {
 
 export type SubscriptionUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  maximumLocations?: Prisma.IntFieldUpdateOperationsInput | number
-  usedTexts?: Prisma.IntFieldUpdateOperationsInput | number
-  usedEmails?: Prisma.IntFieldUpdateOperationsInput | number
-  maximumTexts?: Prisma.IntFieldUpdateOperationsInput | number
-  maximumEmails?: Prisma.IntFieldUpdateOperationsInput | number
-  amountPaid?: Prisma.IntFieldUpdateOperationsInput | number
+  maximumLocations?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  usedTexts?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  usedEmails?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maximumTexts?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maximumEmails?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cardBrand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountPaid?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastPaid?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  priceId?: Prisma.StringFieldUpdateOperationsInput | string
-  currentPeriodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  priceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -793,19 +843,21 @@ export type SubscriptionUpdateWithoutOrganizationInput = {
 
 export type SubscriptionUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  maximumLocations?: Prisma.IntFieldUpdateOperationsInput | number
-  usedTexts?: Prisma.IntFieldUpdateOperationsInput | number
-  usedEmails?: Prisma.IntFieldUpdateOperationsInput | number
-  maximumTexts?: Prisma.IntFieldUpdateOperationsInput | number
-  maximumEmails?: Prisma.IntFieldUpdateOperationsInput | number
-  amountPaid?: Prisma.IntFieldUpdateOperationsInput | number
+  maximumLocations?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  usedTexts?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  usedEmails?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maximumTexts?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maximumEmails?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  cardBrand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountPaid?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeSubscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastPaid?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  priceId?: Prisma.StringFieldUpdateOperationsInput | string
-  currentPeriodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  priceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentPeriodStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -821,6 +873,8 @@ export type SubscriptionSelect<ExtArgs extends runtime.Types.Extensions.Internal
   usedEmails?: boolean
   maximumTexts?: boolean
   maximumEmails?: boolean
+  cardBrand?: boolean
+  cardLast4?: boolean
   amountPaid?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
@@ -843,6 +897,8 @@ export type SubscriptionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   usedEmails?: boolean
   maximumTexts?: boolean
   maximumEmails?: boolean
+  cardBrand?: boolean
+  cardLast4?: boolean
   amountPaid?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
@@ -865,6 +921,8 @@ export type SubscriptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   usedEmails?: boolean
   maximumTexts?: boolean
   maximumEmails?: boolean
+  cardBrand?: boolean
+  cardLast4?: boolean
   amountPaid?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
@@ -887,6 +945,8 @@ export type SubscriptionSelectScalar = {
   usedEmails?: boolean
   maximumTexts?: boolean
   maximumEmails?: boolean
+  cardBrand?: boolean
+  cardLast4?: boolean
   amountPaid?: boolean
   stripeCustomerId?: boolean
   stripeSubscriptionId?: boolean
@@ -900,7 +960,7 @@ export type SubscriptionSelectScalar = {
   updatedAt?: boolean
 }
 
-export type SubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "maximumLocations" | "usedTexts" | "usedEmails" | "maximumTexts" | "maximumEmails" | "amountPaid" | "stripeCustomerId" | "stripeSubscriptionId" | "status" | "lastPaid" | "priceId" | "currentPeriodStart" | "currentPeriodEnd" | "cancelAtPeriodEnd" | "createdAt" | "updatedAt", ExtArgs["result"]["subscription"]>
+export type SubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "maximumLocations" | "usedTexts" | "usedEmails" | "maximumTexts" | "maximumEmails" | "cardBrand" | "cardLast4" | "amountPaid" | "stripeCustomerId" | "stripeSubscriptionId" | "status" | "lastPaid" | "priceId" | "currentPeriodStart" | "currentPeriodEnd" | "cancelAtPeriodEnd" | "createdAt" | "updatedAt", ExtArgs["result"]["subscription"]>
 export type SubscriptionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }
@@ -919,19 +979,21 @@ export type $SubscriptionPayload<ExtArgs extends runtime.Types.Extensions.Intern
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     organizationId: string
-    maximumLocations: number
-    usedTexts: number
-    usedEmails: number
-    maximumTexts: number
-    maximumEmails: number
-    amountPaid: number
+    maximumLocations: number | null
+    usedTexts: number | null
+    usedEmails: number | null
+    maximumTexts: number | null
+    maximumEmails: number | null
+    cardBrand: string | null
+    cardLast4: string | null
+    amountPaid: number | null
     stripeCustomerId: string
-    stripeSubscriptionId: string
-    status: string
+    stripeSubscriptionId: string | null
+    status: string | null
     lastPaid: Date | null
-    priceId: string
-    currentPeriodStart: Date
-    currentPeriodEnd: Date
+    priceId: string | null
+    currentPeriodStart: Date | null
+    currentPeriodEnd: Date | null
     cancelAtPeriodEnd: boolean
     createdAt: Date
     updatedAt: Date
@@ -1366,6 +1428,8 @@ export interface SubscriptionFieldRefs {
   readonly usedEmails: Prisma.FieldRef<"Subscription", 'Int'>
   readonly maximumTexts: Prisma.FieldRef<"Subscription", 'Int'>
   readonly maximumEmails: Prisma.FieldRef<"Subscription", 'Int'>
+  readonly cardBrand: Prisma.FieldRef<"Subscription", 'String'>
+  readonly cardLast4: Prisma.FieldRef<"Subscription", 'String'>
   readonly amountPaid: Prisma.FieldRef<"Subscription", 'Int'>
   readonly stripeCustomerId: Prisma.FieldRef<"Subscription", 'String'>
   readonly stripeSubscriptionId: Prisma.FieldRef<"Subscription", 'String'>

@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -21,9 +20,9 @@ body {
 :root {
   --background: oklch(0.9735 0.0261 90.0953);
   --foreground: oklch(0.4015 0.0436 37.9587);
-  --card: oklch(0.9920 0.0073 80.7214);
+  --card: oklch(0.992 0.0073 80.7214);
   --card-foreground: oklch(0.4015 0.0436 37.9587);
-  --popover: oklch(0.9920 0.0073 80.7214);
+  --popover: oklch(0.992 0.0073 80.7214);
   --popover-foreground: oklch(0.4015 0.0436 37.9587);
   --primary: oklch(0.5212 0.0823 62.3839);
   --primary-foreground: oklch(0.9735 0.0261 90.0953);
@@ -57,11 +56,16 @@ body {
   --radius: 0.5rem;
   --shadow-2xs: 0px 4px 8px 0px hsl(0 0% 0% / 0.03);
   --shadow-xs: 0px 4px 8px 0px hsl(0 0% 0% / 0.03);
-  --shadow-sm: 0px 4px 8px 0px hsl(0 0% 0% / 0.05), 0px 1px 2px -1px hsl(0 0% 0% / 0.05);
-  --shadow: 0px 4px 8px 0px hsl(0 0% 0% / 0.05), 0px 1px 2px -1px hsl(0 0% 0% / 0.05);
-  --shadow-md: 0px 4px 8px 0px hsl(0 0% 0% / 0.05), 0px 2px 4px -1px hsl(0 0% 0% / 0.05);
-  --shadow-lg: 0px 4px 8px 0px hsl(0 0% 0% / 0.05), 0px 4px 6px -1px hsl(0 0% 0% / 0.05);
-  --shadow-xl: 0px 4px 8px 0px hsl(0 0% 0% / 0.05), 0px 8px 10px -1px hsl(0 0% 0% / 0.05);
+  --shadow-sm: 0px 4px 8px 0px hsl(0 0% 0% / 0.05),
+    0px 1px 2px -1px hsl(0 0% 0% / 0.05);
+  --shadow: 0px 4px 8px 0px hsl(0 0% 0% / 0.05),
+    0px 1px 2px -1px hsl(0 0% 0% / 0.05);
+  --shadow-md: 0px 4px 8px 0px hsl(0 0% 0% / 0.05),
+    0px 2px 4px -1px hsl(0 0% 0% / 0.05);
+  --shadow-lg: 0px 4px 8px 0px hsl(0 0% 0% / 0.05),
+    0px 4px 6px -1px hsl(0 0% 0% / 0.05);
+  --shadow-xl: 0px 4px 8px 0px hsl(0 0% 0% / 0.05),
+    0px 8px 10px -1px hsl(0 0% 0% / 0.05);
   --shadow-2xl: 0px 4px 8px 0px hsl(0 0% 0% / 0.13);
   --tracking-normal: 0rem;
   --spacing: 0.25rem;
@@ -79,7 +83,7 @@ body {
   --secondary: oklch(0.5212 0.0823 62.3839);
   --secondary-foreground: oklch(0.9735 0.0261 90.0953);
   --muted: oklch(0.3889 0.0212 84.5472);
-  --muted-foreground: oklch(0.7161 0.0091 56.2590);
+  --muted-foreground: oklch(0.7161 0.0091 56.259);
   --accent: oklch(0.3889 0.0212 84.5472);
   --accent-foreground: oklch(0.9735 0.0261 90.0953);
   --destructive: oklch(0.4437 0.1613 26.8994);
@@ -106,11 +110,16 @@ body {
   --radius: 0.5rem;
   --shadow-2xs: 0px 2px 4px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0px 2px 4px 0px hsl(0 0% 0% / 0.05);
-  --shadow-sm: 0px 2px 4px 0px hsl(0 0% 0% / 0.10), 0px 1px 2px -1px hsl(0 0% 0% / 0.10);
-  --shadow: 0px 2px 4px 0px hsl(0 0% 0% / 0.10), 0px 1px 2px -1px hsl(0 0% 0% / 0.10);
-  --shadow-md: 0px 2px 4px 0px hsl(0 0% 0% / 0.10), 0px 2px 4px -1px hsl(0 0% 0% / 0.10);
-  --shadow-lg: 0px 2px 4px 0px hsl(0 0% 0% / 0.10), 0px 4px 6px -1px hsl(0 0% 0% / 0.10);
-  --shadow-xl: 0px 2px 4px 0px hsl(0 0% 0% / 0.10), 0px 8px 10px -1px hsl(0 0% 0% / 0.10);
+  --shadow-sm: 0px 2px 4px 0px hsl(0 0% 0% / 0.1),
+    0px 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow: 0px 2px 4px 0px hsl(0 0% 0% / 0.1),
+    0px 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow-md: 0px 2px 4px 0px hsl(0 0% 0% / 0.1),
+    0px 2px 4px -1px hsl(0 0% 0% / 0.1);
+  --shadow-lg: 0px 2px 4px 0px hsl(0 0% 0% / 0.1),
+    0px 4px 6px -1px hsl(0 0% 0% / 0.1);
+  --shadow-xl: 0px 2px 4px 0px hsl(0 0% 0% / 0.1),
+    0px 8px 10px -1px hsl(0 0% 0% / 0.1);
   --shadow-2xl: 0px 2px 4px 0px hsl(0 0% 0% / 0.25);
 }
 
@@ -187,35 +196,69 @@ body {
   }
 }
 
+.loader-container {
+  transform-origin: center;
+  animation: rotate4 2s linear infinite;
+}
+.loader-circle {
+  fill: none;
+  stroke: url(#trailGradient);
+  stroke-width: 6;
+  stroke-dasharray: 2, 200;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  animation: dash4 1.5s ease-in-out infinite;
+}
+@keyframes rotate4 {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes dash4 {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 200;
+    stroke-dashoffset: -35px;
+  }
+  100% {
+    stroke-dashoffset: -125px;
+  }
+}
 
-        .loader-container {
-          transform-origin: center;
-          animation: rotate4 2s linear infinite;
-        }
-        .loader-circle {
-          fill: none;
-          stroke: url(#trailGradient);
-          stroke-width: 6;
-          stroke-dasharray: 2, 200;
-          stroke-dashoffset: 0;
-          stroke-linecap: round;
-          animation: dash4 1.5s ease-in-out infinite;
-        }
-        @keyframes rotate4 {
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-        @keyframes dash4 {
-          0% {
-            stroke-dasharray: 1, 200;
-            stroke-dashoffset: 0;
-          }
-          50% {
-            stroke-dasharray: 90, 200;
-            stroke-dashoffset: -35px;
-          }
-          100% {
-            stroke-dashoffset: -125px;
-          }
-        }
+.clock-loader {
+  color: var(--color-primary);
+}
+
+.clock-loader line {
+  transform-origin: 12px 12px;
+  stroke: var(--color-primary);
+}
+
+.minute-hand {
+  animation: rotate-minute 2s linear infinite;
+}
+
+.hour-hand {
+  animation: rotate-hour 12s linear infinite;
+}
+
+@keyframes rotate-minute {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotate-hour {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

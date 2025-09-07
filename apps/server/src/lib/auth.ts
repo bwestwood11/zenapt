@@ -4,6 +4,9 @@ import prisma from "../../prisma";
 import { createAuthMiddleware, APIError } from "better-auth/api";
 import { verifyInvitationToken } from "./invitationToken";
 import { nextCookies } from "better-auth/next-js";
+import { customSession } from "better-auth/plugins";
+import { getOrganizationByUserId } from "./helpers/organization";
+
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -13,7 +16,24 @@ export const auth = betterAuth({
     .split(",")
     .map((o) => o.trim())
     .filter(Boolean),
-  plugins: [nextCookies()],
+  plugins: [
+    nextCookies(),
+    customSession(async ({ user, session }) => {
+      const roles = (await getOrganizationByUserId(user.id)) ?? {
+        role: undefined,
+        organizationId: undefined,
+        locationId: undefined,
+      };
+
+      return {
+        user: {
+          ...user,
+          ...roles,
+        },
+        session,
+      };
+    }),
+  ],
   hooks: {
     before: createAuthMiddleware(async (ctx) => {
       if (ctx.path !== "/sign-up/email") {
@@ -40,6 +60,20 @@ export const auth = betterAuth({
       }
 
       return;
+    }),
+    after: createAuthMiddleware(async (ctx) => {
+      //TODO: manage other sign up roles as well not just owner
+      if (ctx.path.startsWith("/sign-up/")) {
+        const newSession = ctx.context.session;
+        if (newSession) {
+          await prisma.managementMembership.create({
+            data: {
+              userId: newSession.user.id,
+              role: "OWNER",
+            },
+          });
+        }
+      }
     }),
   },
   emailAndPassword: {

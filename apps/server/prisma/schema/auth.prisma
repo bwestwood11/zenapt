@@ -27,19 +27,21 @@ enum OrgRole {
 model Subscription {
   id                   String    @id @default(cuid()) @map("_id")
   organizationId       String    @unique
-  maximumLocations     Int
-  usedTexts            Int       @default(0)
-  usedEmails           Int       @default(0)
-  maximumTexts         Int
-  maximumEmails        Int
-  amountPaid           Int       @default(0)
-  stripeCustomerId     String
-  stripeSubscriptionId String
-  status               String
+  maximumLocations     Int?
+  usedTexts            Int?      @default(0)
+  usedEmails           Int?      @default(0)
+  maximumTexts         Int?
+  maximumEmails        Int?
+  cardBrand            String?
+  cardLast4            String?
+  amountPaid           Int?      @default(0)
+  stripeCustomerId     String    @unique
+  stripeSubscriptionId String?
+  status               String?
   lastPaid             DateTime?
-  priceId              String
-  currentPeriodStart   DateTime
-  currentPeriodEnd     DateTime
+  priceId              String?
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
   cancelAtPeriodEnd    Boolean   @default(false)
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
@@ -51,9 +53,9 @@ model Subscription {
 
 model Organization {
   id              String                 @id @default(cuid()) @map("_id")
-  name            String                  
+  name            String
   description     String?
-  companySize     String?    @default("1-10")
+  companySize     String?                @default("1-10")
   businessWebsite String?
   logo            String?
   slug            String                 @unique
@@ -69,12 +71,12 @@ model ManagementMembership {
   id             String   @id @default(cuid()) @map("_id")
   userId         String
   role           OrgRole  @default(ADMIN)
-  organizationId String
+  organizationId String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Location {

@@ -81,7 +81,7 @@ const inviteUser = adminProcedure
   .mutation(async ({ ctx, input }) => {
     const token = createInvitationToken({ email: input.email });
 
-    const url = `${process.env.DASHBOARD_URL}/sign-up/email?token=${token}&email=${input.email}`;
+    const url = `${process.env.DASHBOARD_URL}/sign-up/owner?token=${token}&email=${input.email}`;
     console.log(process.env.NODE_ENV);
     // if (process.env.NODE_ENV !== "development") {
     try {

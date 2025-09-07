@@ -425,6 +425,11 @@ export type OrganizationMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type OrganizationNullableScalarRelationFilter = {
+  is?: Prisma.OrganizationWhereInput | null
+  isNot?: Prisma.OrganizationWhereInput | null
+}
+
 export type OrganizationCreateNestedOneWithoutSubscriptionInput = {
   create?: Prisma.XOR<Prisma.OrganizationCreateWithoutSubscriptionInput, Prisma.OrganizationUncheckedCreateWithoutSubscriptionInput>
   connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutSubscriptionInput
@@ -445,10 +450,12 @@ export type OrganizationCreateNestedOneWithoutManagementInput = {
   connect?: Prisma.OrganizationWhereUniqueInput
 }
 
-export type OrganizationUpdateOneRequiredWithoutManagementNestedInput = {
+export type OrganizationUpdateOneWithoutManagementNestedInput = {
   create?: Prisma.XOR<Prisma.OrganizationCreateWithoutManagementInput, Prisma.OrganizationUncheckedCreateWithoutManagementInput>
   connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutManagementInput
   upsert?: Prisma.OrganizationUpsertWithoutManagementInput
+  disconnect?: Prisma.OrganizationWhereInput | boolean
+  delete?: Prisma.OrganizationWhereInput | boolean
   connect?: Prisma.OrganizationWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutManagementInput, Prisma.OrganizationUpdateWithoutManagementInput>, Prisma.OrganizationUncheckedUpdateWithoutManagementInput>
 }

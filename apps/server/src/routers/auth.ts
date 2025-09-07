@@ -18,7 +18,7 @@ export const authRouter = router({
           email: input.email,
           password: input.password,
           name: input.name,
-          token: input.token,
+          token: input.token
         },
       });
       return "OK";
