@@ -15,35 +15,51 @@ type Response =
       organizationId: undefined;
     };
 
+type MembershipResponse = {
+  management: {
+    role: OrgRole
+    organizationId: string
+  } | undefined | null
+  employees: {
+    role: EmployeeRole
+    locationId: string
+    organizationId: string
+  }[] | null
+}
+
 export async function getOrganizationByUserId(
   userId: string
-): Promise<Response | null> {
-  const user = await prisma.user.findFirst({
-    where: {
-      id: userId,
-    },
+): Promise<MembershipResponse | null> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
     select: {
-      management: true,
-      locationEmployees: true,
+      management: {
+        select: {
+          role: true,
+          organizationId: true,
+        },
+      },
+      locationEmployees: {
+        select: {
+          role: true,
+          locationId: true,
+          location: { select: { organizationId: true } }, // because loc → org
+        },
+      },
     },
   });
 
-  if (!user) return null;
-  if (user.management.length) {
-    return {
+  if (!user) return {management: null, employees: null};
+
+  return {
+    management: user.management[0].organizationId ? {
       role: user.management[0].role,
-      organizationId: user.management[0].organizationId,
-      locationId: undefined,
-      type: "management",
-    };
-  }
-  if (user.locationEmployees.length) {
-    return {
-      role: user.locationEmployees[0].role,
-      locationId: user.locationEmployees[0].locationId,
-      organizationId: undefined,
-      type: "employee",
-    };
-  }
-  return null;
+      organizationId: user.management[0].organizationId
+    } : undefined,
+    employees: user.locationEmployees.map(e => ({
+      role: e.role,
+      locationId: e.locationId,
+      organizationId: e.location.organizationId,
+    })),
+  };
 }

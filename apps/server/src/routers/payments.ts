@@ -1,12 +1,13 @@
-import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
+import { protectedProcedure, publicProcedure, router, t } from "../lib/trpc";
 import prisma from "../../prisma";
 import { TRPCError } from "@trpc/server";
 import { getPriceDetails } from "../lib/stripe/helpers";
 import { stripe, syncStripeCustomer } from "../lib/stripe/server-stripe";
-import z, { number } from "zod";
-import { redirect } from "next/navigation";
+import z from "zod";
+
 import Stripe from "stripe";
 import { validateSubscription } from "../lib/subscription/subscription";
+
 
 const initializePayment = protectedProcedure.mutation(async ({ ctx }) => {
   const { session } = ctx;
@@ -169,7 +170,7 @@ const getSessionDetails = protectedProcedure
     if (
       !ctx.session.user.organizationId ||
       !session.customer ||
-      ctx.session.user.role !== "OWNER"
+      ctx.session.user.management?.role !== "OWNER"
     ) {
       throw new TRPCError({
         message: "You are not allowed",
@@ -226,12 +227,13 @@ const getSessionDetails = protectedProcedure
   });
 
   const getSubscriptionDetails = protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx.session.user.organizationId) {
+    if (!ctx.session?.user.organizationId) {
       throw new TRPCError({
         message: "You are not allowed",
         code: "FORBIDDEN",
       });
     }
+
     const organization = await prisma.organization.findUnique({
       where: {
         id: ctx.session.user.organizationId,

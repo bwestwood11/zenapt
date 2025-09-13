@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { stripe, syncStripeCustomer } from "@/lib/stripe/server-stripe";
+import { stripe, syncStripeCustomer } from "../../../lib/stripe/server-stripe";
 import type Stripe from "stripe";
 
 export const dynamic = "force-dynamic";

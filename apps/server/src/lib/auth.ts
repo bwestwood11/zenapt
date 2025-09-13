@@ -7,7 +7,6 @@ import { nextCookies } from "better-auth/next-js";
 import { customSession } from "better-auth/plugins";
 import { getOrganizationByUserId } from "./helpers/organization";
 
-
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
@@ -19,16 +18,16 @@ export const auth = betterAuth({
   plugins: [
     nextCookies(),
     customSession(async ({ user, session }) => {
-      const roles = (await getOrganizationByUserId(user.id)) ?? {
-        role: undefined,
-        organizationId: undefined,
-        locationId: undefined,
-      };
+      const roles = await getOrganizationByUserId(user.id);
+      const organizationId =
+        roles?.management?.organizationId ||
+        roles?.employees?.[0]?.organizationId;
 
       return {
         user: {
           ...user,
           ...roles,
+          organizationId,
         },
         session,
       };

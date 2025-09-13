@@ -8,13 +8,12 @@ const DashboardLayout = async ({
   children: React.ReactNode;
 }>) => {
   const { data: session } = await getSession();
-  console.log("DashboardLayout session", session);
   if (!session || !session.user.id) {
     return redirect("/login");
   }
 
   // Check if he is onboarded
-  if (!session.user.organizationId && session.user.role === "OWNER") {
+  if (!session.user.management?.organizationId && session.user.management?.role === "OWNER") {
     return redirect("/dashboard/onboarding");
   }
   // Check if he paid

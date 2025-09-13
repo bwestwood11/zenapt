@@ -8,7 +8,7 @@ const CheckoutPage = async () => {
   if (!session || !session.user.id) {
     return null;
   }
-  if (!session.user.role || session.user.role !== "OWNER") {
+  if (!session.user.management || session.user.management?.role !== "OWNER") {
     return forbidden();
   }
 
