@@ -1,5 +1,7 @@
+import { unstable_cacheLife, unstable_cacheTag } from "next/cache";
 import prisma from "../../../prisma";
 import { EmployeeRole, OrgRole } from "../../../prisma/generated/enums";
+import { CACHE_KEYS } from "./cache";
 
 type Response =
   | {
@@ -16,16 +18,57 @@ type Response =
     };
 
 type MembershipResponse = {
-  management: {
-    role: OrgRole
-    organizationId: string
-  } | undefined | null
-  employees: {
-    role: EmployeeRole
-    locationId: string
-    organizationId: string
-  }[] | null
+  management:
+    | {
+        role: OrgRole;
+        organizationId: string;
+      }
+    | undefined
+    | null;
+  employees:
+    | {
+        role: EmployeeRole;
+        locationId: string;
+        organizationId: string;
+      }[]
+    | null;
+};
+
+export async function getOrganizationWithSubscription(organizationId: string) {
+  const orgWithSub = await prisma.organization.findUnique({
+    where: {
+      id: organizationId,
+    },
+    select: {
+      subscription: {
+        select: {
+          stripeSubscriptionId: true,
+          status: true,
+          currentPeriodEnd: true,
+          currentPeriodStart: true,
+        },
+      },
+      id: true,
+      name: true,
+      slug: true,
+    },
+  });
+  return { orgWithSub, iat: new Date() };
 }
+
+export const cache__getOrganizationWithSubscription = async (orgId: string) => {
+  "use cache";
+  unstable_cacheTag(CACHE_KEYS.ORG_WITH_SUBSCRIPTION, orgId);
+  unstable_cacheLife({
+    expire: 3000,
+    revalidate: 900,
+    stale: 900,
+  });
+
+  const res = await getOrganizationWithSubscription(orgId);
+
+  return res;
+};
 
 export async function getOrganizationByUserId(
   userId: string
@@ -49,14 +92,16 @@ export async function getOrganizationByUserId(
     },
   });
 
-  if (!user) return {management: null, employees: null};
+  if (!user) return { management: null, employees: null };
 
   return {
-    management: user.management[0].organizationId ? {
-      role: user.management[0].role,
-      organizationId: user.management[0].organizationId
-    } : undefined,
-    employees: user.locationEmployees.map(e => ({
+    management: user.management[0].organizationId
+      ? {
+          role: user.management[0].role,
+          organizationId: user.management[0].organizationId,
+        }
+      : undefined,
+    employees: user.locationEmployees.map((e) => ({
       role: e.role,
       locationId: e.locationId,
       organizationId: e.location.organizationId,

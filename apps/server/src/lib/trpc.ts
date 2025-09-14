@@ -9,6 +9,8 @@ import {
   type Permission,
 } from "./subscription/permissions";
 import { ZodObject } from "zod";
+import { cache__getOrganizationWithSubscription } from "./helpers/organization";
+import { validateSubscription } from "./subscription/subscription";
 
 export const t = initTRPC
   .context<Context>()
@@ -39,8 +41,6 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
     },
   });
 });
-
-
 
 export const adminProcedure = t.procedure.use(({ ctx, next }) => {
   const token = ctx.req?.cookies.get("admin_token")?.value;
@@ -75,6 +75,51 @@ export const adminProcedure = t.procedure.use(({ ctx, next }) => {
   }
 });
 
+export const premiumProcedure = protectedProcedure.use(
+  async ({ ctx, next }) => {
+    if (!ctx.session.user.organizationId) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No organization associated with user",
+        cause: "User has no organizationId",
+      });
+    }
+
+    const orgWithSub = await cache__getOrganizationWithSubscription(
+      ctx.session.user.organizationId
+    );
+
+    if (
+      !orgWithSub ||
+      !orgWithSub.orgWithSub?.subscription?.stripeSubscriptionId
+    ) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No organization associated with user",
+        cause: "User has no organizationId",
+      });
+    }
+    const { isActive } = validateSubscription(
+      orgWithSub.orgWithSub?.subscription
+    );
+    if (!isActive) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Your subscription is not active",
+        cause: "Subscription not active",
+      });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        orgWithSub: orgWithSub.orgWithSub,
+        orgIAT: orgWithSub.iat
+      },
+    });
+  }
+);
+
 export const permissionMiddleware = t.middleware(
   async ({ ctx, meta, input, next }) => {
     const user = ctx.session?.user;
@@ -101,7 +146,7 @@ export const permissionMiddleware = t.middleware(
     );
 
     const accessCtx = await getUserAccessContext(user.id);
-   
+
     const betterInput = input ?? {};
     console.log(betterInput);
     const locationId =
@@ -134,21 +179,23 @@ export const permissionMiddleware = t.middleware(
 
 export function withPermissions(
   perm: Permission | Permission[]
-): typeof protectedProcedure;
+): typeof premiumProcedure;
 
 export function withPermissions<T extends ZodObject>(
   perm: Permission | Permission[],
   input: T
-): ReturnType<typeof protectedProcedure.input<T>>;
+): ReturnType<typeof premiumProcedure.input<T>>;
 
 // Implementation
 export function withPermissions<T extends ZodObject | undefined>(
   perm: Permission | Permission[],
   input?: T
 ) {
-  const base = protectedProcedure.meta({
+  const base = premiumProcedure.meta({
     requiredPermissions: perm,
   });
 
-  return input ? base.input(input).use(permissionMiddleware) : base.use(permissionMiddleware);
+  return input
+    ? base.input(input).use(permissionMiddleware)
+    : base.use(permissionMiddleware);
 }
