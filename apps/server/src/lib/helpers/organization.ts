@@ -46,6 +46,7 @@ export async function getOrganizationWithSubscription(organizationId: string) {
           status: true,
           currentPeriodEnd: true,
           currentPeriodStart: true,
+          maximumLocations:true
         },
       },
       id: true,

@@ -107,24 +107,21 @@ enum EmployeeRole {
   LOCATION_ADMIN
   LOCATION_FRONT_DESK
   LOCATION_SPECIALIST
+  ORGANIZATION_MANAGEMENT
 }
 
 model LocationEmployee {
   id         String       @id @default(cuid()) @map("_id")
   userId     String
-  locationIds String[]
+  locationId String
   role       EmployeeRole @default(LOCATION_FRONT_DESK)
-  name       String
-  email      String
-  // services Service[]
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
 
-  locations Location[] 
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  // Nameless Nameless[]
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, locationIds])
+  @@unique([userId, locationId])
 }
 
 // model Service {

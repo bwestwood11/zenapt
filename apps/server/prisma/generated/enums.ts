@@ -19,7 +19,8 @@ export type OrgRole = (typeof OrgRole)[keyof typeof OrgRole]
 export const EmployeeRole = {
   LOCATION_ADMIN: 'LOCATION_ADMIN',
   LOCATION_FRONT_DESK: 'LOCATION_FRONT_DESK',
-  LOCATION_SPECIALIST: 'LOCATION_SPECIALIST'
+  LOCATION_SPECIALIST: 'LOCATION_SPECIALIST',
+  ORGANIZATION_MANAGEMENT: 'ORGANIZATION_MANAGEMENT'
 } as const
 
 export type EmployeeRole = (typeof EmployeeRole)[keyof typeof EmployeeRole]

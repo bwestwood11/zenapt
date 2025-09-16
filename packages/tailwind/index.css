@@ -262,3 +262,22 @@ body {
     transform: rotate(360deg);
   }
 }
+
+
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary); 
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary); 
+}
+
+:root {
+  scrollbar-color: var(--color-primary) var(--color-background) !important;
+  scrollbar-width: thin !important;
+}

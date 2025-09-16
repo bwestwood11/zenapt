@@ -1455,8 +1455,6 @@ export const LocationEmployeeScalarFieldEnum = {
   userId: 'userId',
   locationId: 'locationId',
   role: 'role',
-  name: 'name',
-  email: 'email',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

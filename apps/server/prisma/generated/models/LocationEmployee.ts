@@ -28,8 +28,6 @@ export type LocationEmployeeMinAggregateOutputType = {
   userId: string | null
   locationId: string | null
   role: $Enums.EmployeeRole | null
-  name: string | null
-  email: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -39,8 +37,6 @@ export type LocationEmployeeMaxAggregateOutputType = {
   userId: string | null
   locationId: string | null
   role: $Enums.EmployeeRole | null
-  name: string | null
-  email: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,8 +46,6 @@ export type LocationEmployeeCountAggregateOutputType = {
   userId: number
   locationId: number
   role: number
-  name: number
-  email: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -63,8 +57,6 @@ export type LocationEmployeeMinAggregateInputType = {
   userId?: true
   locationId?: true
   role?: true
-  name?: true
-  email?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -74,8 +66,6 @@ export type LocationEmployeeMaxAggregateInputType = {
   userId?: true
   locationId?: true
   role?: true
-  name?: true
-  email?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -85,8 +75,6 @@ export type LocationEmployeeCountAggregateInputType = {
   userId?: true
   locationId?: true
   role?: true
-  name?: true
-  email?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -169,8 +157,6 @@ export type LocationEmployeeGroupByOutputType = {
   userId: string
   locationId: string
   role: $Enums.EmployeeRole
-  name: string
-  email: string
   createdAt: Date
   updatedAt: Date
   _count: LocationEmployeeCountAggregateOutputType | null
@@ -201,8 +187,6 @@ export type LocationEmployeeWhereInput = {
   userId?: Prisma.StringFilter<"LocationEmployee"> | string
   locationId?: Prisma.StringFilter<"LocationEmployee"> | string
   role?: Prisma.EnumEmployeeRoleFilter<"LocationEmployee"> | $Enums.EmployeeRole
-  name?: Prisma.StringFilter<"LocationEmployee"> | string
-  email?: Prisma.StringFilter<"LocationEmployee"> | string
   createdAt?: Prisma.DateTimeFilter<"LocationEmployee"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LocationEmployee"> | Date | string
   location?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.LocationWhereInput>
@@ -214,8 +198,6 @@ export type LocationEmployeeOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  email?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   location?: Prisma.LocationOrderByWithRelationInput
@@ -231,8 +213,6 @@ export type LocationEmployeeWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.StringFilter<"LocationEmployee"> | string
   locationId?: Prisma.StringFilter<"LocationEmployee"> | string
   role?: Prisma.EnumEmployeeRoleFilter<"LocationEmployee"> | $Enums.EmployeeRole
-  name?: Prisma.StringFilter<"LocationEmployee"> | string
-  email?: Prisma.StringFilter<"LocationEmployee"> | string
   createdAt?: Prisma.DateTimeFilter<"LocationEmployee"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LocationEmployee"> | Date | string
   location?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.LocationWhereInput>
@@ -244,8 +224,6 @@ export type LocationEmployeeOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  email?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.LocationEmployeeCountOrderByAggregateInput
@@ -261,8 +239,6 @@ export type LocationEmployeeScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"LocationEmployee"> | string
   locationId?: Prisma.StringWithAggregatesFilter<"LocationEmployee"> | string
   role?: Prisma.EnumEmployeeRoleWithAggregatesFilter<"LocationEmployee"> | $Enums.EmployeeRole
-  name?: Prisma.StringWithAggregatesFilter<"LocationEmployee"> | string
-  email?: Prisma.StringWithAggregatesFilter<"LocationEmployee"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"LocationEmployee"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"LocationEmployee"> | Date | string
 }
@@ -270,8 +246,6 @@ export type LocationEmployeeScalarWhereWithAggregatesInput = {
 export type LocationEmployeeCreateInput = {
   id?: string
   role?: $Enums.EmployeeRole
-  name: string
-  email: string
   createdAt?: Date | string
   updatedAt?: Date | string
   location: Prisma.LocationCreateNestedOneWithoutEmployeesInput
@@ -283,8 +257,6 @@ export type LocationEmployeeUncheckedCreateInput = {
   userId: string
   locationId: string
   role?: $Enums.EmployeeRole
-  name: string
-  email: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -292,8 +264,6 @@ export type LocationEmployeeUncheckedCreateInput = {
 export type LocationEmployeeUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   location?: Prisma.LocationUpdateOneRequiredWithoutEmployeesNestedInput
@@ -305,8 +275,6 @@ export type LocationEmployeeUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   locationId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -316,8 +284,6 @@ export type LocationEmployeeCreateManyInput = {
   userId: string
   locationId: string
   role?: $Enums.EmployeeRole
-  name: string
-  email: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -325,8 +291,6 @@ export type LocationEmployeeCreateManyInput = {
 export type LocationEmployeeUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -336,8 +300,6 @@ export type LocationEmployeeUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   locationId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -362,8 +324,6 @@ export type LocationEmployeeCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  email?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -373,8 +333,6 @@ export type LocationEmployeeMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  email?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -384,8 +342,6 @@ export type LocationEmployeeMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  email?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -481,8 +437,6 @@ export type EnumEmployeeRoleFieldUpdateOperationsInput = {
 export type LocationEmployeeCreateWithoutUserInput = {
   id?: string
   role?: $Enums.EmployeeRole
-  name: string
-  email: string
   createdAt?: Date | string
   updatedAt?: Date | string
   location: Prisma.LocationCreateNestedOneWithoutEmployeesInput
@@ -492,8 +446,6 @@ export type LocationEmployeeUncheckedCreateWithoutUserInput = {
   id?: string
   locationId: string
   role?: $Enums.EmployeeRole
-  name: string
-  email: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -532,8 +484,6 @@ export type LocationEmployeeScalarWhereInput = {
   userId?: Prisma.StringFilter<"LocationEmployee"> | string
   locationId?: Prisma.StringFilter<"LocationEmployee"> | string
   role?: Prisma.EnumEmployeeRoleFilter<"LocationEmployee"> | $Enums.EmployeeRole
-  name?: Prisma.StringFilter<"LocationEmployee"> | string
-  email?: Prisma.StringFilter<"LocationEmployee"> | string
   createdAt?: Prisma.DateTimeFilter<"LocationEmployee"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LocationEmployee"> | Date | string
 }
@@ -541,8 +491,6 @@ export type LocationEmployeeScalarWhereInput = {
 export type LocationEmployeeCreateWithoutLocationInput = {
   id?: string
   role?: $Enums.EmployeeRole
-  name: string
-  email: string
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutLocationEmployeesInput
@@ -552,8 +500,6 @@ export type LocationEmployeeUncheckedCreateWithoutLocationInput = {
   id?: string
   userId: string
   role?: $Enums.EmployeeRole
-  name: string
-  email: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -588,8 +534,6 @@ export type LocationEmployeeCreateManyUserInput = {
   id?: string
   locationId: string
   role?: $Enums.EmployeeRole
-  name: string
-  email: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -597,8 +541,6 @@ export type LocationEmployeeCreateManyUserInput = {
 export type LocationEmployeeUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   location?: Prisma.LocationUpdateOneRequiredWithoutEmployeesNestedInput
@@ -608,8 +550,6 @@ export type LocationEmployeeUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   locationId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -618,8 +558,6 @@ export type LocationEmployeeUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   locationId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -628,8 +566,6 @@ export type LocationEmployeeCreateManyLocationInput = {
   id?: string
   userId: string
   role?: $Enums.EmployeeRole
-  name: string
-  email: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -637,8 +573,6 @@ export type LocationEmployeeCreateManyLocationInput = {
 export type LocationEmployeeUpdateWithoutLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutLocationEmployeesNestedInput
@@ -648,8 +582,6 @@ export type LocationEmployeeUncheckedUpdateWithoutLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -658,8 +590,6 @@ export type LocationEmployeeUncheckedUpdateManyWithoutLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -671,8 +601,6 @@ export type LocationEmployeeSelect<ExtArgs extends runtime.Types.Extensions.Inte
   userId?: boolean
   locationId?: boolean
   role?: boolean
-  name?: boolean
-  email?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
@@ -684,8 +612,6 @@ export type LocationEmployeeSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   userId?: boolean
   locationId?: boolean
   role?: boolean
-  name?: boolean
-  email?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
@@ -697,8 +623,6 @@ export type LocationEmployeeSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   userId?: boolean
   locationId?: boolean
   role?: boolean
-  name?: boolean
-  email?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
@@ -710,13 +634,11 @@ export type LocationEmployeeSelectScalar = {
   userId?: boolean
   locationId?: boolean
   role?: boolean
-  name?: boolean
-  email?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type LocationEmployeeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "locationId" | "role" | "name" | "email" | "createdAt" | "updatedAt", ExtArgs["result"]["locationEmployee"]>
+export type LocationEmployeeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "locationId" | "role" | "createdAt" | "updatedAt", ExtArgs["result"]["locationEmployee"]>
 export type LocationEmployeeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -741,8 +663,6 @@ export type $LocationEmployeePayload<ExtArgs extends runtime.Types.Extensions.In
     userId: string
     locationId: string
     role: $Enums.EmployeeRole
-    name: string
-    email: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["locationEmployee"]>
@@ -1174,8 +1094,6 @@ export interface LocationEmployeeFieldRefs {
   readonly userId: Prisma.FieldRef<"LocationEmployee", 'String'>
   readonly locationId: Prisma.FieldRef<"LocationEmployee", 'String'>
   readonly role: Prisma.FieldRef<"LocationEmployee", 'EmployeeRole'>
-  readonly name: Prisma.FieldRef<"LocationEmployee", 'String'>
-  readonly email: Prisma.FieldRef<"LocationEmployee", 'String'>
   readonly createdAt: Prisma.FieldRef<"LocationEmployee", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"LocationEmployee", 'DateTime'>
 }
