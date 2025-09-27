@@ -50,7 +50,7 @@ export const auth = betterAuth({
 
       try {
         const tokenPayload = verifyInvitationToken(token);
-        console.log(tokenPayload);
+
         if (!tokenPayload) throw new Error("malformed token");
       } catch (error) {
         throw new APIError("BAD_REQUEST", {
@@ -58,19 +58,44 @@ export const auth = betterAuth({
         });
       }
 
-      return;
+      return { context: ctx };
     }),
     after: createAuthMiddleware(async (ctx) => {
-      //TODO: manage other sign up roles as well not just owner
-      if (ctx.path.startsWith("/sign-up/")) {
-        const newSession = ctx.context.session;
+      if (ctx.path.startsWith("/sign-up/email")) {
+        const newSession = ctx.context.newSession;
         if (newSession) {
-          await prisma.managementMembership.create({
-            data: {
-              userId: newSession.user.id,
-              role: "OWNER",
-            },
-          });
+          try {
+            const tokenPayload = verifyInvitationToken(newSession.user.token);
+
+            if (!tokenPayload || !tokenPayload.data) {
+              throw new APIError("BAD_REQUEST", {
+                message: "token is invalid in after hook better auth",
+              });
+            }
+
+            if (tokenPayload.data.type === "MANAGEMENT") {
+              await prisma.managementMembership.create({
+                data: {
+                  userId: newSession.user.id,
+                  role: tokenPayload.data.role,
+                  organizationId: tokenPayload.data.organizationId,
+                },
+              });
+            } else {
+              await prisma.locationEmployee.create({
+                data: {
+                  userId: newSession.user.id,
+                  role: tokenPayload.data.role,
+                  locationId: tokenPayload.data.locationId,
+                },
+              });
+            }
+          } catch (error) {
+            console.log(error);
+            throw new APIError("BAD_REQUEST", {
+              message: "token is invalid in after hook better auth",
+            });
+          }
         }
       }
     }),
@@ -83,6 +108,10 @@ export const auth = betterAuth({
       token: {
         type: "string",
         required: true,
+      },
+      isTempPassword: {
+        type: "boolean",
+        defaultValue: false,
       },
     },
   },

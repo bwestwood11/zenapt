@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import prisma from "../../../../../prisma";
 import z from "zod";
 
-const ADMIN_JWT_TOKEN = process.env.ADMIN_JWT_TOKEN;
+const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET;
 const MAX_ADMINS = 2;
 const SALT_ROUNDS = 10;
 
@@ -16,7 +16,7 @@ const bodySchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    if (!ADMIN_JWT_TOKEN)
+    if (!ADMIN_JWT_SECRET)
       return NextResponse.json(
         { message: "Something Went Wrong" },
         { status: 500 }
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     if (!secret)
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-    if (secret != `Bearer ${ADMIN_JWT_TOKEN}`) {
+    if (secret != `Bearer ${ADMIN_JWT_SECRET}`) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 

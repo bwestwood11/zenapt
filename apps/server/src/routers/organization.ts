@@ -1,4 +1,10 @@
-import { protectedProcedure, router } from "../lib/trpc";
+import {
+  premiumProcedure,
+  protectedProcedure,
+  publicProcedure,
+  router,
+  withPermissions,
+} from "../lib/trpc";
 import prisma from "../../prisma";
 import z from "zod";
 import { OrgRole } from "../../prisma/generated/enums";
@@ -13,6 +19,16 @@ import {
   mimeTypeToExtension,
 } from "../lib/s3/utils";
 import { deleteFile } from "../lib/s3/commands";
+import crypto from "crypto";
+import { encrypt } from "../lib/helpers/encyrption";
+import { createSignedToken, verifySignedToken } from "../lib/helpers/hash";
+import { ACTIVITY_LOG_ACTIONS } from "../lib/activitylogs";
+import { maskEmail } from "../lib/helpers/utils";
+import { after } from "next/server";
+
+import { InvitationEmail } from "transactional/emails";
+import { resend } from "../lib/resend";
+
 
 export const organizationRouter = router({
   createOrganization: protectedProcedure
@@ -39,31 +55,43 @@ export const organizationRouter = router({
           .toLowerCase()
           .replace(/\s+/g, "-")}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-        const hasManagement = await prisma.user.count({
+        const user = await prisma.user.findFirst({
           where: {
             id: ctx.session.user.id,
-
-            OR: [
-              {
-                management: {
-                  some: {},
-                },
-              },
-              {
-                locationEmployees: {
-                  some: {},
-                },
-              },
-            ],
           },
+          include: {
+            _count: {
+              select: {
+                locationEmployees:true
+              }
+            },
+            management: true,
+          }
         });
 
-        console.log(hasManagement);
+       
 
-        if (hasManagement > 0) {
+        if (!user) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "There is no user",
+          });
+        }
+
+
+        if(user._count.locationEmployees > 0){
           throw new TRPCError({
             code: "FORBIDDEN",
             message: "User is already associated with an organization.",
+          });
+        }
+
+        const ownerManagement = user.management.find(u => u.role === "OWNER")
+
+        if(!ownerManagement?.role){
+            throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You don't have any organization.",
           });
         }
 
@@ -75,9 +103,8 @@ export const organizationRouter = router({
             logo,
             slug,
             management: {
-              create: {
-                userId: ctx.session.user.id,
-                role: OrgRole.OWNER,
+              connect: {
+                 id: ownerManagement.id
               },
             },
           },

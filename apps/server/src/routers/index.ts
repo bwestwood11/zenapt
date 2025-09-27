@@ -1,6 +1,7 @@
 import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
 import { adminRouter } from "./admin";
 import { authRouter } from "./auth";
+import { invitationRouter } from "./invitations";
 import { locationRouter } from "./location";
 import { marketingRouter } from "./marketing";
 import { organizationRouter } from "./organization";
@@ -17,6 +18,7 @@ export const appRouter = router({
   organization: organizationRouter,
   payments: paymentRouter,
   permissions: permissionRouter,
-  location: locationRouter
+  location: locationRouter,
+  invitation: invitationRouter
 });
 export type AppRouter = typeof appRouter;

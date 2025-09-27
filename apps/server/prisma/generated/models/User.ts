@@ -32,6 +32,7 @@ export type UserMinAggregateOutputType = {
   token: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  isTempPassword: boolean | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -43,6 +44,7 @@ export type UserMaxAggregateOutputType = {
   token: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  isTempPassword: boolean | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -54,6 +56,7 @@ export type UserCountAggregateOutputType = {
   token: number
   createdAt: number
   updatedAt: number
+  isTempPassword: number
   _all: number
 }
 
@@ -67,6 +70,7 @@ export type UserMinAggregateInputType = {
   token?: true
   createdAt?: true
   updatedAt?: true
+  isTempPassword?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -78,6 +82,7 @@ export type UserMaxAggregateInputType = {
   token?: true
   createdAt?: true
   updatedAt?: true
+  isTempPassword?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -89,6 +94,7 @@ export type UserCountAggregateInputType = {
   token?: true
   createdAt?: true
   updatedAt?: true
+  isTempPassword?: true
   _all?: true
 }
 
@@ -173,6 +179,7 @@ export type UserGroupByOutputType = {
   token: string | null
   createdAt: Date
   updatedAt: Date
+  isTempPassword: boolean
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
@@ -205,6 +212,7 @@ export type UserWhereInput = {
   token?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  isTempPassword?: Prisma.BoolFilter<"User"> | boolean
   sessions?: Prisma.SessionListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
   management?: Prisma.ManagementMembershipListRelationFilter
@@ -221,6 +229,7 @@ export type UserOrderByWithRelationInput = {
   token?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isTempPassword?: Prisma.SortOrder
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   accounts?: Prisma.AccountOrderByRelationAggregateInput
   management?: Prisma.ManagementMembershipOrderByRelationAggregateInput
@@ -240,6 +249,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   token?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  isTempPassword?: Prisma.BoolFilter<"User"> | boolean
   sessions?: Prisma.SessionListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
   management?: Prisma.ManagementMembershipListRelationFilter
@@ -256,6 +266,7 @@ export type UserOrderByWithAggregationInput = {
   token?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isTempPassword?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
@@ -273,6 +284,7 @@ export type UserScalarWhereWithAggregatesInput = {
   token?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
+  isTempPassword?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
 }
 
 export type UserCreateInput = {
@@ -284,6 +296,7 @@ export type UserCreateInput = {
   token?: string | null
   createdAt: Date | string
   updatedAt: Date | string
+  isTempPassword?: boolean
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipCreateNestedManyWithoutUserInput
@@ -300,6 +313,7 @@ export type UserUncheckedCreateInput = {
   token?: string | null
   createdAt: Date | string
   updatedAt: Date | string
+  isTempPassword?: boolean
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -316,6 +330,7 @@ export type UserUpdateInput = {
   token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUpdateManyWithoutUserNestedInput
@@ -332,6 +347,7 @@ export type UserUncheckedUpdateInput = {
   token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -348,6 +364,7 @@ export type UserCreateManyInput = {
   token?: string | null
   createdAt: Date | string
   updatedAt: Date | string
+  isTempPassword?: boolean
 }
 
 export type UserUpdateManyMutationInput = {
@@ -359,6 +376,7 @@ export type UserUpdateManyMutationInput = {
   token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -370,6 +388,7 @@ export type UserUncheckedUpdateManyInput = {
   token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -381,6 +400,7 @@ export type UserCountOrderByAggregateInput = {
   token?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isTempPassword?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -392,6 +412,7 @@ export type UserMaxOrderByAggregateInput = {
   token?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isTempPassword?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -403,6 +424,7 @@ export type UserMinOrderByAggregateInput = {
   token?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isTempPassword?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -497,6 +519,7 @@ export type UserCreateWithoutManagementInput = {
   token?: string | null
   createdAt: Date | string
   updatedAt: Date | string
+  isTempPassword?: boolean
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeCreateNestedManyWithoutUserInput
@@ -512,6 +535,7 @@ export type UserUncheckedCreateWithoutManagementInput = {
   token?: string | null
   createdAt: Date | string
   updatedAt: Date | string
+  isTempPassword?: boolean
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutUserInput
@@ -543,6 +567,7 @@ export type UserUpdateWithoutManagementInput = {
   token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUpdateManyWithoutUserNestedInput
@@ -558,6 +583,7 @@ export type UserUncheckedUpdateWithoutManagementInput = {
   token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutUserNestedInput
@@ -573,6 +599,7 @@ export type UserCreateWithoutLocationEmployeesInput = {
   token?: string | null
   createdAt: Date | string
   updatedAt: Date | string
+  isTempPassword?: boolean
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipCreateNestedManyWithoutUserInput
@@ -588,6 +615,7 @@ export type UserUncheckedCreateWithoutLocationEmployeesInput = {
   token?: string | null
   createdAt: Date | string
   updatedAt: Date | string
+  isTempPassword?: boolean
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -619,6 +647,7 @@ export type UserUpdateWithoutLocationEmployeesInput = {
   token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUpdateManyWithoutUserNestedInput
@@ -634,6 +663,7 @@ export type UserUncheckedUpdateWithoutLocationEmployeesInput = {
   token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -649,6 +679,7 @@ export type UserCreateWithoutAuditLogInput = {
   token?: string | null
   createdAt: Date | string
   updatedAt: Date | string
+  isTempPassword?: boolean
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipCreateNestedManyWithoutUserInput
@@ -664,6 +695,7 @@ export type UserUncheckedCreateWithoutAuditLogInput = {
   token?: string | null
   createdAt: Date | string
   updatedAt: Date | string
+  isTempPassword?: boolean
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -695,6 +727,7 @@ export type UserUpdateWithoutAuditLogInput = {
   token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUpdateManyWithoutUserNestedInput
@@ -710,6 +743,7 @@ export type UserUncheckedUpdateWithoutAuditLogInput = {
   token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -725,6 +759,7 @@ export type UserCreateWithoutSessionsInput = {
   token?: string | null
   createdAt: Date | string
   updatedAt: Date | string
+  isTempPassword?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeCreateNestedManyWithoutUserInput
@@ -740,6 +775,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   token?: string | null
   createdAt: Date | string
   updatedAt: Date | string
+  isTempPassword?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutUserInput
@@ -771,6 +807,7 @@ export type UserUpdateWithoutSessionsInput = {
   token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUpdateManyWithoutUserNestedInput
@@ -786,6 +823,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutUserNestedInput
@@ -801,6 +839,7 @@ export type UserCreateWithoutAccountsInput = {
   token?: string | null
   createdAt: Date | string
   updatedAt: Date | string
+  isTempPassword?: boolean
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeCreateNestedManyWithoutUserInput
@@ -816,6 +855,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   token?: string | null
   createdAt: Date | string
   updatedAt: Date | string
+  isTempPassword?: boolean
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutUserInput
@@ -847,6 +887,7 @@ export type UserUpdateWithoutAccountsInput = {
   token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUpdateManyWithoutUserNestedInput
@@ -862,6 +903,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutUserNestedInput
@@ -944,6 +986,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   token?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isTempPassword?: boolean
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   management?: boolean | Prisma.User$managementArgs<ExtArgs>
@@ -961,6 +1004,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   token?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isTempPassword?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -972,6 +1016,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   token?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isTempPassword?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -983,9 +1028,10 @@ export type UserSelectScalar = {
   token?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isTempPassword?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "token" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "token" | "createdAt" | "updatedAt" | "isTempPassword", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
@@ -1015,6 +1061,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     token: string | null
     createdAt: Date
     updatedAt: Date
+    isTempPassword: boolean
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1451,6 +1498,7 @@ export interface UserFieldRefs {
   readonly token: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly isTempPassword: Prisma.FieldRef<"User", 'Boolean'>
 }
     
 

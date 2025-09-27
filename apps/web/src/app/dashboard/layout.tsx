@@ -12,15 +12,30 @@ const DashboardLayout = async ({
     return redirect("/login");
   }
 
+
   // Check if he is onboarded
   if (!session.user.management?.organizationId && session.user.management?.role === "OWNER") {
-    return redirect("/dashboard/onboarding");
+    return redirect("/onboarding");
   }
+
+  if(!session.user.management && session.session.token){
+    return redirect("/onboarding");
+  }
+
+
+  if(!session.user.organizationId) {
+    return <p>You Don't Have any organization If you are admin contact support if you are employee contact admin or support</p>
+  }
+
+
+
   // Check if he paid
   const subscription = await getSubscription();
+
   if (!subscription?.isActive) {
     return redirect("/checkout");
   }
+
   return <div>{children}</div>;
 };
 

@@ -1,10 +1,13 @@
 "use client";
 
-import OnboardingForm from "../../../components/onboarding/onboarding-form";
+import OnboardingForm from "@/components/onboarding/onboarding-form";
+import { authClient } from "@/lib/auth-client";
 import { Sparkles } from "lucide-react";
 import type React from "react";
 
 export default function OnboardingPage() {
+  const {data} = authClient.useSession()
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
@@ -16,7 +19,7 @@ export default function OnboardingPage() {
             </div>
           </div>
           <h1 className="text-4xl font-bold text-foreground mb-2">
-            Welcome to Zenapt
+            Welcome to Zenapt {data?.user.name}
           </h1>
           <p className="text-lg text-muted-foreground max-w-md mx-auto">
             The all-in-one booking management system designed specifically for

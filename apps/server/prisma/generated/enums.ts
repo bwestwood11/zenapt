@@ -24,3 +24,12 @@ export const EmployeeRole = {
 } as const
 
 export type EmployeeRole = (typeof EmployeeRole)[keyof typeof EmployeeRole]
+
+
+export const InvitationStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  DECLINED: 'DECLINED'
+} as const
+
+export type InvitationStatus = (typeof InvitationStatus)[keyof typeof InvitationStatus]

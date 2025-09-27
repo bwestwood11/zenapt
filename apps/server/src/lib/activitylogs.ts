@@ -1,0 +1,3 @@
+export const ACTIVITY_LOG_ACTIONS = {
+    INVITE_EMPLOYEE: "INVITE_EMPLOYEE"
+} as const

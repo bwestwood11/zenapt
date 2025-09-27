@@ -1,0 +1,20 @@
+{
+  "name": "transactional",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "email dev -p 3001"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@react-email/components": "0.5.3",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@react-email/preview-server": "^4.2.11",
+    "react-email": "4.2.11"
+  }
+}

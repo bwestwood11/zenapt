@@ -40,14 +40,7 @@ import {
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-const companySizeOptions = [
-  { value: "1-10", label: "1-10 employees" },
-  { value: "11-25", label: "11-25 employees" },
-  { value: "26-50", label: "26-50 employees" },
-  { value: "51-100", label: "51-100 employees" },
-  { value: "101-250", label: "101-250 employees" },
-  { value: "250+", label: "250+ employees" },
-];
+const companySizeOption = ["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"] as const
 
 const OnboardingForm = () => {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -59,7 +52,7 @@ const OnboardingForm = () => {
     logo: z.instanceof(File).optional(),
     businessDescription: z.string().optional(),
     companySize: z
-      .enum(["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"])
+      .enum(companySizeOption)
       .optional(),
   });
 
@@ -72,6 +65,7 @@ const OnboardingForm = () => {
       logo: undefined,
     },
   });
+
   const router = useRouter();
   const { mutate: createOrganization, error: OrganizationError } = useMutation(
     trpc.organization.createOrganization.mutationOptions({
@@ -80,7 +74,7 @@ const OnboardingForm = () => {
       },
       onSuccess() {
         setIsSubmitting(false);
-        router.replace("/payment/init");
+        router.replace("/checkout");
       },
     })
   );
@@ -281,13 +275,13 @@ const OnboardingForm = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {companySizeOptions.map((option) => (
+                      {companySizeOption.map((option) => (
                         <SelectItem
-                          key={option.value}
-                          value={option.value}
+                          key={option}
+                          value={option}
                           className="text-base"
                         >
-                          {option.label}
+                          {option} Employees
                         </SelectItem>
                       ))}
                     </SelectContent>

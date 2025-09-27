@@ -96,10 +96,10 @@ export async function getOrganizationByUserId(
   if (!user) return { management: null, employees: null };
 
   return {
-    management: user.management[0].organizationId
+    management: user.management[0]?.organizationId
       ? {
-          role: user.management[0].role,
-          organizationId: user.management[0].organizationId,
+          role: user.management[0]?.role,
+          organizationId: user.management[0]?.organizationId,
         }
       : undefined,
     employees: user.locationEmployees.map((e) => ({

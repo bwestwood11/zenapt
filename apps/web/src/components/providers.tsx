@@ -5,13 +5,9 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { queryClient } from "@/utils/trpc";
 import { ThemeProvider } from "./theme-provider";
 import { Toaster } from "./ui/sonner";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
-
-export default function Providers({
-  children
-}: {
-  children: React.ReactNode
-}) {
+export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider
       attribute="class"
@@ -19,10 +15,12 @@ export default function Providers({
       enableSystem
       disableTransitionOnChange
     >
-      <QueryClientProvider client={queryClient}>
-        {children}
-        <ReactQueryDevtools />
-      </QueryClientProvider>
+      <SidebarProvider>
+        <QueryClientProvider client={queryClient}>
+          {children}
+          <ReactQueryDevtools />
+        </QueryClientProvider>
+      </SidebarProvider>
       <Toaster richColors />
     </ThemeProvider>
   );

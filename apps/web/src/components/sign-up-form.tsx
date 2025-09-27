@@ -65,7 +65,7 @@ export default function SignUpForm({
         password: data.password,
         token: token,
       });
-      router.push("/dashboard");
+      router.push("/onboarding");
     } catch (error) {
       console.error("Sign-up failed:", error);
       toast.error("Sign-up failed. Please try again.");

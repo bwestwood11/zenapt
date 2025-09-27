@@ -97,6 +97,11 @@ export type Account = Prisma.AccountModel
  */
 export type Verification = Prisma.VerificationModel
 /**
+ * Model OrganizationInvitation
+ * 
+ */
+export type OrganizationInvitation = Prisma.OrganizationInvitationModel
+/**
  * Model DemoRequest
  * 
  */
@@ -107,3 +112,6 @@ export const OrgRole = $Enums.OrgRole
 
 export type EmployeeRole = $Enums.EmployeeRole
 export const EmployeeRole = $Enums.EmployeeRole
+
+export type InvitationStatus = $Enums.InvitationStatus
+export const InvitationStatus = $Enums.InvitationStatus

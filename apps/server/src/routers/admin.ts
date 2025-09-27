@@ -6,8 +6,10 @@ import prisma from "../../prisma";
 import type { AdminJWTPayload } from "../lib/types";
 import { cookies } from "next/headers";
 import bcrypt from "bcrypt";
-import { createInvitationToken } from "../lib/invitationToken";
+import { createInvitationToken, INVITATION_TYPE } from "../lib/invitationToken";
 import { resend } from "../lib/resend";
+import { toSeconds } from "../lib/helpers/utils";
+import { OrgRole } from "../../prisma/generated/enums";
 
 const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET!;
 
@@ -24,13 +26,15 @@ const loginAdmin = publicProcedure
     const admin = await prisma.admin.findUnique({
       where: { email },
     });
-
+   console.log(password)
     if (!admin) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
         message: "Invalid email or password",
       });
     }
+    console.log(admin);
+    
 
     const isPasswordValid = bcrypt.compareSync(password, admin.password);
     if (!isPasswordValid) {
@@ -39,6 +43,7 @@ const loginAdmin = publicProcedure
         message: "Invalid email or password",
       });
     }
+    console.log("Password is valid");
     // Prepare JWT payload
     const data: AdminJWTPayload = {
       id: admin.id,
@@ -79,15 +84,14 @@ const sessionAdmin = adminProcedure.query(async ({ ctx }) => {
 const inviteUser = adminProcedure
   .input(z.object({ email: z.email() }))
   .mutation(async ({ ctx, input }) => {
-    const token = createInvitationToken({ email: input.email });
+    const token = createInvitationToken({ email: input.email, type: INVITATION_TYPE.MANAGEMENT, role: OrgRole.OWNER }, toSeconds({days: 7 }));
 
     const url = `${process.env.DASHBOARD_URL}/sign-up/owner?token=${token}&email=${input.email}`;
-    console.log(process.env.NODE_ENV);
-    // if (process.env.NODE_ENV !== "development") {
+   
     try {
       const { data, error } = await resend.emails.send({
         from: "Acme <onboarding@resend.dev>",
-        to: ["delivered@resend.dev"],
+        to: process.env.NODE_ENV === "development" ? ["delivered@resend.dev"] : [input.email],
         subject: "Hello world",
         html: `<strong>It works!</strong> <a href="${url}">Sign Up Here</a>`,
       });

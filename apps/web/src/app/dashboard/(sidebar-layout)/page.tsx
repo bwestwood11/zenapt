@@ -1,17 +1,21 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { WithPermissions } from "@/lib/permissions/usePermissions";
+import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const {} = useQuery(trpc.permissions.getPermission.queryOptions());
-  
+  const { mutate } = useMutation(
+    trpc.invitation.inviteOrganizationMember.mutationOptions()
+  );
+
   useEffect(() => {
     if (!session && !isPending) {
       router.push("/login");
@@ -26,7 +30,17 @@ export default function Dashboard() {
     <div>
       <h1>Dashboard</h1>
       <p>Welcome {session?.user.name}</p>
-
+      <Button
+        onClick={() =>
+          mutate({
+            email: "brett222@gmail.com",
+            role: "ANALYST",
+            name: "Brett",
+          })
+        }
+      >
+        Send Invite
+      </Button>
       <WithPermissions required={["CREATE::EMPLOYEES"]}>
         <button>Create Employee</button>
       </WithPermissions>

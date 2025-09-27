@@ -1,78 +1,54 @@
-import crypto from "crypto";
+import { EmployeeRole, OrgRole } from "../../prisma/generated/enums";
+import {
+  createSignedToken,
+  createTokenWithTTL,
+  verifySignedToken,
+} from "./helpers/hash";
 
-type Header = {
-  alg: "HS256";
-  typ: "JWT";
-  v: number; // versioning for key rotation
-};
-
-type Payload = {
-  email: string;
-  name?: string;
-  [key: string]: any;
-  exp: number; // expiry timestamp
-};
-
-const ALGORITHM = "sha256";
-const EXPIRY_DAYS = 7;
-
-function base64url(input: string | Buffer): string {
-  return Buffer.from(input)
-    .toString("base64")
-    .replace(/=/g, "")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_");
+export enum INVITATION_TYPE {
+  MANAGEMENT = "MANAGEMENT",
+  LOCATION = "LOCATION",
 }
 
-function sign(data: string, secret: string): string {
-  return base64url(crypto.createHmac(ALGORITHM, secret).update(data).digest());
-}
+type Payload<T extends Record<string, string>> = (
+  | {
+      email: string;
+      name?: string;
+      type: INVITATION_TYPE.MANAGEMENT;
+      role: OrgRole;
+      organizationId?: string;
+    }
+  | {
+      email: string;
+      name?: string;
+      type: INVITATION_TYPE.LOCATION;
+      role: EmployeeRole;
+      locationId: string;
+    }
+) &
+  T;
 
 /**
  * Create a secure HMAC token (JWT style)
  */
-export function createInvitationToken(user: Omit<Payload, "exp">): string {
-  const header: Header = { alg: "HS256", typ: "JWT", v: 1 };
-  const payload = {
-    ...user,
-    exp: Date.now() + EXPIRY_DAYS * 24 * 60 * 60 * 1000,
-  };
-  const SECRET = process.env.INVITE_SECRET!;
-  const headerB64 = base64url(JSON.stringify(header));
-  const payloadB64 = base64url(JSON.stringify(payload));
-  const signature = sign(`${headerB64}.${payloadB64}`, SECRET);
-
-  return `${headerB64}.${payloadB64}.${signature}`;
+export function createInvitationToken<T extends Record<string, string>>(
+  user: Payload<T>,
+  ttlInSeconds: number
+): string {
+  const sig = createTokenWithTTL<Payload<T>>(user, ttlInSeconds);
+  return `${user.role}_${sig}`;
 }
 
 /**
  * Verify token integrity and expiry
  */
-export function verifyInvitationToken(token: string): Payload | null {
-  const parts = token.split(".");
-  if (parts.length !== 3) return null;
-
-  const SECRET = process.env.INVITE_SECRET!;
-  const [headerB64, payloadB64, signature] = parts;
-
-  const expected = sign(`${headerB64}.${payloadB64}`, SECRET);
-
-  // normalize lengths for timingSafeEqual
-  const sigBuf = Buffer.from(signature);
-  const expBuf = Buffer.from(expected);
-  if (sigBuf.length !== expBuf.length) return null;
-
-  if (!crypto.timingSafeEqual(sigBuf, expBuf)) {
-    return null;
+export function verifyInvitationToken<T extends Record<string, string>>(
+  token: string
+): { data: Payload<T> | undefined; exp?: number } {
+  const actualToken = token.split("_").pop();
+  if (!actualToken) {
+    throw new Error("Token is malformed");
   }
 
-  const payload = JSON.parse(
-    Buffer.from(payloadB64, "base64").toString("utf8")
-  ) as Payload;
-
-  if (Math.floor(Date.now() / 1000) > payload.exp) {
-    return null; // expired
-  }
-
-  return payload;
+  return verifySignedToken<Payload<T>>(actualToken);
 }

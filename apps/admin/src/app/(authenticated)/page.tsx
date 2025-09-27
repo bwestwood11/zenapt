@@ -24,7 +24,7 @@ export default function InvitePage() {
   const [message, setMessage] = useState("");
   const { isLoading: sessionIsLoading } = useAdminSession();
 
-  const { mutate: sendInvitation, isPending: isLoading } = useMutation(
+  const { mutate: sendInvitation, isPending: isLoading, isSuccess, isError } = useMutation(
     trpc.admin.inviteUser.mutationOptions({
       onSuccess() {
         setMessage("Sent Successfully");
@@ -105,10 +105,10 @@ export default function InvitePage() {
               </Button>
             </form>
 
-            {message && (
+            {(isError || isSuccess) && (
               <div
                 className={`text-center text-sm p-3 rounded-md ${
-                  message.includes("success")
+                  isSuccess
                     ? "bg-green-50 text-green-700 border border-green-200"
                     : "bg-red-50 text-red-700 border border-red-200"
                 }`}
