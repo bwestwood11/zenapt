@@ -8,6 +8,20 @@ import { customSession } from "better-auth/plugins";
 import { getOrganizationByUserId } from "./helpers/organization";
 
 export const auth = betterAuth({
+  user: {
+    additionalFields: {
+      token: {
+        type: "string",
+        required: true,
+      },
+      isTempPassword: {
+        type: "boolean",
+        defaultValue: false,
+        returned: true,
+      },
+    },
+  },
+  
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
@@ -23,11 +37,17 @@ export const auth = betterAuth({
         roles?.management?.organizationId ||
         roles?.employees?.[0]?.organizationId;
 
+      const isTempPassword =
+        "isTempPassword" in user ? (user.isTempPassword as boolean) : false;
+      const token = "token" in user ? (user.token as string) : undefined;
+
       return {
         user: {
           ...user,
           ...roles,
           organizationId,
+          isTempPassword,
+          token,
         },
         session,
       };
@@ -102,17 +122,5 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
-  },
-  user: {
-    additionalFields: {
-      token: {
-        type: "string",
-        required: true,
-      },
-      isTempPassword: {
-        type: "boolean",
-        defaultValue: false,
-      },
-    },
   },
 });
