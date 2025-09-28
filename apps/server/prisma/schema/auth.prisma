@@ -13,7 +13,7 @@ model User {
   locationEmployees LocationEmployee[]
   // customer Customer?
   AuditLog          ActivityLog[]
-  isTempPassword    Boolean  @default(false)
+  isTempPassword    Boolean                @default(false)
 
   @@unique([email])
   @@map("user")
@@ -53,20 +53,20 @@ model Subscription {
 }
 
 model Organization {
-  id                     String                   @id @default(cuid()) @map("_id")
-  name                   String
-  description            String?
-  companySize            String?                  @default("1-10")
-  businessWebsite        String?
-  logo                   String?
-  slug                   String                   @unique
-  createdAt              DateTime                 @default(now())
-  updatedAt              DateTime                 @updatedAt
-  management             ManagementMembership[]
-  subscription           Subscription?
-  locations              Location[]
-  activityLogs           ActivityLog[]
-  
+  id              String                 @id @default(cuid()) @map("_id")
+  name            String
+  description     String?
+  companySize     String?                @default("1-10")
+  businessWebsite String?
+  logo            String?
+  slug            String                 @unique
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  management      ManagementMembership[]
+  subscription    Subscription?
+  locations       Location[]
+  activityLogs    ActivityLog[]
+
   OrganizationInvitation OrganizationInvitation[]
 }
 
@@ -83,25 +83,27 @@ model ManagementMembership {
 }
 
 model Location {
-  id             String             @id @default(cuid()) @map("_id")
-  name           String
-  organizationId String
-  address        String?
-  city           String?
-  state          String?
-  country        String?
-  zipCode        String?
-  timeZone       String?
-  email          String?
-  phoneNumber    String?
+  id                 String               @id @default(cuid()) @map("_id")
+  name               String
+  organizationId     String
+  address            String?
+  city               String?
+  state              String?
+  country            String?
+  zipCode            String?
+  timeZone           String?
+  email              String?
+  phoneNumber        String?
   // services       Service[]
   // customers      Customer[]
   // appointments   Appointment[]
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
-  employees      LocationEmployee[]
-  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  employees          LocationEmployee[]
+  organization       Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   // Nameless       Nameless[]
+  LocationInvitation LocationInvitation[]
+  ActivityLog        ActivityLog[]
 
   @@unique([name, organizationId])
 }
@@ -171,12 +173,14 @@ model ActivityLog {
   id             String   @id @default(cuid()) @map("_id")
   userId         String
   organizationId String
+  locationId     String?
   action         String
   description    String?
   createdAt      DateTime @default(now())
 
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  location     Location?    @relation(fields: [locationId], references: [id], onDelete: Cascade)
 }
 
 model Session {
@@ -233,7 +237,7 @@ enum InvitationStatus {
 model OrganizationInvitation {
   id                String           @id @default(cuid()) @map("_id")
   name              String
-  email             String   
+  email             String
   encryptedPassword String
   role              OrgRole
   status            InvitationStatus @default(PENDING)
@@ -241,12 +245,31 @@ model OrganizationInvitation {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  expAt     DateTime 
+  expAt     DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-
   @@unique([email, status])
   @@index([organizationId])
+  @@index([email])
+}
+
+model LocationInvitation {
+  id                String           @id @default(cuid()) @map("_id")
+  name              String
+  email             String
+  encryptedPassword String
+  role              EmployeeRole
+  status            InvitationStatus @default(PENDING)
+
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  expAt     DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([email, status])
+  @@index([locationId])
   @@index([email])
 }

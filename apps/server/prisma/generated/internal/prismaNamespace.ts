@@ -406,6 +406,7 @@ export const ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   OrganizationInvitation: 'OrganizationInvitation',
+  LocationInvitation: 'LocationInvitation',
   DemoRequest: 'DemoRequest'
 } as const
 
@@ -422,7 +423,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "admin" | "user" | "subscription" | "organization" | "managementMembership" | "location" | "locationEmployee" | "activityLog" | "session" | "account" | "verification" | "organizationInvitation" | "demoRequest"
+    modelProps: "admin" | "user" | "subscription" | "organization" | "managementMembership" | "location" | "locationEmployee" | "activityLog" | "session" | "account" | "verification" | "organizationInvitation" | "locationInvitation" | "demoRequest"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1314,6 +1315,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    LocationInvitation: {
+      payload: Prisma.$LocationInvitationPayload<ExtArgs>
+      fields: Prisma.LocationInvitationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LocationInvitationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LocationInvitationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LocationInvitationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LocationInvitationPayload>
+        }
+        findFirst: {
+          args: Prisma.LocationInvitationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LocationInvitationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LocationInvitationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LocationInvitationPayload>
+        }
+        findMany: {
+          args: Prisma.LocationInvitationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LocationInvitationPayload>[]
+        }
+        create: {
+          args: Prisma.LocationInvitationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LocationInvitationPayload>
+        }
+        createMany: {
+          args: Prisma.LocationInvitationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LocationInvitationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LocationInvitationPayload>[]
+        }
+        delete: {
+          args: Prisma.LocationInvitationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LocationInvitationPayload>
+        }
+        update: {
+          args: Prisma.LocationInvitationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LocationInvitationPayload>
+        }
+        deleteMany: {
+          args: Prisma.LocationInvitationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LocationInvitationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LocationInvitationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LocationInvitationPayload>[]
+        }
+        upsert: {
+          args: Prisma.LocationInvitationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LocationInvitationPayload>
+        }
+        aggregate: {
+          args: Prisma.LocationInvitationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLocationInvitation>
+        }
+        groupBy: {
+          args: Prisma.LocationInvitationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LocationInvitationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LocationInvitationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LocationInvitationCountAggregateOutputType> | number
+        }
+      }
+    }
     DemoRequest: {
       payload: Prisma.$DemoRequestPayload<ExtArgs>
       fields: Prisma.DemoRequestFieldRefs
@@ -1542,6 +1617,7 @@ export const ActivityLogScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   organizationId: 'organizationId',
+  locationId: 'locationId',
   action: 'action',
   description: 'description',
   createdAt: 'createdAt'
@@ -1609,6 +1685,22 @@ export const OrganizationInvitationScalarFieldEnum = {
 } as const
 
 export type OrganizationInvitationScalarFieldEnum = (typeof OrganizationInvitationScalarFieldEnum)[keyof typeof OrganizationInvitationScalarFieldEnum]
+
+
+export const LocationInvitationScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  encryptedPassword: 'encryptedPassword',
+  role: 'role',
+  status: 'status',
+  locationId: 'locationId',
+  expAt: 'expAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LocationInvitationScalarFieldEnum = (typeof LocationInvitationScalarFieldEnum)[keyof typeof LocationInvitationScalarFieldEnum]
 
 
 export const DemoRequestScalarFieldEnum = {
@@ -1856,6 +1948,7 @@ export type GlobalOmitConfig = {
   account?: Prisma.AccountOmit
   verification?: Prisma.VerificationOmit
   organizationInvitation?: Prisma.OrganizationInvitationOmit
+  locationInvitation?: Prisma.LocationInvitationOmit
   demoRequest?: Prisma.DemoRequestOmit
 }
 

@@ -13,9 +13,9 @@ const validateToken = async ({ token }: { token: string }) => {
   }
 };
 
-type Params = Promise<{ token?: string; email?: string; org?: string }>;
+type Params = Promise<{ token?: string }>;
 const InvitationPage = async ({ searchParams }: { searchParams: Params }) => {
-  const { email, token, org } = await searchParams;
+  const { token } = await searchParams;
 
   if (!token) throw Forbidden();
 
@@ -42,30 +42,35 @@ const InvitationPage = async ({ searchParams }: { searchParams: Params }) => {
             </h1>
             <p className="text-xl text-muted-foreground text-pretty max-w-xl mx-auto leading-relaxed">
               You have been invited to join{" "}
-              <span className="font-semibold text-foreground">{org}</span> as a{" "}
               <span className="font-semibold text-foreground">
-                {data?.role}
+                {data?.organizationName}
+              </span>{" "}
+              as a{" "}
+              <span className="font-semibold text-foreground capitalize">
+                {data?.role.replaceAll("_", " ").toLowerCase()}
               </span>
               .
             </p>
           </div>
 
           <div className="bg-muted/50 rounded-lg p-6 max-w-md mx-auto space-y-2">
-            
             <div className="text-left text-sm text-muted-foreground space-y-1 mt-4">
               <div>
                 <span className="font-semibold text-foreground">Email:</span>{" "}
-                {data?.email || email}
+                {data?.email}
               </div>
               <div>
                 <span className="font-semibold text-foreground">
-                  Organization:
+                  {data?.type && data?.type === "MANAGEMENT"
+                    ? "Organization"
+                    : "Location"}
+                  :
                 </span>{" "}
-                {org}
+                {data?.organizationName}
               </div>
               <div>
-                <span className="font-semibold text-foreground">Role:</span>{" "}
-                {data?.role}
+                <span className="font-semibold text-foreground capitalize">Role:</span>{" "}
+                   {data?.role.replaceAll("_", " ").toLowerCase()}
               </div>
               <div>
                 <span className="font-semibold text-foreground">Expires:</span>{" "}

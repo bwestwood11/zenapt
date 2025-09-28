@@ -102,6 +102,11 @@ export type Verification = Prisma.VerificationModel
  */
 export type OrganizationInvitation = Prisma.OrganizationInvitationModel
 /**
+ * Model LocationInvitation
+ * 
+ */
+export type LocationInvitation = Prisma.LocationInvitationModel
+/**
  * Model DemoRequest
  * 
  */

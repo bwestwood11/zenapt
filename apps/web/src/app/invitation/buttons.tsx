@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation"
 
 const ActionButtons = ({token}: {token: string}) => {
   const router = useRouter()
-     const {mutate: accept, isPending: Accepting} = useMutation(trpc.invitation.acceptOrganizationInvitation.mutationOptions({
+     const {mutate: accept, isPending: Accepting} = useMutation(trpc.invitation.acceptInvitation.mutationOptions({
       onError(err){
         toast.error(err.message)
       },
@@ -17,7 +17,7 @@ const ActionButtons = ({token}: {token: string}) => {
          router.replace("/change-password")
       },
      }))
-     const {mutate: decline, isPending: Declining} = useMutation(trpc.invitation.declineOrganizationInvitation.mutationOptions())
+     const {mutate: decline, isPending: Declining} = useMutation(trpc.invitation.declineInvitation.mutationOptions())
 
   const handleAccept = () => {
       accept({token})  

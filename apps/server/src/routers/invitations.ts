@@ -10,7 +10,7 @@ import { TRPCError } from "@trpc/server";
 import { createSignedToken, verifySignedToken } from "../lib/helpers/hash";
 import z from "zod";
 import crypto from "crypto";
-import { OrgRole } from "../../prisma/generated/enums";
+import { EmployeeRole, OrgRole } from "../../prisma/generated/enums";
 import { auth } from "../lib/auth";
 import {
   createInvitationToken,
@@ -27,8 +27,26 @@ type Invitation_Token = {
   invitationId: string;
 };
 
+const getAppropriateInvitation = async (id: string, type: INVITATION_TYPE) => {
+  if (type === INVITATION_TYPE.MANAGEMENT) {
+    return await prisma.organizationInvitation.findFirst({
+      where: {
+        id: id,
+        status: "PENDING",
+      },
+    });
+  } else if (type === INVITATION_TYPE.LOCATION) {
+    return await prisma.locationInvitation.findFirst({
+      where: {
+        id: id,
+        status: "PENDING",
+      },
+    });
+  }
+};
+
 export const invitationRouter = router({
-  acceptOrganizationInvitation: publicProcedure
+  acceptInvitation: publicProcedure
     .input(z.object({ token: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const { token } = input;
@@ -48,7 +66,7 @@ export const invitationRouter = router({
         });
       }
 
-      const { data } = verifyInvitationToken<{ invitationId: string }>(token);
+      const { data } = verifyInvitationToken<{ invitationId: string, organizationName:string  }>(token);
 
       const invitationId = data?.invitationId;
 
@@ -57,13 +75,6 @@ export const invitationRouter = router({
         throw new TRPCError({
           message: "Oppsy Something went wrong",
           code: "INTERNAL_SERVER_ERROR",
-        });
-      }
-
-      if (data.type !== "MANAGEMENT") {
-        throw new TRPCError({
-          message: "You can't access this endpoint",
-          code: "FORBIDDEN",
         });
       }
 
@@ -78,13 +89,11 @@ export const invitationRouter = router({
         });
       }
 
-      console.log(data)
-      const invitation = await prisma.organizationInvitation.findFirst({
-        where: {
-          id: data.invitationId,
-          status: "PENDING",
-        },
-      });
+      console.log(data);
+      const invitation = await getAppropriateInvitation(
+        invitationId,
+        data.type
+      );
       console.log({ invitation });
       if (!invitation || !invitation.encryptedPassword) {
         throw new TRPCError({
@@ -102,20 +111,31 @@ export const invitationRouter = router({
           email: invitation.email,
           password: password,
           token: token,
-          isTempPassword: true
+          isTempPassword: true,
         },
       });
 
-      await prisma.organizationInvitation.update({
-        where: {
-          id: invitation.id,
-        },
-        data: {
-          status: "ACCEPTED",
-        },
-      });
+      if (data.type === INVITATION_TYPE.MANAGEMENT) {
+        await prisma.organizationInvitation.update({
+          where: {
+            id: invitation.id,
+          },
+          data: {
+            status: "ACCEPTED",
+          },
+        });
+      } else {
+        await prisma.locationInvitation.update({
+          where: {
+            id: invitation.id,
+          },
+          data: {
+            status: "ACCEPTED",
+          },
+        });
+      }
     }),
-  declineOrganizationInvitation: publicProcedure
+  declineInvitation: publicProcedure
     .input(z.object({ token: z.string() }))
     .mutation(async ({ input, ctx }) => {
       try {
@@ -128,7 +148,7 @@ export const invitationRouter = router({
           });
         }
 
-        const { data } = verifyInvitationToken<{ invitationId: string }>(token);
+        const { data } = verifyInvitationToken<{ invitationId: string, organizationName:string  }>(token);
 
         const invitationId = data?.invitationId;
 
@@ -139,15 +159,25 @@ export const invitationRouter = router({
             code: "INTERNAL_SERVER_ERROR",
           });
         }
-
-        await prisma.organizationInvitation.update({
-          where: {
-            id: invitationId,
-          },
-          data: {
-            status: "DECLINED",
-          },
-        });
+        if (data.type === INVITATION_TYPE.MANAGEMENT) {
+          await prisma.organizationInvitation.update({
+            where: {
+              id: invitationId,
+            },
+            data: {
+              status: "DECLINED",
+            },
+          });
+        } else if (data.type === INVITATION_TYPE.LOCATION) {
+          await prisma.locationInvitation.update({
+            where: {
+              id: invitationId,
+            },
+            data: {
+              status: "DECLINED",
+            },
+          });
+        }
       } catch (error) {
         console.error("In the catch", error);
         throw new TRPCError({
@@ -157,7 +187,7 @@ export const invitationRouter = router({
       }
     }),
   inviteOrganizationMember: withPermissions(
-    "CREATE::EMPLOYEES",
+    "CREATE::MEMBERS",
     z.object({
       email: z.email(),
       name: z.string().min(1).max(100),
@@ -245,12 +275,12 @@ export const invitationRouter = router({
         organization: { select: { name: true } },
       },
     });
-   
+
     // send email with token, email, and also a one time password and username
     console.log({ email, role, randomPassword });
 
     // 48 hours from now
-    const token = createInvitationToken<{ invitationId: string }>(
+    const token = createInvitationToken<{ invitationId: string, organizationName:string }>(
       {
         email,
         organizationId: ctx.session.user.organizationId,
@@ -258,12 +288,13 @@ export const invitationRouter = router({
         invitationId: res.id,
         type: INVITATION_TYPE.MANAGEMENT,
         name: ctx.session.user.name,
+        organizationName: res.organization.name
       },
       toSeconds({ hours: INVITATION_EXPIRE_IN_HOURS })
     );
 
     const EmailHtml = InvitationEmail({
-      inviteLink: `${process.env.DASHBOARD_URL || "http://localhost:3000"}/invitation?token=${token}&email=${email}&org=${res.organization.name}`,
+      inviteLink: `${process.env.DASHBOARD_URL || "http://localhost:3000"}/invitation?token=${token}`,
       logoUrl: `${process.env.DASHBOARD_URL || "http://localhost:3000"}/logo`,
       organization: res.organization.name,
       password: randomPassword,
@@ -314,7 +345,7 @@ export const invitationRouter = router({
           });
         }
 
-        const { data, exp } = verifyInvitationToken<{ invitationId: string }>(
+        const { data, exp } = verifyInvitationToken<{ invitationId: string, organizationName:string }>(
           token
         );
         return { data, exp };
@@ -326,4 +357,157 @@ export const invitationRouter = router({
         });
       }
     }),
+
+  inviteLocationEmployee: withPermissions(
+    "CREATE::EMPLOYEES",
+    z.object({
+      email: z.email(),
+      name: z.string().min(1).max(100),
+      role: z
+        .enum(EmployeeRole)
+        .exclude([EmployeeRole.ORGANIZATION_MANAGEMENT]),
+      locationId: z.string(),
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const { email, name, role } = input;
+
+    if (!ctx.session.user.organizationId) {
+      console.error(
+        "THIS SHOULD NOT HAPPEN, User accessed route inviteOrganizationMember without the organization Id",
+        ctx.session.user
+      );
+
+      throw new TRPCError({
+        message: "Oops Something Don't feel right?",
+        cause: "User don't have organization",
+        code: "FORBIDDEN",
+      });
+    }
+
+    const usersCount = await prisma.user.count({ where: { email } });
+    if (usersCount >= 1) {
+      throw new TRPCError({
+        message:
+          "User with this email already part of the zenapt. try any other email",
+
+        code: "BAD_REQUEST",
+      });
+    }
+
+    const existingInvitations = await prisma.locationInvitation.findFirst({
+      where: {
+        email,
+        locationId: input.locationId,
+      },
+    });
+
+    if (existingInvitations?.status === "ACCEPTED") {
+      throw new TRPCError({
+        message:
+          "User has accepted the invitation. If you need any help you can contact",
+        code: "BAD_REQUEST",
+      });
+    }
+
+    if (
+      existingInvitations?.status === "PENDING" &&
+      existingInvitations.expAt > new Date()
+    ) {
+      throw new TRPCError({
+        message:
+          "User has a pending invitation. Please wait until they accept or deny the invitation.",
+        code: "BAD_REQUEST",
+      });
+    }
+
+    const randomPassword = crypto.randomBytes(14).toString("hex").slice(0, 14);
+
+    const encryptedPassword = encrypt(randomPassword);
+    const expAt = new Date(
+      Date.now() + INVITATION_EXPIRE_IN_HOURS * 60 * 60 * 1000
+    );
+    const res = await prisma.locationInvitation.upsert({
+      where: {
+        email_status: {
+          email,
+          status: "PENDING",
+        },
+        locationId: input.locationId,
+      },
+      create: {
+        email: email,
+        name: name,
+        role: role,
+        encryptedPassword,
+        expAt,
+        locationId: input.locationId,
+      },
+      update: {
+        expAt,
+        role,
+        encryptedPassword,
+      },
+      select: {
+        id: true,
+        location: { select: { name: true } },
+      },
+    });
+
+    // send email with token, email, and also a one time password and username
+    console.log({ email, role, randomPassword });
+
+    // 48 hours from now
+    const token = createInvitationToken<{ invitationId: string, organizationName:string  }>(
+      {
+        email,
+        locationId: input.locationId,
+        role,
+        invitationId: res.id,
+        type: INVITATION_TYPE.LOCATION,
+        name: ctx.session.user.name,
+        organizationName: res.location.name
+      },
+      toSeconds({ hours: INVITATION_EXPIRE_IN_HOURS })
+    );
+
+    const EmailHtml = InvitationEmail({
+      inviteLink: `${process.env.DASHBOARD_URL || "http://localhost:3000"}/invitation?token=${token}`,
+      logoUrl: `${process.env.DASHBOARD_URL || "http://localhost:3000"}/logo`,
+      organization: res.location.name,
+      password: randomPassword,
+      role: role,
+      userEmail: email,
+      supportEmail: "support@zenapt.com",
+    });
+
+    // Create and activity log the the user was invited
+
+    await resend.emails.send({
+      from: process.env.FROM_EMAIL || "support@zenapt.com",
+      to:
+        process.env.NODE_ENV === "development"
+          ? `delivered+${encodeURIComponent(email)}@resend.dev`
+          : email,
+      subject: "hello world",
+      react: EmailHtml,
+    });
+
+    after(async () => {
+      if (ctx.session.user.organizationId) {
+        await prisma.activityLog.create({
+          data: {
+            action: ACTIVITY_LOG_ACTIONS.INVITE_EMPLOYEE,
+            description: `${name} ${maskEmail(
+              email
+            )} was invited to your organization as an ${role}`,
+            userId: ctx.session.user.id,
+            organizationId: ctx.session.user.organizationId,
+            locationId: input.locationId,
+          },
+        });
+      }
+    });
+
+    return "OK";
+  }),
 });

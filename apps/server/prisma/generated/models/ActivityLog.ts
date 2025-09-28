@@ -27,6 +27,7 @@ export type ActivityLogMinAggregateOutputType = {
   id: string | null
   userId: string | null
   organizationId: string | null
+  locationId: string | null
   action: string | null
   description: string | null
   createdAt: Date | null
@@ -36,6 +37,7 @@ export type ActivityLogMaxAggregateOutputType = {
   id: string | null
   userId: string | null
   organizationId: string | null
+  locationId: string | null
   action: string | null
   description: string | null
   createdAt: Date | null
@@ -45,6 +47,7 @@ export type ActivityLogCountAggregateOutputType = {
   id: number
   userId: number
   organizationId: number
+  locationId: number
   action: number
   description: number
   createdAt: number
@@ -56,6 +59,7 @@ export type ActivityLogMinAggregateInputType = {
   id?: true
   userId?: true
   organizationId?: true
+  locationId?: true
   action?: true
   description?: true
   createdAt?: true
@@ -65,6 +69,7 @@ export type ActivityLogMaxAggregateInputType = {
   id?: true
   userId?: true
   organizationId?: true
+  locationId?: true
   action?: true
   description?: true
   createdAt?: true
@@ -74,6 +79,7 @@ export type ActivityLogCountAggregateInputType = {
   id?: true
   userId?: true
   organizationId?: true
+  locationId?: true
   action?: true
   description?: true
   createdAt?: true
@@ -156,6 +162,7 @@ export type ActivityLogGroupByOutputType = {
   id: string
   userId: string
   organizationId: string
+  locationId: string | null
   action: string
   description: string | null
   createdAt: Date
@@ -186,22 +193,26 @@ export type ActivityLogWhereInput = {
   id?: Prisma.StringFilter<"ActivityLog"> | string
   userId?: Prisma.StringFilter<"ActivityLog"> | string
   organizationId?: Prisma.StringFilter<"ActivityLog"> | string
+  locationId?: Prisma.StringNullableFilter<"ActivityLog"> | string | null
   action?: Prisma.StringFilter<"ActivityLog"> | string
   description?: Prisma.StringNullableFilter<"ActivityLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ActivityLog"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.LocationWhereInput> | null
 }
 
 export type ActivityLogOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  locationId?: Prisma.SortOrderInput | Prisma.SortOrder
   action?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   organization?: Prisma.OrganizationOrderByWithRelationInput
+  location?: Prisma.LocationOrderByWithRelationInput
 }
 
 export type ActivityLogWhereUniqueInput = Prisma.AtLeast<{
@@ -211,17 +222,20 @@ export type ActivityLogWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ActivityLogWhereInput | Prisma.ActivityLogWhereInput[]
   userId?: Prisma.StringFilter<"ActivityLog"> | string
   organizationId?: Prisma.StringFilter<"ActivityLog"> | string
+  locationId?: Prisma.StringNullableFilter<"ActivityLog"> | string | null
   action?: Prisma.StringFilter<"ActivityLog"> | string
   description?: Prisma.StringNullableFilter<"ActivityLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ActivityLog"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.LocationWhereInput> | null
 }, "id">
 
 export type ActivityLogOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  locationId?: Prisma.SortOrderInput | Prisma.SortOrder
   action?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -237,6 +251,7 @@ export type ActivityLogScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"ActivityLog"> | string
   userId?: Prisma.StringWithAggregatesFilter<"ActivityLog"> | string
   organizationId?: Prisma.StringWithAggregatesFilter<"ActivityLog"> | string
+  locationId?: Prisma.StringNullableWithAggregatesFilter<"ActivityLog"> | string | null
   action?: Prisma.StringWithAggregatesFilter<"ActivityLog"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"ActivityLog"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ActivityLog"> | Date | string
@@ -249,12 +264,14 @@ export type ActivityLogCreateInput = {
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutAuditLogInput
   organization: Prisma.OrganizationCreateNestedOneWithoutActivityLogsInput
+  location?: Prisma.LocationCreateNestedOneWithoutActivityLogInput
 }
 
 export type ActivityLogUncheckedCreateInput = {
   id?: string
   userId: string
   organizationId: string
+  locationId?: string | null
   action: string
   description?: string | null
   createdAt?: Date | string
@@ -267,12 +284,14 @@ export type ActivityLogUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutAuditLogNestedInput
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutActivityLogsNestedInput
+  location?: Prisma.LocationUpdateOneWithoutActivityLogNestedInput
 }
 
 export type ActivityLogUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   action?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -282,6 +301,7 @@ export type ActivityLogCreateManyInput = {
   id?: string
   userId: string
   organizationId: string
+  locationId?: string | null
   action: string
   description?: string | null
   createdAt?: Date | string
@@ -298,6 +318,7 @@ export type ActivityLogUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   action?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -317,6 +338,7 @@ export type ActivityLogCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  locationId?: Prisma.SortOrder
   action?: Prisma.SortOrder
   description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -326,6 +348,7 @@ export type ActivityLogMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  locationId?: Prisma.SortOrder
   action?: Prisma.SortOrder
   description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -335,6 +358,7 @@ export type ActivityLogMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  locationId?: Prisma.SortOrder
   action?: Prisma.SortOrder
   description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -424,17 +448,61 @@ export type ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput = {
   deleteMany?: Prisma.ActivityLogScalarWhereInput | Prisma.ActivityLogScalarWhereInput[]
 }
 
+export type ActivityLogCreateNestedManyWithoutLocationInput = {
+  create?: Prisma.XOR<Prisma.ActivityLogCreateWithoutLocationInput, Prisma.ActivityLogUncheckedCreateWithoutLocationInput> | Prisma.ActivityLogCreateWithoutLocationInput[] | Prisma.ActivityLogUncheckedCreateWithoutLocationInput[]
+  connectOrCreate?: Prisma.ActivityLogCreateOrConnectWithoutLocationInput | Prisma.ActivityLogCreateOrConnectWithoutLocationInput[]
+  createMany?: Prisma.ActivityLogCreateManyLocationInputEnvelope
+  connect?: Prisma.ActivityLogWhereUniqueInput | Prisma.ActivityLogWhereUniqueInput[]
+}
+
+export type ActivityLogUncheckedCreateNestedManyWithoutLocationInput = {
+  create?: Prisma.XOR<Prisma.ActivityLogCreateWithoutLocationInput, Prisma.ActivityLogUncheckedCreateWithoutLocationInput> | Prisma.ActivityLogCreateWithoutLocationInput[] | Prisma.ActivityLogUncheckedCreateWithoutLocationInput[]
+  connectOrCreate?: Prisma.ActivityLogCreateOrConnectWithoutLocationInput | Prisma.ActivityLogCreateOrConnectWithoutLocationInput[]
+  createMany?: Prisma.ActivityLogCreateManyLocationInputEnvelope
+  connect?: Prisma.ActivityLogWhereUniqueInput | Prisma.ActivityLogWhereUniqueInput[]
+}
+
+export type ActivityLogUpdateManyWithoutLocationNestedInput = {
+  create?: Prisma.XOR<Prisma.ActivityLogCreateWithoutLocationInput, Prisma.ActivityLogUncheckedCreateWithoutLocationInput> | Prisma.ActivityLogCreateWithoutLocationInput[] | Prisma.ActivityLogUncheckedCreateWithoutLocationInput[]
+  connectOrCreate?: Prisma.ActivityLogCreateOrConnectWithoutLocationInput | Prisma.ActivityLogCreateOrConnectWithoutLocationInput[]
+  upsert?: Prisma.ActivityLogUpsertWithWhereUniqueWithoutLocationInput | Prisma.ActivityLogUpsertWithWhereUniqueWithoutLocationInput[]
+  createMany?: Prisma.ActivityLogCreateManyLocationInputEnvelope
+  set?: Prisma.ActivityLogWhereUniqueInput | Prisma.ActivityLogWhereUniqueInput[]
+  disconnect?: Prisma.ActivityLogWhereUniqueInput | Prisma.ActivityLogWhereUniqueInput[]
+  delete?: Prisma.ActivityLogWhereUniqueInput | Prisma.ActivityLogWhereUniqueInput[]
+  connect?: Prisma.ActivityLogWhereUniqueInput | Prisma.ActivityLogWhereUniqueInput[]
+  update?: Prisma.ActivityLogUpdateWithWhereUniqueWithoutLocationInput | Prisma.ActivityLogUpdateWithWhereUniqueWithoutLocationInput[]
+  updateMany?: Prisma.ActivityLogUpdateManyWithWhereWithoutLocationInput | Prisma.ActivityLogUpdateManyWithWhereWithoutLocationInput[]
+  deleteMany?: Prisma.ActivityLogScalarWhereInput | Prisma.ActivityLogScalarWhereInput[]
+}
+
+export type ActivityLogUncheckedUpdateManyWithoutLocationNestedInput = {
+  create?: Prisma.XOR<Prisma.ActivityLogCreateWithoutLocationInput, Prisma.ActivityLogUncheckedCreateWithoutLocationInput> | Prisma.ActivityLogCreateWithoutLocationInput[] | Prisma.ActivityLogUncheckedCreateWithoutLocationInput[]
+  connectOrCreate?: Prisma.ActivityLogCreateOrConnectWithoutLocationInput | Prisma.ActivityLogCreateOrConnectWithoutLocationInput[]
+  upsert?: Prisma.ActivityLogUpsertWithWhereUniqueWithoutLocationInput | Prisma.ActivityLogUpsertWithWhereUniqueWithoutLocationInput[]
+  createMany?: Prisma.ActivityLogCreateManyLocationInputEnvelope
+  set?: Prisma.ActivityLogWhereUniqueInput | Prisma.ActivityLogWhereUniqueInput[]
+  disconnect?: Prisma.ActivityLogWhereUniqueInput | Prisma.ActivityLogWhereUniqueInput[]
+  delete?: Prisma.ActivityLogWhereUniqueInput | Prisma.ActivityLogWhereUniqueInput[]
+  connect?: Prisma.ActivityLogWhereUniqueInput | Prisma.ActivityLogWhereUniqueInput[]
+  update?: Prisma.ActivityLogUpdateWithWhereUniqueWithoutLocationInput | Prisma.ActivityLogUpdateWithWhereUniqueWithoutLocationInput[]
+  updateMany?: Prisma.ActivityLogUpdateManyWithWhereWithoutLocationInput | Prisma.ActivityLogUpdateManyWithWhereWithoutLocationInput[]
+  deleteMany?: Prisma.ActivityLogScalarWhereInput | Prisma.ActivityLogScalarWhereInput[]
+}
+
 export type ActivityLogCreateWithoutUserInput = {
   id?: string
   action: string
   description?: string | null
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutActivityLogsInput
+  location?: Prisma.LocationCreateNestedOneWithoutActivityLogInput
 }
 
 export type ActivityLogUncheckedCreateWithoutUserInput = {
   id?: string
   organizationId: string
+  locationId?: string | null
   action: string
   description?: string | null
   createdAt?: Date | string
@@ -473,6 +541,7 @@ export type ActivityLogScalarWhereInput = {
   id?: Prisma.StringFilter<"ActivityLog"> | string
   userId?: Prisma.StringFilter<"ActivityLog"> | string
   organizationId?: Prisma.StringFilter<"ActivityLog"> | string
+  locationId?: Prisma.StringNullableFilter<"ActivityLog"> | string | null
   action?: Prisma.StringFilter<"ActivityLog"> | string
   description?: Prisma.StringNullableFilter<"ActivityLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ActivityLog"> | Date | string
@@ -484,11 +553,13 @@ export type ActivityLogCreateWithoutOrganizationInput = {
   description?: string | null
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutAuditLogInput
+  location?: Prisma.LocationCreateNestedOneWithoutActivityLogInput
 }
 
 export type ActivityLogUncheckedCreateWithoutOrganizationInput = {
   id?: string
   userId: string
+  locationId?: string | null
   action: string
   description?: string | null
   createdAt?: Date | string
@@ -520,9 +591,54 @@ export type ActivityLogUpdateManyWithWhereWithoutOrganizationInput = {
   data: Prisma.XOR<Prisma.ActivityLogUpdateManyMutationInput, Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationInput>
 }
 
+export type ActivityLogCreateWithoutLocationInput = {
+  id?: string
+  action: string
+  description?: string | null
+  createdAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutAuditLogInput
+  organization: Prisma.OrganizationCreateNestedOneWithoutActivityLogsInput
+}
+
+export type ActivityLogUncheckedCreateWithoutLocationInput = {
+  id?: string
+  userId: string
+  organizationId: string
+  action: string
+  description?: string | null
+  createdAt?: Date | string
+}
+
+export type ActivityLogCreateOrConnectWithoutLocationInput = {
+  where: Prisma.ActivityLogWhereUniqueInput
+  create: Prisma.XOR<Prisma.ActivityLogCreateWithoutLocationInput, Prisma.ActivityLogUncheckedCreateWithoutLocationInput>
+}
+
+export type ActivityLogCreateManyLocationInputEnvelope = {
+  data: Prisma.ActivityLogCreateManyLocationInput | Prisma.ActivityLogCreateManyLocationInput[]
+  skipDuplicates?: boolean
+}
+
+export type ActivityLogUpsertWithWhereUniqueWithoutLocationInput = {
+  where: Prisma.ActivityLogWhereUniqueInput
+  update: Prisma.XOR<Prisma.ActivityLogUpdateWithoutLocationInput, Prisma.ActivityLogUncheckedUpdateWithoutLocationInput>
+  create: Prisma.XOR<Prisma.ActivityLogCreateWithoutLocationInput, Prisma.ActivityLogUncheckedCreateWithoutLocationInput>
+}
+
+export type ActivityLogUpdateWithWhereUniqueWithoutLocationInput = {
+  where: Prisma.ActivityLogWhereUniqueInput
+  data: Prisma.XOR<Prisma.ActivityLogUpdateWithoutLocationInput, Prisma.ActivityLogUncheckedUpdateWithoutLocationInput>
+}
+
+export type ActivityLogUpdateManyWithWhereWithoutLocationInput = {
+  where: Prisma.ActivityLogScalarWhereInput
+  data: Prisma.XOR<Prisma.ActivityLogUpdateManyMutationInput, Prisma.ActivityLogUncheckedUpdateManyWithoutLocationInput>
+}
+
 export type ActivityLogCreateManyUserInput = {
   id?: string
   organizationId: string
+  locationId?: string | null
   action: string
   description?: string | null
   createdAt?: Date | string
@@ -534,11 +650,13 @@ export type ActivityLogUpdateWithoutUserInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutActivityLogsNestedInput
+  location?: Prisma.LocationUpdateOneWithoutActivityLogNestedInput
 }
 
 export type ActivityLogUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   action?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -547,6 +665,7 @@ export type ActivityLogUncheckedUpdateWithoutUserInput = {
 export type ActivityLogUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   action?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -555,6 +674,7 @@ export type ActivityLogUncheckedUpdateManyWithoutUserInput = {
 export type ActivityLogCreateManyOrganizationInput = {
   id?: string
   userId: string
+  locationId?: string | null
   action: string
   description?: string | null
   createdAt?: Date | string
@@ -566,11 +686,13 @@ export type ActivityLogUpdateWithoutOrganizationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutAuditLogNestedInput
+  location?: Prisma.LocationUpdateOneWithoutActivityLogNestedInput
 }
 
 export type ActivityLogUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   action?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -579,6 +701,43 @@ export type ActivityLogUncheckedUpdateWithoutOrganizationInput = {
 export type ActivityLogUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  action?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ActivityLogCreateManyLocationInput = {
+  id?: string
+  userId: string
+  organizationId: string
+  action: string
+  description?: string | null
+  createdAt?: Date | string
+}
+
+export type ActivityLogUpdateWithoutLocationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  action?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutAuditLogNestedInput
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutActivityLogsNestedInput
+}
+
+export type ActivityLogUncheckedUpdateWithoutLocationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  action?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ActivityLogUncheckedUpdateManyWithoutLocationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   action?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -590,56 +749,66 @@ export type ActivityLogSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   id?: boolean
   userId?: boolean
   organizationId?: boolean
+  locationId?: boolean
   action?: boolean
   description?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  location?: boolean | Prisma.ActivityLog$locationArgs<ExtArgs>
 }, ExtArgs["result"]["activityLog"]>
 
 export type ActivityLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
   organizationId?: boolean
+  locationId?: boolean
   action?: boolean
   description?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  location?: boolean | Prisma.ActivityLog$locationArgs<ExtArgs>
 }, ExtArgs["result"]["activityLog"]>
 
 export type ActivityLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
   organizationId?: boolean
+  locationId?: boolean
   action?: boolean
   description?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  location?: boolean | Prisma.ActivityLog$locationArgs<ExtArgs>
 }, ExtArgs["result"]["activityLog"]>
 
 export type ActivityLogSelectScalar = {
   id?: boolean
   userId?: boolean
   organizationId?: boolean
+  locationId?: boolean
   action?: boolean
   description?: boolean
   createdAt?: boolean
 }
 
-export type ActivityLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "organizationId" | "action" | "description" | "createdAt", ExtArgs["result"]["activityLog"]>
+export type ActivityLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "organizationId" | "locationId" | "action" | "description" | "createdAt", ExtArgs["result"]["activityLog"]>
 export type ActivityLogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  location?: boolean | Prisma.ActivityLog$locationArgs<ExtArgs>
 }
 export type ActivityLogIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  location?: boolean | Prisma.ActivityLog$locationArgs<ExtArgs>
 }
 export type ActivityLogIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  location?: boolean | Prisma.ActivityLog$locationArgs<ExtArgs>
 }
 
 export type $ActivityLogPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -647,11 +816,13 @@ export type $ActivityLogPayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     organization: Prisma.$OrganizationPayload<ExtArgs>
+    location: Prisma.$LocationPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
     organizationId: string
+    locationId: string | null
     action: string
     description: string | null
     createdAt: Date
@@ -1051,6 +1222,7 @@ export interface Prisma__ActivityLogClient<T, Null = never, ExtArgs extends runt
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  location<T extends Prisma.ActivityLog$locationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ActivityLog$locationArgs<ExtArgs>>): Prisma.Prisma__LocationClient<runtime.Types.Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1083,6 +1255,7 @@ export interface ActivityLogFieldRefs {
   readonly id: Prisma.FieldRef<"ActivityLog", 'String'>
   readonly userId: Prisma.FieldRef<"ActivityLog", 'String'>
   readonly organizationId: Prisma.FieldRef<"ActivityLog", 'String'>
+  readonly locationId: Prisma.FieldRef<"ActivityLog", 'String'>
   readonly action: Prisma.FieldRef<"ActivityLog", 'String'>
   readonly description: Prisma.FieldRef<"ActivityLog", 'String'>
   readonly createdAt: Prisma.FieldRef<"ActivityLog", 'DateTime'>
@@ -1479,6 +1652,25 @@ export type ActivityLogDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many ActivityLogs to delete.
    */
   limit?: number
+}
+
+/**
+ * ActivityLog.location
+ */
+export type ActivityLog$locationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Location
+   */
+  select?: Prisma.LocationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Location
+   */
+  omit?: Prisma.LocationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LocationInclude<ExtArgs> | null
+  where?: Prisma.LocationWhereInput
 }
 
 /**

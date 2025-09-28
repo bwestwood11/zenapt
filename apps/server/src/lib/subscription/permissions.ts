@@ -7,6 +7,7 @@ export type Action = (typeof ACTIONS)[number];
 export const FEATURES = [
   "LOCATION",
   "SERVICES",
+  "MEMBERS",
   "EMPLOYEES",
   "ORGANIZATION",
   "SUBSCRIPTION",
@@ -57,17 +58,19 @@ export const ROLE_PERMISSIONS: RolePermission = {
     ADMIN: [
       "UPDATE::SERVICES",
       "READ::ANALYTICS",
-      "CREATE::EMPLOYEES",
-      "UPDATE::ANALYTICS"
+      "UPDATE::ANALYTICS",
+      "CREATE::MEMBERS"
     ],
     ANALYST: ["READ::ANALYTICS"],
   },
+
   LOCATION: {
     LOCATION_ADMIN: [
       "READ::LOCATION",
       "UPDATE::LOCATION",
       "READ::EMPLOYEES",
       "UPDATE::SERVICES",
+      "CREATE::EMPLOYEES"
     ],
     LOCATION_FRONT_DESK: ["READ::EMPLOYEES", "READ::SERVICES"],
     LOCATION_SPECIALIST: ["READ::SERVICES"],
@@ -76,6 +79,7 @@ export const ROLE_PERMISSIONS: RolePermission = {
       "UPDATE::LOCATION",
       "READ::EMPLOYEES",
       "UPDATE::SERVICES",
+      "CREATE::EMPLOYEES"
     ],
   },
 };
