@@ -48,12 +48,17 @@ const createLocation = withPermissions(
     });
   }
 
-
   const createdLocation = await prisma.location.create({
     data: {
-      name: input.name,
+      name: input.name.replace(/\s+/g, "-"),
       address: input.address,
       city: input.city,
+      slug: input.name
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]+/g, "-")
+        .replace(/(^-|-$)+/g, "")
+        .substring(0, 50),
       country: input.country,
       email: input.email,
       employees: {
@@ -85,6 +90,52 @@ const createLocation = withPermissions(
   };
 });
 
+const getAllLocations = withPermissions("READ::ADMIN_LOCATION").query(
+  async ({ ctx }) => {
+    const locations = await prisma.location.findMany({
+      where: {
+        organizationId: ctx.session.user.organizationId,
+      },
+      include: {
+        _count: {
+          select: {
+            employees: true,
+          },
+        },
+      },
+    });
+
+    return locations;
+  }
+);
+
+const getLocation = withPermissions(
+  "READ::LOCATION",
+  z.object({ slug: z.string() })
+).query(async ({ ctx, input }) => {
+  const hasPermissionToLocation = ctx.session.user.employees?.find(
+    (emp) => emp.locationSlug === input.slug
+  );
+
+  if (!hasPermissionToLocation) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message:
+        "You are not allowed to view the location details. or location may not exist",
+    });
+  }
+
+  const location = await prisma.location.findFirst({
+    where: {
+      slug: input.slug,
+    },
+  });
+
+  return location;
+});
+
 export const locationRouter = router({
   createLocation: createLocation,
+  getAllLocations,
+  getLocation,
 });

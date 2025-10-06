@@ -18,16 +18,15 @@ body {
 }
 
 :root {
-  --background: oklch(.985 0 0);
-  /* --background: oklch(98.066% 0.00211 14.279); */
+  --background: oklch(0.9735 0.0261 90.0953);
   --foreground: oklch(0.4015 0.0436 37.9587);
-  --card: oklch(98.066% 0.00211 14.279);
+  --card: oklch(0.9920 0.0073 80.7214);
   --card-foreground: oklch(0.4015 0.0436 37.9587);
-  --popover: oklch(0.992 0.0073 80.7214);
+  --popover: oklch(0.9920 0.0073 80.7214);
   --popover-foreground: oklch(0.4015 0.0436 37.9587);
   --primary: oklch(0.5212 0.0823 62.3839);
   --primary-foreground: oklch(0.9735 0.0261 90.0953);
-  --secondary: oklch(0.7665 0.1387 91.0594);
+  --secondary: #d4af37;
   --secondary-foreground: oklch(0.2788 0.0138 81.6811);
   --muted: oklch(0.9402 0.0302 83.6329);
   --muted-foreground: oklch(0.5534 0.0116 58.0708);
@@ -43,8 +42,7 @@ body {
   --chart-3: oklch(0.6661 0.1315 61.2938);
   --chart-4: oklch(0.4708 0.1121 50.8452);
   --chart-5: oklch(0.5265 0.1151 44.6044);
-
-  --sidebar: oklch(98.066% 0.00211 14.279);
+  --sidebar: oklch(0.9402 0.0302 83.6329);
   --sidebar-foreground: oklch(0.4015 0.0436 37.9587);
   --sidebar-primary: oklch(0.5212 0.0823 62.3839);
   --sidebar-primary-foreground: oklch(0.9735 0.0261 90.0953);
@@ -52,27 +50,26 @@ body {
   --sidebar-accent-foreground: oklch(0.9735 0.0261 90.0953);
   --sidebar-border: oklch(0.8765 0.0295 82.5897);
   --sidebar-ring: oklch(0.5212 0.0823 62.3839);
-
   --font-sans: Lato;
   --font-serif: Playfair Display;
   --font-mono: monospace;
   --radius: 0.5rem;
+  --shadow-x: 0px;
+  --shadow-y: 4px;
+  --shadow-blur: 8px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.05;
+  --shadow-color: #000000;
   --shadow-2xs: 0px 4px 8px 0px hsl(0 0% 0% / 0.03);
   --shadow-xs: 0px 4px 8px 0px hsl(0 0% 0% / 0.03);
-  --shadow-sm: 0px 4px 8px 0px hsl(0 0% 0% / 0.05),
-    0px 1px 2px -1px hsl(0 0% 0% / 0.05);
-  --shadow: 0px 4px 8px 0px hsl(0 0% 0% / 0.05),
-    0px 1px 2px -1px hsl(0 0% 0% / 0.05);
-  --shadow-md: 0px 4px 8px 0px hsl(0 0% 0% / 0.05),
-    0px 2px 4px -1px hsl(0 0% 0% / 0.05);
-  --shadow-lg: 0px 4px 8px 0px hsl(0 0% 0% / 0.05),
-    0px 4px 6px -1px hsl(0 0% 0% / 0.05);
-  --shadow-xl: 0px 4px 8px 0px hsl(0 0% 0% / 0.05),
-    0px 8px 10px -1px hsl(0 0% 0% / 0.05);
+  --shadow-sm: 0px 4px 8px 0px hsl(0 0% 0% / 0.05), 0px 1px 2px -1px hsl(0 0% 0% / 0.05);
+  --shadow: 0px 4px 8px 0px hsl(0 0% 0% / 0.05), 0px 1px 2px -1px hsl(0 0% 0% / 0.05);
+  --shadow-md: 0px 4px 8px 0px hsl(0 0% 0% / 0.05), 0px 2px 4px -1px hsl(0 0% 0% / 0.05);
+  --shadow-lg: 0px 4px 8px 0px hsl(0 0% 0% / 0.05), 0px 4px 6px -1px hsl(0 0% 0% / 0.05);
+  --shadow-xl: 0px 4px 8px 0px hsl(0 0% 0% / 0.05), 0px 8px 10px -1px hsl(0 0% 0% / 0.05);
   --shadow-2xl: 0px 4px 8px 0px hsl(0 0% 0% / 0.13);
   --tracking-normal: 0rem;
   --spacing: 0.25rem;
-
 }
 
 .dark {
@@ -87,7 +84,7 @@ body {
   --secondary: oklch(0.5212 0.0823 62.3839);
   --secondary-foreground: oklch(0.9735 0.0261 90.0953);
   --muted: oklch(0.3889 0.0212 84.5472);
-  --muted-foreground: oklch(0.7161 0.0091 56.259);
+  --muted-foreground: oklch(0.7161 0.0091 56.2590);
   --accent: oklch(0.3889 0.0212 84.5472);
   --accent-foreground: oklch(0.9735 0.0261 90.0953);
   --destructive: oklch(0.4437 0.1613 26.8994);
@@ -112,18 +109,19 @@ body {
   --font-serif: Playfair Display;
   --font-mono: monospace;
   --radius: 0.5rem;
+  --shadow-x: 0px;
+  --shadow-y: 2px;
+  --shadow-blur: 4px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.1;
+  --shadow-color: #000000;
   --shadow-2xs: 0px 2px 4px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0px 2px 4px 0px hsl(0 0% 0% / 0.05);
-  --shadow-sm: 0px 2px 4px 0px hsl(0 0% 0% / 0.1),
-    0px 1px 2px -1px hsl(0 0% 0% / 0.1);
-  --shadow: 0px 2px 4px 0px hsl(0 0% 0% / 0.1),
-    0px 1px 2px -1px hsl(0 0% 0% / 0.1);
-  --shadow-md: 0px 2px 4px 0px hsl(0 0% 0% / 0.1),
-    0px 2px 4px -1px hsl(0 0% 0% / 0.1);
-  --shadow-lg: 0px 2px 4px 0px hsl(0 0% 0% / 0.1),
-    0px 4px 6px -1px hsl(0 0% 0% / 0.1);
-  --shadow-xl: 0px 2px 4px 0px hsl(0 0% 0% / 0.1),
-    0px 8px 10px -1px hsl(0 0% 0% / 0.1);
+  --shadow-sm: 0px 2px 4px 0px hsl(0 0% 0% / 0.10), 0px 1px 2px -1px hsl(0 0% 0% / 0.10);
+  --shadow: 0px 2px 4px 0px hsl(0 0% 0% / 0.10), 0px 1px 2px -1px hsl(0 0% 0% / 0.10);
+  --shadow-md: 0px 2px 4px 0px hsl(0 0% 0% / 0.10), 0px 2px 4px -1px hsl(0 0% 0% / 0.10);
+  --shadow-lg: 0px 2px 4px 0px hsl(0 0% 0% / 0.10), 0px 4px 6px -1px hsl(0 0% 0% / 0.10);
+  --shadow-xl: 0px 2px 4px 0px hsl(0 0% 0% / 0.10), 0px 8px 10px -1px hsl(0 0% 0% / 0.10);
   --shadow-2xl: 0px 2px 4px 0px hsl(0 0% 0% / 0.25);
 }
 
@@ -185,7 +183,6 @@ body {
   --tracking-wide: calc(var(--tracking-normal) + 0.025em);
   --tracking-wider: calc(var(--tracking-normal) + 0.05em);
   --tracking-widest: calc(var(--tracking-normal) + 0.1em);
-
 }
 
 body {
@@ -283,4 +280,94 @@ body {
 :root {
   scrollbar-color: var(--color-primary) var(--color-background) !important;
   scrollbar-width: thin !important;
+}
+
+
+
+/* Basic editor styles */
+.tiptap {
+  :first-child {
+    margin-top: 0;
+  }
+
+  width: 100%;
+  height: 100%;
+
+  /* List styles */
+  ul,
+  ol {
+    padding: 0 1rem;
+    margin: 1.25rem 1rem 1.25rem 0.4rem;
+
+    li p {
+      margin-top: 0.25em;
+      margin-bottom: 0.25em;
+    }
+  }
+
+  /* Heading styles */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+    margin-top: 2.5rem;
+    text-wrap: pretty;
+  }
+
+  h1,
+  h2 {
+    margin-top: 3.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: 1rem;
+  }
+
+  /* Code and preformatted text styles */
+  code {
+    @apply font-mono bg-primary/10 text-primary rounded-sm text-sm py-0.5 px-1;
+  }
+
+  pre {
+    font-family: "JetBrainsMono", monospace;
+    @apply bg-card text-white rounded-lg p-4 my-6;
+
+    code {
+      @apply text-inherit bg-none p-0 text-sm;
+    }
+  }
+
+  blockquote {
+    @apply border-l-4 pl-4  my-6 border-foreground;
+  }
+
+  hr {
+    @apply border-border border-t my-6;
+  }
+
+  .mention {
+    @apply bg-primary/30 text-primary rounded-sm py-0.5 px-1 after:content-['\200B'];
+  }
+
+  a {
+    @apply cursor-pointer underline text-primary hover:text-primary/70;
+  }
 }

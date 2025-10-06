@@ -1,7 +1,5 @@
 import { ChevronsUpDown, Home } from "lucide-react"
 import { Select as SelectPrimitive } from "radix-ui"
-
-import Logo from "@/components/logo"
 import NotificationMenu from "@/components/notification-menu"
 import UserMenu from "@/components/user-menu"
 import {
@@ -27,6 +25,13 @@ import {
 } from "@/components/ui/select"
 import { SidebarTrigger } from "./ui/sidebar"
 import { Separator } from "./ui/separator"
+
+
+// const validPaths = [
+//   "/location/[]/"
+//   "/l/idofloc/"
+// ]
+
 
 export default function ClientNavbar() {
   return (

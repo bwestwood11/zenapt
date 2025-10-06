@@ -1,4 +1,4 @@
-import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
+import { protectedProcedure, router } from "../lib/trpc";
 import { adminRouter } from "./admin";
 import { authRouter } from "./auth";
 import { invitationRouter } from "./invitations";
@@ -7,6 +7,7 @@ import { marketingRouter } from "./marketing";
 import { organizationRouter } from "./organization";
 import { paymentRouter } from "./payments";
 import { permissionRouter } from "./permissions";
+import { servicesRouter } from "./services";
 
 export const appRouter = router({
   healthCheck: protectedProcedure.query(() => {
@@ -19,6 +20,8 @@ export const appRouter = router({
   payments: paymentRouter,
   permissions: permissionRouter,
   location: locationRouter,
-  invitation: invitationRouter
+  invitation: invitationRouter,
+  services: servicesRouter,
 });
+
 export type AppRouter = typeof appRouter;

@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { useMutation } from "@tanstack/react-query"
-import { toast } from "sonner"
-import { Mail, User, Shield } from "lucide-react"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Mail, User, Shield, GitGraph } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 import {
   Select,
@@ -16,7 +16,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -24,23 +24,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { OrgRole } from "../../../../server/prisma/generated/enums"
+} from "@/components/ui/form";
+import { OrgRole } from "../../../../server/prisma/generated/enums";
+import { trpc } from "@/utils/trpc";
 
 // 1. Validation schema
 const orgInvSchema = z.object({
   email: z.string().email("Enter a valid email"),
   name: z.string().min(1, "Name is required"),
-  role: z.enum(OrgRole),
-})
+  role: z.enum(OrgRole).exclude([OrgRole.OWNER]),
+});
 
-type OrgInvFormValues = z.infer<typeof orgInvSchema>
-
-// 2. Fake API function (replace with tRPC or fetch)
-const sendInvitation = async (data: OrgInvFormValues) => {
-  await new Promise((resolve) => setTimeout(resolve, 1500))
-  return data
-}
+type OrgInvFormValues = z.infer<typeof orgInvSchema>;
 
 const OrgInvForm = () => {
   const form = useForm<OrgInvFormValues>({
@@ -50,22 +45,23 @@ const OrgInvForm = () => {
       name: "",
       role: undefined,
     },
-  })
+  });
 
-  const mutation = useMutation({
-    mutationFn: sendInvitation,
-    onSuccess: () => {
-      toast.success("Invitation sent successfully!")
-      form.reset()
-    },
-    onError: () => {
-      toast.error("Failed to send invitation. Please try again.")
-    },
-  })
+  const mutation = useMutation(
+    trpc.invitation.inviteOrganizationMember.mutationOptions({
+      onSuccess: () => {
+        toast.success("Invitation sent successfully!");
+        form.reset();
+      },
+      onError: () => {
+        toast.error("Failed to send invitation. Please try again.");
+      },
+    })
+  );
 
   const onSubmit = (values: OrgInvFormValues) => {
-    mutation.mutate(values)
-  }
+    mutation.mutate(values);
+  };
 
   return (
     <Form {...form}>
@@ -126,34 +122,24 @@ const OrgInvForm = () => {
               <FormLabel>Role</FormLabel>
               <FormControl>
                 <div className="relative">
-                  <Shield className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground z-10" />
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger className="pl-10 h-12 text-base">
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className=" h-20 text-base">
                       <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="analyst">
+                      <SelectItem value={OrgRole.ANALYST}>
                         <div className="flex items-center space-x-2">
-                          <div className="h-2 w-2 rounded-full bg-blue-500" />
+                          <GitGraph className="size-4" />
                           <div>
                             <div className="font-medium">Analyst</div>
-                            <div className="text-xs text-muted-foreground">
-                              Can view and analyze data
-                            </div>
                           </div>
                         </div>
                       </SelectItem>
-                      <SelectItem value="admin">
+                      <SelectItem value={OrgRole.ADMIN}>
                         <div className="flex items-center space-x-2">
-                          <div className="h-2 w-2 rounded-full bg-red-500" />
+                          <Shield className="size-4" />
                           <div>
                             <div className="font-medium">Admin</div>
-                            <div className="text-xs text-muted-foreground">
-                              Full access to all features
-                            </div>
                           </div>
                         </div>
                       </SelectItem>
@@ -199,7 +185,7 @@ const OrgInvForm = () => {
         </div>
       </form>
     </Form>
-  )
-}
+  );
+};
 
-export default OrgInvForm
+export default OrgInvForm;

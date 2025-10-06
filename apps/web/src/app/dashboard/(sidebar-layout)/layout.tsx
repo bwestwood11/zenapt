@@ -6,7 +6,7 @@ import React from "react";
 const SidebarLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="w-full flex ">
-      <ClientSidebar />
+      <ClientSidebar  />
 
       <SidebarInset className="overflow-hidden min-h-svh">
         <ClientNavbar />

@@ -53,7 +53,7 @@ export default function Dashboard() {
       <WithPermissions required={["UPDATE::LOCATION"]}>
         <button>Update Location</button>
       </WithPermissions>
-      <WithPermissions required={["READ::SERVICES"]}>
+      <WithPermissions required={["READ::SERVICE"]}>
         <div>Services Data</div>
       </WithPermissions>
       <WithPermissions required={["READ::SUBSCRIPTION"]}>

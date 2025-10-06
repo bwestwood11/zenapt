@@ -1,7 +1,7 @@
+"use client";
+
 import * as React from "react";
 
-// import { SearchForm } from "@/components/search-form";
-// import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -16,23 +16,10 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Brain, LayoutDashboard } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 // This is sample data.
 const data = {
-  teams: [
-    {
-      name: "InnovaCraft",
-      logo: "https://raw.githubusercontent.com/origin-space/origin-images/refs/heads/main/exp1/logo-01_kp2j8x.png",
-    },
-    {
-      name: "Acme Corp.",
-      logo: "https://raw.githubusercontent.com/origin-space/origin-images/refs/heads/main/exp1/logo-01_kp2j8x.png",
-    },
-    {
-      name: "Evil Corp.",
-      logo: "https://raw.githubusercontent.com/origin-space/origin-images/refs/heads/main/exp1/logo-01_kp2j8x.png",
-    },
-  ],
   navMain: [
     {
       title: "Sections",
@@ -40,7 +27,7 @@ const data = {
       items: [
         {
           title: "Dashboard",
-          url: "#",
+          url: "/dashboard",
           icon: LayoutDashboard,
         },
         {
@@ -49,29 +36,8 @@ const data = {
           icon: LayoutDashboard,
         },
         {
-          title: "Contacts",
-          url: "#",
-          icon: LayoutDashboard,
-          isActive: true,
-        },
-        {
-          title: "Tools",
-          url: "#",
-          icon: LayoutDashboard,
-        },
-        {
-          title: "Integration",
-          url: "#",
-          icon: LayoutDashboard,
-        },
-        {
-          title: "Layouts",
-          url: "#",
-          icon: LayoutDashboard,
-        },
-        {
-          title: "Reports",
-          url: "#",
+          title: "Services",
+          url: "/dashboard/services",
           icon: LayoutDashboard,
         },
       ],
@@ -82,7 +48,7 @@ const data = {
       items: [
         {
           title: "Settings",
-          url: "#",
+          url: "/dashboard/settings",
           icon: LayoutDashboard,
         },
         {
@@ -98,6 +64,7 @@ const data = {
 export function ClientSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
+  const pathName = usePathname();
   return (
     <Sidebar {...props}>
       {" "}
@@ -120,8 +87,8 @@ export function ClientSidebar({
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
-                      className="group/menu-button font-medium gap-3 h-9 rounded-md bg-gradient-to-r hover:bg-transparent hover:from-sidebar-accent hover:to-sidebar-accent/40 data-[active=true]:from-primary/20 data-[active=true]:to-primary/5 [&>svg]:size-auto"
-                      isActive={item.isActive}
+                      isActive={pathName === item.url}
+                      // className="group/menu-button font-medium gap-3 h-9 rounded-md bg-gradient-to-r hover:bg-transparent hover:from-sidebar-accent hover:to-sidebar-accent/40 data-[active=true]:from-primary/20 data-[active=true]:to-primary/5 [&>svg]:size-auto"
                     >
                       <a href={item.url}>
                         {item.icon && (

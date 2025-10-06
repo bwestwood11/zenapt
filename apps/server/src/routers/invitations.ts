@@ -66,7 +66,10 @@ export const invitationRouter = router({
         });
       }
 
-      const { data } = verifyInvitationToken<{ invitationId: string, organizationName:string  }>(token);
+      const { data } = verifyInvitationToken<{
+        invitationId: string;
+        organizationName: string;
+      }>(token);
 
       const invitationId = data?.invitationId;
 
@@ -148,7 +151,10 @@ export const invitationRouter = router({
           });
         }
 
-        const { data } = verifyInvitationToken<{ invitationId: string, organizationName:string  }>(token);
+        const { data } = verifyInvitationToken<{
+          invitationId: string;
+          organizationName: string;
+        }>(token);
 
         const invitationId = data?.invitationId;
 
@@ -213,8 +219,7 @@ export const invitationRouter = router({
     if (usersCount >= 1) {
       throw new TRPCError({
         message:
-          "User with this email already part of the zenapt. try any other email",
-
+          "User with this email already part of the ZenApt. Try an other email",
         code: "BAD_REQUEST",
       });
     }
@@ -280,7 +285,10 @@ export const invitationRouter = router({
     console.log({ email, role, randomPassword });
 
     // 48 hours from now
-    const token = createInvitationToken<{ invitationId: string, organizationName:string }>(
+    const token = createInvitationToken<{
+      invitationId: string;
+      organizationName: string;
+    }>(
       {
         email,
         organizationId: ctx.session.user.organizationId,
@@ -288,7 +296,7 @@ export const invitationRouter = router({
         invitationId: res.id,
         type: INVITATION_TYPE.MANAGEMENT,
         name: ctx.session.user.name,
-        organizationName: res.organization.name
+        organizationName: res.organization.name,
       },
       toSeconds({ hours: INVITATION_EXPIRE_IN_HOURS })
     );
@@ -345,9 +353,10 @@ export const invitationRouter = router({
           });
         }
 
-        const { data, exp } = verifyInvitationToken<{ invitationId: string, organizationName:string }>(
-          token
-        );
+        const { data, exp } = verifyInvitationToken<{
+          invitationId: string;
+          organizationName: string;
+        }>(token);
         return { data, exp };
       } catch (error) {
         console.error(error);
@@ -383,13 +392,12 @@ export const invitationRouter = router({
         code: "FORBIDDEN",
       });
     }
-
+    
     const usersCount = await prisma.user.count({ where: { email } });
     if (usersCount >= 1) {
       throw new TRPCError({
         message:
           "User with this email already part of the zenapt. try any other email",
-
         code: "BAD_REQUEST",
       });
     }
@@ -457,7 +465,10 @@ export const invitationRouter = router({
     console.log({ email, role, randomPassword });
 
     // 48 hours from now
-    const token = createInvitationToken<{ invitationId: string, organizationName:string  }>(
+    const token = createInvitationToken<{
+      invitationId: string;
+      organizationName: string;
+    }>(
       {
         email,
         locationId: input.locationId,
@@ -465,7 +476,7 @@ export const invitationRouter = router({
         invitationId: res.id,
         type: INVITATION_TYPE.LOCATION,
         name: ctx.session.user.name,
-        organizationName: res.location.name
+        organizationName: res.location.name,
       },
       toSeconds({ hours: INVITATION_EXPIRE_IN_HOURS })
     );

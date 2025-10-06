@@ -3,7 +3,6 @@ import { Playfair_Display } from "next/font/google";
 import "@repo/tailwind";
 import Providers from "@/components/providers";
 import ClientNavbar from "@/components/client-navbar";
-import { ClientSidebar } from "@/components/sidebar/client-sidebar";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],

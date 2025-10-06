@@ -77,6 +77,21 @@ export type Location = Prisma.LocationModel
  */
 export type LocationEmployee = Prisma.LocationEmployeeModel
 /**
+ * Model ServiceTerms
+ * 
+ */
+export type ServiceTerms = Prisma.ServiceTermsModel
+/**
+ * Model ServiceGroup
+ * 
+ */
+export type ServiceGroup = Prisma.ServiceGroupModel
+/**
+ * Model Service
+ * 
+ */
+export type Service = Prisma.ServiceModel
+/**
  * Model ActivityLog
  * 
  */

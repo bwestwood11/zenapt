@@ -19,9 +19,10 @@ import { useMutation } from "@tanstack/react-query";
 import { EmployeeRole } from "../../../../../../../../../server/prisma/generated/enums";
 import { useParams } from "next/navigation";
 import z from "zod";
+import { useQuery } from "@tanstack/react-query";
 
 export default function InviteEmployeePage() {
-  const { locId } = useParams<{ locId: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<
@@ -31,6 +32,10 @@ export default function InviteEmployeePage() {
   const { mutate: inviteEmployee } = useMutation(
     trpc.invitation.inviteLocationEmployee.mutationOptions()
   );
+
+  const {data: location, isLoading: isLoadingLocations} =  useQuery(trpc.location.getLocation.queryOptions({slug}))
+
+  
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -39,10 +44,15 @@ export default function InviteEmployeePage() {
       return;
     }
 
-    if (!locId) {
+    if(!location || !location.id){
+      toast.error(!location ? "Please wait few seconds we are confirming the location details" : "Something is not right reload your page")
+      return
+    }
+
+    if (!slug) {
       toast.error("Try Reloading the page");
     }
-    inviteEmployee({ name, email, role, locationId: locId });
+    inviteEmployee({ name, email, role, locationId: location.id });
   }
 
   const getRoleIcon = (role: string) => {
@@ -235,7 +245,7 @@ export default function InviteEmployeePage() {
               <div className="flex justify-end pt-6">
                 <Button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isLoading || isLoadingLocations}
                   className="h-12 px-8 text-base font-semibold"
                 >
                   {isLoading ? (

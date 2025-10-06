@@ -15,6 +15,7 @@ type Response =
       role: EmployeeRole;
       locationId?: string;
       organizationId: undefined;
+      locationSlug:string;
     };
 
 type MembershipResponse = {
@@ -30,6 +31,7 @@ type MembershipResponse = {
         role: EmployeeRole;
         locationId: string;
         organizationId: string;
+        locationSlug:string;
       }[]
     | null;
 };
@@ -87,7 +89,7 @@ export async function getOrganizationByUserId(
         select: {
           role: true,
           locationId: true,
-          location: { select: { organizationId: true } }, // because loc → org
+          location: { select: { organizationId: true, slug: true } }, // because loc → org
         },
       },
     },
@@ -106,6 +108,7 @@ export async function getOrganizationByUserId(
       role: e.role,
       locationId: e.locationId,
       organizationId: e.location.organizationId,
+      locationSlug: e.location.slug
     })),
   };
 }

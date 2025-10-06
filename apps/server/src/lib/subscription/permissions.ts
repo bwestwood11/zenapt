@@ -6,7 +6,10 @@ export type Action = (typeof ACTIONS)[number];
 
 export const FEATURES = [
   "LOCATION",
-  "SERVICES",
+  "ADMIN_LOCATION",
+  "SERVICES_TERMS",
+  "SERVICES_GROUP",
+  "SERVICE",
   "MEMBERS",
   "EMPLOYEES",
   "ORGANIZATION",
@@ -51,15 +54,21 @@ export type RolePermission = {
   LOCATION: Record<LocationRole, Permission[]>;
 };
 
+const addFeature = (feature: Feature, actions?: Action[]): Permission[] => {
+  if(!actions) return ACTIONS.map((a) => `${a}::${feature}` as Permission)
+  return actions.map((a) => `${a}::${feature}` as Permission)
+}
+
 /* ---------- Role → Permissions Map ---------- */
 export const ROLE_PERMISSIONS: RolePermission = {
   ORG: {
     OWNER: ACTIONS.flatMap((a) => (FEATURES.map((f) => `${a}::${f}` as Permission))),
     ADMIN: [
-      "UPDATE::SERVICES",
-      "READ::ANALYTICS",
-      "UPDATE::ANALYTICS",
-      "CREATE::MEMBERS"
+      ...addFeature("SERVICES_GROUP"),
+      ...addFeature("SERVICES_TERMS"),
+      ...addFeature("ANALYTICS"),
+      "CREATE::MEMBERS",
+      "READ::ADMIN_LOCATION"
     ],
     ANALYST: ["READ::ANALYTICS"],
   },
@@ -69,16 +78,16 @@ export const ROLE_PERMISSIONS: RolePermission = {
       "READ::LOCATION",
       "UPDATE::LOCATION",
       "READ::EMPLOYEES",
-      "UPDATE::SERVICES",
+       ...addFeature("SERVICE"),
       "CREATE::EMPLOYEES"
     ],
-    LOCATION_FRONT_DESK: ["READ::EMPLOYEES", "READ::SERVICES"],
-    LOCATION_SPECIALIST: ["READ::SERVICES"],
+    LOCATION_FRONT_DESK: ["READ::EMPLOYEES", "READ::SERVICE"],
+    LOCATION_SPECIALIST: ["READ::SERVICE"],
     ORGANIZATION_MANAGEMENT: [
       "READ::LOCATION",
       "UPDATE::LOCATION",
       "READ::EMPLOYEES",
-      "UPDATE::SERVICES",
+      "UPDATE::SERVICE",
       "CREATE::EMPLOYEES"
     ],
   },

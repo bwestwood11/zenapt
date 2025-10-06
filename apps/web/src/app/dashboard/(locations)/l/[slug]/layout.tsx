@@ -1,5 +1,3 @@
-import { getSession } from "@/lib/auth/session";
-import { getSubscription } from "@/lib/payments/subscriptions";
 import { hasAccessToLocation } from "@/lib/permissions/permission";
 import { forbidden, redirect } from "next/navigation";
 
@@ -8,14 +6,14 @@ const DashboardLayout = async ({
   params,
 }: Readonly<{
   children: React.ReactNode;
-  params: Promise<{ locId: string }>;
+  params: Promise<{ slug: string }>;
 }>) => {
-  const { locId } = await params;
+  const { slug } = await params;
 
-  if (!locId) {
+  if (!slug) {
     throw forbidden();
   }
-  const hasAccess = await hasAccessToLocation(locId);
+  const hasAccess = await hasAccessToLocation(slug);
   if (!hasAccess) {
     throw redirect("/dashboard");
   }

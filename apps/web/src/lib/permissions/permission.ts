@@ -36,14 +36,14 @@ export const checkPermission = async (
   }
 };
 
-export const hasAccessToLocation = async (locationId: string) => {
+export const hasAccessToLocation = async (slug: string) => {
   try {
     const session = await getSession();
 
     if (!session) return false;
 
     const location = session.data?.user.employees?.find(
-      (emp) => emp.locationId === locationId
+      (emp) => emp.locationSlug === slug
     );
     if (!location) return false;
     return true;

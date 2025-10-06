@@ -68,6 +68,8 @@ model Organization {
   activityLogs    ActivityLog[]
 
   OrganizationInvitation OrganizationInvitation[]
+  ServiceTerms           ServiceTerms[]
+  ServiceGroup           ServiceGroup[]
 }
 
 model ManagementMembership {
@@ -86,6 +88,7 @@ model Location {
   id                 String               @id @default(cuid()) @map("_id")
   name               String
   organizationId     String
+  slug               String               @unique
   address            String?
   city               String?
   state              String?
@@ -104,8 +107,10 @@ model Location {
   // Nameless       Nameless[]
   LocationInvitation LocationInvitation[]
   ActivityLog        ActivityLog[]
+  Service            Service[]
 
   @@unique([name, organizationId])
+  @@index([slug, organizationId])
 }
 
 enum EmployeeRole {
@@ -123,34 +128,49 @@ model LocationEmployee {
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
 
-  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  location Location  @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Service  Service[]
 
   @@unique([userId, locationId])
 }
 
-// model Service {
-//   id           String  @id @default(cuid()) @map("_id")
-//   name         String
-//   description  String?
-//   minimumPrice Int
+model ServiceTerms {
+  id             String        @id @default(cuid()) @map("_id")
+  name           String
+  serviceGroupId String?
+  serviceGroup   ServiceGroup? @relation(fields: [serviceGroupId], references: [id], onDelete: Cascade)
+  description    String?
+  excerpt        String?
+  minimumPrice   Int
+  Service        Service[]
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
 
-//   // Nameless Nameless[]
-// }
+model ServiceGroup {
+  id             String       @id @default(cuid()) @map("_id")
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  description    String?
 
-// model Nameless {
-//   id                 String            @id @default(cuid()) @map("_id")
-//   service            Service           @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-//   serviceId          String
-//   location           Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
-//   locationId         String
-//   price              Int
-//   duration           Int
-//   locationEmployee   LocationEmployee? @relation(fields: [locationEmployeeId], references: [id], onDelete: Cascade)
-//   locationEmployeeId String?
-//   createdAt          DateTime          @default(now())
-//   updatedAt          DateTime          @updatedAt
-// }
+  serviceTerms ServiceTerms[]
+}
+
+model Service {
+  id                 String            @id @default(cuid()) @map("_id")
+  serviceTerms       ServiceTerms      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceId          String
+  location           Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  locationId         String
+  price              Int
+  duration           Int
+  locationEmployee   LocationEmployee? @relation(fields: [locationEmployeeId], references: [id], onDelete: Cascade)
+  locationEmployeeId String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+}
 
 // model Customer {
 //   id           String    @id @default(cuid()) @map("_id")

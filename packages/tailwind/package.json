@@ -2,11 +2,14 @@
   "name": "@repo/tailwind",
   "version": "1.0.0",
   "description": "",
-  "private":true,
+  "private": true,
   "author": "",
   "license": "ISC",
-  "exports":{
+  "exports": {
     ".": "./index.css",
-    "./postcss":"./postcss.config.mjs"
+    "./postcss": "./postcss.config.mjs"
+  },
+  "devDependencies": {
+    "@tailwindcss/container-queries": "^0.1.1"
   }
 }
