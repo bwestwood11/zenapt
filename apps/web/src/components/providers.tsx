@@ -6,6 +6,8 @@ import { queryClient } from "@/utils/trpc";
 import { ThemeProvider } from "./theme-provider";
 import { Toaster } from "./ui/sonner";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { ConfirmProvider } from "./ui/confirm";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -15,12 +17,17 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       enableSystem
       disableTransitionOnChange
     >
-      <SidebarProvider>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          <ReactQueryDevtools />
-        </QueryClientProvider>
-      </SidebarProvider>
+      <ConfirmProvider>
+        <NuqsAdapter>
+          <SidebarProvider>
+            <QueryClientProvider client={queryClient}>
+              {children}
+              <ReactQueryDevtools />
+            </QueryClientProvider>
+          </SidebarProvider>
+        </NuqsAdapter>
+      </ConfirmProvider>
+
       <Toaster richColors />
     </ThemeProvider>
   );

@@ -4,7 +4,7 @@ import { resend } from "../lib/resend";
 import { after } from "next/server";
 import prisma from "../../prisma";
 import { maskEmail, toSeconds } from "../lib/helpers/utils";
-import { ACTIVITY_LOG_ACTIONS } from "../lib/activitylogs";
+import { ACTIVITY_LOG_ACTIONS, addActivityLog } from "../lib/activitylogs";
 import { decrypt, encrypt } from "../lib/helpers/encyrption";
 import { TRPCError } from "@trpc/server";
 import { createSignedToken, verifySignedToken } from "../lib/helpers/hash";
@@ -327,7 +327,7 @@ export const invitationRouter = router({
       if (ctx.session.user.organizationId) {
         await prisma.activityLog.create({
           data: {
-            action: ACTIVITY_LOG_ACTIONS.INVITE_EMPLOYEE,
+            action: ACTIVITY_LOG_ACTIONS.INVITED_EMPLOYEE,
             description: `${name} ${maskEmail(
               email
             )} was invited to your organization as an ${role}`,
@@ -503,21 +503,15 @@ export const invitationRouter = router({
       react: EmailHtml,
     });
 
-    after(async () => {
-      if (ctx.session.user.organizationId) {
-        await prisma.activityLog.create({
-          data: {
-            action: ACTIVITY_LOG_ACTIONS.INVITE_EMPLOYEE,
-            description: `${name} ${maskEmail(
-              email
-            )} was invited to your organization as an ${role}`,
-            userId: ctx.session.user.id,
-            organizationId: ctx.session.user.organizationId,
-            locationId: input.locationId,
-          },
-        });
-      }
-    });
+    addActivityLog({
+      type: ACTIVITY_LOG_ACTIONS.INVITED_EMPLOYEE,
+      description: `${name} ${maskEmail(
+        email
+      )} was invited to your location as an ${role}`,
+      userId: ctx.session.user.id,
+      organizationId: ctx.session.user.organizationId,
+      locationId: input.locationId,
+    })
 
     return "OK";
   }),

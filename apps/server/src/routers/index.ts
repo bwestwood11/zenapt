@@ -3,6 +3,7 @@ import { adminRouter } from "./admin";
 import { authRouter } from "./auth";
 import { invitationRouter } from "./invitations";
 import { locationRouter } from "./location";
+import { logsRouter } from "./logs";
 import { marketingRouter } from "./marketing";
 import { organizationRouter } from "./organization";
 import { paymentRouter } from "./payments";
@@ -22,6 +23,7 @@ export const appRouter = router({
   location: locationRouter,
   invitation: invitationRouter,
   services: servicesRouter,
+  logs: logsRouter
 });
 
 export type AppRouter = typeof appRouter;

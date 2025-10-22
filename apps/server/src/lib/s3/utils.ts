@@ -5,8 +5,8 @@ export const IMAGE_UPLOAD_ENDPOINTS = {
   },
 };
 
-export const BUCKET_NAME = process.env.S3_BUCKET_NAME!
-const AWS_REGION = process.env.AWS_REGION!
+export const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
+const AWS_REGION = process.env.AWS_REGION!;
 
 const MIME_TYPES = {
   "image/png": "png",
@@ -72,11 +72,12 @@ export async function getFileChecksum(
 }
 
 // https://zenapt.s3.us-east-2.amazonaws.com/${key}
-
-const baseUrl = `https://${BUCKET_NAME}.s3.${AWS_REGION}`
+//  https://zenapt.s3.us-east-2/logos/F8vGrVEPVUJZAPbS2tRJZUeUp2EgykRZ/1760110963300.png
+// https://zenapt.s3.us-east-2.amazonaws.com/logos/F8vGrVEPVUJZAPbS2tRJZUeUp2EgykRZ/1760110730152.png
+const baseUrl = `https://${BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com`;
 
 export function keyToFileUrl(key: string) {
-    return `${baseUrl}/${key}`
+  return `${baseUrl}/${key}`;
 }
 
 export function extractS3Key(url: string): string | null {

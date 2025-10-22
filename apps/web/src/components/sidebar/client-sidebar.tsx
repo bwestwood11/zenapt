@@ -15,8 +15,9 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { Brain, LayoutDashboard } from "lucide-react";
+import { LayoutDashboard } from "lucide-react";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 // This is sample data.
 const data = {
@@ -40,6 +41,11 @@ const data = {
           url: "/dashboard/services",
           icon: LayoutDashboard,
         },
+        {
+          title: "Activity Log",
+          url: "/dashboard/activity-log",
+          icon: LayoutDashboard,
+        },
       ],
     },
     {
@@ -47,7 +53,7 @@ const data = {
       url: "#",
       items: [
         {
-          title: "Settings",
+          title: "Company Settings",
           url: "/dashboard/settings",
           icon: LayoutDashboard,
         },
@@ -70,8 +76,8 @@ export function ClientSidebar({
       {" "}
       <SidebarHeader className="px-6 h-16 py-0 flex it">
         <div className="flex items-center gap-3 h-full">
-          <Brain className="size-5" />
-          <p className="text-xl">ZenApt</p>
+          <Image src="/logo.svg" alt="Zenapt" width={40} height={40}  priority/>
+          <Image src="/logo-text.svg" alt="Zenapt" width={100} height={40}  priority/>
         </div>
       </SidebarHeader>
       <SidebarContent>

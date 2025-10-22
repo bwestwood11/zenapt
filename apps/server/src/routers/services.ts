@@ -2,6 +2,8 @@ import z from "zod";
 import { withPermissions } from "../lib/trpc";
 import prisma from "../../prisma";
 import { getServices } from "../lib/service/group";
+import { ACTIVITY_LOG_ACTIONS, addActivityLog } from "../lib/activitylogs";
+import { maskEmail } from "../lib/helpers/utils";
 
 const createServiceTerms = withPermissions(
   "CREATE::SERVICES_TERMS",
@@ -10,7 +12,7 @@ const createServiceTerms = withPermissions(
     description: z.string().optional(),
     groupId: z.string(),
     minPrice: z.number(),
-    excerpt:z.string()
+    excerpt: z.string(),
   })
 ).mutation(async ({ ctx, input }) => {
   const { name, description, minPrice, groupId, excerpt } = input;
@@ -42,6 +44,13 @@ const createServiceGroup = withPermissions(
       description,
       organizationId: ctx.orgWithSub.id,
     },
+  });
+
+  addActivityLog({
+    type: ACTIVITY_LOG_ACTIONS.CREATED_SERVICE_GROUP,
+    description: `Service group ${name} was created.`,
+    userId: ctx.session.user.id,
+    organizationId: ctx.session.user.organizationId,
   });
 });
 
@@ -81,7 +90,6 @@ const getAllGroups = withPermissions("READ::SERVICES_GROUP").query(
       select: {
         id: true,
         name: true,
-
       },
       where: {
         organizationId: ctx.orgWithSub.id,
@@ -95,5 +103,5 @@ export const servicesRouter = {
   createServiceGroup,
   createService,
   getAllServicesTerms,
-  getAllGroups
+  getAllGroups,
 };

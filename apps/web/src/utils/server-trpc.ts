@@ -19,6 +19,8 @@ const proxyClient = createTRPCClient<AppRouter>({
     }),
   ],
 });
+
+
 export const serverTRPC = createServerSideHelpers({
   client: proxyClient,
 });

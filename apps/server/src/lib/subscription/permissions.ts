@@ -67,7 +67,7 @@ export const ROLE_PERMISSIONS: RolePermission = {
       ...addFeature("SERVICES_GROUP"),
       ...addFeature("SERVICES_TERMS"),
       ...addFeature("ANALYTICS"),
-      "CREATE::MEMBERS",
+      ...addFeature("MEMBERS"),
       "READ::ADMIN_LOCATION"
     ],
     ANALYST: ["READ::ANALYTICS"],
