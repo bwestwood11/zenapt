@@ -1,6 +1,6 @@
 import { getSession } from "@/lib/auth/session";
 import { getSubscription } from "@/lib/payments/subscriptions";
-import { redirect } from "next/navigation";
+import { forbidden, redirect } from "next/navigation";
 
 const DashboardLayout = async ({
   children,
@@ -16,15 +16,15 @@ const DashboardLayout = async ({
     return redirect("/change-password");
   }
 
+  if(session.user.token?.startsWith("OWNER") && !session.user.management){
+    return redirect("/onboarding");
+  }
+
   // Check if he is onboarded
   if (
     !session.user.management?.organizationId &&
     session.user.management?.role === "OWNER"
   ) {
-    return redirect("/onboarding");
-  }
-
-  if (!session.user.management && session.session.token) {
     return redirect("/onboarding");
   }
 
@@ -40,8 +40,11 @@ const DashboardLayout = async ({
   // Check if he paid
   const subscription = await getSubscription();
 
-  if (!subscription?.isActive) {
+  if (!subscription?.isActive && session.user.management?.role === "OWNER") {
     return redirect("/checkout");
+  }
+  if (!subscription?.isActive) {
+    return forbidden();
   }
 
   return <div>{children}</div>;

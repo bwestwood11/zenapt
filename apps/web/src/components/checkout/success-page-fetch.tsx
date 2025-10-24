@@ -14,11 +14,12 @@ import {
   Users,
   Clock,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import ClockLoader from "../ui/clock-loader";
+import Link from "next/link";
 const orderData = {
   orderNumber: "MEDSPA-2024-001234",
   date: new Date().toLocaleDateString("en-US", {
@@ -374,7 +375,9 @@ const SessionDetails = ({ sessionId }: { sessionId: string }) => {
             Ready to Get Started?
           </h3>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg">Access Dashboard</Button>
+            <Link className={buttonVariants({ size: "lg" })} href="/dashboard">
+              Access Dashboard
+            </Link>
             <Button variant="outline" size="lg">
               Contact Support
             </Button>

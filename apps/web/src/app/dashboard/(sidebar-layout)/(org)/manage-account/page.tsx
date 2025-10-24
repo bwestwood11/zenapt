@@ -1,7 +1,10 @@
 import { AccountSettings } from "@/components/manage-account/account-settings";
+import { requireAuth } from "@/lib/permissions/permission";
 
 
-export default function AccountPage() {
+export default async function AccountPage() {
+  await requireAuth()
+  
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">

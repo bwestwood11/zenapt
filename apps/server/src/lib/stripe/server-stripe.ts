@@ -3,6 +3,7 @@ import "server-only";
 import Stripe from "stripe";
 import prisma from "../../../prisma";
 import { STRIPE_STATUS } from "./types";
+import { revalidateTag } from "next/cache";
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-07-30.basil",
@@ -14,8 +15,17 @@ export const syncStripeCustomer = async (customerId: string) => {
     customer: customerId,
     status: "all",
     limit: 1,
-    expand: ["data.default_payment_method"],
+    expand: ["data.default_payment_method", "data.customer"],
   });
+
+  const customer = subscription.data[0].customer as Stripe.Customer;
+
+  if (!customer.metadata) {
+    console.error(
+      "[This should not happen] Got a customer without details happens if customer is deleted"
+    );
+  }
+
   if (subscription.data.length === 0) {
     await prisma.subscription.update({
       where: { stripeCustomerId: customerId },
@@ -23,13 +33,20 @@ export const syncStripeCustomer = async (customerId: string) => {
         status: STRIPE_STATUS.UNPAID,
       },
     });
+
+    if (customer.metadata.organizationId) {
+      revalidateTag(customer.metadata.organizationId);
+    }
+
     return;
   }
+
   const sub = subscription.data[0];
   const metadata = sub.items.data[0].price.metadata as {
     MAX_EMAILS?: string;
     MAX_TEXTS?: string;
   };
+
   if (!metadata || !metadata.MAX_EMAILS || !metadata.MAX_TEXTS) {
     throw new Error("Price metadata is missing MAX_EMAILS or MAX_TEXTS");
   }
@@ -41,7 +58,6 @@ export const syncStripeCustomer = async (customerId: string) => {
     sub.default_payment_method && sub.default_payment_method !== "string"
       ? (sub.default_payment_method as Stripe.PaymentMethod).card?.last4
       : null;
-  console.dir(sub, { depth: null });
   await prisma.subscription.update({
     where: { stripeCustomerId: customerId },
     data: {
@@ -66,4 +82,7 @@ export const syncStripeCustomer = async (customerId: string) => {
         parseInt(metadata.MAX_TEXTS, 10) * (sub.items.data[0].quantity ?? 1),
     },
   });
+  if (customer.metadata.organizationId) {
+    revalidateTag(customer.metadata.organizationId);
+  }
 };

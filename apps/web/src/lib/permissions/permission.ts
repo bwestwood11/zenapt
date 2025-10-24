@@ -6,6 +6,7 @@ import { serverTRPC } from "@/utils/server-trpc";
 import type { Permission } from "../../../../server/src/lib/subscription/permissions";
 import { authClient } from "../auth-client";
 import { getSession } from "../auth/session";
+import { forbidden, redirect } from "next/navigation";
 
 export const checkPermission = async (
   required: Permission[],
@@ -34,6 +35,40 @@ export const checkPermission = async (
     console.error(error);
     return false;
   }
+};
+
+export const requirePermission = async (
+  required: Permission[],
+  params?: Params
+) => {
+  const hasPerm = await checkPermission(required, params ?? {});
+  if (!hasPerm) {
+    return forbidden();
+  }
+
+  return true;
+};
+
+const LoginRoute = "/login";
+
+export const requireAuth = async (redirectUrl?: string) => {
+  const { data: session } = await getSession();
+
+  if (!session) {
+    return redirect(redirectUrl ?? LoginRoute);
+  }
+
+  return true;
+};
+
+export const redirectIfAuthenticated = async (redirectUrl: string) => {
+  const { data: session } = await getSession();
+
+  if (!!session) {
+    return redirect(redirectUrl);
+  }
+
+  return true;
 };
 
 export const hasAccessToLocation = async (slug: string) => {

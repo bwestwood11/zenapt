@@ -13,7 +13,6 @@ import {
   mimeTypeToExtension,
 } from "../lib/s3/utils";
 import { deleteFile } from "../lib/s3/commands";
-import { revalidateCache } from "../lib/helpers/cache";
 import { revalidateTag } from "next/cache";
 
 const CompanySizeSchema = z
@@ -140,6 +139,9 @@ export const organizationRouter = router({
             logo,
           },
         });
+
+
+        revalidateTag(ctx.orgWithSub.id)
         return organization;
       } catch (error) {
         if (error instanceof TRPCError) throw error;

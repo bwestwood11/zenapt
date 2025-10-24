@@ -7,6 +7,7 @@ import z from "zod";
 
 import Stripe from "stripe";
 import { validateSubscription } from "../lib/subscription/subscription";
+import { revalidateTag } from "next/cache";
 
 
 const initializePayment = protectedProcedure.mutation(async ({ ctx }) => {
@@ -118,6 +119,8 @@ const getCheckoutSession = protectedProcedure
           stripeCustomerId: customerId,
         },
       });
+      
+      revalidateTag(organization.id)
     }
 
     if (!customerId) {
@@ -193,6 +196,8 @@ const getSessionDetails = protectedProcedure
     }
 
     await syncStripeCustomer(sessionCustomer);
+
+    revalidateTag(ctx.session.user.organizationId)
 
     const subscription = session.subscription as Stripe.Subscription;
     const metadata = subscription.items.data[0].price.metadata as {

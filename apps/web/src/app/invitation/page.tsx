@@ -2,7 +2,7 @@ import { Mail, Users } from "lucide-react";
 import React from "react";
 import ActionButtons from "./buttons";
 import { serverTRPC } from "@/utils/server-trpc";
-import Forbidden from "../forbidden";
+import { forbidden } from "next/navigation";
 
 const validateToken = async ({ token }: { token: string }) => {
   try {
@@ -17,10 +17,10 @@ type Params = Promise<{ token?: string }>;
 const InvitationPage = async ({ searchParams }: { searchParams: Params }) => {
   const { token } = await searchParams;
 
-  if (!token) throw Forbidden();
+  if (!token) return forbidden();
 
   const res = await validateToken({ token });
-  if (!res) throw Forbidden();
+  if (!res) return forbidden();
 
   const { data, exp } = res;
 

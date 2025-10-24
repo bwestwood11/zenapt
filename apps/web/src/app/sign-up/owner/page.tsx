@@ -8,7 +8,7 @@ const SignUpPage = async ({
 }) => {
   const { email, token } = await searchParams;
 
-  if (!token || !email) return <p>Try booking a demo {email} {token}</p>;
+  if (!token || !email) return <p>Try booking a demo</p>;
   return <SignUpForm email={email} token={token} />;
 };
 

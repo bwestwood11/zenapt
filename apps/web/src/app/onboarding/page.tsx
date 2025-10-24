@@ -1,12 +1,21 @@
-"use client";
 
 import OnboardingForm from "@/components/onboarding/onboarding-form";
 import { authClient } from "@/lib/auth-client";
+import { getSession } from "@/lib/auth/session";
 import { Sparkles } from "lucide-react";
+import { redirect } from "next/navigation";
 import type React from "react";
 
-export default function OnboardingPage() {
-  const {data} = authClient.useSession()
+export default async function OnboardingPage() {
+  const {data} = await getSession()
+
+  if(!data){
+    return redirect("/login")
+  }
+
+  if(data.user.management?.organizationId){
+    return redirect("/dashboard")
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">

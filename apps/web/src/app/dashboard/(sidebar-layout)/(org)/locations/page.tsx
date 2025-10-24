@@ -1,7 +1,9 @@
 import { LocationsGrid } from "@/components/locations/locations-grid";
+import { requirePermission } from "@/lib/permissions/permission";
 import Link from "next/link";
 
-export default function LocationsPage() {
+export default async function LocationsPage() {
+  await requirePermission(["READ::ADMIN_LOCATION"])
   
   return (
     <main className="min-h-screen bg-background">

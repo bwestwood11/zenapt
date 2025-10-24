@@ -1,8 +1,10 @@
 import NewLocationForm from "@/components/locations/new-location-form"
+import { requirePermission } from "@/lib/permissions/permission"
 import { MapPin, Building2 } from "lucide-react"
 
 
-export default function CreateLocationPage() {
+export default async function CreateLocationPage() {
+  await requirePermission(["CREATE::LOCATION"])
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-8 px-4 max-w-7xl">

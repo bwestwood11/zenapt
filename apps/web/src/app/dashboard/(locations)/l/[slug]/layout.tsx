@@ -11,7 +11,7 @@ const DashboardLayout = async ({
   const { slug } = await params;
 
   if (!slug) {
-    throw forbidden();
+    return forbidden();
   }
   const hasAccess = await hasAccessToLocation(slug);
   if (!hasAccess) {

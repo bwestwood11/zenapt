@@ -40,7 +40,14 @@ import {
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-const companySizeOption = ["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"] as const
+const companySizeOption = [
+  "1-10",
+  "11-50",
+  "51-200",
+  "201-500",
+  "501-1000",
+  "1000+",
+] as const;
 
 const OnboardingForm = () => {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -51,9 +58,7 @@ const OnboardingForm = () => {
     }),
     logo: z.instanceof(File).optional(),
     businessDescription: z.string().optional(),
-    companySize: z
-      .enum(companySizeOption)
-      .optional(),
+    companySize: z.enum(companySizeOption).optional(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -100,6 +105,11 @@ const OnboardingForm = () => {
       return;
     }
 
+    if (file.size > IMAGE_UPLOAD_ENDPOINTS["logos"]["MAX_FILE_SIZE"]) {
+      toast.error("File is to big");
+      return;
+    }
+
     form.setValue("logo", file);
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -112,11 +122,9 @@ const OnboardingForm = () => {
     setIsSubmitting(true);
     const logoFile = values.logo;
     const fileName = logoFile?.name;
-    let fileUrl = undefined;
     if (fileName) {
       try {
         const checksum = await getFileChecksum(logoFile, "SHA-256");
-        console.log(checksum);
 
         const response = await initUpload({
           mimeType: logoFile.type,
@@ -124,7 +132,7 @@ const OnboardingForm = () => {
           checksum: checksum,
         });
 
-        if (!response) {
+        if (!response || !response.url) {
           return;
         }
 
@@ -134,14 +142,16 @@ const OnboardingForm = () => {
           body: logoFile,
         });
 
-        fileUrl = response.url;
+       createOrganization({ ...values, logo: response.url });
       } catch (err) {
         console.error(err);
         setIsSubmitting(false);
       }
+    } else {
+       createOrganization({ ...values, logo: undefined });
     }
 
-    createOrganization({ ...values, logo: fileUrl });
+    
   }
   return (
     <Card className="shadow-2xl border-0 bg-card/80 backdrop-blur-sm">

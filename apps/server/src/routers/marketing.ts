@@ -46,12 +46,12 @@ const BookDemo = publicProcedure
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.CALAPIKEY}`,
+        Authorization: `Bearer ${process.env.CAL_API_KEY}`,
         "cal-api-version": Cal_API_Version,
       },
       body: JSON.stringify({
         start: demoTime,
-        eventTypeId: parseInt(process.env.EVENTTYPEID!),
+        eventTypeId: parseInt(process.env.EVENT_TYPE_ID!),
         attendee: {
           name: `${firstName} ${lastName}`,
           email: email,
@@ -128,13 +128,13 @@ const GetBookingSlots = publicProcedure
       const url = new URL("https://api.cal.com/v2/slots/available");
       url.searchParams.set("startTime", start);
       url.searchParams.set("endTime", end);
-      url.searchParams.set("eventTypeId", process.env.eventTypeId ?? "");
+      url.searchParams.set("eventTypeId", process.env.EVENT_TYPE_ID ?? "");
 
       const response = await fetch(url.toString(), {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.calAPIKey}`,
+          Authorization: `Bearer ${process.env.CAL_API_KEY}`,
         },
       });
 

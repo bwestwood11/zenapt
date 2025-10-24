@@ -1,10 +1,9 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
 import { Shield } from "lucide-react";
 import ChangePasswordForm from "./form";
+import { requireAuth } from "@/lib/permissions/permission";
 
-export default function ChangePasswordPage() {
+export default async function ChangePasswordPage() {
+  await requireAuth()
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
