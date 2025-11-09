@@ -169,8 +169,6 @@ function LocationFields() {
 }
 
 export default function NewLocationForm() {
-
-
   const timezones = useMemo(() => {
     const now = new Date();
 
@@ -194,7 +192,11 @@ export default function NewLocationForm() {
     });
   }, []);
 
-  const { mutate, isSuccess, isPending: isSubmitting  } = useMutation(
+  const {
+    mutate,
+    isSuccess,
+    isPending: isSubmitting,
+  } = useMutation(
     trpc.location.createLocation.mutationOptions({
       onSuccess: () => {
         form.reset();
@@ -222,13 +224,12 @@ export default function NewLocationForm() {
   });
 
   const onSubmit = async (data: FormData) => {
-    console.log("Submitting", data);
     mutate(data);
   };
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen container mx-auto p-10 bg-background flex items-center justify-center">
+      <div className="container mx-auto p-10 bg-background flex items-center justify-center">
         <div className="w-full max-w-md text-center space-y-4 p-8">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
           <h2 className="text-2xl font-semibold text-foreground">

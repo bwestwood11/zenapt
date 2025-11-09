@@ -1,4 +1,6 @@
+import { SetBreadcrumbs } from "@/components/breadcrumbs";
 import { LocationsGrid } from "@/components/locations/locations-grid";
+import { BREADCRUMBS } from "@/hooks/breadcrumbs";
 import { requirePermission } from "@/lib/permissions/permission";
 import Link from "next/link";
 
@@ -7,6 +9,7 @@ export default async function LocationsPage() {
   
   return (
     <main className="min-h-screen bg-background">
+      <SetBreadcrumbs items={BREADCRUMBS.dashboardLocations} />
       <div className="container mx-auto px-4 py-12">
       <div className="flex items-center justify-between mb-16">
         <div className="text-left">

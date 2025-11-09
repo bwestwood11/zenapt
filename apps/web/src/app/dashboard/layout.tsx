@@ -43,6 +43,7 @@ const DashboardLayout = async ({
   if (!subscription?.isActive && session.user.management?.role === "OWNER") {
     return redirect("/checkout");
   }
+  
   if (!subscription?.isActive) {
     return forbidden();
   }

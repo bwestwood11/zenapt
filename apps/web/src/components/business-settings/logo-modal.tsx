@@ -40,6 +40,7 @@ export const LogoDialog = ({
 
     onOpenChange(false);
     onLogoSelect(dataUrl)
+    
   };
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -58,6 +59,9 @@ export const LogoDialog = ({
     maxSize: 2 * 1024 * 1024,
     onDropRejected: () =>
       setDropError("Please upload a valid image (max 2MB)."),
+    onDropAccepted() {
+      setDropError("")
+    },
   });
 
   return (
@@ -105,7 +109,7 @@ export const LogoDialog = ({
               JPG, PNG, GIF, WebP — Max 2MB
             </p>
             {dropError && (
-              <p className="text-xs text-destructive text-center">
+              <p className="text-xs text-destructive text-center bg-red-100 p-2.5 rounded-lg w-fit mx-auto">
                 {dropError}
               </p>
             )}

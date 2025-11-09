@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { getCroppedImg } from "./utils";
 import Cropper from "react-easy-crop";
 import { Slider } from "../ui/slider";
@@ -41,7 +41,11 @@ export function CropModal({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md p-4">
-        <DialogHeader>Crop your profile picture</DialogHeader>
+        <DialogHeader>
+          <DialogTitle className="text-lg font-medium">
+            Crop your profile picture
+          </DialogTitle>
+        </DialogHeader>
         <div className="relative w-full h-64 bg-muted overflow-hidden rounded-lg">
           <Cropper
             image={imageSrc}

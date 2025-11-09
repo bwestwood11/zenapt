@@ -1968,6 +1968,7 @@ export type LocationInvitationScalarFieldEnum = (typeof LocationInvitationScalar
 
 export const DemoRequestScalarFieldEnum = {
   id: 'id',
+  createdAt: 'createdAt',
   firstName: 'firstName',
   lastName: 'lastName',
   businessName: 'businessName',

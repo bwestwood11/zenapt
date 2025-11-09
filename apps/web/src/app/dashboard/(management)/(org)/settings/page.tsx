@@ -37,7 +37,7 @@ export default function SettingsPage() {
     "tab",
     parseAsString.withDefault("general").withOptions({ clearOnDefault: false })
   );
-
+  
   const { checkPermission, isLoadingPermissions } = usePermissions();
 
   // Handle loading state early

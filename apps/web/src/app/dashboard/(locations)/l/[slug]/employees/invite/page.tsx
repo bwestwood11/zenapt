@@ -29,13 +29,32 @@ export default function InviteEmployeePage() {
     Exclude<EmployeeRole, "ORGANIZATION_MANAGEMENT">
   >(EmployeeRole.LOCATION_ADMIN);
   const [isLoading, setIsLoading] = useState(false);
-  const { mutate: inviteEmployee } = useMutation(
-    trpc.invitation.inviteLocationEmployee.mutationOptions()
+  const {
+    mutate: inviteEmployee,
+    isSuccess,
+    isError,
+    isPending,
+    error,
+  } = useMutation(
+    trpc.invitation.inviteLocationEmployee.mutationOptions({
+      onSuccess: () => {
+        toast.success("Invitation sent successfully");
+        setName("");
+        setEmail("");
+        setRole(EmployeeRole.LOCATION_ADMIN);
+      },
+      onError: (error) => {
+        toast.error(
+          error.message || "Failed to send invitation. Please try again."
+        );
+      },
+    })
   );
 
-  const {data: location, isLoading: isLoadingLocations} =  useQuery(trpc.location.getLocation.queryOptions({slug}))
+  const { data: location, isLoading: isLoadingLocations } = useQuery(
+    trpc.location.getLocation.queryOptions({ slug })
+  );
 
-  
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -44,9 +63,13 @@ export default function InviteEmployeePage() {
       return;
     }
 
-    if(!location || !location.id){
-      toast.error(!location ? "Please wait few seconds we are confirming the location details" : "Something is not right reload your page")
-      return
+    if (!location || !location.id) {
+      toast.error(
+        !location
+          ? "Please wait few seconds we are confirming the location details"
+          : "Something is not right reload your page"
+      );
+      return;
     }
 
     if (!slug) {
@@ -197,25 +220,6 @@ export default function InviteEmployeePage() {
                 </p>
               </div>
 
-              {/* Role Preview */}
-              {role && (
-                <div className="rounded-lg border border-border bg-accent/50 p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                      {getRoleIcon(role)}
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="font-semibold capitalize">
-                        {role.replace("_", " ")} Role
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {getRoleDescription(role)}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               {/* Role Descriptions */}
               <div className="space-y-3 text-sm text-muted-foreground">
                 <div className="flex items-center gap-3">
@@ -256,12 +260,26 @@ export default function InviteEmployeePage() {
                   ) : (
                     <>
                       <Mail className="mr-2 h-4 w-4" />
-                      Send Invitation
+                      {isPending ? "Sending Invitation..." : "Send Invitation"}
                     </>
                   )}
                 </Button>
               </div>
             </form>
+            {isSuccess && (
+              <div className="rounded-md bg-green-50 p-4">
+                <p className="text-sm text-green-700">
+                  Invitation sent successfully!
+                </p>
+              </div>
+            )}
+            {isError && (
+              <div className="rounded-md bg-red-50 p-4">
+                <p className="text-sm text-red-700">
+                  {error?.message || "Failed to send invitation."}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Information Section */}

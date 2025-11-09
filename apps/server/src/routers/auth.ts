@@ -8,6 +8,8 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { keyToFileUrl, mimeTypeToExtension } from "../lib/s3/utils";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { S3client } from "../lib/s3";
+
+import { APIError } from "better-auth/api";
 const AVATARS = [
   "https://cdn.jsdelivr.net/gh/alohe/avatars/png/vibrent_1.png",
   "https://cdn.jsdelivr.net/gh/alohe/avatars/png/vibrent_2.png",
@@ -78,6 +80,7 @@ export const authRouter = router({
 
           headers: await headers(),
         });
+
         await prisma.user.update({
           data: {
             isTempPassword: false,
@@ -89,8 +92,22 @@ export const authRouter = router({
 
         return "OK";
       } catch (error) {
-        console.log(error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+        console.error(error);
+        if (error instanceof APIError && error.status === "BAD_REQUEST") {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message:
+              "The password is Invalid. Make sure you put the password you got from the email",
+          });
+        }
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Something went wrong try it after some time.",
+        });
       }
     }),
   updateProfileImage: protectedProcedure
@@ -108,36 +125,45 @@ export const authRouter = router({
           headers: await headers(),
         });
       } catch (error) {
-        console.error(error)
+        console.error(error);
 
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Something Went wrong"
-        })
+          message: "Something Went wrong",
+        });
       }
     }),
 
-
-    updateProfile: protectedProcedure.input(z.object({name: z.string()})).mutation(async ({input}) => {
+  updateProfile: protectedProcedure
+    .input(z.object({ name: z.string() }))
+    .mutation(async ({ input }) => {
       try {
         await auth.api.updateUser({
           body: {
-           name: input.name
+            name: input.name,
           },
           headers: await headers(),
         });
       } catch (error) {
-        console.error(error)
+        console.error(error);
 
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Something Went wrong"
-        })
+          message: "Something Went wrong",
+        });
       }
     }),
 
-    getSignedUrlForProfileUpdate: protectedProcedure.input(z.object({mimeType: z.string(), filesize:z.number().min(1), checksum: z.string()})).mutation(async ({ctx, input}) => {
-      const {mimeType, filesize, checksum} = input
+  getSignedUrlForProfileUpdate: protectedProcedure
+    .input(
+      z.object({
+        mimeType: z.string(),
+        filesize: z.number().min(1),
+        checksum: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { mimeType, filesize, checksum } = input;
       const extension = mimeTypeToExtension(mimeType);
       const key = `user/${ctx.session.user.id}/user_avatar.${extension}`;
       const command = new PutObjectCommand({
@@ -147,13 +173,13 @@ export const authRouter = router({
         ContentLength: filesize,
         ChecksumSHA256: checksum,
       });
-      
+
       const signedUrl = await getSignedUrl(S3client, command, {
         expiresIn: 600, // 10 minutes
       });
-      
+
       const url = keyToFileUrl(key);
 
-      return {url, signedUrl}
-    })
+      return { url, signedUrl };
+    }),
 });

@@ -26,12 +26,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LogoDialog } from "./logo-modal";
 import { Pencil } from "lucide-react";
 import { base64ToFile } from "../manage-account/utils";
 import { getFileChecksum } from "../../../../server/src/lib/s3/utils";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const businessSchema = z.object({
   name: z.string().min(2, "Business name is required"),
@@ -57,16 +58,22 @@ export function BusinessProfile() {
     return <p>Something went wrong. Please reload the page.</p>;
   }
 
-  return <BusinessForm businessDetails={businessDetails} />;
+  return (
+    <BusinessForm
+      businessDetails={businessDetails}
+      businessUpdatedAt={businessDetails.updatedAt}
+    />
+  );
 }
 
 function BusinessForm({
   businessDetails,
+  businessUpdatedAt,
 }: {
   businessDetails: BusinessFormValues;
+  businessUpdatedAt: Date;
 }) {
   const queryClient = useQueryClient();
-
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const form = useForm<BusinessFormValues>({
@@ -75,9 +82,17 @@ function BusinessForm({
       name: businessDetails.name ?? "",
       companySize: businessDetails.companySize ?? "1-10",
       description: businessDetails.description ?? "",
-      logo: businessDetails.logo ?? undefined,
+      logo: businessDetails.logo
+        ? `${businessDetails.logo}?v=${businessUpdatedAt}`
+        : undefined,
     },
   });
+
+  useEffect(() => {
+    console.log({ updateCheck: businessDetails });
+  }, [businessDetails]);
+
+  const router = useRouter();
 
   const { mutateAsync: initLogo } = useMutation(
     trpc.organization.initLogoUpload.mutationOptions()
@@ -89,9 +104,9 @@ function BusinessForm({
       },
     })
   );
+
   const onSubmit = async (values: BusinessFormValues) => {
-    console.log("Submit:", values);
-    let updatedLogo = values.logo
+    let updatedLogo = values.logo;
     try {
       if (values.logo?.startsWith("data:") && values.logo.includes("base64")) {
         const file = await base64ToFile(values.logo);
@@ -124,9 +139,12 @@ function BusinessForm({
       });
 
       // invalidate and force refetch a query
-      await queryClient.invalidateQueries({queryKey: trpc.organization.getOrganizationDetails.queryKey()});
+     await queryClient.refetchQueries({
+        queryKey: trpc.organization.getOrganizationDetails.queryKey(),
+      });
 
-      await form.reset()
+      router.refresh();
+
       toast.success("Business profile updated");
     } catch (error) {
       console.error("Logo upload failed:", error);
@@ -175,7 +193,9 @@ function BusinessForm({
                     >
                       <AvatarImage
                         src={
-                          field.value ?? "/placeholder.svg?height=128&width=128"
+                          field.value
+                            ? field.value
+                            : "/placeholder.svg?height=128&width=128"
                         }
                       />
                       <AvatarFallback className="bg-foreground text-2xl font-semibold text-background">

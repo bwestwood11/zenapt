@@ -13,6 +13,7 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 
 const stripe = getStripe();
+
 const StripeInit = ({
   numberOfLocations,
   price,

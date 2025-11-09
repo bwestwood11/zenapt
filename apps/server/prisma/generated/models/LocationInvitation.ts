@@ -240,7 +240,7 @@ export type LocationInvitationOrderByWithRelationInput = {
 
 export type LocationInvitationWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  email_status?: Prisma.LocationInvitationEmailStatusCompoundUniqueInput
+  email_status_locationId?: Prisma.LocationInvitationEmailStatusLocationIdCompoundUniqueInput
   AND?: Prisma.LocationInvitationWhereInput | Prisma.LocationInvitationWhereInput[]
   OR?: Prisma.LocationInvitationWhereInput[]
   NOT?: Prisma.LocationInvitationWhereInput | Prisma.LocationInvitationWhereInput[]
@@ -254,7 +254,7 @@ export type LocationInvitationWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"LocationInvitation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LocationInvitation"> | Date | string
   location?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.LocationWhereInput>
-}, "id" | "email_status">
+}, "id" | "email_status_locationId">
 
 export type LocationInvitationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -388,9 +388,10 @@ export type LocationInvitationOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type LocationInvitationEmailStatusCompoundUniqueInput = {
+export type LocationInvitationEmailStatusLocationIdCompoundUniqueInput = {
   email: string
   status: $Enums.InvitationStatus
+  locationId: string
 }
 
 export type LocationInvitationCountOrderByAggregateInput = {

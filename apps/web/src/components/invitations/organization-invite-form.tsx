@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Mail, User, Shield, GitGraph } from "lucide-react";
 
@@ -47,11 +47,16 @@ const OrgInvForm = () => {
     },
   });
 
+  const queryClient = useQueryClient();
+
   const mutation = useMutation(
     trpc.invitation.inviteOrganizationMember.mutationOptions({
       onSuccess: () => {
         toast.success("Invitation sent successfully!");
         form.reset();
+        queryClient.invalidateQueries({
+          queryKey: trpc.invitation.getOrganizationInvitations.queryKey(),
+        });
       },
       onError: () => {
         toast.error("Failed to send invitation. Please try again.");
@@ -64,7 +69,6 @@ const OrgInvForm = () => {
   };
 
   return (
-    
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {/* Email Field */}

@@ -2,15 +2,68 @@
 
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/utils/trpc";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
+import { confirm } from "../ui/confirm";
 
 export function ServiceList() {
   const { data: services, isLoading } = useQuery(
     trpc.services.getAllServicesTerms.queryOptions()
   );
 
-  const onDelete = (id: string) => {};
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation(
+    trpc.services.deleteServiceTerm.mutationOptions({
+      onMutate: async (removedService) => {
+        const queryKey = trpc.services.getAllServicesTerms.queryKey();
+        // Cancel any outgoing refetches
+        // (so they don't overwrite our optimistic update)
+        await queryClient.cancelQueries({ queryKey: queryKey });
+
+        // Snapshot the previous value
+        const prev = queryClient.getQueryData(queryKey);
+
+        // Optimistically update to the new value
+        queryClient.setQueryData(queryKey, (old) => {
+          if (!old) return old;
+          const idToRemove = removedService.serviceId;
+          return old.map((group) => ({
+            ...group,
+            serviceTerms: group.serviceTerms.filter((s) => s.id !== idToRemove),
+          }));
+        });
+
+        // Return a context object with the snapshotted value
+        return { prev };
+      },
+      // If the mutation fails,
+      // use the context returned from onMutate to roll back
+      onError: (err, newTodo, context) => {
+        queryClient.setQueryData(
+          trpc.services.getAllServicesTerms.queryKey(),
+          context?.prev || []
+        );
+      },
+      // Always refetch after error or success:
+      onSettled: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.services.getAllServicesTerms.queryKey(),
+        });
+      },
+    })
+  );
+
+  const onDelete = async (id: string) => {
+    const shouldDelete = await confirm({
+      title: "Do you want to delete the Service?",
+      confirmText: "Delete Service",
+      description: "This is immutable and cannot be reverted once deleted",
+    });
+    if (shouldDelete) {
+      mutate({ serviceId: id });
+    }
+  };
 
   if (isLoading) {
     return (

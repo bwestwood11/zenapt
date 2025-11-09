@@ -50,14 +50,16 @@ export const invitationRouter = router({
     .input(z.object({ token: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const { token } = input;
-
-      if (!!ctx.session) {
-        throw new TRPCError({
-          message:
-            "You are logged in with another account, try logging out first",
-          code: "FORBIDDEN",
-        });
-      }
+      // Check token exist
+      // Verify the token and get payload
+      // Check if payload is correct
+      // Check if the user with same email exist
+      // yes: check if the location is same if
+      // yes: then throw error
+      // no: we will accept invite, create new location Employee or management member based on payload
+      // if user not has session in browser or they are logged in with another account give them error
+      // no: then sign the user up and accept invite (creating location employee or member will be handled by auth middleware)
+      // if they are logged in throw error
 
       if (!token) {
         throw new TRPCError({
@@ -81,23 +83,46 @@ export const invitationRouter = router({
         });
       }
 
-      const userExist = await prisma.user.count({
+      const existingUser = await prisma.user.findUnique({
         where: { email: data.email },
+        select: {
+          email: true,
+          id: true,
+          locationEmployees: {
+            select: {
+              locationId: true,
+            },
+          },
+        },
       });
 
-      if (userExist > 0) {
+      // User Exist and has same location as the invitation
+      if (
+        !!existingUser &&
+        data.type === INVITATION_TYPE.LOCATION &&
+        existingUser.locationEmployees.some(
+          (le) => le.locationId === data.locationId
+        )
+      ) {
         throw new TRPCError({
-          message: "There is already an account with this email.",
+          message:
+            "There is already an account with this email associated to this specific location.",
           code: "BAD_REQUEST",
         });
       }
 
-      console.log(data);
+      if(!!existingUser && data.type === INVITATION_TYPE.MANAGEMENT){
+         throw new TRPCError({
+          message:
+            "There is already an account with this email.",
+          code: "BAD_REQUEST",
+        });
+      }
+
       const invitation = await getAppropriateInvitation(
         invitationId,
         data.type
       );
-      console.log({ invitation });
       if (!invitation || !invitation.encryptedPassword) {
         throw new TRPCError({
           message:
@@ -105,18 +130,58 @@ export const invitationRouter = router({
           code: "BAD_REQUEST",
         });
       }
+      
+      let createdAccount = false
 
-      const password = decrypt(invitation.encryptedPassword);
+      if (!existingUser) {
+        if (!!ctx.session) {
+          throw new TRPCError({
+            message:
+              "You are logged in with another account, try logging out first",
+            code: "FORBIDDEN",
+          });
+        }
 
-      await auth.api.signUpEmail({
-        body: {
-          name: invitation.name,
-          email: invitation.email,
-          password: password,
-          token: token,
-          isTempPassword: true,
-        },
-      });
+        const password = decrypt(invitation.encryptedPassword);
+
+        await auth.api.signUpEmail({
+          body: {
+            name: invitation.name,
+            email: invitation.email,
+            password: password,
+            token: token,
+            isTempPassword: true,
+          },
+        });
+
+        createdAccount = true    
+      } else {
+        if (!ctx.session || ctx.session.user.email !== invitation.email) {
+          throw new TRPCError({
+            message:
+              "The Account Does not belongs to you. You cannot accept it. Try logging with same email.",
+            code: "FORBIDDEN",
+          });
+        }
+
+        if (data.type === INVITATION_TYPE.MANAGEMENT) {
+          await prisma.managementMembership.create({
+            data: {
+              userId: existingUser.id,
+              role: data.role,
+              organizationId: data.organizationId,
+            },
+          });
+        } else {
+          await prisma.locationEmployee.create({
+            data: {
+              userId: existingUser.id,
+              role: data.role,
+              locationId: data.locationId,
+            },
+          });
+        }
+      }
 
       if (data.type === INVITATION_TYPE.MANAGEMENT) {
         await prisma.organizationInvitation.update({
@@ -137,6 +202,8 @@ export const invitationRouter = router({
           },
         });
       }
+
+      return {success: true, createdAccount}
     }),
   declineInvitation: publicProcedure
     .input(z.object({ token: z.string() }))
@@ -191,6 +258,54 @@ export const invitationRouter = router({
           code: "INTERNAL_SERVER_ERROR",
         });
       }
+    }),
+  getOrganizationInvitations: withPermissions("READ::MEMBERS")
+    .input(
+      z.object({
+        page: z.number().min(1).optional(),
+        limit: z.number().min(1).max(100).optional(),
+        sort: z.enum(["asc", "desc"]).optional(),
+        email: z.string().optional(),
+        status: z.enum(["PENDING", "ACCEPTED", "DECLINED"]).optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const page = input?.page ?? 1;
+      const limit = input?.limit ?? 20;
+      const sort = (input?.sort as "asc" | "desc") ?? "desc";
+
+      const where: any = {
+        organizationId: ctx.orgWithSub.id,
+      };
+
+      if (input?.email) {
+        where.email = { contains: input.email, mode: "insensitive" };
+      }
+
+      if (input?.status) {
+        where.status = input.status;
+      }
+
+      const [invitations, total] = await Promise.all([
+        prisma.organizationInvitation.findMany({
+          where,
+          orderBy: { createdAt: sort },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        prisma.organizationInvitation.count({ where }),
+      ]);
+
+      return {
+        invitations,
+        meta: {
+          page,
+          limit,
+          total,
+          totalPages: Math.max(1, Math.ceil(total / limit)),
+          sort,
+        },
+      };
     }),
   inviteOrganizationMember: withPermissions(
     "CREATE::MEMBERS",
@@ -378,7 +493,7 @@ export const invitationRouter = router({
       locationId: z.string(),
     })
   ).mutation(async ({ ctx, input }) => {
-    const { email, name, role } = input;
+    const { email, name, role, locationId } = input;
 
     if (!ctx.session.user.organizationId) {
       console.error(
@@ -392,12 +507,22 @@ export const invitationRouter = router({
         code: "FORBIDDEN",
       });
     }
-    
-    const usersCount = await prisma.user.count({ where: { email } });
+
+    // would fail if user needs to be invited to work at 2 locations
+    const usersCount = await prisma.user.count({
+      where: {
+        email,
+        locationEmployees: {
+          some: {
+            locationId: locationId,
+          },
+        },
+      },
+    });
     if (usersCount >= 1) {
       throw new TRPCError({
         message:
-          "User with this email already part of the zenapt. try any other email",
+          "User with this email already part of this location. Try any other email",
         code: "BAD_REQUEST",
       });
     }
@@ -436,9 +561,10 @@ export const invitationRouter = router({
     );
     const res = await prisma.locationInvitation.upsert({
       where: {
-        email_status: {
+        email_status_locationId: {
           email,
           status: "PENDING",
+          locationId: input.locationId,
         },
         locationId: input.locationId,
       },
@@ -511,7 +637,7 @@ export const invitationRouter = router({
       userId: ctx.session.user.id,
       organizationId: ctx.session.user.organizationId,
       locationId: input.locationId,
-    })
+    });
 
     return "OK";
   }),

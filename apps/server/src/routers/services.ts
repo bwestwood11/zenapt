@@ -77,6 +77,21 @@ const createService = withPermissions(
   });
 });
 
+const deleteServiceTerm = withPermissions(
+  "DELETE::SERVICE",
+  z.object({
+    serviceId: z.string(),
+  })
+).mutation(async ({ ctx, input }) => {
+  const { serviceId } = input;
+  await prisma.serviceTerms.delete({
+    where: {
+      id: serviceId,
+      organizationId: ctx.orgWithSub.id,
+    },
+  });
+});
+
 const getAllServicesTerms = withPermissions([
   "READ::SERVICES_TERMS",
   "READ::SERVICES_GROUP",
@@ -100,6 +115,7 @@ const getAllGroups = withPermissions("READ::SERVICES_GROUP").query(
 
 export const servicesRouter = {
   createServiceTerms,
+  deleteServiceTerm,
   createServiceGroup,
   createService,
   getAllServicesTerms,

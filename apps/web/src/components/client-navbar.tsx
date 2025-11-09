@@ -1,117 +1,88 @@
-import { ChevronsUpDown, Home } from "lucide-react"
-import { Select as SelectPrimitive } from "radix-ui"
-import NotificationMenu from "@/components/notification-menu"
-import UserMenu from "@/components/user-menu"
+"use client";
+
+import { ChevronsUpDown, Home } from "lucide-react";
+import { Select as SelectPrimitive } from "radix-ui";
+import NotificationMenu from "@/components/notification-menu";
+import UserMenu from "@/components/user-menu";
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
+  BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectValue,
-} from "@/components/ui/select"
-import { SidebarTrigger } from "./ui/sidebar"
-import { Separator } from "./ui/separator"
-
-
-// const validPaths = [
-//   "/location/[]/"
-//   "/l/idofloc/"
-// ]
-
+} from "@/components/ui/select";
+import { SidebarTrigger } from "./ui/sidebar";
+import { Separator } from "./ui/separator";
+import { useBreadcrumbStore } from "@/hooks/breadcrumbs";
+import React from "react";
 
 export default function ClientNavbar() {
+  const breadcrumbs = useBreadcrumbStore((s) => s.breadcrumbs);
+
   return (
     <header className="border-b px-4 ">
       <div className="flex h-16 items-center justify-between gap-4">
-       
         {/* Left side */}
         <div className="flex items-center gap-5">
-          <SidebarTrigger/>
+          <SidebarTrigger />
           <Separator orientation="vertical" className="!h-6" />
           <Breadcrumb>
             <BreadcrumbList>
+              {/* Home */}
               <BreadcrumbItem>
-                <Home className="size-6 text-foreground/50"/>
+                <BreadcrumbLink href="/">
+                  <Home className="size-5 text-foreground/60 hover:text-foreground transition-colors" />
+                </BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbSeparator> / </BreadcrumbSeparator>
-              <BreadcrumbItem className="md:hidden">
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="hover:text-foreground">
-                    <BreadcrumbEllipsis />
-                    <span className="sr-only">Toggle menu</span>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start">
-                    <DropdownMenuItem asChild>
-                      <a href="#">Personal Account</a>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <a href="#">Projects</a>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </BreadcrumbItem>
-              <BreadcrumbItem className="max-md:hidden">
-                <BreadcrumbLink href="#">Personal Account</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="max-md:hidden">
-                {" "}
-                /{" "}
-              </BreadcrumbSeparator>
-              <BreadcrumbItem className="max-md:hidden">
-                <BreadcrumbLink href="#">Projects</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator> / </BreadcrumbSeparator>
-              <BreadcrumbItem>
-                <Select defaultValue="1">
-                  <SelectPrimitive.SelectTrigger
-                    aria-label="Select project"
-                    asChild
-                  >
-                    <Button
-                      variant="ghost"
-                      className="focus-visible:bg-accent text-foreground h-8 px-1.5 focus-visible:ring-0"
-                    >
-                      <SelectValue placeholder="Select project" />
-                      <ChevronsUpDown
-                        size={14}
-                        className="text-muted-foreground/80"
-                      />
-                    </Button>
-                  </SelectPrimitive.SelectTrigger>
-                  <SelectContent className="[&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8 [&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2">
-                    <SelectItem value="1">Main project</SelectItem>
-                    <SelectItem value="2">Origin project</SelectItem>
-                  </SelectContent>
-                </Select>
-              </BreadcrumbItem>
+
+              {breadcrumbs.map((bc, i) => {
+                const isLast = i === breadcrumbs.length - 1;
+
+                return (
+                  <React.Fragment key={bc.href}>
+                    <BreadcrumbSeparator>/</BreadcrumbSeparator>
+                    <>
+                      {isLast ? (
+                        <BreadcrumbItem>
+                          <BreadcrumbPage>{bc.label}</BreadcrumbPage>
+                        </BreadcrumbItem>
+                      ) : (
+                        <BreadcrumbLink
+                          href={bc.href ?? "#"}
+                          className="text-foreground/60 hover:text-foreground transition-colors"
+                        >
+                          {bc.label}
+                        </BreadcrumbLink>
+                      )}
+                    </>
+                  </React.Fragment>
+                );
+              })}
             </BreadcrumbList>
           </Breadcrumb>
         </div>
 
-
-
         {/* Right side */}
         <div className="flex items-center gap-4">
-          {/* Notification */}
           <NotificationMenu />
-          {/* User menu */}
           <UserMenu />
         </div>
       </div>
     </header>
-  )
+  );
 }

@@ -30,7 +30,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Plus } from "lucide-react";
 import { SimpleEditor } from "../tiptap/TipTap";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 
 interface AddServiceModalProps {
@@ -43,6 +43,7 @@ interface AddServiceModalProps {
     group: string;
     excerpt: string;
   }) => void;
+  isSubmitting: boolean;
 }
 
 type FormData = {
@@ -66,11 +67,12 @@ export function AddServiceModal({
   open,
   onOpenChange,
   onSubmit,
+  isSubmitting,
 }: AddServiceModalProps) {
   // const [groups, setGroups] = useState(DEFAULT_GROUPS);
   const [isCreatingGroup, setIsCreatingGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
-
+  const utils = useQueryClient();
   const { data: groups, refetch } = useQuery(
     trpc.services.getAllGroups.queryOptions()
   );
@@ -80,6 +82,9 @@ export function AddServiceModal({
         setIsCreatingGroup(false);
         setNewGroupName("");
         refetch();
+        utils.invalidateQueries({
+          queryKey: trpc.services.getAllServicesTerms.queryKey(),
+        });
         // Optimistic
       },
     })
@@ -316,7 +321,9 @@ export function AddServiceModal({
               <Button type="button" variant="outline" onClick={handleCancel}>
                 Cancel
               </Button>
-              <Button type="submit">Add Service</Button>
+              <Button isLoading={isSubmitting} type="submit">
+                Add Service
+              </Button>
             </div>
           </form>
         </Form>

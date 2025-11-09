@@ -219,6 +219,8 @@ export const organizationRouter = router({
           description: true,
           companySize: true,
           logo: true,
+          updatedAt: true,
+          createdAt: true,
         },
       });
 

@@ -25,6 +25,7 @@ export type AggregateDemoRequest = {
 
 export type DemoRequestMinAggregateOutputType = {
   id: string | null
+  createdAt: Date | null
   firstName: string | null
   lastName: string | null
   businessName: string | null
@@ -38,6 +39,7 @@ export type DemoRequestMinAggregateOutputType = {
 
 export type DemoRequestMaxAggregateOutputType = {
   id: string | null
+  createdAt: Date | null
   firstName: string | null
   lastName: string | null
   businessName: string | null
@@ -51,6 +53,7 @@ export type DemoRequestMaxAggregateOutputType = {
 
 export type DemoRequestCountAggregateOutputType = {
   id: number
+  createdAt: number
   firstName: number
   lastName: number
   businessName: number
@@ -66,6 +69,7 @@ export type DemoRequestCountAggregateOutputType = {
 
 export type DemoRequestMinAggregateInputType = {
   id?: true
+  createdAt?: true
   firstName?: true
   lastName?: true
   businessName?: true
@@ -79,6 +83,7 @@ export type DemoRequestMinAggregateInputType = {
 
 export type DemoRequestMaxAggregateInputType = {
   id?: true
+  createdAt?: true
   firstName?: true
   lastName?: true
   businessName?: true
@@ -92,6 +97,7 @@ export type DemoRequestMaxAggregateInputType = {
 
 export type DemoRequestCountAggregateInputType = {
   id?: true
+  createdAt?: true
   firstName?: true
   lastName?: true
   businessName?: true
@@ -178,6 +184,7 @@ export type DemoRequestGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 
 export type DemoRequestGroupByOutputType = {
   id: string
+  createdAt: Date
   firstName: string
   lastName: string
   businessName: string
@@ -212,6 +219,7 @@ export type DemoRequestWhereInput = {
   OR?: Prisma.DemoRequestWhereInput[]
   NOT?: Prisma.DemoRequestWhereInput | Prisma.DemoRequestWhereInput[]
   id?: Prisma.StringFilter<"DemoRequest"> | string
+  createdAt?: Prisma.DateTimeFilter<"DemoRequest"> | Date | string
   firstName?: Prisma.StringFilter<"DemoRequest"> | string
   lastName?: Prisma.StringFilter<"DemoRequest"> | string
   businessName?: Prisma.StringFilter<"DemoRequest"> | string
@@ -225,6 +233,7 @@ export type DemoRequestWhereInput = {
 
 export type DemoRequestOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   businessName?: Prisma.SortOrder
@@ -241,6 +250,7 @@ export type DemoRequestWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.DemoRequestWhereInput | Prisma.DemoRequestWhereInput[]
   OR?: Prisma.DemoRequestWhereInput[]
   NOT?: Prisma.DemoRequestWhereInput | Prisma.DemoRequestWhereInput[]
+  createdAt?: Prisma.DateTimeFilter<"DemoRequest"> | Date | string
   firstName?: Prisma.StringFilter<"DemoRequest"> | string
   lastName?: Prisma.StringFilter<"DemoRequest"> | string
   businessName?: Prisma.StringFilter<"DemoRequest"> | string
@@ -254,6 +264,7 @@ export type DemoRequestWhereUniqueInput = Prisma.AtLeast<{
 
 export type DemoRequestOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   businessName?: Prisma.SortOrder
@@ -273,6 +284,7 @@ export type DemoRequestScalarWhereWithAggregatesInput = {
   OR?: Prisma.DemoRequestScalarWhereWithAggregatesInput[]
   NOT?: Prisma.DemoRequestScalarWhereWithAggregatesInput | Prisma.DemoRequestScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"DemoRequest"> | string
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"DemoRequest"> | Date | string
   firstName?: Prisma.StringWithAggregatesFilter<"DemoRequest"> | string
   lastName?: Prisma.StringWithAggregatesFilter<"DemoRequest"> | string
   businessName?: Prisma.StringWithAggregatesFilter<"DemoRequest"> | string
@@ -286,6 +298,7 @@ export type DemoRequestScalarWhereWithAggregatesInput = {
 
 export type DemoRequestCreateInput = {
   id?: string
+  createdAt?: Date | string
   firstName: string
   lastName: string
   businessName: string
@@ -299,6 +312,7 @@ export type DemoRequestCreateInput = {
 
 export type DemoRequestUncheckedCreateInput = {
   id?: string
+  createdAt?: Date | string
   firstName: string
   lastName: string
   businessName: string
@@ -312,6 +326,7 @@ export type DemoRequestUncheckedCreateInput = {
 
 export type DemoRequestUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   businessName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -325,6 +340,7 @@ export type DemoRequestUpdateInput = {
 
 export type DemoRequestUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   businessName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -338,6 +354,7 @@ export type DemoRequestUncheckedUpdateInput = {
 
 export type DemoRequestCreateManyInput = {
   id?: string
+  createdAt?: Date | string
   firstName: string
   lastName: string
   businessName: string
@@ -351,6 +368,7 @@ export type DemoRequestCreateManyInput = {
 
 export type DemoRequestUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   businessName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -364,6 +382,7 @@ export type DemoRequestUpdateManyMutationInput = {
 
 export type DemoRequestUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   businessName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -377,6 +396,7 @@ export type DemoRequestUncheckedUpdateManyInput = {
 
 export type DemoRequestCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   businessName?: Prisma.SortOrder
@@ -390,6 +410,7 @@ export type DemoRequestCountOrderByAggregateInput = {
 
 export type DemoRequestMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   businessName?: Prisma.SortOrder
@@ -403,6 +424,7 @@ export type DemoRequestMaxOrderByAggregateInput = {
 
 export type DemoRequestMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   businessName?: Prisma.SortOrder
@@ -418,6 +440,7 @@ export type DemoRequestMinOrderByAggregateInput = {
 
 export type DemoRequestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  createdAt?: boolean
   firstName?: boolean
   lastName?: boolean
   businessName?: boolean
@@ -431,6 +454,7 @@ export type DemoRequestSelect<ExtArgs extends runtime.Types.Extensions.InternalA
 
 export type DemoRequestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  createdAt?: boolean
   firstName?: boolean
   lastName?: boolean
   businessName?: boolean
@@ -444,6 +468,7 @@ export type DemoRequestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
 
 export type DemoRequestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  createdAt?: boolean
   firstName?: boolean
   lastName?: boolean
   businessName?: boolean
@@ -457,6 +482,7 @@ export type DemoRequestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
 
 export type DemoRequestSelectScalar = {
   id?: boolean
+  createdAt?: boolean
   firstName?: boolean
   lastName?: boolean
   businessName?: boolean
@@ -468,13 +494,14 @@ export type DemoRequestSelectScalar = {
   demoTime?: boolean
 }
 
-export type DemoRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "businessName" | "email" | "cellPhone" | "numberOfLocations" | "zipCode" | "websiteUrl" | "demoTime", ExtArgs["result"]["demoRequest"]>
+export type DemoRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "firstName" | "lastName" | "businessName" | "email" | "cellPhone" | "numberOfLocations" | "zipCode" | "websiteUrl" | "demoTime", ExtArgs["result"]["demoRequest"]>
 
 export type $DemoRequestPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "DemoRequest"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    createdAt: Date
     firstName: string
     lastName: string
     businessName: string
@@ -908,6 +935,7 @@ export interface Prisma__DemoRequestClient<T, Null = never, ExtArgs extends runt
  */
 export interface DemoRequestFieldRefs {
   readonly id: Prisma.FieldRef<"DemoRequest", 'String'>
+  readonly createdAt: Prisma.FieldRef<"DemoRequest", 'DateTime'>
   readonly firstName: Prisma.FieldRef<"DemoRequest", 'String'>
   readonly lastName: Prisma.FieldRef<"DemoRequest", 'String'>
   readonly businessName: Prisma.FieldRef<"DemoRequest", 'String'>

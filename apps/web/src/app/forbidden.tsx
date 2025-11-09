@@ -33,16 +33,10 @@ export default function Forbidden() {
 
         {/* Action buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
-          <Button
-            className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-8"
-            size="lg"
-          >
-            <Mail className="h-4 w-4 mr-2" />
-            Request Access
-          </Button>
+    
 
       
-            <Link href="/" className={buttonVariants({size:"lg", variant:"outline"})}>
+            <Link href="/dashboard" className={buttonVariants({size:"lg", variant:"outline"})}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Dashboard
             </Link>

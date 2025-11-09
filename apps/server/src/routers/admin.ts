@@ -26,7 +26,7 @@ const loginAdmin = publicProcedure
     const admin = await prisma.admin.findUnique({
       where: { email },
     });
-   console.log(password)
+    console.log(password);
     if (!admin) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
@@ -34,7 +34,6 @@ const loginAdmin = publicProcedure
       });
     }
     console.log(admin);
-    
 
     const isPasswordValid = bcrypt.compareSync(password, admin.password);
     if (!isPasswordValid) {
@@ -43,7 +42,7 @@ const loginAdmin = publicProcedure
         message: "Invalid email or password",
       });
     }
-    console.log("Password is valid");
+    
     // Prepare JWT payload
     const data: AdminJWTPayload = {
       id: admin.id,
@@ -84,14 +83,24 @@ const sessionAdmin = adminProcedure.query(async ({ ctx }) => {
 const inviteUser = adminProcedure
   .input(z.object({ email: z.email() }))
   .mutation(async ({ ctx, input }) => {
-    const token = createInvitationToken({ email: input.email, type: INVITATION_TYPE.MANAGEMENT, role: OrgRole.OWNER }, toSeconds({days: 7 }));
+    const token = createInvitationToken(
+      {
+        email: input.email,
+        type: INVITATION_TYPE.MANAGEMENT,
+        role: OrgRole.OWNER,
+      },
+      toSeconds({ days: 7 })
+    );
 
     const url = `${process.env.DASHBOARD_URL}/sign-up/owner?token=${token}&email=${input.email}`;
-   
+
     try {
       const { data, error } = await resend.emails.send({
         from: "Acme <onboarding@resend.dev>",
-        to: process.env.NODE_ENV === "development" ? ["delivered@resend.dev"] : [input.email],
+        to:
+          process.env.NODE_ENV === "development"
+            ? ["delivered@resend.dev"]
+            : [input.email],
         subject: "Hello world",
         html: `<strong>It works!</strong> <a href="${url}">Sign Up Here</a>`,
       });
@@ -112,15 +121,60 @@ const inviteUser = adminProcedure
         cause: error,
       });
     }
-    // } else {
-    //   console.log(url);
-    // }
+  });
 
-    return "OK";
+const getDemosRequest = adminProcedure
+  .input(
+    z.object({
+      limit: z.number().min(1).max(50).default(10),
+      cursor: z.string().nullish(),
+      direction: z.enum(["forward", "backward"]).default("forward"),
+    })
+  )
+  .query(async ({ ctx, input }) => {
+    if (!ctx.admin?.id) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Not authenticated",
+      });
+    }
+
+    const { limit, cursor, direction } = input;
+
+    const take = direction === "forward" ? limit + 1 : -(limit + 1);
+
+    const demos = await prisma.demoRequest.findMany({
+      take,
+      skip: cursor ? 1 : 0,
+      ...(cursor && { cursor: { id: cursor } }),
+      orderBy: { createdAt: "desc" },
+    });
+
+    let nextCursor: string | null = null;
+    let prevCursor: string | null = null;
+
+    if (demos.length > limit) {
+      if (direction === "forward") {
+        const nextItem = demos.pop();
+        nextCursor = nextItem?.id ?? null;
+      } else {
+        demos.shift();
+        prevCursor = demos[0]?.id ?? null;
+      }
+    }
+
+    return {
+      data: demos,
+      nextCursor,
+      prevCursor,
+      hasNextPage: !!nextCursor,
+      hasPrevPage: !!prevCursor,
+    };
   });
 
 export const adminRouter = router({
   login: loginAdmin,
   session: sessionAdmin,
   inviteUser: inviteUser,
+  getDemosRequest: getDemosRequest,
 });

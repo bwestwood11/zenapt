@@ -3,10 +3,17 @@
 import { authClient } from "@/lib/auth-client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
-import { useRouter } from "next/navigation";
+import { forbidden, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { WithPermissions } from "@/lib/permissions/usePermissions";
 import { Button } from "@/components/ui/button";
+import { SetBreadcrumbs } from "@/components/breadcrumbs";
+
+// This is navigation route 
+// So if user comes to this he will decide what he wants to go. to his management dashboard, to his location dashboard.
+
+// 1. If Management lands on this page what to show
+// 2. If Location member lands what to show
 
 export default function Dashboard() {
   const router = useRouter();
@@ -15,7 +22,7 @@ export default function Dashboard() {
   const { mutate } = useMutation(
     trpc.invitation.inviteOrganizationMember.mutationOptions()
   );
-
+  
   useEffect(() => {
     if (!session && !isPending) {
       router.push("/login");
@@ -25,11 +32,12 @@ export default function Dashboard() {
   if (isPending) {
     return <div>Loading...</div>;
   }
-
+  
   return (
     <div>
       <h1>Dashboard</h1>
       <p>Welcome {session?.user.name}</p>
+      <SetBreadcrumbs items={[{href: "/dashboard", label: "Dashboard"}]}/>
       <Button
         onClick={() =>
           mutate({
