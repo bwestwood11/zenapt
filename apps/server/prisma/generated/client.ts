@@ -47,6 +47,21 @@ path.join(process.cwd(), "prisma/generated/query_engine-windows.dll.node")
  */
 export type Admin = Prisma.AdminModel
 /**
+ * Model Appointment
+ * 
+ */
+export type Appointment = Prisma.AppointmentModel
+/**
+ * Model AddOn
+ * 
+ */
+export type AddOn = Prisma.AddOnModel
+/**
+ * Model PromoCode
+ * 
+ */
+export type PromoCode = Prisma.PromoCodeModel
+/**
  * Model User
  * 
  */
@@ -87,10 +102,20 @@ export type ServiceTerms = Prisma.ServiceTermsModel
  */
 export type ServiceGroup = Prisma.ServiceGroupModel
 /**
- * Model Service
+ * Model EmployeeService
  * 
  */
-export type Service = Prisma.ServiceModel
+export type EmployeeService = Prisma.EmployeeServiceModel
+/**
+ * Model Customer
+ * 
+ */
+export type Customer = Prisma.CustomerModel
+/**
+ * Model CustomerAppointmentPayment
+ * 
+ */
+export type CustomerAppointmentPayment = Prisma.CustomerAppointmentPaymentModel
 /**
  * Model ActivityLog
  * 
@@ -126,6 +151,12 @@ export type LocationInvitation = Prisma.LocationInvitationModel
  * 
  */
 export type DemoRequest = Prisma.DemoRequestModel
+
+export type AppointmentStatus = $Enums.AppointmentStatus
+export const AppointmentStatus = $Enums.AppointmentStatus
+
+export type PromoLevel = $Enums.PromoLevel
+export const PromoLevel = $Enums.PromoLevel
 
 export type OrgRole = $Enums.OrgRole
 export const OrgRole = $Enums.OrgRole

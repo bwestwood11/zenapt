@@ -3,7 +3,6 @@ import { withPermissions } from "../lib/trpc";
 import prisma from "../../prisma";
 import { getServices } from "../lib/service/group";
 import { ACTIVITY_LOG_ACTIONS, addActivityLog } from "../lib/activitylogs";
-import { maskEmail } from "../lib/helpers/utils";
 
 const createServiceTerms = withPermissions(
   "CREATE::SERVICES_TERMS",
@@ -65,8 +64,8 @@ const createService = withPermissions(
     locationEmployeeId: z.string(),
   })
 ).mutation(async ({ ctx, input }) => {
-  const { duration, description, price, termId, locationEmployeeId } = input;
-  await prisma.service.create({
+  const { duration, price, termId, locationEmployeeId } = input;
+  await prisma.employeeService.create({
     data: {
       duration,
       price,

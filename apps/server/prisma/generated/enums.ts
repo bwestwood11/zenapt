@@ -7,6 +7,25 @@
 *
 * 🟢 You can import this file directly.
 */
+export const AppointmentStatus = {
+  SCHEDULED: 'SCHEDULED',
+  COMPLETED: 'COMPLETED',
+  CANCELED: 'CANCELED',
+  NO_SHOW: 'NO_SHOW',
+  RESCHEDULED: 'RESCHEDULED'
+} as const
+
+export type AppointmentStatus = (typeof AppointmentStatus)[keyof typeof AppointmentStatus]
+
+
+export const PromoLevel = {
+  ORGANIZATION: 'ORGANIZATION',
+  LOCATION: 'LOCATION'
+} as const
+
+export type PromoLevel = (typeof PromoLevel)[keyof typeof PromoLevel]
+
+
 export const OrgRole = {
   OWNER: 'OWNER',
   ADMIN: 'ADMIN',

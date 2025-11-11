@@ -217,6 +217,7 @@ export type OrganizationWhereInput = {
   subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
   locations?: Prisma.LocationListRelationFilter
   activityLogs?: Prisma.ActivityLogListRelationFilter
+  PromoCodes?: Prisma.PromoCodeListRelationFilter
   OrganizationInvitation?: Prisma.OrganizationInvitationListRelationFilter
   ServiceTerms?: Prisma.ServiceTermsListRelationFilter
   ServiceGroup?: Prisma.ServiceGroupListRelationFilter
@@ -236,6 +237,7 @@ export type OrganizationOrderByWithRelationInput = {
   subscription?: Prisma.SubscriptionOrderByWithRelationInput
   locations?: Prisma.LocationOrderByRelationAggregateInput
   activityLogs?: Prisma.ActivityLogOrderByRelationAggregateInput
+  PromoCodes?: Prisma.PromoCodeOrderByRelationAggregateInput
   OrganizationInvitation?: Prisma.OrganizationInvitationOrderByRelationAggregateInput
   ServiceTerms?: Prisma.ServiceTermsOrderByRelationAggregateInput
   ServiceGroup?: Prisma.ServiceGroupOrderByRelationAggregateInput
@@ -258,6 +260,7 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
   locations?: Prisma.LocationListRelationFilter
   activityLogs?: Prisma.ActivityLogListRelationFilter
+  PromoCodes?: Prisma.PromoCodeListRelationFilter
   OrganizationInvitation?: Prisma.OrganizationInvitationListRelationFilter
   ServiceTerms?: Prisma.ServiceTermsListRelationFilter
   ServiceGroup?: Prisma.ServiceGroupListRelationFilter
@@ -307,6 +310,7 @@ export type OrganizationCreateInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
   locations?: Prisma.LocationCreateNestedManyWithoutOrganizationInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
@@ -326,6 +330,7 @@ export type OrganizationUncheckedCreateInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
   locations?: Prisma.LocationUncheckedCreateNestedManyWithoutOrganizationInput
   activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
@@ -345,6 +350,7 @@ export type OrganizationUpdateInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
   locations?: Prisma.LocationUpdateManyWithoutOrganizationNestedInput
   activityLogs?: Prisma.ActivityLogUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
@@ -364,6 +370,7 @@ export type OrganizationUncheckedUpdateInput = {
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
   locations?: Prisma.LocationUncheckedUpdateManyWithoutOrganizationNestedInput
   activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -449,6 +456,20 @@ export type OrganizationMinOrderByAggregateInput = {
 export type OrganizationNullableScalarRelationFilter = {
   is?: Prisma.OrganizationWhereInput | null
   isNot?: Prisma.OrganizationWhereInput | null
+}
+
+export type OrganizationCreateNestedOneWithoutPromoCodesInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutPromoCodesInput, Prisma.OrganizationUncheckedCreateWithoutPromoCodesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutPromoCodesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutPromoCodesNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutPromoCodesInput, Prisma.OrganizationUncheckedCreateWithoutPromoCodesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutPromoCodesInput
+  upsert?: Prisma.OrganizationUpsertWithoutPromoCodesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutPromoCodesInput, Prisma.OrganizationUpdateWithoutPromoCodesInput>, Prisma.OrganizationUncheckedUpdateWithoutPromoCodesInput>
 }
 
 export type OrganizationCreateNestedOneWithoutSubscriptionInput = {
@@ -551,6 +572,98 @@ export type OrganizationUpdateOneRequiredWithoutOrganizationInvitationNestedInpu
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutOrganizationInvitationInput, Prisma.OrganizationUpdateWithoutOrganizationInvitationInput>, Prisma.OrganizationUncheckedUpdateWithoutOrganizationInvitationInput>
 }
 
+export type OrganizationCreateWithoutPromoCodesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutPromoCodesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationUncheckedCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutPromoCodesInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutPromoCodesInput, Prisma.OrganizationUncheckedCreateWithoutPromoCodesInput>
+}
+
+export type OrganizationUpsertWithoutPromoCodesInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutPromoCodesInput, Prisma.OrganizationUncheckedUpdateWithoutPromoCodesInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutPromoCodesInput, Prisma.OrganizationUncheckedCreateWithoutPromoCodesInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutPromoCodesInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutPromoCodesInput, Prisma.OrganizationUncheckedUpdateWithoutPromoCodesInput>
+}
+
+export type OrganizationUpdateWithoutPromoCodesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutPromoCodesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
 export type OrganizationCreateWithoutSubscriptionInput = {
   id?: string
   name: string
@@ -564,6 +677,7 @@ export type OrganizationCreateWithoutSubscriptionInput = {
   management?: Prisma.ManagementMembershipCreateNestedManyWithoutOrganizationInput
   locations?: Prisma.LocationCreateNestedManyWithoutOrganizationInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
@@ -582,6 +696,7 @@ export type OrganizationUncheckedCreateWithoutSubscriptionInput = {
   management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutOrganizationInput
   locations?: Prisma.LocationUncheckedCreateNestedManyWithoutOrganizationInput
   activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
@@ -616,6 +731,7 @@ export type OrganizationUpdateWithoutSubscriptionInput = {
   management?: Prisma.ManagementMembershipUpdateManyWithoutOrganizationNestedInput
   locations?: Prisma.LocationUpdateManyWithoutOrganizationNestedInput
   activityLogs?: Prisma.ActivityLogUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
@@ -634,6 +750,7 @@ export type OrganizationUncheckedUpdateWithoutSubscriptionInput = {
   management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
   locations?: Prisma.LocationUncheckedUpdateManyWithoutOrganizationNestedInput
   activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -652,6 +769,7 @@ export type OrganizationCreateWithoutManagementInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
   locations?: Prisma.LocationCreateNestedManyWithoutOrganizationInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
@@ -670,6 +788,7 @@ export type OrganizationUncheckedCreateWithoutManagementInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
   locations?: Prisma.LocationUncheckedCreateNestedManyWithoutOrganizationInput
   activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
@@ -704,6 +823,7 @@ export type OrganizationUpdateWithoutManagementInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
   locations?: Prisma.LocationUpdateManyWithoutOrganizationNestedInput
   activityLogs?: Prisma.ActivityLogUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
@@ -722,6 +842,7 @@ export type OrganizationUncheckedUpdateWithoutManagementInput = {
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
   locations?: Prisma.LocationUncheckedUpdateManyWithoutOrganizationNestedInput
   activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -740,6 +861,7 @@ export type OrganizationCreateWithoutLocationsInput = {
   management?: Prisma.ManagementMembershipCreateNestedManyWithoutOrganizationInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
@@ -758,6 +880,7 @@ export type OrganizationUncheckedCreateWithoutLocationsInput = {
   management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutOrganizationInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
   activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
@@ -792,6 +915,7 @@ export type OrganizationUpdateWithoutLocationsInput = {
   management?: Prisma.ManagementMembershipUpdateManyWithoutOrganizationNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
   activityLogs?: Prisma.ActivityLogUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
@@ -810,6 +934,7 @@ export type OrganizationUncheckedUpdateWithoutLocationsInput = {
   management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
   activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -829,6 +954,7 @@ export type OrganizationCreateWithoutServiceTermsInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
   locations?: Prisma.LocationCreateNestedManyWithoutOrganizationInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
 }
@@ -847,6 +973,7 @@ export type OrganizationUncheckedCreateWithoutServiceTermsInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
   locations?: Prisma.LocationUncheckedCreateNestedManyWithoutOrganizationInput
   activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
 }
@@ -881,6 +1008,7 @@ export type OrganizationUpdateWithoutServiceTermsInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
   locations?: Prisma.LocationUpdateManyWithoutOrganizationNestedInput
   activityLogs?: Prisma.ActivityLogUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
 }
@@ -899,6 +1027,7 @@ export type OrganizationUncheckedUpdateWithoutServiceTermsInput = {
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
   locations?: Prisma.LocationUncheckedUpdateManyWithoutOrganizationNestedInput
   activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
 }
@@ -917,6 +1046,7 @@ export type OrganizationCreateWithoutServiceGroupInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
   locations?: Prisma.LocationCreateNestedManyWithoutOrganizationInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
 }
@@ -935,6 +1065,7 @@ export type OrganizationUncheckedCreateWithoutServiceGroupInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
   locations?: Prisma.LocationUncheckedCreateNestedManyWithoutOrganizationInput
   activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
 }
@@ -969,6 +1100,7 @@ export type OrganizationUpdateWithoutServiceGroupInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
   locations?: Prisma.LocationUpdateManyWithoutOrganizationNestedInput
   activityLogs?: Prisma.ActivityLogUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
 }
@@ -987,6 +1119,7 @@ export type OrganizationUncheckedUpdateWithoutServiceGroupInput = {
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
   locations?: Prisma.LocationUncheckedUpdateManyWithoutOrganizationNestedInput
   activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
 }
@@ -1004,6 +1137,7 @@ export type OrganizationCreateWithoutActivityLogsInput = {
   management?: Prisma.ManagementMembershipCreateNestedManyWithoutOrganizationInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
   locations?: Prisma.LocationCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
@@ -1022,6 +1156,7 @@ export type OrganizationUncheckedCreateWithoutActivityLogsInput = {
   management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutOrganizationInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
   locations?: Prisma.LocationUncheckedCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
@@ -1056,6 +1191,7 @@ export type OrganizationUpdateWithoutActivityLogsInput = {
   management?: Prisma.ManagementMembershipUpdateManyWithoutOrganizationNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
   locations?: Prisma.LocationUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
@@ -1074,6 +1210,7 @@ export type OrganizationUncheckedUpdateWithoutActivityLogsInput = {
   management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
   locations?: Prisma.LocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1093,6 +1230,7 @@ export type OrganizationCreateWithoutOrganizationInvitationInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
   locations?: Prisma.LocationCreateNestedManyWithoutOrganizationInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
 }
@@ -1111,6 +1249,7 @@ export type OrganizationUncheckedCreateWithoutOrganizationInvitationInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
   locations?: Prisma.LocationUncheckedCreateNestedManyWithoutOrganizationInput
   activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
 }
@@ -1145,6 +1284,7 @@ export type OrganizationUpdateWithoutOrganizationInvitationInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
   locations?: Prisma.LocationUpdateManyWithoutOrganizationNestedInput
   activityLogs?: Prisma.ActivityLogUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
 }
@@ -1163,6 +1303,7 @@ export type OrganizationUncheckedUpdateWithoutOrganizationInvitationInput = {
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
   locations?: Prisma.LocationUncheckedUpdateManyWithoutOrganizationNestedInput
   activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
 }
@@ -1176,6 +1317,7 @@ export type OrganizationCountOutputType = {
   management: number
   locations: number
   activityLogs: number
+  PromoCodes: number
   OrganizationInvitation: number
   ServiceTerms: number
   ServiceGroup: number
@@ -1185,6 +1327,7 @@ export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Exte
   management?: boolean | OrganizationCountOutputTypeCountManagementArgs
   locations?: boolean | OrganizationCountOutputTypeCountLocationsArgs
   activityLogs?: boolean | OrganizationCountOutputTypeCountActivityLogsArgs
+  PromoCodes?: boolean | OrganizationCountOutputTypeCountPromoCodesArgs
   OrganizationInvitation?: boolean | OrganizationCountOutputTypeCountOrganizationInvitationArgs
   ServiceTerms?: boolean | OrganizationCountOutputTypeCountServiceTermsArgs
   ServiceGroup?: boolean | OrganizationCountOutputTypeCountServiceGroupArgs
@@ -1224,6 +1367,13 @@ export type OrganizationCountOutputTypeCountActivityLogsArgs<ExtArgs extends run
 /**
  * OrganizationCountOutputType without action
  */
+export type OrganizationCountOutputTypeCountPromoCodesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PromoCodeWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
 export type OrganizationCountOutputTypeCountOrganizationInvitationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.OrganizationInvitationWhereInput
 }
@@ -1257,6 +1407,7 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   subscription?: boolean | Prisma.Organization$subscriptionArgs<ExtArgs>
   locations?: boolean | Prisma.Organization$locationsArgs<ExtArgs>
   activityLogs?: boolean | Prisma.Organization$activityLogsArgs<ExtArgs>
+  PromoCodes?: boolean | Prisma.Organization$PromoCodesArgs<ExtArgs>
   OrganizationInvitation?: boolean | Prisma.Organization$OrganizationInvitationArgs<ExtArgs>
   ServiceTerms?: boolean | Prisma.Organization$ServiceTermsArgs<ExtArgs>
   ServiceGroup?: boolean | Prisma.Organization$ServiceGroupArgs<ExtArgs>
@@ -1305,6 +1456,7 @@ export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   subscription?: boolean | Prisma.Organization$subscriptionArgs<ExtArgs>
   locations?: boolean | Prisma.Organization$locationsArgs<ExtArgs>
   activityLogs?: boolean | Prisma.Organization$activityLogsArgs<ExtArgs>
+  PromoCodes?: boolean | Prisma.Organization$PromoCodesArgs<ExtArgs>
   OrganizationInvitation?: boolean | Prisma.Organization$OrganizationInvitationArgs<ExtArgs>
   ServiceTerms?: boolean | Prisma.Organization$ServiceTermsArgs<ExtArgs>
   ServiceGroup?: boolean | Prisma.Organization$ServiceGroupArgs<ExtArgs>
@@ -1320,6 +1472,7 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     subscription: Prisma.$SubscriptionPayload<ExtArgs> | null
     locations: Prisma.$LocationPayload<ExtArgs>[]
     activityLogs: Prisma.$ActivityLogPayload<ExtArgs>[]
+    PromoCodes: Prisma.$PromoCodePayload<ExtArgs>[]
     OrganizationInvitation: Prisma.$OrganizationInvitationPayload<ExtArgs>[]
     ServiceTerms: Prisma.$ServiceTermsPayload<ExtArgs>[]
     ServiceGroup: Prisma.$ServiceGroupPayload<ExtArgs>[]
@@ -1732,6 +1885,7 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   subscription<T extends Prisma.Organization$subscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$subscriptionArgs<ExtArgs>>): Prisma.Prisma__SubscriptionClient<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   locations<T extends Prisma.Organization$locationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$locationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   activityLogs<T extends Prisma.Organization$activityLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$activityLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  PromoCodes<T extends Prisma.Organization$PromoCodesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$PromoCodesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PromoCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   OrganizationInvitation<T extends Prisma.Organization$OrganizationInvitationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$OrganizationInvitationArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ServiceTerms<T extends Prisma.Organization$ServiceTermsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$ServiceTermsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceTermsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ServiceGroup<T extends Prisma.Organization$ServiceGroupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$ServiceGroupArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2249,6 +2403,30 @@ export type Organization$activityLogsArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.ActivityLogScalarFieldEnum | Prisma.ActivityLogScalarFieldEnum[]
+}
+
+/**
+ * Organization.PromoCodes
+ */
+export type Organization$PromoCodesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PromoCode
+   */
+  select?: Prisma.PromoCodeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PromoCode
+   */
+  omit?: Prisma.PromoCodeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PromoCodeInclude<ExtArgs> | null
+  where?: Prisma.PromoCodeWhereInput
+  orderBy?: Prisma.PromoCodeOrderByWithRelationInput | Prisma.PromoCodeOrderByWithRelationInput[]
+  cursor?: Prisma.PromoCodeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PromoCodeScalarFieldEnum | Prisma.PromoCodeScalarFieldEnum[]
 }
 
 /**

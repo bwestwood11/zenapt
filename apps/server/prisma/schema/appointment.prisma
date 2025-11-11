@@ -1,0 +1,65 @@
+enum AppointmentStatus {
+    SCHEDULED
+    COMPLETED
+    CANCELED
+    NO_SHOW
+    RESCHEDULED
+}
+
+model Appointment {
+    id         String            @id @default(cuid()) @map("_id")
+    locationId String
+    location   Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
+    customerId String
+    customer   Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
+    startTime  DateTime
+    endTime    DateTime
+    status     AppointmentStatus @default(SCHEDULED)
+    service    EmployeeService[]
+    addOns     AddOn[]
+
+    notes     String?
+    price     Int
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    customerPaymentId String? @unique
+    customerAppointmentPayment   CustomerAppointmentPayment? @relation(fields: [customerPaymentId], references: [id], onDelete: Restrict)
+    promoCodeId String?
+    promoCode   PromoCode? @relation(fields: [promoCodeId], references: [id], onDelete: SetNull)
+}
+
+model AddOn {
+    id          String  @id @default(cuid()) @map("_id")
+    name        String
+    description String?
+    basPrice    Int
+
+    appointments Appointment[]
+}
+
+model PromoCode {
+  id             String        @id @default(cuid()) @map("_id")
+  code           String        @unique
+  description    String?
+  discount       Int
+  isActive       Boolean       @default(true)
+  maxUsage       Int?
+  appliesToLevel PromoLevel    @default(ORGANIZATION)
+
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  // optional location (only set if appliesToLevel == LOCATION)
+  locationId     String?       
+  location       Location?     @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  appointments   Appointment[]
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+enum PromoLevel {
+  ORGANIZATION
+  LOCATION
+}

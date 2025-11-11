@@ -191,7 +191,7 @@ export type LocationEmployeeWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"LocationEmployee"> | Date | string
   location?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.LocationWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  Service?: Prisma.ServiceListRelationFilter
+  Service?: Prisma.EmployeeServiceListRelationFilter
 }
 
 export type LocationEmployeeOrderByWithRelationInput = {
@@ -203,7 +203,7 @@ export type LocationEmployeeOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   location?: Prisma.LocationOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
-  Service?: Prisma.ServiceOrderByRelationAggregateInput
+  Service?: Prisma.EmployeeServiceOrderByRelationAggregateInput
 }
 
 export type LocationEmployeeWhereUniqueInput = Prisma.AtLeast<{
@@ -219,7 +219,7 @@ export type LocationEmployeeWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"LocationEmployee"> | Date | string
   location?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.LocationWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  Service?: Prisma.ServiceListRelationFilter
+  Service?: Prisma.EmployeeServiceListRelationFilter
 }, "id" | "userId_locationId">
 
 export type LocationEmployeeOrderByWithAggregationInput = {
@@ -253,7 +253,7 @@ export type LocationEmployeeCreateInput = {
   updatedAt?: Date | string
   location: Prisma.LocationCreateNestedOneWithoutEmployeesInput
   user: Prisma.UserCreateNestedOneWithoutLocationEmployeesInput
-  Service?: Prisma.ServiceCreateNestedManyWithoutLocationEmployeeInput
+  Service?: Prisma.EmployeeServiceCreateNestedManyWithoutLocationEmployeeInput
 }
 
 export type LocationEmployeeUncheckedCreateInput = {
@@ -263,7 +263,7 @@ export type LocationEmployeeUncheckedCreateInput = {
   role?: $Enums.EmployeeRole
   createdAt?: Date | string
   updatedAt?: Date | string
-  Service?: Prisma.ServiceUncheckedCreateNestedManyWithoutLocationEmployeeInput
+  Service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutLocationEmployeeInput
 }
 
 export type LocationEmployeeUpdateInput = {
@@ -273,7 +273,7 @@ export type LocationEmployeeUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   location?: Prisma.LocationUpdateOneRequiredWithoutEmployeesNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutLocationEmployeesNestedInput
-  Service?: Prisma.ServiceUpdateManyWithoutLocationEmployeeNestedInput
+  Service?: Prisma.EmployeeServiceUpdateManyWithoutLocationEmployeeNestedInput
 }
 
 export type LocationEmployeeUncheckedUpdateInput = {
@@ -283,7 +283,7 @@ export type LocationEmployeeUncheckedUpdateInput = {
   role?: Prisma.EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  Service?: Prisma.ServiceUncheckedUpdateManyWithoutLocationEmployeeNestedInput
+  Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutLocationEmployeeNestedInput
 }
 
 export type LocationEmployeeCreateManyInput = {
@@ -468,7 +468,7 @@ export type LocationEmployeeCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   location: Prisma.LocationCreateNestedOneWithoutEmployeesInput
-  Service?: Prisma.ServiceCreateNestedManyWithoutLocationEmployeeInput
+  Service?: Prisma.EmployeeServiceCreateNestedManyWithoutLocationEmployeeInput
 }
 
 export type LocationEmployeeUncheckedCreateWithoutUserInput = {
@@ -477,7 +477,7 @@ export type LocationEmployeeUncheckedCreateWithoutUserInput = {
   role?: $Enums.EmployeeRole
   createdAt?: Date | string
   updatedAt?: Date | string
-  Service?: Prisma.ServiceUncheckedCreateNestedManyWithoutLocationEmployeeInput
+  Service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutLocationEmployeeInput
 }
 
 export type LocationEmployeeCreateOrConnectWithoutUserInput = {
@@ -524,7 +524,7 @@ export type LocationEmployeeCreateWithoutLocationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutLocationEmployeesInput
-  Service?: Prisma.ServiceCreateNestedManyWithoutLocationEmployeeInput
+  Service?: Prisma.EmployeeServiceCreateNestedManyWithoutLocationEmployeeInput
 }
 
 export type LocationEmployeeUncheckedCreateWithoutLocationInput = {
@@ -533,7 +533,7 @@ export type LocationEmployeeUncheckedCreateWithoutLocationInput = {
   role?: $Enums.EmployeeRole
   createdAt?: Date | string
   updatedAt?: Date | string
-  Service?: Prisma.ServiceUncheckedCreateNestedManyWithoutLocationEmployeeInput
+  Service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutLocationEmployeeInput
 }
 
 export type LocationEmployeeCreateOrConnectWithoutLocationInput = {
@@ -628,7 +628,7 @@ export type LocationEmployeeUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   location?: Prisma.LocationUpdateOneRequiredWithoutEmployeesNestedInput
-  Service?: Prisma.ServiceUpdateManyWithoutLocationEmployeeNestedInput
+  Service?: Prisma.EmployeeServiceUpdateManyWithoutLocationEmployeeNestedInput
 }
 
 export type LocationEmployeeUncheckedUpdateWithoutUserInput = {
@@ -637,7 +637,7 @@ export type LocationEmployeeUncheckedUpdateWithoutUserInput = {
   role?: Prisma.EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  Service?: Prisma.ServiceUncheckedUpdateManyWithoutLocationEmployeeNestedInput
+  Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutLocationEmployeeNestedInput
 }
 
 export type LocationEmployeeUncheckedUpdateManyWithoutUserInput = {
@@ -662,7 +662,7 @@ export type LocationEmployeeUpdateWithoutLocationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutLocationEmployeesNestedInput
-  Service?: Prisma.ServiceUpdateManyWithoutLocationEmployeeNestedInput
+  Service?: Prisma.EmployeeServiceUpdateManyWithoutLocationEmployeeNestedInput
 }
 
 export type LocationEmployeeUncheckedUpdateWithoutLocationInput = {
@@ -671,7 +671,7 @@ export type LocationEmployeeUncheckedUpdateWithoutLocationInput = {
   role?: Prisma.EnumEmployeeRoleFieldUpdateOperationsInput | $Enums.EmployeeRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  Service?: Prisma.ServiceUncheckedUpdateManyWithoutLocationEmployeeNestedInput
+  Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutLocationEmployeeNestedInput
 }
 
 export type LocationEmployeeUncheckedUpdateManyWithoutLocationInput = {
@@ -709,7 +709,7 @@ export type LocationEmployeeCountOutputTypeDefaultArgs<ExtArgs extends runtime.T
  * LocationEmployeeCountOutputType without action
  */
 export type LocationEmployeeCountOutputTypeCountServiceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ServiceWhereInput
+  where?: Prisma.EmployeeServiceWhereInput
 }
 
 
@@ -778,7 +778,7 @@ export type $LocationEmployeePayload<ExtArgs extends runtime.Types.Extensions.In
   objects: {
     location: Prisma.$LocationPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs>
-    Service: Prisma.$ServicePayload<ExtArgs>[]
+    Service: Prisma.$EmployeeServicePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1183,7 +1183,7 @@ export interface Prisma__LocationEmployeeClient<T, Null = never, ExtArgs extends
   readonly [Symbol.toStringTag]: "PrismaPromise"
   location<T extends Prisma.LocationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LocationDefaultArgs<ExtArgs>>): Prisma.Prisma__LocationClient<runtime.Types.Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  Service<T extends Prisma.LocationEmployee$ServiceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LocationEmployee$ServiceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  Service<T extends Prisma.LocationEmployee$ServiceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LocationEmployee$ServiceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1619,23 +1619,23 @@ export type LocationEmployeeDeleteManyArgs<ExtArgs extends runtime.Types.Extensi
  */
 export type LocationEmployee$ServiceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Service
+   * Select specific fields to fetch from the EmployeeService
    */
-  select?: Prisma.ServiceSelect<ExtArgs> | null
+  select?: Prisma.EmployeeServiceSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Service
+   * Omit specific fields from the EmployeeService
    */
-  omit?: Prisma.ServiceOmit<ExtArgs> | null
+  omit?: Prisma.EmployeeServiceOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ServiceInclude<ExtArgs> | null
-  where?: Prisma.ServiceWhereInput
-  orderBy?: Prisma.ServiceOrderByWithRelationInput | Prisma.ServiceOrderByWithRelationInput[]
-  cursor?: Prisma.ServiceWhereUniqueInput
+  include?: Prisma.EmployeeServiceInclude<ExtArgs> | null
+  where?: Prisma.EmployeeServiceWhereInput
+  orderBy?: Prisma.EmployeeServiceOrderByWithRelationInput | Prisma.EmployeeServiceOrderByWithRelationInput[]
+  cursor?: Prisma.EmployeeServiceWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ServiceScalarFieldEnum | Prisma.ServiceScalarFieldEnum[]
+  distinct?: Prisma.EmployeeServiceScalarFieldEnum | Prisma.EmployeeServiceScalarFieldEnum[]
 }
 
 /**

@@ -53,20 +53,20 @@ model Subscription {
 }
 
 model Organization {
-  id              String                 @id @default(cuid()) @map("_id")
-  name            String
-  description     String?
-  companySize     String?                @default("1-10")
-  businessWebsite String?
-  logo            String?
-  slug            String                 @unique
-  createdAt       DateTime               @default(now())
-  updatedAt       DateTime               @updatedAt
-  management      ManagementMembership[]
-  subscription    Subscription?
-  locations       Location[]
-  activityLogs    ActivityLog[]
-
+  id                     String                   @id @default(cuid()) @map("_id")
+  name                   String
+  description            String?
+  companySize            String?                  @default("1-10")
+  businessWebsite        String?
+  logo                   String?
+  slug                   String                   @unique
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  management             ManagementMembership[]
+  subscription           Subscription?
+  locations              Location[]
+  activityLogs           ActivityLog[]
+  PromoCodes             PromoCode[]
   OrganizationInvitation OrganizationInvitation[]
   ServiceTerms           ServiceTerms[]
   ServiceGroup           ServiceGroup[]
@@ -107,7 +107,9 @@ model Location {
   // Nameless       Nameless[]
   LocationInvitation LocationInvitation[]
   ActivityLog        ActivityLog[]
-  Service            Service[]
+  Service            EmployeeService[]
+  appointments       Appointment[]
+  PromoCodes         PromoCode[]
 
   @@unique([name, organizationId])
   @@index([slug, organizationId])
@@ -127,25 +129,25 @@ model LocationEmployee {
   role       EmployeeRole @default(LOCATION_FRONT_DESK)
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
-  
-  location Location  @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Service  Service[]
+
+  location Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Service  EmployeeService[]
 
   @@unique([userId, locationId])
 }
 
 model ServiceTerms {
-  id             String        @id @default(cuid()) @map("_id")
+  id             String            @id @default(cuid()) @map("_id")
   name           String
   serviceGroupId String?
-  serviceGroup   ServiceGroup? @relation(fields: [serviceGroupId], references: [id], onDelete: Cascade)
+  serviceGroup   ServiceGroup?     @relation(fields: [serviceGroupId], references: [id], onDelete: Cascade)
   description    String?
   excerpt        String?
   minimumPrice   Int
-  Service        Service[]
+  Service        EmployeeService[]
   organizationId String
-  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model ServiceGroup {
@@ -158,36 +160,53 @@ model ServiceGroup {
   serviceTerms ServiceTerms[]
 }
 
-model Service {
+model EmployeeService {
   id                 String            @id @default(cuid()) @map("_id")
   serviceTerms       ServiceTerms      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   serviceId          String
   location           Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
   locationId         String
+  isActive           Boolean           @default(true)
   price              Int
   duration           Int
   locationEmployee   LocationEmployee? @relation(fields: [locationEmployeeId], references: [id], onDelete: Cascade)
+  appointments       Appointment[]
   locationEmployeeId String?
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
 }
 
-// model Customer {
-//   id           String    @id @default(cuid()) @map("_id")
-//   locationId   String
-//   firstName    String
-//   lastName     String
-//   email        String?
-//   phoneNumber  String?
-//   dateOfBirth  DateTime?
-//   notes        String?
-//   createdAt    DateTime  @default(now())
-//   updatedAt    DateTime  @updatedAt
-//   // appointments Appointment[]
-//   location     Location  @relation(fields: [locationId], references: [id], onDelete: Cascade)
+model Customer {
+  id               String        @id @default(cuid()) @map("_id")
+  locationId       String
+  stripeCustomerId String        @unique
+  status           String?
+  firstName        String
+  lastName         String
+  email            String?
+  phoneNumber      String?
+  dateOfBirth      DateTime?
+  notes            String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  appointments     Appointment[]
+  customerPayments CustomerAppointmentPayment[]
 
-//   @@unique([email, locationId])
-// }
+  @@unique([email, locationId])
+}
+
+model CustomerAppointmentPayment {
+  id            String   @id @default(cuid()) @map("_id")
+  customerId   String
+  customer     Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  amountPaid    Int
+  paymentMethod String
+  transactionId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  appointment Appointment?
+}
 
 model ActivityLog {
   id             String   @id @default(cuid()) @map("_id")

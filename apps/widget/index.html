@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Widget Dev</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <script id="zenapt-script">
+      const v = { businessId: "123445" };
+      const script = document.createElement("script");
+      script.src = "./src/main.tsx";
+      script.type = "module"
+      script.async = true;
+      script.onload = () => {
+        window.zenapt?.init(v);
+      };
+
+      const parent_script = document.querySelector("#zenapt-script");
+     
+      parent_script.parentNode.insertBefore(script, parent_script);
+    </script>
+
+    <a href="#book-now">Book Now</a>
+    <button class="book">Book Now</button>
+  </body>
+</html>
