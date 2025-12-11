@@ -371,3 +371,7 @@ body {
     @apply cursor-pointer underline text-primary hover:text-primary/70;
   }
 }
+
+ .scrollbar-container {
+       scrollbar-gutter: stable both-edges;
+    }

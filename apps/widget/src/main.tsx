@@ -8,6 +8,7 @@ export interface WidgetHostOptions {
   globalBindings?: boolean;
   watchHash?: boolean;
   hashName?: string;
+  businessId:string;
 }
 
 export interface InitOptions {
@@ -34,11 +35,12 @@ export class WidgetHost {
   private styleEl?: HTMLStyleElement;
   private hashName: string;
 
-  constructor(selector: string, options: WidgetHostOptions = {}) {
+  constructor(selector: string, options: WidgetHostOptions) {
     const {
       globalBindings = true,
       watchHash = true,
       hashName = "book-now",
+      businessId
     } = options;
 
     this.hashName = hashName;
@@ -70,7 +72,7 @@ export class WidgetHost {
 
     // mount React root
     this.root = ReactDOM.createRoot(container);
-    this.root.render(<Widget ref={this.widgetRef} {...(options.props || {})} />);
+    this.root.render(<Widget ref={this.widgetRef} hashName={hashName} businessId={businessId} {...(options.props || {})} />);
 
     // attach global helpers if requested
     if (globalBindings) this.bindWindow();
@@ -147,7 +149,7 @@ window.zenapt = {
       document.body.appendChild(container);
     }
 
-    const instance = new WidgetHost(`#${widgetId}`, { hashName });
+    const instance = new WidgetHost(`#${widgetId}`, { hashName, businessId });
     window.zenapt.__instance = instance;
 
     console.info(`[zenapt] Widget initialized for businessId: ${businessId}`);

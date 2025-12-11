@@ -92,12 +92,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 6.14.0
- * Query Engine version: 717184b7b35ea05dfa71a3236b7af656013e1e49
+ * Prisma Client JS version: 6.13.0
+ * Query Engine version: 361e86d0ea4987e9f53a565309b3eed797a6bcbd
  */
 export const prismaVersion: PrismaVersion = {
-  client: "6.14.0",
-  engine: "717184b7b35ea05dfa71a3236b7af656013e1e49"
+  client: "6.13.0",
+  engine: "361e86d0ea4987e9f53a565309b3eed797a6bcbd"
 }
 
 /**
@@ -398,6 +398,9 @@ export const ModelName = {
   Appointment: 'Appointment',
   AddOn: 'AddOn',
   PromoCode: 'PromoCode',
+  ScheduleRule: 'ScheduleRule',
+  ScheduleException: 'ScheduleException',
+  TimeOff: 'TimeOff',
   User: 'User',
   Subscription: 'Subscription',
   Organization: 'Organization',
@@ -422,8 +425,8 @@ export type ModelName = (typeof ModelName)[keyof typeof ModelName]
 
 
 
-export interface TypeMapCb<GlobalOmitOptions = {}> extends runtime.Types.Utils.Fn<{extArgs: runtime.Types.Extensions.InternalArgs }, runtime.Types.Utils.Record<string, any>> {
-  returns: TypeMap<this['params']['extArgs'], GlobalOmitOptions>
+export interface TypeMapCb<ClientOptions = {}> extends runtime.Types.Utils.Fn<{extArgs: runtime.Types.Extensions.InternalArgs }, runtime.Types.Utils.Record<string, any>> {
+  returns: TypeMap<this['params']['extArgs'], ClientOptions extends { omit: infer OmitOptions } ? OmitOptions : {}>
 }
 
 export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> = {
@@ -431,7 +434,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "admin" | "appointment" | "addOn" | "promoCode" | "user" | "subscription" | "organization" | "managementMembership" | "location" | "locationEmployee" | "serviceTerms" | "serviceGroup" | "employeeService" | "customer" | "customerAppointmentPayment" | "activityLog" | "session" | "account" | "verification" | "organizationInvitation" | "locationInvitation" | "demoRequest"
+    modelProps: "admin" | "appointment" | "addOn" | "promoCode" | "scheduleRule" | "scheduleException" | "timeOff" | "user" | "subscription" | "organization" | "managementMembership" | "location" | "locationEmployee" | "serviceTerms" | "serviceGroup" | "employeeService" | "customer" | "customerAppointmentPayment" | "activityLog" | "session" | "account" | "verification" | "organizationInvitation" | "locationInvitation" | "demoRequest"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -728,6 +731,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.PromoCodeCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.PromoCodeCountAggregateOutputType> | number
+        }
+      }
+    }
+    ScheduleRule: {
+      payload: Prisma.$ScheduleRulePayload<ExtArgs>
+      fields: Prisma.ScheduleRuleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ScheduleRuleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleRulePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ScheduleRuleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleRulePayload>
+        }
+        findFirst: {
+          args: Prisma.ScheduleRuleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleRulePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ScheduleRuleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleRulePayload>
+        }
+        findMany: {
+          args: Prisma.ScheduleRuleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleRulePayload>[]
+        }
+        create: {
+          args: Prisma.ScheduleRuleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleRulePayload>
+        }
+        createMany: {
+          args: Prisma.ScheduleRuleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ScheduleRuleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleRulePayload>[]
+        }
+        delete: {
+          args: Prisma.ScheduleRuleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleRulePayload>
+        }
+        update: {
+          args: Prisma.ScheduleRuleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleRulePayload>
+        }
+        deleteMany: {
+          args: Prisma.ScheduleRuleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ScheduleRuleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ScheduleRuleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleRulePayload>[]
+        }
+        upsert: {
+          args: Prisma.ScheduleRuleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleRulePayload>
+        }
+        aggregate: {
+          args: Prisma.ScheduleRuleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateScheduleRule>
+        }
+        groupBy: {
+          args: Prisma.ScheduleRuleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ScheduleRuleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ScheduleRuleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ScheduleRuleCountAggregateOutputType> | number
+        }
+      }
+    }
+    ScheduleException: {
+      payload: Prisma.$ScheduleExceptionPayload<ExtArgs>
+      fields: Prisma.ScheduleExceptionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ScheduleExceptionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleExceptionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ScheduleExceptionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleExceptionPayload>
+        }
+        findFirst: {
+          args: Prisma.ScheduleExceptionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleExceptionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ScheduleExceptionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleExceptionPayload>
+        }
+        findMany: {
+          args: Prisma.ScheduleExceptionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleExceptionPayload>[]
+        }
+        create: {
+          args: Prisma.ScheduleExceptionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleExceptionPayload>
+        }
+        createMany: {
+          args: Prisma.ScheduleExceptionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ScheduleExceptionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleExceptionPayload>[]
+        }
+        delete: {
+          args: Prisma.ScheduleExceptionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleExceptionPayload>
+        }
+        update: {
+          args: Prisma.ScheduleExceptionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleExceptionPayload>
+        }
+        deleteMany: {
+          args: Prisma.ScheduleExceptionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ScheduleExceptionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ScheduleExceptionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleExceptionPayload>[]
+        }
+        upsert: {
+          args: Prisma.ScheduleExceptionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduleExceptionPayload>
+        }
+        aggregate: {
+          args: Prisma.ScheduleExceptionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateScheduleException>
+        }
+        groupBy: {
+          args: Prisma.ScheduleExceptionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ScheduleExceptionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ScheduleExceptionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ScheduleExceptionCountAggregateOutputType> | number
+        }
+      }
+    }
+    TimeOff: {
+      payload: Prisma.$TimeOffPayload<ExtArgs>
+      fields: Prisma.TimeOffFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TimeOffFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimeOffPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TimeOffFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimeOffPayload>
+        }
+        findFirst: {
+          args: Prisma.TimeOffFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimeOffPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TimeOffFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimeOffPayload>
+        }
+        findMany: {
+          args: Prisma.TimeOffFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimeOffPayload>[]
+        }
+        create: {
+          args: Prisma.TimeOffCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimeOffPayload>
+        }
+        createMany: {
+          args: Prisma.TimeOffCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TimeOffCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimeOffPayload>[]
+        }
+        delete: {
+          args: Prisma.TimeOffDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimeOffPayload>
+        }
+        update: {
+          args: Prisma.TimeOffUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimeOffPayload>
+        }
+        deleteMany: {
+          args: Prisma.TimeOffDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TimeOffUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TimeOffUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimeOffPayload>[]
+        }
+        upsert: {
+          args: Prisma.TimeOffUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TimeOffPayload>
+        }
+        aggregate: {
+          args: Prisma.TimeOffAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTimeOff>
+        }
+        groupBy: {
+          args: Prisma.TimeOffGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TimeOffGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TimeOffCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TimeOffCountAggregateOutputType> | number
         }
       }
     }
@@ -2136,7 +2361,9 @@ export const AddOnScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
-  basPrice: 'basPrice'
+  basePrice: 'basePrice',
+  incrementalDuration: 'incrementalDuration',
+  serviceTermId: 'serviceTermId'
 } as const
 
 export type AddOnScalarFieldEnum = (typeof AddOnScalarFieldEnum)[keyof typeof AddOnScalarFieldEnum]
@@ -2157,6 +2384,50 @@ export const PromoCodeScalarFieldEnum = {
 } as const
 
 export type PromoCodeScalarFieldEnum = (typeof PromoCodeScalarFieldEnum)[keyof typeof PromoCodeScalarFieldEnum]
+
+
+export const ScheduleRuleScalarFieldEnum = {
+  id: 'id',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  daysMask: 'daysMask',
+  startMinute: 'startMinute',
+  endMinute: 'endMinute',
+  isBreak: 'isBreak',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ScheduleRuleScalarFieldEnum = (typeof ScheduleRuleScalarFieldEnum)[keyof typeof ScheduleRuleScalarFieldEnum]
+
+
+export const ScheduleExceptionScalarFieldEnum = {
+  id: 'id',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  date: 'date',
+  startMinute: 'startMinute',
+  endMinute: 'endMinute',
+  isBreak: 'isBreak',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ScheduleExceptionScalarFieldEnum = (typeof ScheduleExceptionScalarFieldEnum)[keyof typeof ScheduleExceptionScalarFieldEnum]
+
+
+export const TimeOffScalarFieldEnum = {
+  id: 'id',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  reason: 'reason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TimeOffScalarFieldEnum = (typeof TimeOffScalarFieldEnum)[keyof typeof TimeOffScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
@@ -2239,6 +2510,7 @@ export const LocationScalarFieldEnum = {
   zipCode: 'zipCode',
   timeZone: 'timeZone',
   email: 'email',
+  image: 'image',
   phoneNumber: 'phoneNumber',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -2543,6 +2815,20 @@ export type ListEnumPromoLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$P
 
 
 /**
+ * Reference to a field of type 'ScheduleTargetType'
+ */
+export type EnumScheduleTargetTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScheduleTargetType'>
+    
+
+
+/**
+ * Reference to a field of type 'ScheduleTargetType[]'
+ */
+export type ListEnumScheduleTargetTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScheduleTargetType[]'>
+    
+
+
+/**
  * Reference to a field of type 'OrgRole'
  */
 export type EnumOrgRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrgRole'>
@@ -2684,6 +2970,9 @@ export type GlobalOmitConfig = {
   appointment?: Prisma.AppointmentOmit
   addOn?: Prisma.AddOnOmit
   promoCode?: Prisma.PromoCodeOmit
+  scheduleRule?: Prisma.ScheduleRuleOmit
+  scheduleException?: Prisma.ScheduleExceptionOmit
+  timeOff?: Prisma.TimeOffOmit
   user?: Prisma.UserOmit
   subscription?: Prisma.SubscriptionOmit
   organization?: Prisma.OrganizationOmit
@@ -2759,6 +3048,25 @@ export type PrismaAction =
   | 'runCommandRaw'
   | 'findRaw'
   | 'groupBy'
+
+/**
+ * These options are being passed into the middleware as "params"
+ */
+export type MiddlewareParams = {
+  model?: ModelName
+  action: PrismaAction
+  args: any
+  dataPath: string[]
+  runInTransaction: boolean
+}
+
+/**
+ * The `T` type makes sure, that the `return proceed` is not forgotten in the middleware implementation
+ */
+export type Middleware<T = any> = (
+  params: MiddlewareParams,
+  next: (params: MiddlewareParams) => runtime.Types.Utils.JsPromise<T>,
+) => runtime.Types.Utils.JsPromise<T>
 
 /**
  * `PrismaClient` proxy available in interactive transactions.

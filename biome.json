@@ -33,6 +33,9 @@
 		"enabled": true,
 		"rules": {
 			"recommended": true,
+			"a11y": {
+				"useButtonType": "warn"
+			},
 			"correctness": {
 				"useExhaustiveDependencies": "info"
 			},

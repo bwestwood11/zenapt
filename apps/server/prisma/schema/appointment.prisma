@@ -1,65 +1,131 @@
 enum AppointmentStatus {
-    SCHEDULED
-    COMPLETED
-    CANCELED
-    NO_SHOW
-    RESCHEDULED
+  SCHEDULED
+  COMPLETED
+  CANCELED
+  NO_SHOW
+  RESCHEDULED
 }
 
 model Appointment {
-    id         String            @id @default(cuid()) @map("_id")
-    locationId String
-    location   Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
-    customerId String
-    customer   Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
-    startTime  DateTime
-    endTime    DateTime
-    status     AppointmentStatus @default(SCHEDULED)
-    service    EmployeeService[]
-    addOns     AddOn[]
+  id         String            @id @default(cuid()) @map("_id")
+  locationId String
+  location   Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  customerId String
+  customer   Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  startTime  DateTime
+  endTime    DateTime
+  status     AppointmentStatus @default(SCHEDULED)
+  service    EmployeeService[]
+  addOns     AddOn[]
 
-    notes     String?
-    price     Int
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    customerPaymentId String? @unique
-    customerAppointmentPayment   CustomerAppointmentPayment? @relation(fields: [customerPaymentId], references: [id], onDelete: Restrict)
-    promoCodeId String?
-    promoCode   PromoCode? @relation(fields: [promoCodeId], references: [id], onDelete: SetNull)
+  notes                      String?
+  price                      Int
+  createdAt                  DateTime                    @default(now())
+  updatedAt                  DateTime                    @updatedAt
+  customerPaymentId          String?                     @unique
+  customerAppointmentPayment CustomerAppointmentPayment? @relation(fields: [customerPaymentId], references: [id], onDelete: Restrict)
+  promoCodeId                String?
+  promoCode                  PromoCode?                  @relation(fields: [promoCodeId], references: [id], onDelete: SetNull)
 }
 
 model AddOn {
-    id          String  @id @default(cuid()) @map("_id")
-    name        String
-    description String?
-    basPrice    Int
-
-    appointments Appointment[]
+  id               String            @id @default(cuid()) @map("_id")
+  name             String
+  description      String?
+  basePrice        Int
+  incrementalDuration Int
+  serviceTerms     ServiceTerms      @relation(fields: [serviceTermId], references: [id], onDelete: Cascade)
+  serviceTermId    String
+  appointments     Appointment[]
+  employeeServices EmployeeService[]
 }
 
 model PromoCode {
-  id             String        @id @default(cuid()) @map("_id")
-  code           String        @unique
+  id             String     @id @default(cuid()) @map("_id")
+  code           String     @unique
   description    String?
   discount       Int
-  isActive       Boolean       @default(true)
+  isActive       Boolean    @default(true)
   maxUsage       Int?
-  appliesToLevel PromoLevel    @default(ORGANIZATION)
+  appliesToLevel PromoLevel @default(ORGANIZATION)
 
   organizationId String
-  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   // optional location (only set if appliesToLevel == LOCATION)
-  locationId     String?       
-  location       Location?     @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  locationId String?
+  location   Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
 
-  appointments   Appointment[]
+  appointments Appointment[]
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum PromoLevel {
   ORGANIZATION
   LOCATION
+}
+
+
+enum ScheduleTargetType {
+  LOCATION
+  EMPLOYEE
+}
+
+model ScheduleRule {
+  id          String   @id @default(cuid()) @map("_id")
+
+  targetType  ScheduleTargetType
+  targetId    String // locationId or employeeId
+
+  // e.g. 0b0111110 (Mon-Fri)
+  daysMask    Int     // bitmask: 0-127
+
+  startMinute Int     // instead of "09:30" → 570
+  endMinute   Int     // instead of "17:00" → 1020
+
+  isBreak     Boolean @default(false) // false = working hours, true = recurring break
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([targetType, targetId])
+}
+
+
+model ScheduleException {
+  id          String   @id @default(cuid()) @map("_id")
+
+  targetType  ScheduleTargetType
+  targetId    String
+
+  date        DateTime // applies to ONE date
+
+  startMinute Int
+  endMinute   Int
+
+  isBreak     Boolean  @default(true) // true = remove time slot, false = override working hours
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([targetType, targetId, date])
+}
+
+
+model TimeOff {
+  id          String   @id @default(cuid()) @map("_id")
+
+  targetType  ScheduleTargetType
+  targetId    String
+
+  startDate   DateTime
+  endDate     DateTime
+  reason      String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([targetType, targetId, startDate, endDate])
 }

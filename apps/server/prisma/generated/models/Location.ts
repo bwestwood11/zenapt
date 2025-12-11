@@ -35,6 +35,7 @@ export type LocationMinAggregateOutputType = {
   zipCode: string | null
   timeZone: string | null
   email: string | null
+  image: string | null
   phoneNumber: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -52,6 +53,7 @@ export type LocationMaxAggregateOutputType = {
   zipCode: string | null
   timeZone: string | null
   email: string | null
+  image: string | null
   phoneNumber: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -69,6 +71,7 @@ export type LocationCountAggregateOutputType = {
   zipCode: number
   timeZone: number
   email: number
+  image: number
   phoneNumber: number
   createdAt: number
   updatedAt: number
@@ -88,6 +91,7 @@ export type LocationMinAggregateInputType = {
   zipCode?: true
   timeZone?: true
   email?: true
+  image?: true
   phoneNumber?: true
   createdAt?: true
   updatedAt?: true
@@ -105,6 +109,7 @@ export type LocationMaxAggregateInputType = {
   zipCode?: true
   timeZone?: true
   email?: true
+  image?: true
   phoneNumber?: true
   createdAt?: true
   updatedAt?: true
@@ -122,6 +127,7 @@ export type LocationCountAggregateInputType = {
   zipCode?: true
   timeZone?: true
   email?: true
+  image?: true
   phoneNumber?: true
   createdAt?: true
   updatedAt?: true
@@ -212,6 +218,7 @@ export type LocationGroupByOutputType = {
   zipCode: string | null
   timeZone: string | null
   email: string | null
+  image: string | null
   phoneNumber: string | null
   createdAt: Date
   updatedAt: Date
@@ -250,6 +257,7 @@ export type LocationWhereInput = {
   zipCode?: Prisma.StringNullableFilter<"Location"> | string | null
   timeZone?: Prisma.StringNullableFilter<"Location"> | string | null
   email?: Prisma.StringNullableFilter<"Location"> | string | null
+  image?: Prisma.StringNullableFilter<"Location"> | string | null
   phoneNumber?: Prisma.StringNullableFilter<"Location"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Location"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Location"> | Date | string
@@ -274,6 +282,7 @@ export type LocationOrderByWithRelationInput = {
   zipCode?: Prisma.SortOrderInput | Prisma.SortOrder
   timeZone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
+  image?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -302,6 +311,7 @@ export type LocationWhereUniqueInput = Prisma.AtLeast<{
   zipCode?: Prisma.StringNullableFilter<"Location"> | string | null
   timeZone?: Prisma.StringNullableFilter<"Location"> | string | null
   email?: Prisma.StringNullableFilter<"Location"> | string | null
+  image?: Prisma.StringNullableFilter<"Location"> | string | null
   phoneNumber?: Prisma.StringNullableFilter<"Location"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Location"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Location"> | Date | string
@@ -326,6 +336,7 @@ export type LocationOrderByWithAggregationInput = {
   zipCode?: Prisma.SortOrderInput | Prisma.SortOrder
   timeZone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
+  image?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -349,6 +360,7 @@ export type LocationScalarWhereWithAggregatesInput = {
   zipCode?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
   timeZone?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
   email?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
+  image?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
   phoneNumber?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Location"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Location"> | Date | string
@@ -365,6 +377,7 @@ export type LocationCreateInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -389,6 +402,7 @@ export type LocationUncheckedCreateInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -411,6 +425,7 @@ export type LocationUpdateInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -435,6 +450,7 @@ export type LocationUncheckedUpdateInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -458,6 +474,7 @@ export type LocationCreateManyInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -474,6 +491,7 @@ export type LocationUpdateManyMutationInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -491,6 +509,7 @@ export type LocationUncheckedUpdateManyInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -533,6 +552,7 @@ export type LocationCountOrderByAggregateInput = {
   zipCode?: Prisma.SortOrder
   timeZone?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  image?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -550,6 +570,7 @@ export type LocationMaxOrderByAggregateInput = {
   zipCode?: Prisma.SortOrder
   timeZone?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  image?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -567,6 +588,7 @@ export type LocationMinOrderByAggregateInput = {
   zipCode?: Prisma.SortOrder
   timeZone?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  image?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -713,6 +735,7 @@ export type LocationCreateWithoutAppointmentsInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -736,6 +759,7 @@ export type LocationUncheckedCreateWithoutAppointmentsInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -773,6 +797,7 @@ export type LocationUpdateWithoutAppointmentsInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -796,6 +821,7 @@ export type LocationUncheckedUpdateWithoutAppointmentsInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -817,6 +843,7 @@ export type LocationCreateWithoutPromoCodesInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -840,6 +867,7 @@ export type LocationUncheckedCreateWithoutPromoCodesInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -877,6 +905,7 @@ export type LocationUpdateWithoutPromoCodesInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -900,6 +929,7 @@ export type LocationUncheckedUpdateWithoutPromoCodesInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -921,6 +951,7 @@ export type LocationCreateWithoutOrganizationInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -943,6 +974,7 @@ export type LocationUncheckedCreateWithoutOrganizationInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -995,6 +1027,7 @@ export type LocationScalarWhereInput = {
   zipCode?: Prisma.StringNullableFilter<"Location"> | string | null
   timeZone?: Prisma.StringNullableFilter<"Location"> | string | null
   email?: Prisma.StringNullableFilter<"Location"> | string | null
+  image?: Prisma.StringNullableFilter<"Location"> | string | null
   phoneNumber?: Prisma.StringNullableFilter<"Location"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Location"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Location"> | Date | string
@@ -1011,6 +1044,7 @@ export type LocationCreateWithoutEmployeesInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1034,6 +1068,7 @@ export type LocationUncheckedCreateWithoutEmployeesInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1071,6 +1106,7 @@ export type LocationUpdateWithoutEmployeesInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1094,6 +1130,7 @@ export type LocationUncheckedUpdateWithoutEmployeesInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1115,6 +1152,7 @@ export type LocationCreateWithoutServiceInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1138,6 +1176,7 @@ export type LocationUncheckedCreateWithoutServiceInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1175,6 +1214,7 @@ export type LocationUpdateWithoutServiceInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1198,6 +1238,7 @@ export type LocationUncheckedUpdateWithoutServiceInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1219,6 +1260,7 @@ export type LocationCreateWithoutActivityLogInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1242,6 +1284,7 @@ export type LocationUncheckedCreateWithoutActivityLogInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1279,6 +1322,7 @@ export type LocationUpdateWithoutActivityLogInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1302,6 +1346,7 @@ export type LocationUncheckedUpdateWithoutActivityLogInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1323,6 +1368,7 @@ export type LocationCreateWithoutLocationInvitationInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1346,6 +1392,7 @@ export type LocationUncheckedCreateWithoutLocationInvitationInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1383,6 +1430,7 @@ export type LocationUpdateWithoutLocationInvitationInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1406,6 +1454,7 @@ export type LocationUncheckedUpdateWithoutLocationInvitationInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1427,6 +1476,7 @@ export type LocationCreateManyOrganizationInput = {
   zipCode?: string | null
   timeZone?: string | null
   email?: string | null
+  image?: string | null
   phoneNumber?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1443,6 +1493,7 @@ export type LocationUpdateWithoutOrganizationInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1465,6 +1516,7 @@ export type LocationUncheckedUpdateWithoutOrganizationInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1487,6 +1539,7 @@ export type LocationUncheckedUpdateManyWithoutOrganizationInput = {
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1580,6 +1633,7 @@ export type LocationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   zipCode?: boolean
   timeZone?: boolean
   email?: boolean
+  image?: boolean
   phoneNumber?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1605,6 +1659,7 @@ export type LocationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   zipCode?: boolean
   timeZone?: boolean
   email?: boolean
+  image?: boolean
   phoneNumber?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1623,6 +1678,7 @@ export type LocationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   zipCode?: boolean
   timeZone?: boolean
   email?: boolean
+  image?: boolean
   phoneNumber?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1641,12 +1697,13 @@ export type LocationSelectScalar = {
   zipCode?: boolean
   timeZone?: boolean
   email?: boolean
+  image?: boolean
   phoneNumber?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type LocationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "organizationId" | "slug" | "address" | "city" | "state" | "country" | "zipCode" | "timeZone" | "email" | "phoneNumber" | "createdAt" | "updatedAt", ExtArgs["result"]["location"]>
+export type LocationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "organizationId" | "slug" | "address" | "city" | "state" | "country" | "zipCode" | "timeZone" | "email" | "image" | "phoneNumber" | "createdAt" | "updatedAt", ExtArgs["result"]["location"]>
 export type LocationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   employees?: boolean | Prisma.Location$employeesArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -1687,6 +1744,7 @@ export type $LocationPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     zipCode: string | null
     timeZone: string | null
     email: string | null
+    image: string | null
     phoneNumber: string | null
     createdAt: Date
     updatedAt: Date
@@ -2131,6 +2189,7 @@ export interface LocationFieldRefs {
   readonly zipCode: Prisma.FieldRef<"Location", 'String'>
   readonly timeZone: Prisma.FieldRef<"Location", 'String'>
   readonly email: Prisma.FieldRef<"Location", 'String'>
+  readonly image: Prisma.FieldRef<"Location", 'String'>
   readonly phoneNumber: Prisma.FieldRef<"Location", 'String'>
   readonly createdAt: Prisma.FieldRef<"Location", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Location", 'DateTime'>

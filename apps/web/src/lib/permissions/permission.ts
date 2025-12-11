@@ -86,3 +86,20 @@ export const hasAccessToLocation = async (slug: string) => {
     console.error(error);
   }
 };
+
+
+export async function getLocationAccess(slug: string): Promise<false | { id: string }> {
+  try {
+    const session = await getSession();
+    if (!session?.data?.user?.employees) return false;
+
+    const match = session.data.user.employees.find(
+      (emp) => emp.locationSlug === slug
+    );
+
+    return match ? { id: match.locationId } : false;
+  } catch (err) {
+    console.error("location access check failed:", err);
+    return false;
+  }
+}

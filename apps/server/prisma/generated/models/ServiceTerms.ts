@@ -234,6 +234,7 @@ export type ServiceTermsWhereInput = {
   serviceGroup?: Prisma.XOR<Prisma.ServiceGroupNullableScalarRelationFilter, Prisma.ServiceGroupWhereInput> | null
   Service?: Prisma.EmployeeServiceListRelationFilter
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  addOns?: Prisma.AddOnListRelationFilter
 }
 
 export type ServiceTermsOrderByWithRelationInput = {
@@ -247,6 +248,7 @@ export type ServiceTermsOrderByWithRelationInput = {
   serviceGroup?: Prisma.ServiceGroupOrderByWithRelationInput
   Service?: Prisma.EmployeeServiceOrderByRelationAggregateInput
   organization?: Prisma.OrganizationOrderByWithRelationInput
+  addOns?: Prisma.AddOnOrderByRelationAggregateInput
 }
 
 export type ServiceTermsWhereUniqueInput = Prisma.AtLeast<{
@@ -263,6 +265,7 @@ export type ServiceTermsWhereUniqueInput = Prisma.AtLeast<{
   serviceGroup?: Prisma.XOR<Prisma.ServiceGroupNullableScalarRelationFilter, Prisma.ServiceGroupWhereInput> | null
   Service?: Prisma.EmployeeServiceListRelationFilter
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  addOns?: Prisma.AddOnListRelationFilter
 }, "id">
 
 export type ServiceTermsOrderByWithAggregationInput = {
@@ -302,6 +305,7 @@ export type ServiceTermsCreateInput = {
   serviceGroup?: Prisma.ServiceGroupCreateNestedOneWithoutServiceTermsInput
   Service?: Prisma.EmployeeServiceCreateNestedManyWithoutServiceTermsInput
   organization: Prisma.OrganizationCreateNestedOneWithoutServiceTermsInput
+  addOns?: Prisma.AddOnCreateNestedManyWithoutServiceTermsInput
 }
 
 export type ServiceTermsUncheckedCreateInput = {
@@ -313,6 +317,7 @@ export type ServiceTermsUncheckedCreateInput = {
   minimumPrice: number
   organizationId: string
   Service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutServiceTermsInput
+  addOns?: Prisma.AddOnUncheckedCreateNestedManyWithoutServiceTermsInput
 }
 
 export type ServiceTermsUpdateInput = {
@@ -324,6 +329,7 @@ export type ServiceTermsUpdateInput = {
   serviceGroup?: Prisma.ServiceGroupUpdateOneWithoutServiceTermsNestedInput
   Service?: Prisma.EmployeeServiceUpdateManyWithoutServiceTermsNestedInput
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutServiceTermsNestedInput
+  addOns?: Prisma.AddOnUpdateManyWithoutServiceTermsNestedInput
 }
 
 export type ServiceTermsUncheckedUpdateInput = {
@@ -335,6 +341,7 @@ export type ServiceTermsUncheckedUpdateInput = {
   minimumPrice?: Prisma.IntFieldUpdateOperationsInput | number
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutServiceTermsNestedInput
+  addOns?: Prisma.AddOnUncheckedUpdateManyWithoutServiceTermsNestedInput
 }
 
 export type ServiceTermsCreateManyInput = {
@@ -363,6 +370,11 @@ export type ServiceTermsUncheckedUpdateManyInput = {
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   minimumPrice?: Prisma.IntFieldUpdateOperationsInput | number
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type ServiceTermsScalarRelationFilter = {
+  is?: Prisma.ServiceTermsWhereInput
+  isNot?: Prisma.ServiceTermsWhereInput
 }
 
 export type ServiceTermsListRelationFilter = {
@@ -413,9 +425,18 @@ export type ServiceTermsSumOrderByAggregateInput = {
   minimumPrice?: Prisma.SortOrder
 }
 
-export type ServiceTermsScalarRelationFilter = {
-  is?: Prisma.ServiceTermsWhereInput
-  isNot?: Prisma.ServiceTermsWhereInput
+export type ServiceTermsCreateNestedOneWithoutAddOnsInput = {
+  create?: Prisma.XOR<Prisma.ServiceTermsCreateWithoutAddOnsInput, Prisma.ServiceTermsUncheckedCreateWithoutAddOnsInput>
+  connectOrCreate?: Prisma.ServiceTermsCreateOrConnectWithoutAddOnsInput
+  connect?: Prisma.ServiceTermsWhereUniqueInput
+}
+
+export type ServiceTermsUpdateOneRequiredWithoutAddOnsNestedInput = {
+  create?: Prisma.XOR<Prisma.ServiceTermsCreateWithoutAddOnsInput, Prisma.ServiceTermsUncheckedCreateWithoutAddOnsInput>
+  connectOrCreate?: Prisma.ServiceTermsCreateOrConnectWithoutAddOnsInput
+  upsert?: Prisma.ServiceTermsUpsertWithoutAddOnsInput
+  connect?: Prisma.ServiceTermsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServiceTermsUpdateToOneWithWhereWithoutAddOnsInput, Prisma.ServiceTermsUpdateWithoutAddOnsInput>, Prisma.ServiceTermsUncheckedUpdateWithoutAddOnsInput>
 }
 
 export type ServiceTermsCreateNestedManyWithoutOrganizationInput = {
@@ -516,6 +537,66 @@ export type ServiceTermsUpdateOneRequiredWithoutServiceNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ServiceTermsUpdateToOneWithWhereWithoutServiceInput, Prisma.ServiceTermsUpdateWithoutServiceInput>, Prisma.ServiceTermsUncheckedUpdateWithoutServiceInput>
 }
 
+export type ServiceTermsCreateWithoutAddOnsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  excerpt?: string | null
+  minimumPrice: number
+  serviceGroup?: Prisma.ServiceGroupCreateNestedOneWithoutServiceTermsInput
+  Service?: Prisma.EmployeeServiceCreateNestedManyWithoutServiceTermsInput
+  organization: Prisma.OrganizationCreateNestedOneWithoutServiceTermsInput
+}
+
+export type ServiceTermsUncheckedCreateWithoutAddOnsInput = {
+  id?: string
+  name: string
+  serviceGroupId?: string | null
+  description?: string | null
+  excerpt?: string | null
+  minimumPrice: number
+  organizationId: string
+  Service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutServiceTermsInput
+}
+
+export type ServiceTermsCreateOrConnectWithoutAddOnsInput = {
+  where: Prisma.ServiceTermsWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServiceTermsCreateWithoutAddOnsInput, Prisma.ServiceTermsUncheckedCreateWithoutAddOnsInput>
+}
+
+export type ServiceTermsUpsertWithoutAddOnsInput = {
+  update: Prisma.XOR<Prisma.ServiceTermsUpdateWithoutAddOnsInput, Prisma.ServiceTermsUncheckedUpdateWithoutAddOnsInput>
+  create: Prisma.XOR<Prisma.ServiceTermsCreateWithoutAddOnsInput, Prisma.ServiceTermsUncheckedCreateWithoutAddOnsInput>
+  where?: Prisma.ServiceTermsWhereInput
+}
+
+export type ServiceTermsUpdateToOneWithWhereWithoutAddOnsInput = {
+  where?: Prisma.ServiceTermsWhereInput
+  data: Prisma.XOR<Prisma.ServiceTermsUpdateWithoutAddOnsInput, Prisma.ServiceTermsUncheckedUpdateWithoutAddOnsInput>
+}
+
+export type ServiceTermsUpdateWithoutAddOnsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minimumPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  serviceGroup?: Prisma.ServiceGroupUpdateOneWithoutServiceTermsNestedInput
+  Service?: Prisma.EmployeeServiceUpdateManyWithoutServiceTermsNestedInput
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutServiceTermsNestedInput
+}
+
+export type ServiceTermsUncheckedUpdateWithoutAddOnsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  minimumPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutServiceTermsNestedInput
+}
+
 export type ServiceTermsCreateWithoutOrganizationInput = {
   id?: string
   name: string
@@ -524,6 +605,7 @@ export type ServiceTermsCreateWithoutOrganizationInput = {
   minimumPrice: number
   serviceGroup?: Prisma.ServiceGroupCreateNestedOneWithoutServiceTermsInput
   Service?: Prisma.EmployeeServiceCreateNestedManyWithoutServiceTermsInput
+  addOns?: Prisma.AddOnCreateNestedManyWithoutServiceTermsInput
 }
 
 export type ServiceTermsUncheckedCreateWithoutOrganizationInput = {
@@ -534,6 +616,7 @@ export type ServiceTermsUncheckedCreateWithoutOrganizationInput = {
   excerpt?: string | null
   minimumPrice: number
   Service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutServiceTermsInput
+  addOns?: Prisma.AddOnUncheckedCreateNestedManyWithoutServiceTermsInput
 }
 
 export type ServiceTermsCreateOrConnectWithoutOrganizationInput = {
@@ -583,6 +666,7 @@ export type ServiceTermsCreateWithoutServiceGroupInput = {
   minimumPrice: number
   Service?: Prisma.EmployeeServiceCreateNestedManyWithoutServiceTermsInput
   organization: Prisma.OrganizationCreateNestedOneWithoutServiceTermsInput
+  addOns?: Prisma.AddOnCreateNestedManyWithoutServiceTermsInput
 }
 
 export type ServiceTermsUncheckedCreateWithoutServiceGroupInput = {
@@ -593,6 +677,7 @@ export type ServiceTermsUncheckedCreateWithoutServiceGroupInput = {
   minimumPrice: number
   organizationId: string
   Service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutServiceTermsInput
+  addOns?: Prisma.AddOnUncheckedCreateNestedManyWithoutServiceTermsInput
 }
 
 export type ServiceTermsCreateOrConnectWithoutServiceGroupInput = {
@@ -629,6 +714,7 @@ export type ServiceTermsCreateWithoutServiceInput = {
   minimumPrice: number
   serviceGroup?: Prisma.ServiceGroupCreateNestedOneWithoutServiceTermsInput
   organization: Prisma.OrganizationCreateNestedOneWithoutServiceTermsInput
+  addOns?: Prisma.AddOnCreateNestedManyWithoutServiceTermsInput
 }
 
 export type ServiceTermsUncheckedCreateWithoutServiceInput = {
@@ -639,6 +725,7 @@ export type ServiceTermsUncheckedCreateWithoutServiceInput = {
   excerpt?: string | null
   minimumPrice: number
   organizationId: string
+  addOns?: Prisma.AddOnUncheckedCreateNestedManyWithoutServiceTermsInput
 }
 
 export type ServiceTermsCreateOrConnectWithoutServiceInput = {
@@ -665,6 +752,7 @@ export type ServiceTermsUpdateWithoutServiceInput = {
   minimumPrice?: Prisma.IntFieldUpdateOperationsInput | number
   serviceGroup?: Prisma.ServiceGroupUpdateOneWithoutServiceTermsNestedInput
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutServiceTermsNestedInput
+  addOns?: Prisma.AddOnUpdateManyWithoutServiceTermsNestedInput
 }
 
 export type ServiceTermsUncheckedUpdateWithoutServiceInput = {
@@ -675,6 +763,7 @@ export type ServiceTermsUncheckedUpdateWithoutServiceInput = {
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   minimumPrice?: Prisma.IntFieldUpdateOperationsInput | number
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  addOns?: Prisma.AddOnUncheckedUpdateManyWithoutServiceTermsNestedInput
 }
 
 export type ServiceTermsCreateManyOrganizationInput = {
@@ -694,6 +783,7 @@ export type ServiceTermsUpdateWithoutOrganizationInput = {
   minimumPrice?: Prisma.IntFieldUpdateOperationsInput | number
   serviceGroup?: Prisma.ServiceGroupUpdateOneWithoutServiceTermsNestedInput
   Service?: Prisma.EmployeeServiceUpdateManyWithoutServiceTermsNestedInput
+  addOns?: Prisma.AddOnUpdateManyWithoutServiceTermsNestedInput
 }
 
 export type ServiceTermsUncheckedUpdateWithoutOrganizationInput = {
@@ -704,6 +794,7 @@ export type ServiceTermsUncheckedUpdateWithoutOrganizationInput = {
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   minimumPrice?: Prisma.IntFieldUpdateOperationsInput | number
   Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutServiceTermsNestedInput
+  addOns?: Prisma.AddOnUncheckedUpdateManyWithoutServiceTermsNestedInput
 }
 
 export type ServiceTermsUncheckedUpdateManyWithoutOrganizationInput = {
@@ -732,6 +823,7 @@ export type ServiceTermsUpdateWithoutServiceGroupInput = {
   minimumPrice?: Prisma.IntFieldUpdateOperationsInput | number
   Service?: Prisma.EmployeeServiceUpdateManyWithoutServiceTermsNestedInput
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutServiceTermsNestedInput
+  addOns?: Prisma.AddOnUpdateManyWithoutServiceTermsNestedInput
 }
 
 export type ServiceTermsUncheckedUpdateWithoutServiceGroupInput = {
@@ -742,6 +834,7 @@ export type ServiceTermsUncheckedUpdateWithoutServiceGroupInput = {
   minimumPrice?: Prisma.IntFieldUpdateOperationsInput | number
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutServiceTermsNestedInput
+  addOns?: Prisma.AddOnUncheckedUpdateManyWithoutServiceTermsNestedInput
 }
 
 export type ServiceTermsUncheckedUpdateManyWithoutServiceGroupInput = {
@@ -760,10 +853,12 @@ export type ServiceTermsUncheckedUpdateManyWithoutServiceGroupInput = {
 
 export type ServiceTermsCountOutputType = {
   Service: number
+  addOns: number
 }
 
 export type ServiceTermsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Service?: boolean | ServiceTermsCountOutputTypeCountServiceArgs
+  addOns?: boolean | ServiceTermsCountOutputTypeCountAddOnsArgs
 }
 
 /**
@@ -783,6 +878,13 @@ export type ServiceTermsCountOutputTypeCountServiceArgs<ExtArgs extends runtime.
   where?: Prisma.EmployeeServiceWhereInput
 }
 
+/**
+ * ServiceTermsCountOutputType without action
+ */
+export type ServiceTermsCountOutputTypeCountAddOnsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AddOnWhereInput
+}
+
 
 export type ServiceTermsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -795,6 +897,7 @@ export type ServiceTermsSelect<ExtArgs extends runtime.Types.Extensions.Internal
   serviceGroup?: boolean | Prisma.ServiceTerms$serviceGroupArgs<ExtArgs>
   Service?: boolean | Prisma.ServiceTerms$ServiceArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  addOns?: boolean | Prisma.ServiceTerms$addOnsArgs<ExtArgs>
   _count?: boolean | Prisma.ServiceTermsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["serviceTerms"]>
 
@@ -837,6 +940,7 @@ export type ServiceTermsInclude<ExtArgs extends runtime.Types.Extensions.Interna
   serviceGroup?: boolean | Prisma.ServiceTerms$serviceGroupArgs<ExtArgs>
   Service?: boolean | Prisma.ServiceTerms$ServiceArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  addOns?: boolean | Prisma.ServiceTerms$addOnsArgs<ExtArgs>
   _count?: boolean | Prisma.ServiceTermsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ServiceTermsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -854,6 +958,7 @@ export type $ServiceTermsPayload<ExtArgs extends runtime.Types.Extensions.Intern
     serviceGroup: Prisma.$ServiceGroupPayload<ExtArgs> | null
     Service: Prisma.$EmployeeServicePayload<ExtArgs>[]
     organization: Prisma.$OrganizationPayload<ExtArgs>
+    addOns: Prisma.$AddOnPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1260,6 +1365,7 @@ export interface Prisma__ServiceTermsClient<T, Null = never, ExtArgs extends run
   serviceGroup<T extends Prisma.ServiceTerms$serviceGroupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceTerms$serviceGroupArgs<ExtArgs>>): Prisma.Prisma__ServiceGroupClient<runtime.Types.Result.GetResult<Prisma.$ServiceGroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   Service<T extends Prisma.ServiceTerms$ServiceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceTerms$ServiceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  addOns<T extends Prisma.ServiceTerms$addOnsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceTerms$addOnsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AddOnPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1732,6 +1838,30 @@ export type ServiceTerms$ServiceArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.EmployeeServiceScalarFieldEnum | Prisma.EmployeeServiceScalarFieldEnum[]
+}
+
+/**
+ * ServiceTerms.addOns
+ */
+export type ServiceTerms$addOnsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AddOn
+   */
+  select?: Prisma.AddOnSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AddOn
+   */
+  omit?: Prisma.AddOnOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AddOnInclude<ExtArgs> | null
+  where?: Prisma.AddOnWhereInput
+  orderBy?: Prisma.AddOnOrderByWithRelationInput | Prisma.AddOnOrderByWithRelationInput[]
+  cursor?: Prisma.AddOnWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AddOnScalarFieldEnum | Prisma.AddOnScalarFieldEnum[]
 }
 
 /**

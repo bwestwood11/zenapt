@@ -5,6 +5,7 @@ import { TRPCError } from "@trpc/server";
 
 import { isValidPhoneNumber } from "libphonenumber-js";
 import { revalidateTag } from "next/cache";
+import { getWeeklySchedule, updateWeeklySchedule } from "../lib/locations/operating-hours";
 
 const CreateLocationSchema = z.object({
   name: z.string().min(2, "Location name must be at least 2 characters"),
@@ -134,8 +135,39 @@ const getLocation = withPermissions(
   return location;
 });
 
+const updateLocationOperatingHours = withPermissions(
+  "UPDATE::LOCATION",
+  z.object({
+    locationId: z.string(),
+    rules: z.array(
+      z.object({
+        day: z.number(), // 0 = Sun ... 6 = Sat
+        enabled: z.boolean(),
+        startMinute: z.number().optional(),
+        endMinute: z.number().optional(),
+      })
+    ),
+  })
+).mutation(async ({ ctx, input }) => {
+  const { locationId, rules } = input;
+  await updateWeeklySchedule({locationId, rules})
+});
+
+
+const fetchLocationOperatingHours = withPermissions(
+  "READ::LOCATION",
+  z.object({
+    locationId: z.string(),
+  })
+).query(async ({ ctx, input }) => {
+  const { locationId } = input;
+  return await getWeeklySchedule(locationId)
+});
+
 export const locationRouter = router({
   createLocation: createLocation,
   getAllLocations,
   getLocation,
+  updateLocationOperatingHours,
+  fetchLocationOperatingHours
 });

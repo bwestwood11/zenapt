@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import {
-  Poppins
-} from "next/font/google";
+import { Poppins } from "next/font/google";
 import "@repo/tailwind";
 import Providers from "@/components/providers";
-
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -15,7 +12,6 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "med-spa-saas",
   description: "med-spa-saas",
-  
 };
 
 export default function RootLayout({

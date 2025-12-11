@@ -26,6 +26,14 @@ export const PromoLevel = {
 export type PromoLevel = (typeof PromoLevel)[keyof typeof PromoLevel]
 
 
+export const ScheduleTargetType = {
+  LOCATION: 'LOCATION',
+  EMPLOYEE: 'EMPLOYEE'
+} as const
+
+export type ScheduleTargetType = (typeof ScheduleTargetType)[keyof typeof ScheduleTargetType]
+
+
 export const OrgRole = {
   OWNER: 'OWNER',
   ADMIN: 'ADMIN',

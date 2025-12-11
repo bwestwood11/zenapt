@@ -6,5 +6,6 @@ export default {
   schema: path.join("prisma", "schema"),
   migrations: {
     path: path.join("prisma", "migrations"),
-  }
+  },
+   
 } satisfies PrismaConfig;

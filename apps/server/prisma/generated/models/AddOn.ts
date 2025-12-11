@@ -26,63 +26,79 @@ export type AggregateAddOn = {
 }
 
 export type AddOnAvgAggregateOutputType = {
-  basPrice: number | null
+  basePrice: number | null
+  incrementalDuration: number | null
 }
 
 export type AddOnSumAggregateOutputType = {
-  basPrice: number | null
+  basePrice: number | null
+  incrementalDuration: number | null
 }
 
 export type AddOnMinAggregateOutputType = {
   id: string | null
   name: string | null
   description: string | null
-  basPrice: number | null
+  basePrice: number | null
+  incrementalDuration: number | null
+  serviceTermId: string | null
 }
 
 export type AddOnMaxAggregateOutputType = {
   id: string | null
   name: string | null
   description: string | null
-  basPrice: number | null
+  basePrice: number | null
+  incrementalDuration: number | null
+  serviceTermId: string | null
 }
 
 export type AddOnCountAggregateOutputType = {
   id: number
   name: number
   description: number
-  basPrice: number
+  basePrice: number
+  incrementalDuration: number
+  serviceTermId: number
   _all: number
 }
 
 
 export type AddOnAvgAggregateInputType = {
-  basPrice?: true
+  basePrice?: true
+  incrementalDuration?: true
 }
 
 export type AddOnSumAggregateInputType = {
-  basPrice?: true
+  basePrice?: true
+  incrementalDuration?: true
 }
 
 export type AddOnMinAggregateInputType = {
   id?: true
   name?: true
   description?: true
-  basPrice?: true
+  basePrice?: true
+  incrementalDuration?: true
+  serviceTermId?: true
 }
 
 export type AddOnMaxAggregateInputType = {
   id?: true
   name?: true
   description?: true
-  basPrice?: true
+  basePrice?: true
+  incrementalDuration?: true
+  serviceTermId?: true
 }
 
 export type AddOnCountAggregateInputType = {
   id?: true
   name?: true
   description?: true
-  basPrice?: true
+  basePrice?: true
+  incrementalDuration?: true
+  serviceTermId?: true
   _all?: true
 }
 
@@ -176,7 +192,9 @@ export type AddOnGroupByOutputType = {
   id: string
   name: string
   description: string | null
-  basPrice: number
+  basePrice: number
+  incrementalDuration: number
+  serviceTermId: string
   _count: AddOnCountAggregateOutputType | null
   _avg: AddOnAvgAggregateOutputType | null
   _sum: AddOnSumAggregateOutputType | null
@@ -206,16 +224,24 @@ export type AddOnWhereInput = {
   id?: Prisma.StringFilter<"AddOn"> | string
   name?: Prisma.StringFilter<"AddOn"> | string
   description?: Prisma.StringNullableFilter<"AddOn"> | string | null
-  basPrice?: Prisma.IntFilter<"AddOn"> | number
+  basePrice?: Prisma.IntFilter<"AddOn"> | number
+  incrementalDuration?: Prisma.IntFilter<"AddOn"> | number
+  serviceTermId?: Prisma.StringFilter<"AddOn"> | string
+  serviceTerms?: Prisma.XOR<Prisma.ServiceTermsScalarRelationFilter, Prisma.ServiceTermsWhereInput>
   appointments?: Prisma.AppointmentListRelationFilter
+  employeeServices?: Prisma.EmployeeServiceListRelationFilter
 }
 
 export type AddOnOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
-  basPrice?: Prisma.SortOrder
+  basePrice?: Prisma.SortOrder
+  incrementalDuration?: Prisma.SortOrder
+  serviceTermId?: Prisma.SortOrder
+  serviceTerms?: Prisma.ServiceTermsOrderByWithRelationInput
   appointments?: Prisma.AppointmentOrderByRelationAggregateInput
+  employeeServices?: Prisma.EmployeeServiceOrderByRelationAggregateInput
 }
 
 export type AddOnWhereUniqueInput = Prisma.AtLeast<{
@@ -225,15 +251,21 @@ export type AddOnWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.AddOnWhereInput | Prisma.AddOnWhereInput[]
   name?: Prisma.StringFilter<"AddOn"> | string
   description?: Prisma.StringNullableFilter<"AddOn"> | string | null
-  basPrice?: Prisma.IntFilter<"AddOn"> | number
+  basePrice?: Prisma.IntFilter<"AddOn"> | number
+  incrementalDuration?: Prisma.IntFilter<"AddOn"> | number
+  serviceTermId?: Prisma.StringFilter<"AddOn"> | string
+  serviceTerms?: Prisma.XOR<Prisma.ServiceTermsScalarRelationFilter, Prisma.ServiceTermsWhereInput>
   appointments?: Prisma.AppointmentListRelationFilter
+  employeeServices?: Prisma.EmployeeServiceListRelationFilter
 }, "id">
 
 export type AddOnOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
-  basPrice?: Prisma.SortOrder
+  basePrice?: Prisma.SortOrder
+  incrementalDuration?: Prisma.SortOrder
+  serviceTermId?: Prisma.SortOrder
   _count?: Prisma.AddOnCountOrderByAggregateInput
   _avg?: Prisma.AddOnAvgOrderByAggregateInput
   _max?: Prisma.AddOnMaxOrderByAggregateInput
@@ -248,60 +280,79 @@ export type AddOnScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"AddOn"> | string
   name?: Prisma.StringWithAggregatesFilter<"AddOn"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"AddOn"> | string | null
-  basPrice?: Prisma.IntWithAggregatesFilter<"AddOn"> | number
+  basePrice?: Prisma.IntWithAggregatesFilter<"AddOn"> | number
+  incrementalDuration?: Prisma.IntWithAggregatesFilter<"AddOn"> | number
+  serviceTermId?: Prisma.StringWithAggregatesFilter<"AddOn"> | string
 }
 
 export type AddOnCreateInput = {
   id?: string
   name: string
   description?: string | null
-  basPrice: number
+  basePrice: number
+  incrementalDuration: number
+  serviceTerms: Prisma.ServiceTermsCreateNestedOneWithoutAddOnsInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutAddOnsInput
+  employeeServices?: Prisma.EmployeeServiceCreateNestedManyWithoutAddOnsInput
 }
 
 export type AddOnUncheckedCreateInput = {
   id?: string
   name: string
   description?: string | null
-  basPrice: number
+  basePrice: number
+  incrementalDuration: number
+  serviceTermId: string
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutAddOnsInput
+  employeeServices?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutAddOnsInput
 }
 
 export type AddOnUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  basPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  basePrice?: Prisma.IntFieldUpdateOperationsInput | number
+  incrementalDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  serviceTerms?: Prisma.ServiceTermsUpdateOneRequiredWithoutAddOnsNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutAddOnsNestedInput
+  employeeServices?: Prisma.EmployeeServiceUpdateManyWithoutAddOnsNestedInput
 }
 
 export type AddOnUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  basPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  basePrice?: Prisma.IntFieldUpdateOperationsInput | number
+  incrementalDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  serviceTermId?: Prisma.StringFieldUpdateOperationsInput | string
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutAddOnsNestedInput
+  employeeServices?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutAddOnsNestedInput
 }
 
 export type AddOnCreateManyInput = {
   id?: string
   name: string
   description?: string | null
-  basPrice: number
+  basePrice: number
+  incrementalDuration: number
+  serviceTermId: string
 }
 
 export type AddOnUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  basPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  basePrice?: Prisma.IntFieldUpdateOperationsInput | number
+  incrementalDuration?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type AddOnUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  basPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  basePrice?: Prisma.IntFieldUpdateOperationsInput | number
+  incrementalDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  serviceTermId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type AddOnListRelationFilter = {
@@ -318,29 +369,37 @@ export type AddOnCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  basPrice?: Prisma.SortOrder
+  basePrice?: Prisma.SortOrder
+  incrementalDuration?: Prisma.SortOrder
+  serviceTermId?: Prisma.SortOrder
 }
 
 export type AddOnAvgOrderByAggregateInput = {
-  basPrice?: Prisma.SortOrder
+  basePrice?: Prisma.SortOrder
+  incrementalDuration?: Prisma.SortOrder
 }
 
 export type AddOnMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  basPrice?: Prisma.SortOrder
+  basePrice?: Prisma.SortOrder
+  incrementalDuration?: Prisma.SortOrder
+  serviceTermId?: Prisma.SortOrder
 }
 
 export type AddOnMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  basPrice?: Prisma.SortOrder
+  basePrice?: Prisma.SortOrder
+  incrementalDuration?: Prisma.SortOrder
+  serviceTermId?: Prisma.SortOrder
 }
 
 export type AddOnSumOrderByAggregateInput = {
-  basPrice?: Prisma.SortOrder
+  basePrice?: Prisma.SortOrder
+  incrementalDuration?: Prisma.SortOrder
 }
 
 export type AddOnCreateNestedManyWithoutAppointmentsInput = {
@@ -381,18 +440,104 @@ export type AddOnUncheckedUpdateManyWithoutAppointmentsNestedInput = {
   deleteMany?: Prisma.AddOnScalarWhereInput | Prisma.AddOnScalarWhereInput[]
 }
 
+export type AddOnCreateNestedManyWithoutServiceTermsInput = {
+  create?: Prisma.XOR<Prisma.AddOnCreateWithoutServiceTermsInput, Prisma.AddOnUncheckedCreateWithoutServiceTermsInput> | Prisma.AddOnCreateWithoutServiceTermsInput[] | Prisma.AddOnUncheckedCreateWithoutServiceTermsInput[]
+  connectOrCreate?: Prisma.AddOnCreateOrConnectWithoutServiceTermsInput | Prisma.AddOnCreateOrConnectWithoutServiceTermsInput[]
+  createMany?: Prisma.AddOnCreateManyServiceTermsInputEnvelope
+  connect?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+}
+
+export type AddOnUncheckedCreateNestedManyWithoutServiceTermsInput = {
+  create?: Prisma.XOR<Prisma.AddOnCreateWithoutServiceTermsInput, Prisma.AddOnUncheckedCreateWithoutServiceTermsInput> | Prisma.AddOnCreateWithoutServiceTermsInput[] | Prisma.AddOnUncheckedCreateWithoutServiceTermsInput[]
+  connectOrCreate?: Prisma.AddOnCreateOrConnectWithoutServiceTermsInput | Prisma.AddOnCreateOrConnectWithoutServiceTermsInput[]
+  createMany?: Prisma.AddOnCreateManyServiceTermsInputEnvelope
+  connect?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+}
+
+export type AddOnUpdateManyWithoutServiceTermsNestedInput = {
+  create?: Prisma.XOR<Prisma.AddOnCreateWithoutServiceTermsInput, Prisma.AddOnUncheckedCreateWithoutServiceTermsInput> | Prisma.AddOnCreateWithoutServiceTermsInput[] | Prisma.AddOnUncheckedCreateWithoutServiceTermsInput[]
+  connectOrCreate?: Prisma.AddOnCreateOrConnectWithoutServiceTermsInput | Prisma.AddOnCreateOrConnectWithoutServiceTermsInput[]
+  upsert?: Prisma.AddOnUpsertWithWhereUniqueWithoutServiceTermsInput | Prisma.AddOnUpsertWithWhereUniqueWithoutServiceTermsInput[]
+  createMany?: Prisma.AddOnCreateManyServiceTermsInputEnvelope
+  set?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  disconnect?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  delete?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  connect?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  update?: Prisma.AddOnUpdateWithWhereUniqueWithoutServiceTermsInput | Prisma.AddOnUpdateWithWhereUniqueWithoutServiceTermsInput[]
+  updateMany?: Prisma.AddOnUpdateManyWithWhereWithoutServiceTermsInput | Prisma.AddOnUpdateManyWithWhereWithoutServiceTermsInput[]
+  deleteMany?: Prisma.AddOnScalarWhereInput | Prisma.AddOnScalarWhereInput[]
+}
+
+export type AddOnUncheckedUpdateManyWithoutServiceTermsNestedInput = {
+  create?: Prisma.XOR<Prisma.AddOnCreateWithoutServiceTermsInput, Prisma.AddOnUncheckedCreateWithoutServiceTermsInput> | Prisma.AddOnCreateWithoutServiceTermsInput[] | Prisma.AddOnUncheckedCreateWithoutServiceTermsInput[]
+  connectOrCreate?: Prisma.AddOnCreateOrConnectWithoutServiceTermsInput | Prisma.AddOnCreateOrConnectWithoutServiceTermsInput[]
+  upsert?: Prisma.AddOnUpsertWithWhereUniqueWithoutServiceTermsInput | Prisma.AddOnUpsertWithWhereUniqueWithoutServiceTermsInput[]
+  createMany?: Prisma.AddOnCreateManyServiceTermsInputEnvelope
+  set?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  disconnect?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  delete?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  connect?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  update?: Prisma.AddOnUpdateWithWhereUniqueWithoutServiceTermsInput | Prisma.AddOnUpdateWithWhereUniqueWithoutServiceTermsInput[]
+  updateMany?: Prisma.AddOnUpdateManyWithWhereWithoutServiceTermsInput | Prisma.AddOnUpdateManyWithWhereWithoutServiceTermsInput[]
+  deleteMany?: Prisma.AddOnScalarWhereInput | Prisma.AddOnScalarWhereInput[]
+}
+
+export type AddOnCreateNestedManyWithoutEmployeeServicesInput = {
+  create?: Prisma.XOR<Prisma.AddOnCreateWithoutEmployeeServicesInput, Prisma.AddOnUncheckedCreateWithoutEmployeeServicesInput> | Prisma.AddOnCreateWithoutEmployeeServicesInput[] | Prisma.AddOnUncheckedCreateWithoutEmployeeServicesInput[]
+  connectOrCreate?: Prisma.AddOnCreateOrConnectWithoutEmployeeServicesInput | Prisma.AddOnCreateOrConnectWithoutEmployeeServicesInput[]
+  connect?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+}
+
+export type AddOnUncheckedCreateNestedManyWithoutEmployeeServicesInput = {
+  create?: Prisma.XOR<Prisma.AddOnCreateWithoutEmployeeServicesInput, Prisma.AddOnUncheckedCreateWithoutEmployeeServicesInput> | Prisma.AddOnCreateWithoutEmployeeServicesInput[] | Prisma.AddOnUncheckedCreateWithoutEmployeeServicesInput[]
+  connectOrCreate?: Prisma.AddOnCreateOrConnectWithoutEmployeeServicesInput | Prisma.AddOnCreateOrConnectWithoutEmployeeServicesInput[]
+  connect?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+}
+
+export type AddOnUpdateManyWithoutEmployeeServicesNestedInput = {
+  create?: Prisma.XOR<Prisma.AddOnCreateWithoutEmployeeServicesInput, Prisma.AddOnUncheckedCreateWithoutEmployeeServicesInput> | Prisma.AddOnCreateWithoutEmployeeServicesInput[] | Prisma.AddOnUncheckedCreateWithoutEmployeeServicesInput[]
+  connectOrCreate?: Prisma.AddOnCreateOrConnectWithoutEmployeeServicesInput | Prisma.AddOnCreateOrConnectWithoutEmployeeServicesInput[]
+  upsert?: Prisma.AddOnUpsertWithWhereUniqueWithoutEmployeeServicesInput | Prisma.AddOnUpsertWithWhereUniqueWithoutEmployeeServicesInput[]
+  set?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  disconnect?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  delete?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  connect?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  update?: Prisma.AddOnUpdateWithWhereUniqueWithoutEmployeeServicesInput | Prisma.AddOnUpdateWithWhereUniqueWithoutEmployeeServicesInput[]
+  updateMany?: Prisma.AddOnUpdateManyWithWhereWithoutEmployeeServicesInput | Prisma.AddOnUpdateManyWithWhereWithoutEmployeeServicesInput[]
+  deleteMany?: Prisma.AddOnScalarWhereInput | Prisma.AddOnScalarWhereInput[]
+}
+
+export type AddOnUncheckedUpdateManyWithoutEmployeeServicesNestedInput = {
+  create?: Prisma.XOR<Prisma.AddOnCreateWithoutEmployeeServicesInput, Prisma.AddOnUncheckedCreateWithoutEmployeeServicesInput> | Prisma.AddOnCreateWithoutEmployeeServicesInput[] | Prisma.AddOnUncheckedCreateWithoutEmployeeServicesInput[]
+  connectOrCreate?: Prisma.AddOnCreateOrConnectWithoutEmployeeServicesInput | Prisma.AddOnCreateOrConnectWithoutEmployeeServicesInput[]
+  upsert?: Prisma.AddOnUpsertWithWhereUniqueWithoutEmployeeServicesInput | Prisma.AddOnUpsertWithWhereUniqueWithoutEmployeeServicesInput[]
+  set?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  disconnect?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  delete?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  connect?: Prisma.AddOnWhereUniqueInput | Prisma.AddOnWhereUniqueInput[]
+  update?: Prisma.AddOnUpdateWithWhereUniqueWithoutEmployeeServicesInput | Prisma.AddOnUpdateWithWhereUniqueWithoutEmployeeServicesInput[]
+  updateMany?: Prisma.AddOnUpdateManyWithWhereWithoutEmployeeServicesInput | Prisma.AddOnUpdateManyWithWhereWithoutEmployeeServicesInput[]
+  deleteMany?: Prisma.AddOnScalarWhereInput | Prisma.AddOnScalarWhereInput[]
+}
+
 export type AddOnCreateWithoutAppointmentsInput = {
   id?: string
   name: string
   description?: string | null
-  basPrice: number
+  basePrice: number
+  incrementalDuration: number
+  serviceTerms: Prisma.ServiceTermsCreateNestedOneWithoutAddOnsInput
+  employeeServices?: Prisma.EmployeeServiceCreateNestedManyWithoutAddOnsInput
 }
 
 export type AddOnUncheckedCreateWithoutAppointmentsInput = {
   id?: string
   name: string
   description?: string | null
-  basPrice: number
+  basePrice: number
+  incrementalDuration: number
+  serviceTermId: string
+  employeeServices?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutAddOnsInput
 }
 
 export type AddOnCreateOrConnectWithoutAppointmentsInput = {
@@ -423,28 +568,190 @@ export type AddOnScalarWhereInput = {
   id?: Prisma.StringFilter<"AddOn"> | string
   name?: Prisma.StringFilter<"AddOn"> | string
   description?: Prisma.StringNullableFilter<"AddOn"> | string | null
-  basPrice?: Prisma.IntFilter<"AddOn"> | number
+  basePrice?: Prisma.IntFilter<"AddOn"> | number
+  incrementalDuration?: Prisma.IntFilter<"AddOn"> | number
+  serviceTermId?: Prisma.StringFilter<"AddOn"> | string
+}
+
+export type AddOnCreateWithoutServiceTermsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  basePrice: number
+  incrementalDuration: number
+  appointments?: Prisma.AppointmentCreateNestedManyWithoutAddOnsInput
+  employeeServices?: Prisma.EmployeeServiceCreateNestedManyWithoutAddOnsInput
+}
+
+export type AddOnUncheckedCreateWithoutServiceTermsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  basePrice: number
+  incrementalDuration: number
+  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutAddOnsInput
+  employeeServices?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutAddOnsInput
+}
+
+export type AddOnCreateOrConnectWithoutServiceTermsInput = {
+  where: Prisma.AddOnWhereUniqueInput
+  create: Prisma.XOR<Prisma.AddOnCreateWithoutServiceTermsInput, Prisma.AddOnUncheckedCreateWithoutServiceTermsInput>
+}
+
+export type AddOnCreateManyServiceTermsInputEnvelope = {
+  data: Prisma.AddOnCreateManyServiceTermsInput | Prisma.AddOnCreateManyServiceTermsInput[]
+  skipDuplicates?: boolean
+}
+
+export type AddOnUpsertWithWhereUniqueWithoutServiceTermsInput = {
+  where: Prisma.AddOnWhereUniqueInput
+  update: Prisma.XOR<Prisma.AddOnUpdateWithoutServiceTermsInput, Prisma.AddOnUncheckedUpdateWithoutServiceTermsInput>
+  create: Prisma.XOR<Prisma.AddOnCreateWithoutServiceTermsInput, Prisma.AddOnUncheckedCreateWithoutServiceTermsInput>
+}
+
+export type AddOnUpdateWithWhereUniqueWithoutServiceTermsInput = {
+  where: Prisma.AddOnWhereUniqueInput
+  data: Prisma.XOR<Prisma.AddOnUpdateWithoutServiceTermsInput, Prisma.AddOnUncheckedUpdateWithoutServiceTermsInput>
+}
+
+export type AddOnUpdateManyWithWhereWithoutServiceTermsInput = {
+  where: Prisma.AddOnScalarWhereInput
+  data: Prisma.XOR<Prisma.AddOnUpdateManyMutationInput, Prisma.AddOnUncheckedUpdateManyWithoutServiceTermsInput>
+}
+
+export type AddOnCreateWithoutEmployeeServicesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  basePrice: number
+  incrementalDuration: number
+  serviceTerms: Prisma.ServiceTermsCreateNestedOneWithoutAddOnsInput
+  appointments?: Prisma.AppointmentCreateNestedManyWithoutAddOnsInput
+}
+
+export type AddOnUncheckedCreateWithoutEmployeeServicesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  basePrice: number
+  incrementalDuration: number
+  serviceTermId: string
+  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutAddOnsInput
+}
+
+export type AddOnCreateOrConnectWithoutEmployeeServicesInput = {
+  where: Prisma.AddOnWhereUniqueInput
+  create: Prisma.XOR<Prisma.AddOnCreateWithoutEmployeeServicesInput, Prisma.AddOnUncheckedCreateWithoutEmployeeServicesInput>
+}
+
+export type AddOnUpsertWithWhereUniqueWithoutEmployeeServicesInput = {
+  where: Prisma.AddOnWhereUniqueInput
+  update: Prisma.XOR<Prisma.AddOnUpdateWithoutEmployeeServicesInput, Prisma.AddOnUncheckedUpdateWithoutEmployeeServicesInput>
+  create: Prisma.XOR<Prisma.AddOnCreateWithoutEmployeeServicesInput, Prisma.AddOnUncheckedCreateWithoutEmployeeServicesInput>
+}
+
+export type AddOnUpdateWithWhereUniqueWithoutEmployeeServicesInput = {
+  where: Prisma.AddOnWhereUniqueInput
+  data: Prisma.XOR<Prisma.AddOnUpdateWithoutEmployeeServicesInput, Prisma.AddOnUncheckedUpdateWithoutEmployeeServicesInput>
+}
+
+export type AddOnUpdateManyWithWhereWithoutEmployeeServicesInput = {
+  where: Prisma.AddOnScalarWhereInput
+  data: Prisma.XOR<Prisma.AddOnUpdateManyMutationInput, Prisma.AddOnUncheckedUpdateManyWithoutEmployeeServicesInput>
 }
 
 export type AddOnUpdateWithoutAppointmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  basPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  basePrice?: Prisma.IntFieldUpdateOperationsInput | number
+  incrementalDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  serviceTerms?: Prisma.ServiceTermsUpdateOneRequiredWithoutAddOnsNestedInput
+  employeeServices?: Prisma.EmployeeServiceUpdateManyWithoutAddOnsNestedInput
 }
 
 export type AddOnUncheckedUpdateWithoutAppointmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  basPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  basePrice?: Prisma.IntFieldUpdateOperationsInput | number
+  incrementalDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  serviceTermId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeServices?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutAddOnsNestedInput
 }
 
 export type AddOnUncheckedUpdateManyWithoutAppointmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  basPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  basePrice?: Prisma.IntFieldUpdateOperationsInput | number
+  incrementalDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  serviceTermId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type AddOnCreateManyServiceTermsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  basePrice: number
+  incrementalDuration: number
+}
+
+export type AddOnUpdateWithoutServiceTermsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  basePrice?: Prisma.IntFieldUpdateOperationsInput | number
+  incrementalDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  appointments?: Prisma.AppointmentUpdateManyWithoutAddOnsNestedInput
+  employeeServices?: Prisma.EmployeeServiceUpdateManyWithoutAddOnsNestedInput
+}
+
+export type AddOnUncheckedUpdateWithoutServiceTermsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  basePrice?: Prisma.IntFieldUpdateOperationsInput | number
+  incrementalDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutAddOnsNestedInput
+  employeeServices?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutAddOnsNestedInput
+}
+
+export type AddOnUncheckedUpdateManyWithoutServiceTermsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  basePrice?: Prisma.IntFieldUpdateOperationsInput | number
+  incrementalDuration?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type AddOnUpdateWithoutEmployeeServicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  basePrice?: Prisma.IntFieldUpdateOperationsInput | number
+  incrementalDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  serviceTerms?: Prisma.ServiceTermsUpdateOneRequiredWithoutAddOnsNestedInput
+  appointments?: Prisma.AppointmentUpdateManyWithoutAddOnsNestedInput
+}
+
+export type AddOnUncheckedUpdateWithoutEmployeeServicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  basePrice?: Prisma.IntFieldUpdateOperationsInput | number
+  incrementalDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  serviceTermId?: Prisma.StringFieldUpdateOperationsInput | string
+  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutAddOnsNestedInput
+}
+
+export type AddOnUncheckedUpdateManyWithoutEmployeeServicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  basePrice?: Prisma.IntFieldUpdateOperationsInput | number
+  incrementalDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  serviceTermId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
@@ -454,10 +761,12 @@ export type AddOnUncheckedUpdateManyWithoutAppointmentsInput = {
 
 export type AddOnCountOutputType = {
   appointments: number
+  employeeServices: number
 }
 
 export type AddOnCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   appointments?: boolean | AddOnCountOutputTypeCountAppointmentsArgs
+  employeeServices?: boolean | AddOnCountOutputTypeCountEmployeeServicesArgs
 }
 
 /**
@@ -477,13 +786,24 @@ export type AddOnCountOutputTypeCountAppointmentsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.AppointmentWhereInput
 }
 
+/**
+ * AddOnCountOutputType without action
+ */
+export type AddOnCountOutputTypeCountEmployeeServicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmployeeServiceWhereInput
+}
+
 
 export type AddOnSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   description?: boolean
-  basPrice?: boolean
+  basePrice?: boolean
+  incrementalDuration?: boolean
+  serviceTermId?: boolean
+  serviceTerms?: boolean | Prisma.ServiceTermsDefaultArgs<ExtArgs>
   appointments?: boolean | Prisma.AddOn$appointmentsArgs<ExtArgs>
+  employeeServices?: boolean | Prisma.AddOn$employeeServicesArgs<ExtArgs>
   _count?: boolean | Prisma.AddOnCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["addOn"]>
 
@@ -491,41 +811,59 @@ export type AddOnSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   name?: boolean
   description?: boolean
-  basPrice?: boolean
+  basePrice?: boolean
+  incrementalDuration?: boolean
+  serviceTermId?: boolean
+  serviceTerms?: boolean | Prisma.ServiceTermsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["addOn"]>
 
 export type AddOnSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   description?: boolean
-  basPrice?: boolean
+  basePrice?: boolean
+  incrementalDuration?: boolean
+  serviceTermId?: boolean
+  serviceTerms?: boolean | Prisma.ServiceTermsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["addOn"]>
 
 export type AddOnSelectScalar = {
   id?: boolean
   name?: boolean
   description?: boolean
-  basPrice?: boolean
+  basePrice?: boolean
+  incrementalDuration?: boolean
+  serviceTermId?: boolean
 }
 
-export type AddOnOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "basPrice", ExtArgs["result"]["addOn"]>
+export type AddOnOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "basePrice" | "incrementalDuration" | "serviceTermId", ExtArgs["result"]["addOn"]>
 export type AddOnInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  serviceTerms?: boolean | Prisma.ServiceTermsDefaultArgs<ExtArgs>
   appointments?: boolean | Prisma.AddOn$appointmentsArgs<ExtArgs>
+  employeeServices?: boolean | Prisma.AddOn$employeeServicesArgs<ExtArgs>
   _count?: boolean | Prisma.AddOnCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type AddOnIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type AddOnIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type AddOnIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  serviceTerms?: boolean | Prisma.ServiceTermsDefaultArgs<ExtArgs>
+}
+export type AddOnIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  serviceTerms?: boolean | Prisma.ServiceTermsDefaultArgs<ExtArgs>
+}
 
 export type $AddOnPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "AddOn"
   objects: {
+    serviceTerms: Prisma.$ServiceTermsPayload<ExtArgs>
     appointments: Prisma.$AppointmentPayload<ExtArgs>[]
+    employeeServices: Prisma.$EmployeeServicePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     description: string | null
-    basPrice: number
+    basePrice: number
+    incrementalDuration: number
+    serviceTermId: string
   }, ExtArgs["result"]["addOn"]>
   composites: {}
 }
@@ -920,7 +1258,9 @@ readonly fields: AddOnFieldRefs;
  */
 export interface Prisma__AddOnClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  serviceTerms<T extends Prisma.ServiceTermsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceTermsDefaultArgs<ExtArgs>>): Prisma.Prisma__ServiceTermsClient<runtime.Types.Result.GetResult<Prisma.$ServiceTermsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   appointments<T extends Prisma.AddOn$appointmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AddOn$appointmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AppointmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  employeeServices<T extends Prisma.AddOn$employeeServicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AddOn$employeeServicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -953,7 +1293,9 @@ export interface AddOnFieldRefs {
   readonly id: Prisma.FieldRef<"AddOn", 'String'>
   readonly name: Prisma.FieldRef<"AddOn", 'String'>
   readonly description: Prisma.FieldRef<"AddOn", 'String'>
-  readonly basPrice: Prisma.FieldRef<"AddOn", 'Int'>
+  readonly basePrice: Prisma.FieldRef<"AddOn", 'Int'>
+  readonly incrementalDuration: Prisma.FieldRef<"AddOn", 'Int'>
+  readonly serviceTermId: Prisma.FieldRef<"AddOn", 'String'>
 }
     
 
@@ -1203,6 +1545,10 @@ export type AddOnCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    */
   data: Prisma.AddOnCreateManyInput | Prisma.AddOnCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AddOnIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1273,6 +1619,10 @@ export type AddOnUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many AddOns to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AddOnIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1363,6 +1713,30 @@ export type AddOn$appointmentsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.AppointmentScalarFieldEnum | Prisma.AppointmentScalarFieldEnum[]
+}
+
+/**
+ * AddOn.employeeServices
+ */
+export type AddOn$employeeServicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmployeeService
+   */
+  select?: Prisma.EmployeeServiceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmployeeService
+   */
+  omit?: Prisma.EmployeeServiceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmployeeServiceInclude<ExtArgs> | null
+  where?: Prisma.EmployeeServiceWhereInput
+  orderBy?: Prisma.EmployeeServiceOrderByWithRelationInput | Prisma.EmployeeServiceOrderByWithRelationInput[]
+  cursor?: Prisma.EmployeeServiceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmployeeServiceScalarFieldEnum | Prisma.EmployeeServiceScalarFieldEnum[]
 }
 
 /**

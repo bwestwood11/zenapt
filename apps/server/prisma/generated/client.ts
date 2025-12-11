@@ -33,7 +33,7 @@ export * as $Enums from './enums'
  * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
  */
 export const PrismaClient = $Class.getPrismaClientClass(__dirname)
-export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts extends Prisma.PrismaClientOptions["omit"] = Prisma.PrismaClientOptions["omit"], ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>
+export type PrismaClient<ClientOptions extends Prisma.PrismaClientOptions = Prisma.PrismaClientOptions, Log = $Class.LogOptions<ClientOptions>, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<ClientOptions, Log, ExtArgs>
 export { Prisma }
 
 
@@ -61,6 +61,21 @@ export type AddOn = Prisma.AddOnModel
  * 
  */
 export type PromoCode = Prisma.PromoCodeModel
+/**
+ * Model ScheduleRule
+ * 
+ */
+export type ScheduleRule = Prisma.ScheduleRuleModel
+/**
+ * Model ScheduleException
+ * 
+ */
+export type ScheduleException = Prisma.ScheduleExceptionModel
+/**
+ * Model TimeOff
+ * 
+ */
+export type TimeOff = Prisma.TimeOffModel
 /**
  * Model User
  * 
@@ -157,6 +172,9 @@ export const AppointmentStatus = $Enums.AppointmentStatus
 
 export type PromoLevel = $Enums.PromoLevel
 export const PromoLevel = $Enums.PromoLevel
+
+export type ScheduleTargetType = $Enums.ScheduleTargetType
+export const ScheduleTargetType = $Enums.ScheduleTargetType
 
 export type OrgRole = $Enums.OrgRole
 export const OrgRole = $Enums.OrgRole

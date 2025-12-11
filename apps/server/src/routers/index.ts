@@ -8,6 +8,7 @@ import { marketingRouter } from "./marketing";
 import { organizationRouter } from "./organization";
 import { paymentRouter } from "./payments";
 import { permissionRouter } from "./permissions";
+import { publicRouter } from "./public";
 import { servicesRouter } from "./services";
 
 export const appRouter = router({
@@ -23,7 +24,8 @@ export const appRouter = router({
   location: locationRouter,
   invitation: invitationRouter,
   services: servicesRouter,
-  logs: logsRouter
+  logs: logsRouter,
+  public: publicRouter
 });
 
 export type AppRouter = typeof appRouter;

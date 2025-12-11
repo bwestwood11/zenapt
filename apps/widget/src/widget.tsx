@@ -33,9 +33,10 @@ const sideVariants = {
   },
 } as const;
 
-const Widget = forwardRef<WidgetRef>((_, ref) => {
-  const [isOpen, setIsOpen] = useState(false);
+const Widget = forwardRef<WidgetRef, {businessId: string, hashName:string}>(({businessId, hashName}, ref) => {
+  const [isOpen, setIsOpen] = useState(window.location.hash === `#${hashName}`);
   const { side } = usePreferences();
+  const [isLoading, setIsLoading] = useState(true)
 
   const openDialog = useCallback(() => setIsOpen(true), []);
 
@@ -98,17 +99,20 @@ const Widget = forwardRef<WidgetRef>((_, ref) => {
           <motion.aside
             className={cn(
               "relative bg-background text-foreground shadow-xl flex flex-col",
-              side === "right" && "h-svh w-full max-w-[480px] ml-auto",
-              side === "left" && "h-svh w-full max-w-[480px] mr-auto"
+              side === "right" && "h-svh w-full max-w-[560px] ml-auto",
+              side === "left" && "h-svh w-full max-w-[560px] mr-auto"
             )}
             variants={sideVariants[side]}
             transition={{ type: "spring", stiffness: 380, damping: 40 }}
           >
             <div className="flex-1 overflow-auto">
               <iframe
-                src="https://www.joinblvd.com/b/skin-nv/widget#/locations"
+                src={`${import.meta.env.VITE_IFRAME_BASE_URL}/widget/${businessId}/book`}
+                onLoad={() => setIsLoading(false)}
                 className="w-full h-full"
               />
+
+              {isLoading ? <p>Loading</p> : null}
             </div>
           </motion.aside>
         </motion.div>
