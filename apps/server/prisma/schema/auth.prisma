@@ -85,32 +85,33 @@ model ManagementMembership {
 }
 
 model Location {
-  id                 String               @id @default(cuid()) @map("_id")
-  name               String
-  organizationId     String
-  slug               String               @unique
-  address            String?
-  city               String?
-  state              String?
-  country            String?
-  zipCode            String?
-  timeZone           String?
-  email              String?
-  image              String?
-  phoneNumber        String?
+  id                  String               @id @default(cuid()) @map("_id")
+  name                String
+  organizationId      String
+  slug                String               @unique
+  address             String?
+  city                String?
+  state               String?
+  country             String?
+  zipCode             String?
+  timeZone            String?
+  email               String?
+  image               String?
+  phoneNumber         String?
   // services       Service[]
   // customers      Customer[]
   // appointments   Appointment[]
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-  employees          LocationEmployee[]
-  organization       Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  employees           LocationEmployee[]
+  organization        Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   // Nameless       Nameless[]
-  LocationInvitation LocationInvitation[]
-  ActivityLog        ActivityLog[]
-  Service            EmployeeService[]
-  appointments       Appointment[]
-  PromoCodes         PromoCode[]
+  LocationInvitation  LocationInvitation[]
+  ActivityLog         ActivityLog[]
+  Service             EmployeeService[]
+  appointments        Appointment[]
+  appointmentSettings AppointmentSettings?
+  PromoCodes          PromoCode[]
 
   @@unique([name, organizationId])
   @@index([slug, organizationId])
@@ -130,7 +131,7 @@ model LocationEmployee {
   role       EmployeeRole @default(LOCATION_FRONT_DESK)
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
-  
+
   location Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
   user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   Service  EmployeeService[]
@@ -149,7 +150,7 @@ model ServiceTerms {
   Service        EmployeeService[]
   organizationId String
   organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  addOns        AddOn[]
+  addOns         AddOn[]
 }
 
 model ServiceGroup {

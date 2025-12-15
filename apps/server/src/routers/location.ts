@@ -5,7 +5,12 @@ import { TRPCError } from "@trpc/server";
 
 import { isValidPhoneNumber } from "libphonenumber-js";
 import { revalidateTag } from "next/cache";
-import { getWeeklySchedule, updateWeeklySchedule } from "../lib/locations/operating-hours";
+import {
+  getWeeklySchedule,
+  updateWeeklySchedule,
+} from "../lib/locations/operating-hours";
+import { ExceptionService } from "../lib/appointment/holidays";
+import { buffer } from "stream/consumers";
 
 const CreateLocationSchema = z.object({
   name: z.string().min(2, "Location name must be at least 2 characters"),
@@ -139,6 +144,10 @@ const updateLocationOperatingHours = withPermissions(
   "UPDATE::LOCATION",
   z.object({
     locationId: z.string(),
+    bufferTime: z.number().min(0).max(60),
+    prepTime: z.number().min(0).max(30),
+    advanceBookingLimitDays: z.number().min(1).max(365),
+    bookingCutOff: z.number().min(1).max(10080),
     rules: z.array(
       z.object({
         day: z.number(), // 0 = Sun ... 6 = Sat
@@ -148,20 +157,88 @@ const updateLocationOperatingHours = withPermissions(
       })
     ),
   })
-).mutation(async ({ ctx, input }) => {
-  const { locationId, rules } = input;
-  await updateWeeklySchedule({locationId, rules})
+).mutation(async ({ input }) => {
+  const {
+    locationId,
+    rules,
+    bookingCutOff,
+    bufferTime,
+    advanceBookingLimitDays,
+    prepTime,
+  } = input;
+  await updateWeeklySchedule({ locationId, rules });
+  await prisma.appointmentSettings.upsert({
+    where: {
+      locationId: locationId,
+    },
+    create: {
+      locationId,
+      bufferTime,
+      prepTime,
+      advanceBookingLimitDays,
+      bookingCutOff,
+    },
+    update: {
+      bufferTime,
+      prepTime,
+      advanceBookingLimitDays,
+      bookingCutOff,
+    },
+  });
 });
 
+const createLocationHoliday = withPermissions(
+  "UPDATE::LOCATION",
+  z.object({
+    locationId: z.string(),
+    holiday: z.object({
+      monthDay: z.string(),
+      name: z.string(),
+    }),
+  })
+).mutation(async ({ input }) => {
+  const { locationId, holiday } = input;
+  return await ExceptionService.createHoliday(
+    locationId,
+    holiday.monthDay,
+    holiday.name
+  );
+});
 
-const fetchLocationOperatingHours = withPermissions(
+const removeLocationHoliday = withPermissions(
+  "UPDATE::LOCATION",
+  z.object({ locationId: z.string(), holidayId: z.string() })
+).mutation(async ({ input }) => {
+  const { holidayId } = input;
+  return await ExceptionService.deleteException(holidayId);
+});
+
+const fetchLocationHolidays = withPermissions(
+  "READ::LOCATION",
+  z.object({ locationId: z.string() })
+).query(async ({ input }) => {
+  const { locationId } = input;
+  return await ExceptionService.getFullDayHolidays(locationId);
+});
+
+const fetchLocationAppointmentSettings = withPermissions(
   "READ::LOCATION",
   z.object({
     locationId: z.string(),
   })
-).query(async ({ ctx, input }) => {
+).query(async ({ input }) => {
   const { locationId } = input;
-  return await getWeeklySchedule(locationId)
+  const [weeklySchedule, appointmentSettings] = await Promise.all([
+    getWeeklySchedule(locationId),
+    prisma.appointmentSettings.findUnique({
+      where: { locationId },
+    }),
+  ]);
+
+  return {
+    weeklySchedule,
+    appointmentSettings,
+  };
 });
 
 export const locationRouter = router({
@@ -169,5 +246,8 @@ export const locationRouter = router({
   getAllLocations,
   getLocation,
   updateLocationOperatingHours,
-  fetchLocationOperatingHours
+  fetchLocationAppointmentSettings,
+  createLocationHoliday,
+  fetchLocationHolidays,
+  removeLocationHoliday,
 });

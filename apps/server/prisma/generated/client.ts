@@ -77,6 +77,11 @@ export type ScheduleException = Prisma.ScheduleExceptionModel
  */
 export type TimeOff = Prisma.TimeOffModel
 /**
+ * Model AppointmentSettings
+ * 
+ */
+export type AppointmentSettings = Prisma.AppointmentSettingsModel
+/**
  * Model User
  * 
  */

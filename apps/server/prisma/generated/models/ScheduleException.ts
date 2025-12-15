@@ -39,10 +39,11 @@ export type ScheduleExceptionMinAggregateOutputType = {
   id: string | null
   targetType: $Enums.ScheduleTargetType | null
   targetId: string | null
-  date: Date | null
+  monthDay: string | null
   startMinute: number | null
   endMinute: number | null
   isBreak: boolean | null
+  reason: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -51,10 +52,11 @@ export type ScheduleExceptionMaxAggregateOutputType = {
   id: string | null
   targetType: $Enums.ScheduleTargetType | null
   targetId: string | null
-  date: Date | null
+  monthDay: string | null
   startMinute: number | null
   endMinute: number | null
   isBreak: boolean | null
+  reason: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -63,10 +65,11 @@ export type ScheduleExceptionCountAggregateOutputType = {
   id: number
   targetType: number
   targetId: number
-  date: number
+  monthDay: number
   startMinute: number
   endMinute: number
   isBreak: number
+  reason: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -87,10 +90,11 @@ export type ScheduleExceptionMinAggregateInputType = {
   id?: true
   targetType?: true
   targetId?: true
-  date?: true
+  monthDay?: true
   startMinute?: true
   endMinute?: true
   isBreak?: true
+  reason?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -99,10 +103,11 @@ export type ScheduleExceptionMaxAggregateInputType = {
   id?: true
   targetType?: true
   targetId?: true
-  date?: true
+  monthDay?: true
   startMinute?: true
   endMinute?: true
   isBreak?: true
+  reason?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -111,10 +116,11 @@ export type ScheduleExceptionCountAggregateInputType = {
   id?: true
   targetType?: true
   targetId?: true
-  date?: true
+  monthDay?: true
   startMinute?: true
   endMinute?: true
   isBreak?: true
+  reason?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -210,10 +216,11 @@ export type ScheduleExceptionGroupByOutputType = {
   id: string
   targetType: $Enums.ScheduleTargetType
   targetId: string
-  date: Date
-  startMinute: number
-  endMinute: number
+  monthDay: string
+  startMinute: number | null
+  endMinute: number | null
   isBreak: boolean
+  reason: string | null
   createdAt: Date
   updatedAt: Date
   _count: ScheduleExceptionCountAggregateOutputType | null
@@ -245,10 +252,11 @@ export type ScheduleExceptionWhereInput = {
   id?: Prisma.StringFilter<"ScheduleException"> | string
   targetType?: Prisma.EnumScheduleTargetTypeFilter<"ScheduleException"> | $Enums.ScheduleTargetType
   targetId?: Prisma.StringFilter<"ScheduleException"> | string
-  date?: Prisma.DateTimeFilter<"ScheduleException"> | Date | string
-  startMinute?: Prisma.IntFilter<"ScheduleException"> | number
-  endMinute?: Prisma.IntFilter<"ScheduleException"> | number
+  monthDay?: Prisma.StringFilter<"ScheduleException"> | string
+  startMinute?: Prisma.IntNullableFilter<"ScheduleException"> | number | null
+  endMinute?: Prisma.IntNullableFilter<"ScheduleException"> | number | null
   isBreak?: Prisma.BoolFilter<"ScheduleException"> | boolean
+  reason?: Prisma.StringNullableFilter<"ScheduleException"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ScheduleException"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ScheduleException"> | Date | string
 }
@@ -257,10 +265,11 @@ export type ScheduleExceptionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   targetType?: Prisma.SortOrder
   targetId?: Prisma.SortOrder
-  date?: Prisma.SortOrder
-  startMinute?: Prisma.SortOrder
-  endMinute?: Prisma.SortOrder
+  monthDay?: Prisma.SortOrder
+  startMinute?: Prisma.SortOrderInput | Prisma.SortOrder
+  endMinute?: Prisma.SortOrderInput | Prisma.SortOrder
   isBreak?: Prisma.SortOrder
+  reason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -272,10 +281,11 @@ export type ScheduleExceptionWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ScheduleExceptionWhereInput | Prisma.ScheduleExceptionWhereInput[]
   targetType?: Prisma.EnumScheduleTargetTypeFilter<"ScheduleException"> | $Enums.ScheduleTargetType
   targetId?: Prisma.StringFilter<"ScheduleException"> | string
-  date?: Prisma.DateTimeFilter<"ScheduleException"> | Date | string
-  startMinute?: Prisma.IntFilter<"ScheduleException"> | number
-  endMinute?: Prisma.IntFilter<"ScheduleException"> | number
+  monthDay?: Prisma.StringFilter<"ScheduleException"> | string
+  startMinute?: Prisma.IntNullableFilter<"ScheduleException"> | number | null
+  endMinute?: Prisma.IntNullableFilter<"ScheduleException"> | number | null
   isBreak?: Prisma.BoolFilter<"ScheduleException"> | boolean
+  reason?: Prisma.StringNullableFilter<"ScheduleException"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ScheduleException"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ScheduleException"> | Date | string
 }, "id">
@@ -284,10 +294,11 @@ export type ScheduleExceptionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   targetType?: Prisma.SortOrder
   targetId?: Prisma.SortOrder
-  date?: Prisma.SortOrder
-  startMinute?: Prisma.SortOrder
-  endMinute?: Prisma.SortOrder
+  monthDay?: Prisma.SortOrder
+  startMinute?: Prisma.SortOrderInput | Prisma.SortOrder
+  endMinute?: Prisma.SortOrderInput | Prisma.SortOrder
   isBreak?: Prisma.SortOrder
+  reason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ScheduleExceptionCountOrderByAggregateInput
@@ -304,10 +315,11 @@ export type ScheduleExceptionScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"ScheduleException"> | string
   targetType?: Prisma.EnumScheduleTargetTypeWithAggregatesFilter<"ScheduleException"> | $Enums.ScheduleTargetType
   targetId?: Prisma.StringWithAggregatesFilter<"ScheduleException"> | string
-  date?: Prisma.DateTimeWithAggregatesFilter<"ScheduleException"> | Date | string
-  startMinute?: Prisma.IntWithAggregatesFilter<"ScheduleException"> | number
-  endMinute?: Prisma.IntWithAggregatesFilter<"ScheduleException"> | number
+  monthDay?: Prisma.StringWithAggregatesFilter<"ScheduleException"> | string
+  startMinute?: Prisma.IntNullableWithAggregatesFilter<"ScheduleException"> | number | null
+  endMinute?: Prisma.IntNullableWithAggregatesFilter<"ScheduleException"> | number | null
   isBreak?: Prisma.BoolWithAggregatesFilter<"ScheduleException"> | boolean
+  reason?: Prisma.StringNullableWithAggregatesFilter<"ScheduleException"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ScheduleException"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ScheduleException"> | Date | string
 }
@@ -316,10 +328,11 @@ export type ScheduleExceptionCreateInput = {
   id?: string
   targetType: $Enums.ScheduleTargetType
   targetId: string
-  date: Date | string
-  startMinute: number
-  endMinute: number
+  monthDay: string
+  startMinute?: number | null
+  endMinute?: number | null
   isBreak?: boolean
+  reason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -328,10 +341,11 @@ export type ScheduleExceptionUncheckedCreateInput = {
   id?: string
   targetType: $Enums.ScheduleTargetType
   targetId: string
-  date: Date | string
-  startMinute: number
-  endMinute: number
+  monthDay: string
+  startMinute?: number | null
+  endMinute?: number | null
   isBreak?: boolean
+  reason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -340,10 +354,11 @@ export type ScheduleExceptionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumScheduleTargetTypeFieldUpdateOperationsInput | $Enums.ScheduleTargetType
   targetId?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  startMinute?: Prisma.IntFieldUpdateOperationsInput | number
-  endMinute?: Prisma.IntFieldUpdateOperationsInput | number
+  monthDay?: Prisma.StringFieldUpdateOperationsInput | string
+  startMinute?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  endMinute?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isBreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -352,10 +367,11 @@ export type ScheduleExceptionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumScheduleTargetTypeFieldUpdateOperationsInput | $Enums.ScheduleTargetType
   targetId?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  startMinute?: Prisma.IntFieldUpdateOperationsInput | number
-  endMinute?: Prisma.IntFieldUpdateOperationsInput | number
+  monthDay?: Prisma.StringFieldUpdateOperationsInput | string
+  startMinute?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  endMinute?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isBreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -364,10 +380,11 @@ export type ScheduleExceptionCreateManyInput = {
   id?: string
   targetType: $Enums.ScheduleTargetType
   targetId: string
-  date: Date | string
-  startMinute: number
-  endMinute: number
+  monthDay: string
+  startMinute?: number | null
+  endMinute?: number | null
   isBreak?: boolean
+  reason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -376,10 +393,11 @@ export type ScheduleExceptionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumScheduleTargetTypeFieldUpdateOperationsInput | $Enums.ScheduleTargetType
   targetId?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  startMinute?: Prisma.IntFieldUpdateOperationsInput | number
-  endMinute?: Prisma.IntFieldUpdateOperationsInput | number
+  monthDay?: Prisma.StringFieldUpdateOperationsInput | string
+  startMinute?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  endMinute?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isBreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -388,10 +406,11 @@ export type ScheduleExceptionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   targetType?: Prisma.EnumScheduleTargetTypeFieldUpdateOperationsInput | $Enums.ScheduleTargetType
   targetId?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  startMinute?: Prisma.IntFieldUpdateOperationsInput | number
-  endMinute?: Prisma.IntFieldUpdateOperationsInput | number
+  monthDay?: Prisma.StringFieldUpdateOperationsInput | string
+  startMinute?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  endMinute?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isBreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -400,10 +419,11 @@ export type ScheduleExceptionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   targetType?: Prisma.SortOrder
   targetId?: Prisma.SortOrder
-  date?: Prisma.SortOrder
+  monthDay?: Prisma.SortOrder
   startMinute?: Prisma.SortOrder
   endMinute?: Prisma.SortOrder
   isBreak?: Prisma.SortOrder
+  reason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -417,10 +437,11 @@ export type ScheduleExceptionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   targetType?: Prisma.SortOrder
   targetId?: Prisma.SortOrder
-  date?: Prisma.SortOrder
+  monthDay?: Prisma.SortOrder
   startMinute?: Prisma.SortOrder
   endMinute?: Prisma.SortOrder
   isBreak?: Prisma.SortOrder
+  reason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -429,10 +450,11 @@ export type ScheduleExceptionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   targetType?: Prisma.SortOrder
   targetId?: Prisma.SortOrder
-  date?: Prisma.SortOrder
+  monthDay?: Prisma.SortOrder
   startMinute?: Prisma.SortOrder
   endMinute?: Prisma.SortOrder
   isBreak?: Prisma.SortOrder
+  reason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -448,10 +470,11 @@ export type ScheduleExceptionSelect<ExtArgs extends runtime.Types.Extensions.Int
   id?: boolean
   targetType?: boolean
   targetId?: boolean
-  date?: boolean
+  monthDay?: boolean
   startMinute?: boolean
   endMinute?: boolean
   isBreak?: boolean
+  reason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["scheduleException"]>
@@ -460,10 +483,11 @@ export type ScheduleExceptionSelectCreateManyAndReturn<ExtArgs extends runtime.T
   id?: boolean
   targetType?: boolean
   targetId?: boolean
-  date?: boolean
+  monthDay?: boolean
   startMinute?: boolean
   endMinute?: boolean
   isBreak?: boolean
+  reason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["scheduleException"]>
@@ -472,10 +496,11 @@ export type ScheduleExceptionSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   id?: boolean
   targetType?: boolean
   targetId?: boolean
-  date?: boolean
+  monthDay?: boolean
   startMinute?: boolean
   endMinute?: boolean
   isBreak?: boolean
+  reason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["scheduleException"]>
@@ -484,15 +509,16 @@ export type ScheduleExceptionSelectScalar = {
   id?: boolean
   targetType?: boolean
   targetId?: boolean
-  date?: boolean
+  monthDay?: boolean
   startMinute?: boolean
   endMinute?: boolean
   isBreak?: boolean
+  reason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ScheduleExceptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "targetType" | "targetId" | "date" | "startMinute" | "endMinute" | "isBreak" | "createdAt" | "updatedAt", ExtArgs["result"]["scheduleException"]>
+export type ScheduleExceptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "targetType" | "targetId" | "monthDay" | "startMinute" | "endMinute" | "isBreak" | "reason" | "createdAt" | "updatedAt", ExtArgs["result"]["scheduleException"]>
 
 export type $ScheduleExceptionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ScheduleException"
@@ -501,10 +527,11 @@ export type $ScheduleExceptionPayload<ExtArgs extends runtime.Types.Extensions.I
     id: string
     targetType: $Enums.ScheduleTargetType
     targetId: string
-    date: Date
-    startMinute: number
-    endMinute: number
+    monthDay: string
+    startMinute: number | null
+    endMinute: number | null
     isBreak: boolean
+    reason: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["scheduleException"]>
@@ -933,10 +960,11 @@ export interface ScheduleExceptionFieldRefs {
   readonly id: Prisma.FieldRef<"ScheduleException", 'String'>
   readonly targetType: Prisma.FieldRef<"ScheduleException", 'ScheduleTargetType'>
   readonly targetId: Prisma.FieldRef<"ScheduleException", 'String'>
-  readonly date: Prisma.FieldRef<"ScheduleException", 'DateTime'>
+  readonly monthDay: Prisma.FieldRef<"ScheduleException", 'String'>
   readonly startMinute: Prisma.FieldRef<"ScheduleException", 'Int'>
   readonly endMinute: Prisma.FieldRef<"ScheduleException", 'Int'>
   readonly isBreak: Prisma.FieldRef<"ScheduleException", 'Boolean'>
+  readonly reason: Prisma.FieldRef<"ScheduleException", 'String'>
   readonly createdAt: Prisma.FieldRef<"ScheduleException", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ScheduleException", 'DateTime'>
 }

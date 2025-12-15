@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/select";
 import { Clock } from "lucide-react";
 import z from "zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { useMemo } from "react";
 
@@ -59,11 +59,9 @@ const daysSchema = z.object({
 
 export const formDataSchema = daysSchema.extend({
   bufferTime: z.number().int().min(0).max(60),
-  prepCleanup: z.number().int().min(0).max(60),
+  prepCleanup: z.number().int().min(0).max(30),
   advanceBooking: z.number().int().min(1).max(365),
-  lastMinuteCutoff: z.number().int().min(0).max(48),
-  maxAppointments: z.number().int().min(1).max(100),
-  walkIns: z.boolean(),
+  lastMinuteCutoff: z.number().int().min(1).max(10080),
 });
 
 type DaysSchema = z.infer<typeof daysSchema>;
@@ -93,22 +91,21 @@ export function OperatingSchedulingSettings({
 }: {
   locationId: string;
 }) {
-  const { data: locationHours, isLoading } = useQuery(
-    trpc.location.fetchLocationOperatingHours.queryOptions({ locationId })
+  const { data: location, isLoading } = useQuery(
+    trpc.location.fetchLocationAppointmentSettings.queryOptions({ locationId })
   );
 
-
-  console.log(locationHours)
+  const { appointmentSettings, weeklySchedule: locationHours } = location || {};
 
   const defaultValues = useMemo<FormData>(() => {
     // base config (non-day fields)
     const base = {
-      bufferTime: 10,
-      prepCleanup: 5,
-      advanceBooking: 60,
-      lastMinuteCutoff: 2,
-      maxAppointments: 12,
-      walkIns: true,
+      bufferTime: appointmentSettings?.bufferTime ?? 0,
+      prepCleanup: appointmentSettings?.prepTime ?? 0,
+      advanceBooking: appointmentSettings?.advanceBookingLimitDays ?? 30,
+      lastMinuteCutoff: appointmentSettings?.bookingCutOff
+        ? Math.floor(appointmentSettings.bookingCutOff / 60)
+        : 1,
     };
 
     // generate all days structure upfront
@@ -138,7 +135,7 @@ export function OperatingSchedulingSettings({
     return { ...days, ...base };
   }, [locationHours]);
 
-  if(isLoading) return "LOADING"
+  if (isLoading) return "LOADING";
 
   return (
     <OperatingSchedulingForm
@@ -155,8 +152,17 @@ export function OperatingSchedulingForm({
   locationId: string;
   defaultValues: FormData;
 }) {
-  const { mutate } = useMutation(
-    trpc.location.updateLocationOperatingHours.mutationOptions()
+  const queryClient = useQueryClient();
+  const { mutate, isPending } = useMutation(
+    trpc.location.updateLocationOperatingHours.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.location.fetchLocationAppointmentSettings.queryKey({
+            locationId,
+          }),
+        });
+      },
+    })
   );
 
   const form = useForm<FormData>({
@@ -173,12 +179,16 @@ export function OperatingSchedulingForm({
     { label: "Saturday", key: 5, name: "saturday" },
     { label: "Sunday", key: 6, name: "sunday" },
   ] satisfies Array<{ label: string; key: DaysNum; name: Days }>;
- 
+
   const onSubmit = (values: FormData) => {
     console.log("Submitting form values:", values);
 
     mutate({
       locationId,
+      bufferTime: values.bufferTime,
+      prepTime: values.prepCleanup,
+      advanceBookingLimitDays: values.advanceBooking,
+      bookingCutOff: values.lastMinuteCutoff * 60, // convert hours to minutes
       rules: days.map(({ key, name }) => ({
         day: key, // convert to 0=Sun ... 6=Sat
         enabled: values[name].enabled,
@@ -387,39 +397,14 @@ export function OperatingSchedulingForm({
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="maxAppointments"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Max Daily Appointments</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="walkIns"
-                render={({ field }) => (
-                  <div className="flex items-center justify-between space-x-2 rounded-lg border border-border p-4">
-                    <FormLabel className="cursor-pointer">
-                      Walk-In Availability
-                    </FormLabel>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </div>
-                )}
-              />
             </div>
 
-            <Button type="submit" className="w-full">
-              Save Settings
+            <Button
+              disabled={isPending}
+              type="submit"
+              className="w-fit ml-auto flex cursor-pointer"
+            >
+              {isPending ? "Saving..." : "Save Changes"}
             </Button>
           </CardContent>
         </Card>

@@ -267,6 +267,7 @@ export type LocationWhereInput = {
   ActivityLog?: Prisma.ActivityLogListRelationFilter
   Service?: Prisma.EmployeeServiceListRelationFilter
   appointments?: Prisma.AppointmentListRelationFilter
+  appointmentSettings?: Prisma.XOR<Prisma.AppointmentSettingsNullableScalarRelationFilter, Prisma.AppointmentSettingsWhereInput> | null
   PromoCodes?: Prisma.PromoCodeListRelationFilter
 }
 
@@ -292,6 +293,7 @@ export type LocationOrderByWithRelationInput = {
   ActivityLog?: Prisma.ActivityLogOrderByRelationAggregateInput
   Service?: Prisma.EmployeeServiceOrderByRelationAggregateInput
   appointments?: Prisma.AppointmentOrderByRelationAggregateInput
+  appointmentSettings?: Prisma.AppointmentSettingsOrderByWithRelationInput
   PromoCodes?: Prisma.PromoCodeOrderByRelationAggregateInput
 }
 
@@ -321,6 +323,7 @@ export type LocationWhereUniqueInput = Prisma.AtLeast<{
   ActivityLog?: Prisma.ActivityLogListRelationFilter
   Service?: Prisma.EmployeeServiceListRelationFilter
   appointments?: Prisma.AppointmentListRelationFilter
+  appointmentSettings?: Prisma.XOR<Prisma.AppointmentSettingsNullableScalarRelationFilter, Prisma.AppointmentSettingsWhereInput> | null
   PromoCodes?: Prisma.PromoCodeListRelationFilter
 }, "id" | "slug" | "name_organizationId">
 
@@ -387,6 +390,7 @@ export type LocationCreateInput = {
   ActivityLog?: Prisma.ActivityLogCreateNestedManyWithoutLocationInput
   Service?: Prisma.EmployeeServiceCreateNestedManyWithoutLocationInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsCreateNestedOneWithoutLocationInput
   PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutLocationInput
 }
 
@@ -411,6 +415,7 @@ export type LocationUncheckedCreateInput = {
   ActivityLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutLocationInput
   Service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutLocationInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedCreateNestedOneWithoutLocationInput
   PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutLocationInput
 }
 
@@ -435,6 +440,7 @@ export type LocationUpdateInput = {
   ActivityLog?: Prisma.ActivityLogUpdateManyWithoutLocationNestedInput
   Service?: Prisma.EmployeeServiceUpdateManyWithoutLocationNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUpdateOneWithoutLocationNestedInput
   PromoCodes?: Prisma.PromoCodeUpdateManyWithoutLocationNestedInput
 }
 
@@ -459,6 +465,7 @@ export type LocationUncheckedUpdateInput = {
   ActivityLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutLocationNestedInput
   Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutLocationNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedUpdateOneWithoutLocationNestedInput
   PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutLocationNestedInput
 }
 
@@ -624,6 +631,20 @@ export type LocationUpdateOneWithoutPromoCodesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LocationUpdateToOneWithWhereWithoutPromoCodesInput, Prisma.LocationUpdateWithoutPromoCodesInput>, Prisma.LocationUncheckedUpdateWithoutPromoCodesInput>
 }
 
+export type LocationCreateNestedOneWithoutAppointmentSettingsInput = {
+  create?: Prisma.XOR<Prisma.LocationCreateWithoutAppointmentSettingsInput, Prisma.LocationUncheckedCreateWithoutAppointmentSettingsInput>
+  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutAppointmentSettingsInput
+  connect?: Prisma.LocationWhereUniqueInput
+}
+
+export type LocationUpdateOneRequiredWithoutAppointmentSettingsNestedInput = {
+  create?: Prisma.XOR<Prisma.LocationCreateWithoutAppointmentSettingsInput, Prisma.LocationUncheckedCreateWithoutAppointmentSettingsInput>
+  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutAppointmentSettingsInput
+  upsert?: Prisma.LocationUpsertWithoutAppointmentSettingsInput
+  connect?: Prisma.LocationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LocationUpdateToOneWithWhereWithoutAppointmentSettingsInput, Prisma.LocationUpdateWithoutAppointmentSettingsInput>, Prisma.LocationUncheckedUpdateWithoutAppointmentSettingsInput>
+}
+
 export type LocationCreateNestedManyWithoutOrganizationInput = {
   create?: Prisma.XOR<Prisma.LocationCreateWithoutOrganizationInput, Prisma.LocationUncheckedCreateWithoutOrganizationInput> | Prisma.LocationCreateWithoutOrganizationInput[] | Prisma.LocationUncheckedCreateWithoutOrganizationInput[]
   connectOrCreate?: Prisma.LocationCreateOrConnectWithoutOrganizationInput | Prisma.LocationCreateOrConnectWithoutOrganizationInput[]
@@ -744,6 +765,7 @@ export type LocationCreateWithoutAppointmentsInput = {
   LocationInvitation?: Prisma.LocationInvitationCreateNestedManyWithoutLocationInput
   ActivityLog?: Prisma.ActivityLogCreateNestedManyWithoutLocationInput
   Service?: Prisma.EmployeeServiceCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsCreateNestedOneWithoutLocationInput
   PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutLocationInput
 }
 
@@ -767,6 +789,7 @@ export type LocationUncheckedCreateWithoutAppointmentsInput = {
   LocationInvitation?: Prisma.LocationInvitationUncheckedCreateNestedManyWithoutLocationInput
   ActivityLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutLocationInput
   Service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedCreateNestedOneWithoutLocationInput
   PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutLocationInput
 }
 
@@ -806,6 +829,7 @@ export type LocationUpdateWithoutAppointmentsInput = {
   LocationInvitation?: Prisma.LocationInvitationUpdateManyWithoutLocationNestedInput
   ActivityLog?: Prisma.ActivityLogUpdateManyWithoutLocationNestedInput
   Service?: Prisma.EmployeeServiceUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUpdateOneWithoutLocationNestedInput
   PromoCodes?: Prisma.PromoCodeUpdateManyWithoutLocationNestedInput
 }
 
@@ -829,6 +853,7 @@ export type LocationUncheckedUpdateWithoutAppointmentsInput = {
   LocationInvitation?: Prisma.LocationInvitationUncheckedUpdateManyWithoutLocationNestedInput
   ActivityLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutLocationNestedInput
   Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedUpdateOneWithoutLocationNestedInput
   PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutLocationNestedInput
 }
 
@@ -853,6 +878,7 @@ export type LocationCreateWithoutPromoCodesInput = {
   ActivityLog?: Prisma.ActivityLogCreateNestedManyWithoutLocationInput
   Service?: Prisma.EmployeeServiceCreateNestedManyWithoutLocationInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsCreateNestedOneWithoutLocationInput
 }
 
 export type LocationUncheckedCreateWithoutPromoCodesInput = {
@@ -876,6 +902,7 @@ export type LocationUncheckedCreateWithoutPromoCodesInput = {
   ActivityLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutLocationInput
   Service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutLocationInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedCreateNestedOneWithoutLocationInput
 }
 
 export type LocationCreateOrConnectWithoutPromoCodesInput = {
@@ -915,6 +942,7 @@ export type LocationUpdateWithoutPromoCodesInput = {
   ActivityLog?: Prisma.ActivityLogUpdateManyWithoutLocationNestedInput
   Service?: Prisma.EmployeeServiceUpdateManyWithoutLocationNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUpdateOneWithoutLocationNestedInput
 }
 
 export type LocationUncheckedUpdateWithoutPromoCodesInput = {
@@ -938,6 +966,119 @@ export type LocationUncheckedUpdateWithoutPromoCodesInput = {
   ActivityLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutLocationNestedInput
   Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutLocationNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedUpdateOneWithoutLocationNestedInput
+}
+
+export type LocationCreateWithoutAppointmentSettingsInput = {
+  id?: string
+  name: string
+  slug: string
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  country?: string | null
+  zipCode?: string | null
+  timeZone?: string | null
+  email?: string | null
+  image?: string | null
+  phoneNumber?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employees?: Prisma.LocationEmployeeCreateNestedManyWithoutLocationInput
+  organization: Prisma.OrganizationCreateNestedOneWithoutLocationsInput
+  LocationInvitation?: Prisma.LocationInvitationCreateNestedManyWithoutLocationInput
+  ActivityLog?: Prisma.ActivityLogCreateNestedManyWithoutLocationInput
+  Service?: Prisma.EmployeeServiceCreateNestedManyWithoutLocationInput
+  appointments?: Prisma.AppointmentCreateNestedManyWithoutLocationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutLocationInput
+}
+
+export type LocationUncheckedCreateWithoutAppointmentSettingsInput = {
+  id?: string
+  name: string
+  organizationId: string
+  slug: string
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  country?: string | null
+  zipCode?: string | null
+  timeZone?: string | null
+  email?: string | null
+  image?: string | null
+  phoneNumber?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutLocationInput
+  LocationInvitation?: Prisma.LocationInvitationUncheckedCreateNestedManyWithoutLocationInput
+  ActivityLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutLocationInput
+  Service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutLocationInput
+  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutLocationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutLocationInput
+}
+
+export type LocationCreateOrConnectWithoutAppointmentSettingsInput = {
+  where: Prisma.LocationWhereUniqueInput
+  create: Prisma.XOR<Prisma.LocationCreateWithoutAppointmentSettingsInput, Prisma.LocationUncheckedCreateWithoutAppointmentSettingsInput>
+}
+
+export type LocationUpsertWithoutAppointmentSettingsInput = {
+  update: Prisma.XOR<Prisma.LocationUpdateWithoutAppointmentSettingsInput, Prisma.LocationUncheckedUpdateWithoutAppointmentSettingsInput>
+  create: Prisma.XOR<Prisma.LocationCreateWithoutAppointmentSettingsInput, Prisma.LocationUncheckedCreateWithoutAppointmentSettingsInput>
+  where?: Prisma.LocationWhereInput
+}
+
+export type LocationUpdateToOneWithWhereWithoutAppointmentSettingsInput = {
+  where?: Prisma.LocationWhereInput
+  data: Prisma.XOR<Prisma.LocationUpdateWithoutAppointmentSettingsInput, Prisma.LocationUncheckedUpdateWithoutAppointmentSettingsInput>
+}
+
+export type LocationUpdateWithoutAppointmentSettingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employees?: Prisma.LocationEmployeeUpdateManyWithoutLocationNestedInput
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutLocationsNestedInput
+  LocationInvitation?: Prisma.LocationInvitationUpdateManyWithoutLocationNestedInput
+  ActivityLog?: Prisma.ActivityLogUpdateManyWithoutLocationNestedInput
+  Service?: Prisma.EmployeeServiceUpdateManyWithoutLocationNestedInput
+  appointments?: Prisma.AppointmentUpdateManyWithoutLocationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutLocationNestedInput
+}
+
+export type LocationUncheckedUpdateWithoutAppointmentSettingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutLocationNestedInput
+  LocationInvitation?: Prisma.LocationInvitationUncheckedUpdateManyWithoutLocationNestedInput
+  ActivityLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutLocationNestedInput
+  Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutLocationNestedInput
+  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutLocationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutLocationNestedInput
 }
 
 export type LocationCreateWithoutOrganizationInput = {
@@ -960,6 +1101,7 @@ export type LocationCreateWithoutOrganizationInput = {
   ActivityLog?: Prisma.ActivityLogCreateNestedManyWithoutLocationInput
   Service?: Prisma.EmployeeServiceCreateNestedManyWithoutLocationInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsCreateNestedOneWithoutLocationInput
   PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutLocationInput
 }
 
@@ -983,6 +1125,7 @@ export type LocationUncheckedCreateWithoutOrganizationInput = {
   ActivityLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutLocationInput
   Service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutLocationInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedCreateNestedOneWithoutLocationInput
   PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutLocationInput
 }
 
@@ -1053,6 +1196,7 @@ export type LocationCreateWithoutEmployeesInput = {
   ActivityLog?: Prisma.ActivityLogCreateNestedManyWithoutLocationInput
   Service?: Prisma.EmployeeServiceCreateNestedManyWithoutLocationInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsCreateNestedOneWithoutLocationInput
   PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutLocationInput
 }
 
@@ -1076,6 +1220,7 @@ export type LocationUncheckedCreateWithoutEmployeesInput = {
   ActivityLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutLocationInput
   Service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutLocationInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedCreateNestedOneWithoutLocationInput
   PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutLocationInput
 }
 
@@ -1115,6 +1260,7 @@ export type LocationUpdateWithoutEmployeesInput = {
   ActivityLog?: Prisma.ActivityLogUpdateManyWithoutLocationNestedInput
   Service?: Prisma.EmployeeServiceUpdateManyWithoutLocationNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUpdateOneWithoutLocationNestedInput
   PromoCodes?: Prisma.PromoCodeUpdateManyWithoutLocationNestedInput
 }
 
@@ -1138,6 +1284,7 @@ export type LocationUncheckedUpdateWithoutEmployeesInput = {
   ActivityLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutLocationNestedInput
   Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutLocationNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedUpdateOneWithoutLocationNestedInput
   PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutLocationNestedInput
 }
 
@@ -1161,6 +1308,7 @@ export type LocationCreateWithoutServiceInput = {
   LocationInvitation?: Prisma.LocationInvitationCreateNestedManyWithoutLocationInput
   ActivityLog?: Prisma.ActivityLogCreateNestedManyWithoutLocationInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsCreateNestedOneWithoutLocationInput
   PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutLocationInput
 }
 
@@ -1184,6 +1332,7 @@ export type LocationUncheckedCreateWithoutServiceInput = {
   LocationInvitation?: Prisma.LocationInvitationUncheckedCreateNestedManyWithoutLocationInput
   ActivityLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutLocationInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedCreateNestedOneWithoutLocationInput
   PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutLocationInput
 }
 
@@ -1223,6 +1372,7 @@ export type LocationUpdateWithoutServiceInput = {
   LocationInvitation?: Prisma.LocationInvitationUpdateManyWithoutLocationNestedInput
   ActivityLog?: Prisma.ActivityLogUpdateManyWithoutLocationNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUpdateOneWithoutLocationNestedInput
   PromoCodes?: Prisma.PromoCodeUpdateManyWithoutLocationNestedInput
 }
 
@@ -1246,6 +1396,7 @@ export type LocationUncheckedUpdateWithoutServiceInput = {
   LocationInvitation?: Prisma.LocationInvitationUncheckedUpdateManyWithoutLocationNestedInput
   ActivityLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutLocationNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedUpdateOneWithoutLocationNestedInput
   PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutLocationNestedInput
 }
 
@@ -1269,6 +1420,7 @@ export type LocationCreateWithoutActivityLogInput = {
   LocationInvitation?: Prisma.LocationInvitationCreateNestedManyWithoutLocationInput
   Service?: Prisma.EmployeeServiceCreateNestedManyWithoutLocationInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsCreateNestedOneWithoutLocationInput
   PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutLocationInput
 }
 
@@ -1292,6 +1444,7 @@ export type LocationUncheckedCreateWithoutActivityLogInput = {
   LocationInvitation?: Prisma.LocationInvitationUncheckedCreateNestedManyWithoutLocationInput
   Service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutLocationInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedCreateNestedOneWithoutLocationInput
   PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutLocationInput
 }
 
@@ -1331,6 +1484,7 @@ export type LocationUpdateWithoutActivityLogInput = {
   LocationInvitation?: Prisma.LocationInvitationUpdateManyWithoutLocationNestedInput
   Service?: Prisma.EmployeeServiceUpdateManyWithoutLocationNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUpdateOneWithoutLocationNestedInput
   PromoCodes?: Prisma.PromoCodeUpdateManyWithoutLocationNestedInput
 }
 
@@ -1354,6 +1508,7 @@ export type LocationUncheckedUpdateWithoutActivityLogInput = {
   LocationInvitation?: Prisma.LocationInvitationUncheckedUpdateManyWithoutLocationNestedInput
   Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutLocationNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedUpdateOneWithoutLocationNestedInput
   PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutLocationNestedInput
 }
 
@@ -1377,6 +1532,7 @@ export type LocationCreateWithoutLocationInvitationInput = {
   ActivityLog?: Prisma.ActivityLogCreateNestedManyWithoutLocationInput
   Service?: Prisma.EmployeeServiceCreateNestedManyWithoutLocationInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsCreateNestedOneWithoutLocationInput
   PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutLocationInput
 }
 
@@ -1400,6 +1556,7 @@ export type LocationUncheckedCreateWithoutLocationInvitationInput = {
   ActivityLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutLocationInput
   Service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutLocationInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutLocationInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedCreateNestedOneWithoutLocationInput
   PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutLocationInput
 }
 
@@ -1439,6 +1596,7 @@ export type LocationUpdateWithoutLocationInvitationInput = {
   ActivityLog?: Prisma.ActivityLogUpdateManyWithoutLocationNestedInput
   Service?: Prisma.EmployeeServiceUpdateManyWithoutLocationNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUpdateOneWithoutLocationNestedInput
   PromoCodes?: Prisma.PromoCodeUpdateManyWithoutLocationNestedInput
 }
 
@@ -1462,6 +1620,7 @@ export type LocationUncheckedUpdateWithoutLocationInvitationInput = {
   ActivityLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutLocationNestedInput
   Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutLocationNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedUpdateOneWithoutLocationNestedInput
   PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutLocationNestedInput
 }
 
@@ -1502,6 +1661,7 @@ export type LocationUpdateWithoutOrganizationInput = {
   ActivityLog?: Prisma.ActivityLogUpdateManyWithoutLocationNestedInput
   Service?: Prisma.EmployeeServiceUpdateManyWithoutLocationNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUpdateOneWithoutLocationNestedInput
   PromoCodes?: Prisma.PromoCodeUpdateManyWithoutLocationNestedInput
 }
 
@@ -1525,6 +1685,7 @@ export type LocationUncheckedUpdateWithoutOrganizationInput = {
   ActivityLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutLocationNestedInput
   Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutLocationNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedUpdateOneWithoutLocationNestedInput
   PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutLocationNestedInput
 }
 
@@ -1643,6 +1804,7 @@ export type LocationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   ActivityLog?: boolean | Prisma.Location$ActivityLogArgs<ExtArgs>
   Service?: boolean | Prisma.Location$ServiceArgs<ExtArgs>
   appointments?: boolean | Prisma.Location$appointmentsArgs<ExtArgs>
+  appointmentSettings?: boolean | Prisma.Location$appointmentSettingsArgs<ExtArgs>
   PromoCodes?: boolean | Prisma.Location$PromoCodesArgs<ExtArgs>
   _count?: boolean | Prisma.LocationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["location"]>
@@ -1711,6 +1873,7 @@ export type LocationInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   ActivityLog?: boolean | Prisma.Location$ActivityLogArgs<ExtArgs>
   Service?: boolean | Prisma.Location$ServiceArgs<ExtArgs>
   appointments?: boolean | Prisma.Location$appointmentsArgs<ExtArgs>
+  appointmentSettings?: boolean | Prisma.Location$appointmentSettingsArgs<ExtArgs>
   PromoCodes?: boolean | Prisma.Location$PromoCodesArgs<ExtArgs>
   _count?: boolean | Prisma.LocationCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1730,6 +1893,7 @@ export type $LocationPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     ActivityLog: Prisma.$ActivityLogPayload<ExtArgs>[]
     Service: Prisma.$EmployeeServicePayload<ExtArgs>[]
     appointments: Prisma.$AppointmentPayload<ExtArgs>[]
+    appointmentSettings: Prisma.$AppointmentSettingsPayload<ExtArgs> | null
     PromoCodes: Prisma.$PromoCodePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -2148,6 +2312,7 @@ export interface Prisma__LocationClient<T, Null = never, ExtArgs extends runtime
   ActivityLog<T extends Prisma.Location$ActivityLogArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Location$ActivityLogArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   Service<T extends Prisma.Location$ServiceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Location$ServiceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   appointments<T extends Prisma.Location$appointmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Location$appointmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AppointmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  appointmentSettings<T extends Prisma.Location$appointmentSettingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Location$appointmentSettingsArgs<ExtArgs>>): Prisma.Prisma__AppointmentSettingsClient<runtime.Types.Result.GetResult<Prisma.$AppointmentSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   PromoCodes<T extends Prisma.Location$PromoCodesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Location$PromoCodesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PromoCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2706,6 +2871,25 @@ export type Location$appointmentsArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.AppointmentScalarFieldEnum | Prisma.AppointmentScalarFieldEnum[]
+}
+
+/**
+ * Location.appointmentSettings
+ */
+export type Location$appointmentSettingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AppointmentSettings
+   */
+  select?: Prisma.AppointmentSettingsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AppointmentSettings
+   */
+  omit?: Prisma.AppointmentSettingsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppointmentSettingsInclude<ExtArgs> | null
+  where?: Prisma.AppointmentSettingsWhereInput
 }
 
 /**

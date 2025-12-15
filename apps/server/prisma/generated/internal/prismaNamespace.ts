@@ -401,6 +401,7 @@ export const ModelName = {
   ScheduleRule: 'ScheduleRule',
   ScheduleException: 'ScheduleException',
   TimeOff: 'TimeOff',
+  AppointmentSettings: 'AppointmentSettings',
   User: 'User',
   Subscription: 'Subscription',
   Organization: 'Organization',
@@ -434,7 +435,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "admin" | "appointment" | "addOn" | "promoCode" | "scheduleRule" | "scheduleException" | "timeOff" | "user" | "subscription" | "organization" | "managementMembership" | "location" | "locationEmployee" | "serviceTerms" | "serviceGroup" | "employeeService" | "customer" | "customerAppointmentPayment" | "activityLog" | "session" | "account" | "verification" | "organizationInvitation" | "locationInvitation" | "demoRequest"
+    modelProps: "admin" | "appointment" | "addOn" | "promoCode" | "scheduleRule" | "scheduleException" | "timeOff" | "appointmentSettings" | "user" | "subscription" | "organization" | "managementMembership" | "location" | "locationEmployee" | "serviceTerms" | "serviceGroup" | "employeeService" | "customer" | "customerAppointmentPayment" | "activityLog" | "session" | "account" | "verification" | "organizationInvitation" | "locationInvitation" | "demoRequest"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -953,6 +954,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.TimeOffCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.TimeOffCountAggregateOutputType> | number
+        }
+      }
+    }
+    AppointmentSettings: {
+      payload: Prisma.$AppointmentSettingsPayload<ExtArgs>
+      fields: Prisma.AppointmentSettingsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AppointmentSettingsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentSettingsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AppointmentSettingsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentSettingsPayload>
+        }
+        findFirst: {
+          args: Prisma.AppointmentSettingsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentSettingsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AppointmentSettingsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentSettingsPayload>
+        }
+        findMany: {
+          args: Prisma.AppointmentSettingsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentSettingsPayload>[]
+        }
+        create: {
+          args: Prisma.AppointmentSettingsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentSettingsPayload>
+        }
+        createMany: {
+          args: Prisma.AppointmentSettingsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AppointmentSettingsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentSettingsPayload>[]
+        }
+        delete: {
+          args: Prisma.AppointmentSettingsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentSettingsPayload>
+        }
+        update: {
+          args: Prisma.AppointmentSettingsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentSettingsPayload>
+        }
+        deleteMany: {
+          args: Prisma.AppointmentSettingsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AppointmentSettingsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AppointmentSettingsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentSettingsPayload>[]
+        }
+        upsert: {
+          args: Prisma.AppointmentSettingsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentSettingsPayload>
+        }
+        aggregate: {
+          args: Prisma.AppointmentSettingsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAppointmentSettings>
+        }
+        groupBy: {
+          args: Prisma.AppointmentSettingsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AppointmentSettingsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AppointmentSettingsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AppointmentSettingsCountAggregateOutputType> | number
         }
       }
     }
@@ -2405,10 +2480,11 @@ export const ScheduleExceptionScalarFieldEnum = {
   id: 'id',
   targetType: 'targetType',
   targetId: 'targetId',
-  date: 'date',
+  monthDay: 'monthDay',
   startMinute: 'startMinute',
   endMinute: 'endMinute',
   isBreak: 'isBreak',
+  reason: 'reason',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2428,6 +2504,20 @@ export const TimeOffScalarFieldEnum = {
 } as const
 
 export type TimeOffScalarFieldEnum = (typeof TimeOffScalarFieldEnum)[keyof typeof TimeOffScalarFieldEnum]
+
+
+export const AppointmentSettingsScalarFieldEnum = {
+  id: 'id',
+  locationId: 'locationId',
+  bufferTime: 'bufferTime',
+  prepTime: 'prepTime',
+  advanceBookingLimitDays: 'advanceBookingLimitDays',
+  bookingCutOff: 'bookingCutOff',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AppointmentSettingsScalarFieldEnum = (typeof AppointmentSettingsScalarFieldEnum)[keyof typeof AppointmentSettingsScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
@@ -2973,6 +3063,7 @@ export type GlobalOmitConfig = {
   scheduleRule?: Prisma.ScheduleRuleOmit
   scheduleException?: Prisma.ScheduleExceptionOmit
   timeOff?: Prisma.TimeOffOmit
+  appointmentSettings?: Prisma.AppointmentSettingsOmit
   user?: Prisma.UserOmit
   subscription?: Prisma.SubscriptionOmit
   organization?: Prisma.OrganizationOmit
