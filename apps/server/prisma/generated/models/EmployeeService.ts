@@ -28,11 +28,15 @@ export type AggregateEmployeeService = {
 export type EmployeeServiceAvgAggregateOutputType = {
   price: number | null
   duration: number | null
+  bufferTime: number | null
+  prepTime: number | null
 }
 
 export type EmployeeServiceSumAggregateOutputType = {
   price: number | null
   duration: number | null
+  bufferTime: number | null
+  prepTime: number | null
 }
 
 export type EmployeeServiceMinAggregateOutputType = {
@@ -42,6 +46,8 @@ export type EmployeeServiceMinAggregateOutputType = {
   isActive: boolean | null
   price: number | null
   duration: number | null
+  bufferTime: number | null
+  prepTime: number | null
   locationEmployeeId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -54,6 +60,8 @@ export type EmployeeServiceMaxAggregateOutputType = {
   isActive: boolean | null
   price: number | null
   duration: number | null
+  bufferTime: number | null
+  prepTime: number | null
   locationEmployeeId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -66,6 +74,8 @@ export type EmployeeServiceCountAggregateOutputType = {
   isActive: number
   price: number
   duration: number
+  bufferTime: number
+  prepTime: number
   locationEmployeeId: number
   createdAt: number
   updatedAt: number
@@ -76,11 +86,15 @@ export type EmployeeServiceCountAggregateOutputType = {
 export type EmployeeServiceAvgAggregateInputType = {
   price?: true
   duration?: true
+  bufferTime?: true
+  prepTime?: true
 }
 
 export type EmployeeServiceSumAggregateInputType = {
   price?: true
   duration?: true
+  bufferTime?: true
+  prepTime?: true
 }
 
 export type EmployeeServiceMinAggregateInputType = {
@@ -90,6 +104,8 @@ export type EmployeeServiceMinAggregateInputType = {
   isActive?: true
   price?: true
   duration?: true
+  bufferTime?: true
+  prepTime?: true
   locationEmployeeId?: true
   createdAt?: true
   updatedAt?: true
@@ -102,6 +118,8 @@ export type EmployeeServiceMaxAggregateInputType = {
   isActive?: true
   price?: true
   duration?: true
+  bufferTime?: true
+  prepTime?: true
   locationEmployeeId?: true
   createdAt?: true
   updatedAt?: true
@@ -114,6 +132,8 @@ export type EmployeeServiceCountAggregateInputType = {
   isActive?: true
   price?: true
   duration?: true
+  bufferTime?: true
+  prepTime?: true
   locationEmployeeId?: true
   createdAt?: true
   updatedAt?: true
@@ -213,6 +233,8 @@ export type EmployeeServiceGroupByOutputType = {
   isActive: boolean
   price: number
   duration: number
+  bufferTime: number
+  prepTime: number
   locationEmployeeId: string | null
   createdAt: Date
   updatedAt: Date
@@ -248,6 +270,8 @@ export type EmployeeServiceWhereInput = {
   isActive?: Prisma.BoolFilter<"EmployeeService"> | boolean
   price?: Prisma.IntFilter<"EmployeeService"> | number
   duration?: Prisma.IntFilter<"EmployeeService"> | number
+  bufferTime?: Prisma.IntFilter<"EmployeeService"> | number
+  prepTime?: Prisma.IntFilter<"EmployeeService"> | number
   locationEmployeeId?: Prisma.StringNullableFilter<"EmployeeService"> | string | null
   createdAt?: Prisma.DateTimeFilter<"EmployeeService"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"EmployeeService"> | Date | string
@@ -265,6 +289,8 @@ export type EmployeeServiceOrderByWithRelationInput = {
   isActive?: Prisma.SortOrder
   price?: Prisma.SortOrder
   duration?: Prisma.SortOrder
+  bufferTime?: Prisma.SortOrder
+  prepTime?: Prisma.SortOrder
   locationEmployeeId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -285,6 +311,8 @@ export type EmployeeServiceWhereUniqueInput = Prisma.AtLeast<{
   isActive?: Prisma.BoolFilter<"EmployeeService"> | boolean
   price?: Prisma.IntFilter<"EmployeeService"> | number
   duration?: Prisma.IntFilter<"EmployeeService"> | number
+  bufferTime?: Prisma.IntFilter<"EmployeeService"> | number
+  prepTime?: Prisma.IntFilter<"EmployeeService"> | number
   locationEmployeeId?: Prisma.StringNullableFilter<"EmployeeService"> | string | null
   createdAt?: Prisma.DateTimeFilter<"EmployeeService"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"EmployeeService"> | Date | string
@@ -302,6 +330,8 @@ export type EmployeeServiceOrderByWithAggregationInput = {
   isActive?: Prisma.SortOrder
   price?: Prisma.SortOrder
   duration?: Prisma.SortOrder
+  bufferTime?: Prisma.SortOrder
+  prepTime?: Prisma.SortOrder
   locationEmployeeId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -322,6 +352,8 @@ export type EmployeeServiceScalarWhereWithAggregatesInput = {
   isActive?: Prisma.BoolWithAggregatesFilter<"EmployeeService"> | boolean
   price?: Prisma.IntWithAggregatesFilter<"EmployeeService"> | number
   duration?: Prisma.IntWithAggregatesFilter<"EmployeeService"> | number
+  bufferTime?: Prisma.IntWithAggregatesFilter<"EmployeeService"> | number
+  prepTime?: Prisma.IntWithAggregatesFilter<"EmployeeService"> | number
   locationEmployeeId?: Prisma.StringNullableWithAggregatesFilter<"EmployeeService"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"EmployeeService"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"EmployeeService"> | Date | string
@@ -332,6 +364,8 @@ export type EmployeeServiceCreateInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   serviceTerms: Prisma.ServiceTermsCreateNestedOneWithoutServiceInput
@@ -348,6 +382,8 @@ export type EmployeeServiceUncheckedCreateInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   locationEmployeeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -360,6 +396,8 @@ export type EmployeeServiceUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceTerms?: Prisma.ServiceTermsUpdateOneRequiredWithoutServiceNestedInput
@@ -376,6 +414,8 @@ export type EmployeeServiceUncheckedUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   locationEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -390,6 +430,8 @@ export type EmployeeServiceCreateManyInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   locationEmployeeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -400,6 +442,8 @@ export type EmployeeServiceUpdateManyMutationInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -411,6 +455,8 @@ export type EmployeeServiceUncheckedUpdateManyInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   locationEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -433,6 +479,8 @@ export type EmployeeServiceCountOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   price?: Prisma.SortOrder
   duration?: Prisma.SortOrder
+  bufferTime?: Prisma.SortOrder
+  prepTime?: Prisma.SortOrder
   locationEmployeeId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -441,6 +489,8 @@ export type EmployeeServiceCountOrderByAggregateInput = {
 export type EmployeeServiceAvgOrderByAggregateInput = {
   price?: Prisma.SortOrder
   duration?: Prisma.SortOrder
+  bufferTime?: Prisma.SortOrder
+  prepTime?: Prisma.SortOrder
 }
 
 export type EmployeeServiceMaxOrderByAggregateInput = {
@@ -450,6 +500,8 @@ export type EmployeeServiceMaxOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   price?: Prisma.SortOrder
   duration?: Prisma.SortOrder
+  bufferTime?: Prisma.SortOrder
+  prepTime?: Prisma.SortOrder
   locationEmployeeId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -462,6 +514,8 @@ export type EmployeeServiceMinOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   price?: Prisma.SortOrder
   duration?: Prisma.SortOrder
+  bufferTime?: Prisma.SortOrder
+  prepTime?: Prisma.SortOrder
   locationEmployeeId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -470,6 +524,8 @@ export type EmployeeServiceMinOrderByAggregateInput = {
 export type EmployeeServiceSumOrderByAggregateInput = {
   price?: Prisma.SortOrder
   duration?: Prisma.SortOrder
+  bufferTime?: Prisma.SortOrder
+  prepTime?: Prisma.SortOrder
 }
 
 export type EmployeeServiceCreateNestedManyWithoutAppointmentsInput = {
@@ -679,6 +735,8 @@ export type EmployeeServiceCreateWithoutAppointmentsInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   serviceTerms: Prisma.ServiceTermsCreateNestedOneWithoutServiceInput
@@ -694,6 +752,8 @@ export type EmployeeServiceUncheckedCreateWithoutAppointmentsInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   locationEmployeeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -731,6 +791,8 @@ export type EmployeeServiceScalarWhereInput = {
   isActive?: Prisma.BoolFilter<"EmployeeService"> | boolean
   price?: Prisma.IntFilter<"EmployeeService"> | number
   duration?: Prisma.IntFilter<"EmployeeService"> | number
+  bufferTime?: Prisma.IntFilter<"EmployeeService"> | number
+  prepTime?: Prisma.IntFilter<"EmployeeService"> | number
   locationEmployeeId?: Prisma.StringNullableFilter<"EmployeeService"> | string | null
   createdAt?: Prisma.DateTimeFilter<"EmployeeService"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"EmployeeService"> | Date | string
@@ -741,6 +803,8 @@ export type EmployeeServiceCreateWithoutAddOnsInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   serviceTerms: Prisma.ServiceTermsCreateNestedOneWithoutServiceInput
@@ -756,6 +820,8 @@ export type EmployeeServiceUncheckedCreateWithoutAddOnsInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   locationEmployeeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -788,6 +854,8 @@ export type EmployeeServiceCreateWithoutLocationInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   serviceTerms: Prisma.ServiceTermsCreateNestedOneWithoutServiceInput
@@ -802,6 +870,8 @@ export type EmployeeServiceUncheckedCreateWithoutLocationInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   locationEmployeeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -840,6 +910,8 @@ export type EmployeeServiceCreateWithoutLocationEmployeeInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   serviceTerms: Prisma.ServiceTermsCreateNestedOneWithoutServiceInput
@@ -855,6 +927,8 @@ export type EmployeeServiceUncheckedCreateWithoutLocationEmployeeInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutServiceInput
@@ -892,6 +966,8 @@ export type EmployeeServiceCreateWithoutServiceTermsInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   location: Prisma.LocationCreateNestedOneWithoutServiceInput
@@ -906,6 +982,8 @@ export type EmployeeServiceUncheckedCreateWithoutServiceTermsInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   locationEmployeeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -944,6 +1022,8 @@ export type EmployeeServiceUpdateWithoutAppointmentsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceTerms?: Prisma.ServiceTermsUpdateOneRequiredWithoutServiceNestedInput
@@ -959,6 +1039,8 @@ export type EmployeeServiceUncheckedUpdateWithoutAppointmentsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   locationEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -972,6 +1054,8 @@ export type EmployeeServiceUncheckedUpdateManyWithoutAppointmentsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   locationEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -982,6 +1066,8 @@ export type EmployeeServiceUpdateWithoutAddOnsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceTerms?: Prisma.ServiceTermsUpdateOneRequiredWithoutServiceNestedInput
@@ -997,6 +1083,8 @@ export type EmployeeServiceUncheckedUpdateWithoutAddOnsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   locationEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1010,6 +1098,8 @@ export type EmployeeServiceUncheckedUpdateManyWithoutAddOnsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   locationEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1021,6 +1111,8 @@ export type EmployeeServiceCreateManyLocationInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   locationEmployeeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1031,6 +1123,8 @@ export type EmployeeServiceUpdateWithoutLocationInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceTerms?: Prisma.ServiceTermsUpdateOneRequiredWithoutServiceNestedInput
@@ -1045,6 +1139,8 @@ export type EmployeeServiceUncheckedUpdateWithoutLocationInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   locationEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1058,6 +1154,8 @@ export type EmployeeServiceUncheckedUpdateManyWithoutLocationInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   locationEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1070,6 +1168,8 @@ export type EmployeeServiceCreateManyLocationEmployeeInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1079,6 +1179,8 @@ export type EmployeeServiceUpdateWithoutLocationEmployeeInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceTerms?: Prisma.ServiceTermsUpdateOneRequiredWithoutServiceNestedInput
@@ -1094,6 +1196,8 @@ export type EmployeeServiceUncheckedUpdateWithoutLocationEmployeeInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutServiceNestedInput
@@ -1107,6 +1211,8 @@ export type EmployeeServiceUncheckedUpdateManyWithoutLocationEmployeeInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1117,6 +1223,8 @@ export type EmployeeServiceCreateManyServiceTermsInput = {
   isActive?: boolean
   price: number
   duration: number
+  bufferTime?: number
+  prepTime?: number
   locationEmployeeId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1127,6 +1235,8 @@ export type EmployeeServiceUpdateWithoutServiceTermsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   location?: Prisma.LocationUpdateOneRequiredWithoutServiceNestedInput
@@ -1141,6 +1251,8 @@ export type EmployeeServiceUncheckedUpdateWithoutServiceTermsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   locationEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1154,6 +1266,8 @@ export type EmployeeServiceUncheckedUpdateManyWithoutServiceTermsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   price?: Prisma.IntFieldUpdateOperationsInput | number
   duration?: Prisma.IntFieldUpdateOperationsInput | number
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   locationEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1206,6 +1320,8 @@ export type EmployeeServiceSelect<ExtArgs extends runtime.Types.Extensions.Inter
   isActive?: boolean
   price?: boolean
   duration?: boolean
+  bufferTime?: boolean
+  prepTime?: boolean
   locationEmployeeId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1224,6 +1340,8 @@ export type EmployeeServiceSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   isActive?: boolean
   price?: boolean
   duration?: boolean
+  bufferTime?: boolean
+  prepTime?: boolean
   locationEmployeeId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1239,6 +1357,8 @@ export type EmployeeServiceSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   isActive?: boolean
   price?: boolean
   duration?: boolean
+  bufferTime?: boolean
+  prepTime?: boolean
   locationEmployeeId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1254,12 +1374,14 @@ export type EmployeeServiceSelectScalar = {
   isActive?: boolean
   price?: boolean
   duration?: boolean
+  bufferTime?: boolean
+  prepTime?: boolean
   locationEmployeeId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type EmployeeServiceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "serviceId" | "locationId" | "isActive" | "price" | "duration" | "locationEmployeeId" | "createdAt" | "updatedAt", ExtArgs["result"]["employeeService"]>
+export type EmployeeServiceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "serviceId" | "locationId" | "isActive" | "price" | "duration" | "bufferTime" | "prepTime" | "locationEmployeeId" | "createdAt" | "updatedAt", ExtArgs["result"]["employeeService"]>
 export type EmployeeServiceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   serviceTerms?: boolean | Prisma.ServiceTermsDefaultArgs<ExtArgs>
   location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
@@ -1295,6 +1417,8 @@ export type $EmployeeServicePayload<ExtArgs extends runtime.Types.Extensions.Int
     isActive: boolean
     price: number
     duration: number
+    bufferTime: number
+    prepTime: number
     locationEmployeeId: string | null
     createdAt: Date
     updatedAt: Date
@@ -1732,6 +1856,8 @@ export interface EmployeeServiceFieldRefs {
   readonly isActive: Prisma.FieldRef<"EmployeeService", 'Boolean'>
   readonly price: Prisma.FieldRef<"EmployeeService", 'Int'>
   readonly duration: Prisma.FieldRef<"EmployeeService", 'Int'>
+  readonly bufferTime: Prisma.FieldRef<"EmployeeService", 'Int'>
+  readonly prepTime: Prisma.FieldRef<"EmployeeService", 'Int'>
   readonly locationEmployeeId: Prisma.FieldRef<"EmployeeService", 'String'>
   readonly createdAt: Prisma.FieldRef<"EmployeeService", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"EmployeeService", 'DateTime'>

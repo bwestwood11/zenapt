@@ -88,7 +88,7 @@ export const hasAccessToLocation = async (slug: string) => {
 };
 
 
-export async function getLocationAccess(slug: string): Promise<false | { id: string }> {
+export async function getLocationAccess(slug: string) {
   try {
     const session = await getSession();
     if (!session?.data?.user?.employees) return false;
@@ -97,7 +97,7 @@ export async function getLocationAccess(slug: string): Promise<false | { id: str
       (emp) => emp.locationSlug === slug
     );
 
-    return match ? { id: match.locationId } : false;
+    return match ? match : false;
   } catch (err) {
     console.error("location access check failed:", err);
     return false;

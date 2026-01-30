@@ -12,7 +12,7 @@ const createServiceTerms = withPermissions(
     groupId: z.string(),
     minPrice: z.number(),
     excerpt: z.string(),
-  })
+  }),
 ).mutation(async ({ ctx, input }) => {
   const { name, description, minPrice, groupId, excerpt } = input;
 
@@ -33,7 +33,7 @@ const createServiceGroup = withPermissions(
   z.object({
     name: z.string(),
     description: z.string().optional(),
-  })
+  }),
 ).mutation(async ({ ctx, input }) => {
   const { name, description } = input;
 
@@ -62,7 +62,7 @@ const createService = withPermissions(
     termId: z.string(),
     locationId: z.string(),
     locationEmployeeId: z.string(),
-  })
+  }),
 ).mutation(async ({ ctx, input }) => {
   const { duration, price, termId, locationEmployeeId } = input;
   await prisma.employeeService.create({
@@ -80,7 +80,7 @@ const deleteServiceTerm = withPermissions(
   "DELETE::SERVICE",
   z.object({
     serviceId: z.string(),
-  })
+  }),
 ).mutation(async ({ ctx, input }) => {
   const { serviceId } = input;
   await prisma.serviceTerms.delete({
@@ -109,8 +109,45 @@ const getAllGroups = withPermissions("READ::SERVICES_GROUP").query(
         organizationId: ctx.orgWithSub.id,
       },
     });
-  }
+  },
 );
+const getEmployeeServices = withPermissions(
+  "READ::SERVICES_TERMS",
+  z.object({
+    locationEmployeeId: z.string(),
+    locationId: z.string(),
+  }),
+).query(async ({ input }) => {
+  const { locationEmployeeId, locationId } = input;
+  return await prisma.employeeService.findMany({
+    where: {
+      locationEmployeeId,
+      locationId,
+      isActive: true,
+    },
+    select: {
+      addOns: {
+        select: {
+          id: true,
+          name: true,
+          basePrice: true,
+          incrementalDuration: true,
+        },
+      },
+      serviceTerms: {
+        select: {
+          id: true,
+          name: true,
+          excerpt: true,
+        },
+      },
+      id: true,
+      duration: true,
+      price: true,
+      locationEmployeeId: true,
+    },
+  });
+});
 
 export const servicesRouter = {
   createServiceTerms,
@@ -119,4 +156,5 @@ export const servicesRouter = {
   createService,
   getAllServicesTerms,
   getAllGroups,
+  getEmployeeServices,
 };

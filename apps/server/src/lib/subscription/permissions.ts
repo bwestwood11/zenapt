@@ -15,6 +15,9 @@ export const FEATURES = [
   "ORGANIZATION",
   "SUBSCRIPTION",
   "ANALYTICS",
+  "MASTER_CALENDAR",
+  "APPOINTMENTS",
+  "CUSTOMERS",
 ] as const;
 
 export type Feature = (typeof FEATURES)[number];
@@ -55,20 +58,23 @@ export type RolePermission = {
 };
 
 const addFeature = (feature: Feature, actions?: Action[]): Permission[] => {
-  if(!actions) return ACTIONS.map((a) => `${a}::${feature}` as Permission)
-  return actions.map((a) => `${a}::${feature}` as Permission)
-}
+  if (!actions) return ACTIONS.map((a) => `${a}::${feature}` as Permission);
+  return actions.map((a) => `${a}::${feature}` as Permission);
+};
 
 /* ---------- Role → Permissions Map ---------- */
 export const ROLE_PERMISSIONS: RolePermission = {
   ORG: {
-    OWNER: ACTIONS.flatMap((a) => (FEATURES.map((f) => `${a}::${f}` as Permission))),
+    OWNER: ACTIONS.flatMap((a) =>
+      FEATURES.map((f) => `${a}::${f}` as Permission),
+    ),
     ADMIN: [
       ...addFeature("SERVICES_GROUP"),
       ...addFeature("SERVICES_TERMS"),
       ...addFeature("ANALYTICS"),
       ...addFeature("MEMBERS"),
-      "READ::ADMIN_LOCATION"
+      ...addFeature("CUSTOMERS"),
+      "READ::ADMIN_LOCATION",
     ],
     ANALYST: ["READ::ANALYTICS"],
   },
@@ -78,17 +84,29 @@ export const ROLE_PERMISSIONS: RolePermission = {
       "READ::LOCATION",
       "UPDATE::LOCATION",
       "READ::EMPLOYEES",
-       ...addFeature("SERVICE"),
-      "CREATE::EMPLOYEES"
+      ...addFeature("SERVICE"),
+      ...addFeature("MASTER_CALENDAR"),
+      "CREATE::EMPLOYEES",
+      ...addFeature("APPOINTMENTS"),
+      ...addFeature("CUSTOMERS"),
     ],
-    LOCATION_FRONT_DESK: ["READ::EMPLOYEES", "READ::SERVICE"],
+    LOCATION_FRONT_DESK: [
+      "READ::EMPLOYEES",
+      "READ::SERVICE",
+      ...addFeature("MASTER_CALENDAR"),
+      ...addFeature("APPOINTMENTS"),
+      ...addFeature("CUSTOMERS"),
+    ],
     LOCATION_SPECIALIST: ["READ::SERVICE"],
     ORGANIZATION_MANAGEMENT: [
       "READ::LOCATION",
       "UPDATE::LOCATION",
       "READ::EMPLOYEES",
       "UPDATE::SERVICE",
-      "CREATE::EMPLOYEES"
+      "CREATE::EMPLOYEES",
+      ...addFeature("MASTER_CALENDAR"),
+      ...addFeature("APPOINTMENTS"),
+      ...addFeature("CUSTOMERS"),
     ],
   },
 };
@@ -100,7 +118,7 @@ export type UserAccessContext = {
 
 /* ---------- Build Access Context ---------- */
 export async function getUserAccessContext(
-  userId: string
+  userId: string,
 ): Promise<UserAccessContext> {
   const memberships = await prisma.managementMembership.findMany({
     where: { userId },
@@ -138,7 +156,7 @@ export async function getUserAccessContext(
 export function canAccess(
   ctx: UserAccessContext,
   required: Permission[],
-  target: { organizationId?: string; locationId?: string }
+  target: { organizationId?: string; locationId?: string },
 ): boolean {
   const { organizationId, locationId } = target;
   console.log(target);

@@ -85,33 +85,31 @@ model ManagementMembership {
 }
 
 model Location {
-  id                  String               @id @default(cuid()) @map("_id")
-  name                String
-  organizationId      String
-  slug                String               @unique
-  address             String?
-  city                String?
-  state               String?
-  country             String?
-  zipCode             String?
-  timeZone            String?
-  email               String?
-  image               String?
-  phoneNumber         String?
-  // services       Service[]
-  // customers      Customer[]
-  // appointments   Appointment[]
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  employees           LocationEmployee[]
-  organization        Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  // Nameless       Nameless[]
+  id             String             @id @default(cuid()) @map("_id")
+  name           String
+  organizationId String
+  slug           String             @unique
+  address        String?
+  city           String?
+  state          String?
+  country        String?
+  zipCode        String?
+  timeZone       String?
+  email          String?
+  image          String?
+  phoneNumber    String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  employees      LocationEmployee[]
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
   LocationInvitation  LocationInvitation[]
   ActivityLog         ActivityLog[]
   Service             EmployeeService[]
   appointments        Appointment[]
   appointmentSettings AppointmentSettings?
   PromoCodes          PromoCode[]
+  customers           Customer[]
 
   @@unique([name, organizationId])
   @@index([slug, organizationId])
@@ -172,6 +170,8 @@ model EmployeeService {
   isActive           Boolean           @default(true)
   price              Int
   duration           Int
+  bufferTime         Int               @default(0) // in minutes - time after appointment
+  prepTime           Int               @default(0) // in minutes - time before appointment
   locationEmployee   LocationEmployee? @relation(fields: [locationEmployeeId], references: [id], onDelete: Cascade)
   appointments       Appointment[]
   addOns             AddOn[]
@@ -183,6 +183,7 @@ model EmployeeService {
 model Customer {
   id               String                       @id @default(cuid()) @map("_id")
   locationId       String
+  location         Location                     @relation(fields: [locationId], references: [id], onDelete: Cascade)
   stripeCustomerId String                       @unique
   status           String?
   firstName        String
@@ -197,6 +198,7 @@ model Customer {
   customerPayments CustomerAppointmentPayment[]
 
   @@unique([email, locationId])
+  @@index([firstName])
 }
 
 model CustomerAppointmentPayment {

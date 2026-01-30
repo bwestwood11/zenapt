@@ -237,6 +237,7 @@ export type CustomerWhereInput = {
   notes?: Prisma.StringNullableFilter<"Customer"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
+  location?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.LocationWhereInput>
   appointments?: Prisma.AppointmentListRelationFilter
   customerPayments?: Prisma.CustomerAppointmentPaymentListRelationFilter
 }
@@ -254,6 +255,7 @@ export type CustomerOrderByWithRelationInput = {
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  location?: Prisma.LocationOrderByWithRelationInput
   appointments?: Prisma.AppointmentOrderByRelationAggregateInput
   customerPayments?: Prisma.CustomerAppointmentPaymentOrderByRelationAggregateInput
 }
@@ -275,6 +277,7 @@ export type CustomerWhereUniqueInput = Prisma.AtLeast<{
   notes?: Prisma.StringNullableFilter<"Customer"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
+  location?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.LocationWhereInput>
   appointments?: Prisma.AppointmentListRelationFilter
   customerPayments?: Prisma.CustomerAppointmentPaymentListRelationFilter
 }, "id" | "stripeCustomerId" | "email_locationId">
@@ -317,7 +320,6 @@ export type CustomerScalarWhereWithAggregatesInput = {
 
 export type CustomerCreateInput = {
   id?: string
-  locationId: string
   stripeCustomerId: string
   status?: string | null
   firstName: string
@@ -328,6 +330,7 @@ export type CustomerCreateInput = {
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  location: Prisma.LocationCreateNestedOneWithoutCustomersInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutCustomerInput
   customerPayments?: Prisma.CustomerAppointmentPaymentCreateNestedManyWithoutCustomerInput
 }
@@ -351,7 +354,6 @@ export type CustomerUncheckedCreateInput = {
 
 export type CustomerUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  locationId?: Prisma.StringFieldUpdateOperationsInput | string
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -362,6 +364,7 @@ export type CustomerUpdateInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  location?: Prisma.LocationUpdateOneRequiredWithoutCustomersNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutCustomerNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUpdateManyWithoutCustomerNestedInput
 }
@@ -400,7 +403,6 @@ export type CustomerCreateManyInput = {
 
 export type CustomerUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  locationId?: Prisma.StringFieldUpdateOperationsInput | string
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -431,6 +433,16 @@ export type CustomerUncheckedUpdateManyInput = {
 export type CustomerScalarRelationFilter = {
   is?: Prisma.CustomerWhereInput
   isNot?: Prisma.CustomerWhereInput
+}
+
+export type CustomerListRelationFilter = {
+  every?: Prisma.CustomerWhereInput
+  some?: Prisma.CustomerWhereInput
+  none?: Prisma.CustomerWhereInput
+}
+
+export type CustomerOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type CustomerEmailLocationIdCompoundUniqueInput = {
@@ -497,6 +509,48 @@ export type CustomerUpdateOneRequiredWithoutAppointmentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutAppointmentsInput, Prisma.CustomerUpdateWithoutAppointmentsInput>, Prisma.CustomerUncheckedUpdateWithoutAppointmentsInput>
 }
 
+export type CustomerCreateNestedManyWithoutLocationInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutLocationInput, Prisma.CustomerUncheckedCreateWithoutLocationInput> | Prisma.CustomerCreateWithoutLocationInput[] | Prisma.CustomerUncheckedCreateWithoutLocationInput[]
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutLocationInput | Prisma.CustomerCreateOrConnectWithoutLocationInput[]
+  createMany?: Prisma.CustomerCreateManyLocationInputEnvelope
+  connect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+}
+
+export type CustomerUncheckedCreateNestedManyWithoutLocationInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutLocationInput, Prisma.CustomerUncheckedCreateWithoutLocationInput> | Prisma.CustomerCreateWithoutLocationInput[] | Prisma.CustomerUncheckedCreateWithoutLocationInput[]
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutLocationInput | Prisma.CustomerCreateOrConnectWithoutLocationInput[]
+  createMany?: Prisma.CustomerCreateManyLocationInputEnvelope
+  connect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+}
+
+export type CustomerUpdateManyWithoutLocationNestedInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutLocationInput, Prisma.CustomerUncheckedCreateWithoutLocationInput> | Prisma.CustomerCreateWithoutLocationInput[] | Prisma.CustomerUncheckedCreateWithoutLocationInput[]
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutLocationInput | Prisma.CustomerCreateOrConnectWithoutLocationInput[]
+  upsert?: Prisma.CustomerUpsertWithWhereUniqueWithoutLocationInput | Prisma.CustomerUpsertWithWhereUniqueWithoutLocationInput[]
+  createMany?: Prisma.CustomerCreateManyLocationInputEnvelope
+  set?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  disconnect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  delete?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  connect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  update?: Prisma.CustomerUpdateWithWhereUniqueWithoutLocationInput | Prisma.CustomerUpdateWithWhereUniqueWithoutLocationInput[]
+  updateMany?: Prisma.CustomerUpdateManyWithWhereWithoutLocationInput | Prisma.CustomerUpdateManyWithWhereWithoutLocationInput[]
+  deleteMany?: Prisma.CustomerScalarWhereInput | Prisma.CustomerScalarWhereInput[]
+}
+
+export type CustomerUncheckedUpdateManyWithoutLocationNestedInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutLocationInput, Prisma.CustomerUncheckedCreateWithoutLocationInput> | Prisma.CustomerCreateWithoutLocationInput[] | Prisma.CustomerUncheckedCreateWithoutLocationInput[]
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutLocationInput | Prisma.CustomerCreateOrConnectWithoutLocationInput[]
+  upsert?: Prisma.CustomerUpsertWithWhereUniqueWithoutLocationInput | Prisma.CustomerUpsertWithWhereUniqueWithoutLocationInput[]
+  createMany?: Prisma.CustomerCreateManyLocationInputEnvelope
+  set?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  disconnect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  delete?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  connect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  update?: Prisma.CustomerUpdateWithWhereUniqueWithoutLocationInput | Prisma.CustomerUpdateWithWhereUniqueWithoutLocationInput[]
+  updateMany?: Prisma.CustomerUpdateManyWithWhereWithoutLocationInput | Prisma.CustomerUpdateManyWithWhereWithoutLocationInput[]
+  deleteMany?: Prisma.CustomerScalarWhereInput | Prisma.CustomerScalarWhereInput[]
+}
+
 export type CustomerCreateNestedOneWithoutCustomerPaymentsInput = {
   create?: Prisma.XOR<Prisma.CustomerCreateWithoutCustomerPaymentsInput, Prisma.CustomerUncheckedCreateWithoutCustomerPaymentsInput>
   connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutCustomerPaymentsInput
@@ -513,7 +567,6 @@ export type CustomerUpdateOneRequiredWithoutCustomerPaymentsNestedInput = {
 
 export type CustomerCreateWithoutAppointmentsInput = {
   id?: string
-  locationId: string
   stripeCustomerId: string
   status?: string | null
   firstName: string
@@ -524,6 +577,7 @@ export type CustomerCreateWithoutAppointmentsInput = {
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  location: Prisma.LocationCreateNestedOneWithoutCustomersInput
   customerPayments?: Prisma.CustomerAppointmentPaymentCreateNestedManyWithoutCustomerInput
 }
 
@@ -561,7 +615,6 @@ export type CustomerUpdateToOneWithWhereWithoutAppointmentsInput = {
 
 export type CustomerUpdateWithoutAppointmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  locationId?: Prisma.StringFieldUpdateOperationsInput | string
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -572,6 +625,7 @@ export type CustomerUpdateWithoutAppointmentsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  location?: Prisma.LocationUpdateOneRequiredWithoutCustomersNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUpdateManyWithoutCustomerNestedInput
 }
 
@@ -591,9 +645,8 @@ export type CustomerUncheckedUpdateWithoutAppointmentsInput = {
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
-export type CustomerCreateWithoutCustomerPaymentsInput = {
+export type CustomerCreateWithoutLocationInput = {
   id?: string
-  locationId: string
   stripeCustomerId: string
   status?: string | null
   firstName: string
@@ -604,6 +657,83 @@ export type CustomerCreateWithoutCustomerPaymentsInput = {
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  appointments?: Prisma.AppointmentCreateNestedManyWithoutCustomerInput
+  customerPayments?: Prisma.CustomerAppointmentPaymentCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerUncheckedCreateWithoutLocationInput = {
+  id?: string
+  stripeCustomerId: string
+  status?: string | null
+  firstName: string
+  lastName: string
+  email?: string | null
+  phoneNumber?: string | null
+  dateOfBirth?: Date | string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutCustomerInput
+  customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerCreateOrConnectWithoutLocationInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutLocationInput, Prisma.CustomerUncheckedCreateWithoutLocationInput>
+}
+
+export type CustomerCreateManyLocationInputEnvelope = {
+  data: Prisma.CustomerCreateManyLocationInput | Prisma.CustomerCreateManyLocationInput[]
+  skipDuplicates?: boolean
+}
+
+export type CustomerUpsertWithWhereUniqueWithoutLocationInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  update: Prisma.XOR<Prisma.CustomerUpdateWithoutLocationInput, Prisma.CustomerUncheckedUpdateWithoutLocationInput>
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutLocationInput, Prisma.CustomerUncheckedCreateWithoutLocationInput>
+}
+
+export type CustomerUpdateWithWhereUniqueWithoutLocationInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  data: Prisma.XOR<Prisma.CustomerUpdateWithoutLocationInput, Prisma.CustomerUncheckedUpdateWithoutLocationInput>
+}
+
+export type CustomerUpdateManyWithWhereWithoutLocationInput = {
+  where: Prisma.CustomerScalarWhereInput
+  data: Prisma.XOR<Prisma.CustomerUpdateManyMutationInput, Prisma.CustomerUncheckedUpdateManyWithoutLocationInput>
+}
+
+export type CustomerScalarWhereInput = {
+  AND?: Prisma.CustomerScalarWhereInput | Prisma.CustomerScalarWhereInput[]
+  OR?: Prisma.CustomerScalarWhereInput[]
+  NOT?: Prisma.CustomerScalarWhereInput | Prisma.CustomerScalarWhereInput[]
+  id?: Prisma.StringFilter<"Customer"> | string
+  locationId?: Prisma.StringFilter<"Customer"> | string
+  stripeCustomerId?: Prisma.StringFilter<"Customer"> | string
+  status?: Prisma.StringNullableFilter<"Customer"> | string | null
+  firstName?: Prisma.StringFilter<"Customer"> | string
+  lastName?: Prisma.StringFilter<"Customer"> | string
+  email?: Prisma.StringNullableFilter<"Customer"> | string | null
+  phoneNumber?: Prisma.StringNullableFilter<"Customer"> | string | null
+  dateOfBirth?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
+  notes?: Prisma.StringNullableFilter<"Customer"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
+}
+
+export type CustomerCreateWithoutCustomerPaymentsInput = {
+  id?: string
+  stripeCustomerId: string
+  status?: string | null
+  firstName: string
+  lastName: string
+  email?: string | null
+  phoneNumber?: string | null
+  dateOfBirth?: Date | string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  location: Prisma.LocationCreateNestedOneWithoutCustomersInput
   appointments?: Prisma.AppointmentCreateNestedManyWithoutCustomerInput
 }
 
@@ -641,7 +771,6 @@ export type CustomerUpdateToOneWithWhereWithoutCustomerPaymentsInput = {
 
 export type CustomerUpdateWithoutCustomerPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  locationId?: Prisma.StringFieldUpdateOperationsInput | string
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -652,6 +781,7 @@ export type CustomerUpdateWithoutCustomerPaymentsInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  location?: Prisma.LocationUpdateOneRequiredWithoutCustomersNestedInput
   appointments?: Prisma.AppointmentUpdateManyWithoutCustomerNestedInput
 }
 
@@ -669,6 +799,66 @@ export type CustomerUncheckedUpdateWithoutCustomerPaymentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerCreateManyLocationInput = {
+  id?: string
+  stripeCustomerId: string
+  status?: string | null
+  firstName: string
+  lastName: string
+  email?: string | null
+  phoneNumber?: string | null
+  dateOfBirth?: Date | string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type CustomerUpdateWithoutLocationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  appointments?: Prisma.AppointmentUpdateManyWithoutCustomerNestedInput
+  customerPayments?: Prisma.CustomerAppointmentPaymentUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerUncheckedUpdateWithoutLocationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutCustomerNestedInput
+  customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerUncheckedUpdateManyWithoutLocationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -724,6 +914,7 @@ export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
   appointments?: boolean | Prisma.Customer$appointmentsArgs<ExtArgs>
   customerPayments?: boolean | Prisma.Customer$customerPaymentsArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
@@ -742,6 +933,7 @@ export type CustomerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["customer"]>
 
 export type CustomerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -757,6 +949,7 @@ export type CustomerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["customer"]>
 
 export type CustomerSelectScalar = {
@@ -776,16 +969,22 @@ export type CustomerSelectScalar = {
 
 export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "locationId" | "stripeCustomerId" | "status" | "firstName" | "lastName" | "email" | "phoneNumber" | "dateOfBirth" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
 export type CustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
   appointments?: boolean | Prisma.Customer$appointmentsArgs<ExtArgs>
   customerPayments?: boolean | Prisma.Customer$customerPaymentsArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type CustomerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type CustomerIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type CustomerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
+}
+export type CustomerIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
+}
 
 export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Customer"
   objects: {
+    location: Prisma.$LocationPayload<ExtArgs>
     appointments: Prisma.$AppointmentPayload<ExtArgs>[]
     customerPayments: Prisma.$CustomerAppointmentPaymentPayload<ExtArgs>[]
   }
@@ -1196,6 +1395,7 @@ readonly fields: CustomerFieldRefs;
  */
 export interface Prisma__CustomerClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  location<T extends Prisma.LocationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LocationDefaultArgs<ExtArgs>>): Prisma.Prisma__LocationClient<runtime.Types.Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   appointments<T extends Prisma.Customer$appointmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$appointmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AppointmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customerPayments<T extends Prisma.Customer$customerPaymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$customerPaymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerAppointmentPaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1488,6 +1688,10 @@ export type CustomerCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extens
    */
   data: Prisma.CustomerCreateManyInput | Prisma.CustomerCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomerIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1558,6 +1762,10 @@ export type CustomerUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extens
    * Limit how many Customers to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomerIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**

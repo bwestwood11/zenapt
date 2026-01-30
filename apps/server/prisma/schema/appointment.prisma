@@ -14,6 +14,8 @@ model Appointment {
   customer   Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
   startTime  DateTime
   endTime    DateTime
+  bufferTime Int               @default(0) // in minutes - max from selected services
+  prepTime   Int               @default(0) // in minutes - max from selected services
   status     AppointmentStatus @default(SCHEDULED)
   service    EmployeeService[]
   addOns     AddOn[]
@@ -90,6 +92,7 @@ model ScheduleRule {
   updatedAt DateTime @updatedAt
 
   @@index([targetType, targetId])
+  @@index([targetType, targetId, daysMask])
 }
 
 // ScheduleException override the normal schedule rule for specific date it will always be recurring can be break or break override. can be used for whole location or just an employee
@@ -135,7 +138,7 @@ model AppointmentSettings {
   locationId              String   @unique
   location                Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
   bufferTime              Int      @default(0) // in minutes
-  prepTime                 Int      @default(0) // in minutes
+  prepTime                Int      @default(0) // in minutes
   advanceBookingLimitDays Int      @default(60) // in days
   bookingCutOff           Int      @default(60) // in minutes
   createdAt               DateTime @default(now())

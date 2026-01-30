@@ -1,7 +1,6 @@
 "use client";
 
-import { ChevronsUpDown, Home } from "lucide-react";
-import { Select as SelectPrimitive } from "radix-ui";
+import {  Home } from "lucide-react";
 import NotificationMenu from "@/components/notification-menu";
 import UserMenu from "@/components/user-menu";
 import {
@@ -13,19 +12,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { SidebarTrigger } from "./ui/sidebar";
 import { Separator } from "./ui/separator";
 import { useBreadcrumbStore } from "@/hooks/breadcrumbs";

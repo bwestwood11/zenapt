@@ -1,3 +1,6 @@
+import ClientNavbar from "@/components/client-navbar";
+import { ClientSidebar } from "@/components/sidebar/client-sidebar";
+import { SidebarInset } from "@/components/ui/sidebar";
 import { hasAccessToLocation } from "@/lib/permissions/permission";
 import { forbidden, redirect } from "next/navigation";
 
@@ -17,6 +20,15 @@ const DashboardLayout = async ({
   if (!hasAccess) {
     throw redirect("/dashboard");
   }
-  return <div>{children}</div>;
+  return (
+    <div className="w-full flex ">
+      <ClientSidebar  />
+
+      <SidebarInset className="overflow-hidden min-h-svh">
+        <ClientNavbar />
+        {children}
+      </SidebarInset>
+    </div>
+    );
 };
 export default DashboardLayout;
