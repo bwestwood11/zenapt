@@ -16,7 +16,7 @@ const CalendarPage = () => {
   const setAppointmentTime = useCheckoutStore((s) => s.setAppointmentTime);
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    appointmentTime?.start
+    appointmentTime?.start,
   );
   const [selectedTimeRange, setSelectedTimeRange] = useState<{
     start: Date;

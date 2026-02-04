@@ -19,7 +19,7 @@ const ReviewPage = () => {
     queries: cart.map((item) => ({
       ...trpc.public.getServiceDetails.queryOptions(
         { serviceId: item.serviceId! },
-        { enabled: !!item.serviceId, staleTime: Infinity }
+        { enabled: !!item.serviceId, staleTime: Infinity },
       ),
     })),
   });
@@ -29,7 +29,7 @@ const ReviewPage = () => {
     return cart.map((item, index) => {
       const serviceData = serviceQueries[index]?.data;
       const employee = serviceData?.employees.find(
-        (e) => e.id === item.employeeServiceId
+        (e) => e.id === item.employeeServiceId,
       );
 
       return {
@@ -47,11 +47,13 @@ const ReviewPage = () => {
 
     cart.forEach((item) => {
       const servicePrice = item.servicePrice ?? 0;
-      const addonPrice = item.addons?.reduce((sum, addon) => sum + addon.price, 0) ?? 0;
+      const addonPrice =
+        item.addons?.reduce((sum, addon) => sum + addon.price, 0) ?? 0;
       price += servicePrice + addonPrice;
 
       const serviceDuration = item.serviceDuration ?? 0;
-      const addonDuration = item.addons?.reduce((sum, addon) => sum + addon.duration, 0) ?? 0;
+      const addonDuration =
+        item.addons?.reduce((sum, addon) => sum + addon.duration, 0) ?? 0;
       duration += serviceDuration + addonDuration;
     });
 
@@ -104,9 +106,11 @@ const ReviewPage = () => {
 
         {cartWithDetails.map((item, index) => {
           const servicePrice = item.servicePrice ?? 0;
-          const addonPrice = item.addons?.reduce((sum, addon) => sum + addon.price, 0) ?? 0;
+          const addonPrice =
+            item.addons?.reduce((sum, addon) => sum + addon.price, 0) ?? 0;
           const serviceDuration = item.serviceDuration ?? 0;
-          const addonDuration = item.addons?.reduce((sum, addon) => sum + addon.duration, 0) ?? 0;
+          const addonDuration =
+            item.addons?.reduce((sum, addon) => sum + addon.duration, 0) ?? 0;
           const itemTotal = servicePrice + addonPrice;
           const itemDuration = serviceDuration + addonDuration;
 
@@ -182,7 +186,8 @@ const ReviewPage = () => {
                             {addon.title || "Add-on"}
                           </span>
                           <span className="text-sidebar-foreground/70 text-xs">
-                            +${(addon.price / 100).toFixed(2)} • {addon.duration}
+                            +${(addon.price / 100).toFixed(2)} •{" "}
+                            {addon.duration}
                             min
                           </span>
                         </div>
@@ -205,9 +210,7 @@ const ReviewPage = () => {
           <div className="flex items-start gap-3">
             <CalendarIcon className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-accent-foreground/70 text-xs">
-                Date & Time
-              </p>
+              <p className="text-accent-foreground/70 text-xs">Date & Time</p>
               <p className="text-accent-foreground font-medium">
                 {appointmentTime ? (
                   <>
@@ -245,9 +248,7 @@ const ReviewPage = () => {
           <div className="flex items-start gap-3">
             <DollarSign className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-accent-foreground/70 text-xs">
-                Total Price
-              </p>
+              <p className="text-accent-foreground/70 text-xs">Total Price</p>
               <p className="text-accent-foreground font-semibold text-lg">
                 ${(totalPrice / 100).toFixed(2)}
               </p>

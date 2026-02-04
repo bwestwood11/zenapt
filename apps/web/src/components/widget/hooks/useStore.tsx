@@ -135,8 +135,6 @@ export const useCheckoutStore = create<Store>((set, get) => ({
         break;
     }
 
-
-
     // ---- VALIDATE BEFORE MOVING ----
     const result = Step.schema.safeParse(payload);
 
