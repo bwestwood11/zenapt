@@ -2,6 +2,7 @@ import { getLocationAccess } from "@/lib/permissions/permission";
 import { forbidden } from "next/navigation";
 import React from "react";
 import { CustomersTable } from "@/components/customers/CustomersTable";
+import { ExportCustomersButton } from "@/components/customers/ExportCustomersButton";
 
 const CustomersPage = async ({
   params,
@@ -21,7 +22,10 @@ const CustomersPage = async ({
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Customers</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Customers</h1>
+        <ExportCustomersButton locationId={locId.locationId} />
+      </div>
       <CustomersTable locationId={locId.locationId} />
     </div>
   );

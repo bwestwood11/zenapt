@@ -30,6 +30,8 @@ export type ConfirmOptions = {
   locationEmployeeId: string;
   appointmentId: string;
   locationId: string;
+  prepTime: number;
+  bufferTime: number;
 };
 
 export type ConfirmationResponse =
@@ -58,11 +60,11 @@ let globalHandler:
  * Example: `const ok = await confirmAppointment({ title: "Delete?", description: "This is permanent." })`
  */
 export function confirmAppointment(
-  opts: ConfirmOptions
+  opts: ConfirmOptions,
 ): Promise<ConfirmationResponse> {
   if (!globalHandler) {
     throw new Error(
-      "confirmAppointment() called before ConfirmAppointmentProvider was mounted. Wrap your app in <ConfirmAppointmentProvider />."
+      "confirmAppointment() called before ConfirmAppointmentProvider was mounted. Wrap your app in <ConfirmAppointmentProvider />.",
     );
   }
   return globalHandler(opts);
@@ -125,8 +127,8 @@ export const ConfirmAppointmentProvider: React.FC<{ children: ReactNode }> = ({
         changeDuration: shouldChangeDuration,
         proposedEndTime: current?.options.estimatedEndTime ?? new Date(0),
       },
-      { enabled: !!current?.options.appointmentId }
-    )
+      { enabled: !!current?.options.appointmentId },
+    ),
   );
 
   const close = () => {
@@ -192,7 +194,7 @@ export const ConfirmAppointmentProvider: React.FC<{ children: ReactNode }> = ({
             {/* Time Comparison Section */}
             <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-stretch">
               {/* Original Time - Muted Red */}
-              <div className="relative rounded-lg border-2 border-red-200 bg-red-50/50 dark:border-red-900/50 dark:bg-red-950/20 p-4 space-y-2 min-h-[120px] flex flex-col justify-center">
+              <div className="relative rounded-lg border-2 border-red-200 bg-red-50/50 dark:border-red-900/50 dark:bg-red-950/20 p-4 space-y-2 shadow-sm min-h-[120px] flex flex-col justify-center">
                 <div className="flex items-center gap-2 text-xs font-medium text-red-700 dark:text-red-400 uppercase tracking-wide">
                   <Calendar className="size-3.5" />
                   <span>Original Time</span>
@@ -209,6 +211,38 @@ export const ConfirmAppointmentProvider: React.FC<{ children: ReactNode }> = ({
                 <div className="text-sm text-red-700 dark:text-red-300">
                   to {formatTime(current?.options.originalEndTime)}
                 </div>
+                {((current?.options.prepTime ?? 0) > 0 ||
+                  (current?.options.bufferTime ?? 0) > 0) && (
+                  <div className="pt-2 mt-2 border-t border-red-200 dark:border-red-800 space-y-1">
+                    {(current?.options.prepTime ?? 0) > 0 && (
+                      <div className="text-xs text-red-700 dark:text-red-300">
+                        Prep: {current?.options.prepTime ?? 0} min
+                      </div>
+                    )}
+                    {(current?.options.bufferTime ?? 0) > 0 && (
+                      <div className="text-xs text-red-700 dark:text-red-300">
+                        Buffer: {current?.options.bufferTime ?? 0} min
+                      </div>
+                    )}
+                    <div className="text-xs font-medium text-red-800 dark:text-red-200 pt-1">
+                      Actual:{" "}
+                      {(() => {
+                        const startTime = current?.options.originalStartTime;
+                        const endTime = current?.options.originalEndTime;
+                        const prep = current?.options.prepTime ?? 0;
+                        const buffer = current?.options.bufferTime ?? 0;
+
+                        if (!startTime || !endTime) return "N/A";
+
+                        return `${formatTime(
+                          new Date(startTime.getTime() - prep * 60000),
+                        )} - ${formatTime(
+                          new Date(endTime.getTime() + buffer * 60000),
+                        )}`;
+                      })()}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Arrow Separator */}
@@ -232,16 +266,59 @@ export const ConfirmAppointmentProvider: React.FC<{ children: ReactNode }> = ({
                   <div className="font-semibold text-lg">
                     {formatTime(
                       data?.proposedStartTime ||
-                        current?.options.estimatedStartTime
+                        current?.options.estimatedStartTime,
                     )}
                   </div>
                 </div>
                 <div className="text-sm text-emerald-800 dark:text-emerald-200">
                   to{" "}
                   {formatTime(
-                    data?.proposedEndTime || current?.options.estimatedEndTime
+                    data?.proposedEndTime || current?.options.estimatedEndTime,
                   )}
                 </div>
+                {((data?.prepTime ?? current?.options.prepTime ?? 0) > 0 ||
+                  (data?.bufferTime ?? current?.options.bufferTime ?? 0) >
+                    0) && (
+                  <div className="pt-2 mt-2 border-t border-emerald-200 dark:border-emerald-800 space-y-1">
+                    {(data?.prepTime ?? current?.options.prepTime ?? 0) > 0 && (
+                      <div className="text-xs text-emerald-700 dark:text-emerald-300">
+                        Prep: {data?.prepTime ?? current?.options.prepTime ?? 0}{" "}
+                        min
+                      </div>
+                    )}
+                    {(data?.bufferTime ?? current?.options.bufferTime ?? 0) >
+                      0 && (
+                      <div className="text-xs text-emerald-700 dark:text-emerald-300">
+                        Buffer:{" "}
+                        {data?.bufferTime ?? current?.options.bufferTime ?? 0}{" "}
+                        min
+                      </div>
+                    )}
+                    <div className="text-xs font-medium text-emerald-800 dark:text-emerald-200 pt-1">
+                      Actual:{" "}
+                      {(() => {
+                        const startTime =
+                          data?.proposedStartTime ||
+                          current?.options.estimatedStartTime;
+                        const endTime =
+                          data?.proposedEndTime ||
+                          current?.options.estimatedEndTime;
+                        const prep =
+                          data?.prepTime ?? current?.options.prepTime ?? 0;
+                        const buffer =
+                          data?.bufferTime ?? current?.options.bufferTime ?? 0;
+
+                        if (!startTime || !endTime) return "N/A";
+
+                        return `${formatTime(
+                          new Date(startTime.getTime() - prep * 60000),
+                        )} - ${formatTime(
+                          new Date(endTime.getTime() + buffer * 60000),
+                        )}`;
+                      })()}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

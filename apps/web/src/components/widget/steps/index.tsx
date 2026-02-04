@@ -6,6 +6,7 @@ import ServiceDetails from "./service-details";
 import CartPage from "./cart";
 import { CartSchema, WidgetSchema } from "../schema";
 import type { ZodObject } from "zod";
+import ReviewPage from "./review";
 import CalendarPage from "./calendar";
 
 export enum StepIds {
@@ -14,6 +15,7 @@ export enum StepIds {
   SERVICE,
   SERVICE_DETAILS,
   CART,
+  REVIEW,
   CALENDAR,
 }
 
@@ -60,6 +62,14 @@ export const AFTER_CART_STEPS: MainStep[] = [
     title: "Calendar",
     id: StepIds.CALENDAR,
     description: " Please select the date and time for your appointment.",
+    type: StepType.AFTER_CART,
+    schema: WidgetSchema.pick({ cart: true }),
+  },
+  {
+    component: <ReviewPage />,
+    title: "Review",
+    id: StepIds.REVIEW,
+    description: " Review your appointment details before confirming.",
     type: StepType.AFTER_CART,
     schema: WidgetSchema.pick({ cart: true }),
   },

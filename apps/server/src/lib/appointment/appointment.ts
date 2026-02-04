@@ -67,14 +67,61 @@ export async function isEditConflictFastFail(
     bufferTime,
     prepTime,
   } = input;
-  const effectiveStart = addMinutes(startTime, -(prepTime || 0));
-  const effectiveEnd = addMinutes(endTime, bufferTime || 0);
+
+  // Calculate prep/buffer from appointment services only if not provided and appointmentId exists
+  let effectivePrepTime = prepTime ?? 0;
+  let effectiveBufferTime = bufferTime ?? 0;
+
+  if ((prepTime == null || bufferTime == null) && appointmentId) {
+    const appointment = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+      select: {
+        service: {
+          select: {
+            serviceTerms: { select: { id: true } },
+          },
+        },
+      },
+    });
+
+    if (appointment) {
+      const services = await prisma.employeeService.findMany({
+        where: {
+          serviceTerms: {
+            id: {
+              in: appointment.service.map((s) => s.serviceTerms.id),
+            },
+          },
+          locationEmployeeId: employeeId,
+        },
+        select: {
+          prepTime: true,
+          bufferTime: true,
+        },
+      });
+
+      if (services.length > 0) {
+        effectivePrepTime =
+          prepTime ?? Math.max(...services.map((s) => s.prepTime), 0);
+        effectiveBufferTime =
+          bufferTime ?? Math.max(...services.map((s) => s.bufferTime), 0);
+      }
+    }
+  }
+
+  const effectiveStart = addMinutes(startTime, -effectivePrepTime);
+  const effectiveEnd = addMinutes(endTime, effectiveBufferTime);
 
   const startMin = toMinute(startTime);
   const endMin = toMinute(endTime);
   const effectiveStartMin = toMinute(effectiveStart);
   const effectiveEndMin = toMinute(effectiveEnd);
-  console.log({ effectiveStartMin, effectiveEndMin });
+  console.log({
+    effectiveStartMin,
+    effectiveEndMin,
+    effectivePrepTime,
+    effectiveBufferTime,
+  });
   const dayMask = dayToBit(startTime);
   const monthDay = toMonthDay(startTime);
 
@@ -154,6 +201,8 @@ export async function isEditConflictFastFail(
         endMinute: true,
         isBreak: true,
         daysMask: true,
+        targetId: true,
+        targetType: true,
       },
     });
 
@@ -174,8 +223,17 @@ export async function isEditConflictFastFail(
     }
 
     /* ---------- WORK HOURS CHECK ---------- */
-    const workWindows = todayRules.filter((r) => !r.isBreak);
+    // Split by target - employee rules take priority over location rules
+    const employeeRules = todayRules.filter(
+      (r) => r.targetType === "EMPLOYEE" && r.targetId === employeeId,
+    );
+    const locationRules = todayRules.filter(
+      (r) => r.targetType === "LOCATION" && r.targetId === locationId,
+    );
 
+    const employeeWorkWindow = employeeRules.filter((r) => !r.isBreak);
+    const workWindows = employeeWorkWindow.length > 0 ? employeeWorkWindow : locationRules.filter(r => !r.isBreak)
+    console.log({ workWindows });
     if (workWindows.length === 0) return true; // no work hours → conflict
 
     const insideAnyWorkWindow = workWindows.some(
@@ -237,7 +295,7 @@ export async function getAvailableTimings(
   dayEnd.setDate(dayEnd.getDate() + 1);
 
   /* ---------------- FETCH EVERYTHING ---------------- */
-
+  console.log({employeeId})
   const [rules, exceptions, timeOffs, appointments] = await Promise.all([
     prisma.scheduleRule.findMany({
       where: {
@@ -272,19 +330,31 @@ export async function getAvailableTimings(
     prisma.appointment.findMany({
       where: {
         locationId,
+        service: {
+          some: {
+            locationEmployeeId: employeeId,
+          },
+        },
         status: {
           notIn: ["CANCELED", "NO_SHOW"],
         },
         startTime: { lt: dayEnd },
         endTime: { gt: dayStart },
       },
+      select: {
+        startTime: true,
+        endTime: true,
+        bufferTime: true,
+        prepTime: true,
+      },
     }),
   ]);
 
+  console.log({appointments})
   /* ---------------- WORK WINDOWS ---------------- */
 
   const todayRules = rules.filter((r) => (r.daysMask & dayMask) !== 0);
-
+ 
   // split by target
   const employeeRules = todayRules.filter(
     (r) => r.targetType === "EMPLOYEE" && r.targetId === employeeId,
@@ -294,18 +364,28 @@ export async function getAvailableTimings(
     (r) => r.targetType === "LOCATION" && r.targetId === locationId,
   );
 
-  // EMPLOYEE wins if present
-  const effectiveRules =
-    employeeRules.length > 0 ? employeeRules : locationRules;
+  // // EMPLOYEE wins if present
+  // const effectiveRules =
+  //   employeeRules.length > 0 ? employeeRules : locationRules;
 
-  // no rules = closed
-  if (effectiveRules.length === 0) {
-    return [];
-  }
-  const workWindows: MinuteRange[] = effectiveRules
+  // // no rules = closed
+  // if (effectiveRules.length === 0) {
+  //   return [];
+  // }
+
+  const employeeWorkWindows: MinuteRange[] = employeeRules
     .filter((r) => !r.isBreak)
     .map((r) => ({ start: r.startMinute, end: r.endMinute }));
 
+
+  const locationWorkWindows = locationRules
+    .filter((r) => !r.isBreak)
+    .map((r) => ({ start: r.startMinute, end: r.endMinute }));
+
+
+  const workWindows = employeeWorkWindows.length > 0 ? employeeWorkWindows : locationWorkWindows
+
+  console.log({ workWindows });
   if (workWindows.length === 0) return [];
 
   /* ---------------- BLOCKED WINDOWS ---------------- */
@@ -336,16 +416,14 @@ export async function getAvailableTimings(
     });
   });
 
-  // appointments (+ buffer/prep)
+  // appointments (+ buffer/prep) - use each appointment's own buffer/prep times
   appointments.forEach((a) => {
     blocked.push({
-      start: toMinute(a.startTime) - prepTime,
-      end: toMinute(a.endTime) + bufferTime,
+      start: toMinute(a.startTime) - (a.prepTime || 0),
+      end: toMinute(a.endTime) + (a.bufferTime || 0),
     });
   });
-
   console.log({ blocked });
-  console.log({ workWindows });
   /* ---------------- SLOT GENERATION ---------------- */
 
   const slots: TimeRange[] = [];
@@ -358,9 +436,9 @@ export async function getAvailableTimings(
         start: cursor,
         end: cursor + duration,
       };
-
+       console.log(date)
       const hasConflict = blocked.some((b) => overlaps(candidate, b));
-
+       console.log({ hasConflict})
       if (!hasConflict) {
         slots.push({
           start: fromMinute(date, candidate.start),
@@ -371,6 +449,6 @@ export async function getAvailableTimings(
       cursor += duration; // ← fixed-step slots (fast)
     }
   }
-
+   console.log({ slots });
   return slots;
 }

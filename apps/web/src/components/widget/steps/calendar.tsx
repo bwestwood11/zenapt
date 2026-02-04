@@ -1,32 +1,75 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Calendar } from "../../ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const availableTimeSlots = [
-  "9:00 AM",
-  "10:00 AM",
-  "11:00 AM",
-  "12:00 PM",
-  "1:00 PM",
-  "2:00 PM",
-  "3:00 PM",
-  "4:00 PM",
-  "5:00 PM",
-];
+import { useCheckoutStore } from "../hooks/useStore";
+import { useQuery } from "@tanstack/react-query";
+import { trpc } from "@/utils/trpc";
+import { motion } from "framer-motion";
 
 const CalendarPage = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const [selectedTime, setSelectedTime] = useState<string>("");
+  const location = useCheckoutStore((s) => s.location);
+  const cart = useCheckoutStore((s) => s.cart);
+  const appointmentTime = useCheckoutStore((s) => s.appointmentTime);
+  const setAppointmentTime = useCheckoutStore((s) => s.setAppointmentTime);
+
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    appointmentTime?.start
+  );
+  const [selectedTimeRange, setSelectedTimeRange] = useState<{
+    start: Date;
+    end: Date;
+  } | null>(appointmentTime);
+
+  // Calculate total duration from all cart items
+  const totalDuration = useMemo(() => {
+    return cart.reduce((total, item) => {
+      const serviceDuration = item.serviceDuration ?? 0;
+      const addonsDuration =
+        item.addons?.reduce((sum, addon) => sum + addon.duration, 0) ?? 0;
+      return total + serviceDuration + addonsDuration;
+    }, 0);
+  }, [cart]);
+
+  // Get all employee IDs from cart items
+  const employeeIds = useMemo(() => {
+    return cart
+      .map((item) => item.employeeId)
+      .filter((id): id is string => !!id);
+  }, [cart]);
+
+  // For now, we'll use the first employee's ID to fetch timings
+  // In a more complex scenario, you'd need to check availability for all employees
+  const primaryEmployeeId = employeeIds[0];
+
+  // Fetch available timings when date is selected
+  const { data: timings, isLoading } = useQuery(
+    trpc.appointment.getAvailableTimings.queryOptions(
+      {
+        locationId: location!,
+        employeeId: primaryEmployeeId!,
+        date: selectedDate!,
+        duration: totalDuration,
+      },
+      {
+        enabled:
+          !!selectedDate &&
+          !!location &&
+          !!primaryEmployeeId &&
+          totalDuration > 0,
+        staleTime: 60000, // 1 minute
+      },
+    ),
+  );
 
   return (
     <div className="space-y-6">
       <div className="space-y-2">
         <h2 className="text-sidebar-foreground text-2xl font-semibold flex items-center gap-2">
           <CalendarIcon className="w-6 h-6 text-accent" />
-          Select Date & Time
+          Select Date & Time {primaryEmployeeId}
         </h2>
         <p className="text-sidebar-foreground/60 text-sm">
           Choose your preferred appointment date and time.
@@ -43,12 +86,17 @@ const CalendarPage = () => {
             <Calendar
               mode="single"
               selected={selectedDate}
-              onSelect={setSelectedDate}
+              onSelect={(date) => {
+                setSelectedDate(date);
+                setSelectedTimeRange(null); // Reset time selection when date changes
+              }}
               className="rounded-xl  [--cell-size:--spacing(11)] md:[--cell-size:--spacing(10)]"
               disabled={(date) => date < new Date()}
-              
-              // classNames={}
-              styles={{ week: { gap: 20 }, cell: {borderRadius: "99999999999px"}, weeks: { marginTop: 0 }  }}
+              styles={{
+                week: { gap: 20 },
+                cell: { borderRadius: "99999999999px" },
+                weeks: { marginTop: 0 },
+              }}
             />
           </div>
         </div>
@@ -67,27 +115,76 @@ const CalendarPage = () => {
                 year: "numeric",
               })}
             </p>
-            <div className="grid grid-cols-3 gap-3">
-              {availableTimeSlots.map((time) => (
-                <button
-                  key={time}
-                  onClick={() => setSelectedTime(time)}
-                  className={cn(
-                    "py-3 px-4 rounded-lg border-2 transition-all duration-200 text-sm font-medium",
-                    selectedTime === time
-                      ? "bg-accent border-accent text-accent-foreground shadow-md"
-                      : "bg-sidebar-accent/20 border-sidebar-border text-sidebar-foreground hover:border-accent/50 hover:bg-accent/10"
-                  )}
-                >
-                  {time}
-                </button>
-              ))}
-            </div>
+
+            {isLoading ? (
+              <div className="flex items-center justify-center min-h-[200px] text-sm text-sidebar-foreground/60">
+                Loading available times...
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2 min-h-[200px] max-h-[280px] overflow-y-auto pr-2">
+                {timings && timings.length > 0 ? (
+                  timings.map((time, index) => {
+                    const isSelected =
+                      !!selectedTimeRange &&
+                      selectedTimeRange.start.getTime() ===
+                        time.start.getTime();
+
+                    return (
+                      <motion.button
+                        key={time.start.toISOString()}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{
+                          duration: 0.15,
+                          delay: Math.min(index * 0.02, 0.3),
+                          ease: "easeOut",
+                        }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                          const timeRange = {
+                            start: time.start,
+                            end: time.end,
+                          };
+                          setSelectedTimeRange(timeRange);
+                          setAppointmentTime(timeRange);
+                        }}
+                        className={cn(
+                          "py-2.5 px-3 rounded-lg border-2 transition-all duration-150 text-sm font-medium",
+                          isSelected
+                            ? "bg-accent border-accent text-accent-foreground shadow-sm"
+                            : "bg-sidebar-accent/20 border-sidebar-border text-sidebar-foreground hover:border-accent/50 hover:bg-accent/10",
+                        )}
+                      >
+                        {time.start.toLocaleTimeString([], {
+                          hour: "numeric",
+                          minute: "2-digit",
+                        })}{" "}
+                        -{" "}
+                        {time.end.toLocaleTimeString([], {
+                          hour: "numeric",
+                          minute: "2-digit",
+                        })}
+                      </motion.button>
+                    );
+                  })
+                ) : (
+                  <div className="col-span-2 flex items-center justify-center h-[200px] text-sm text-muted-foreground">
+                    <div className="text-center">
+                      <p className="font-medium">No available time slots</p>
+                      <p className="text-xs mt-1">
+                        Try selecting a different date
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
         {/* Selected Date/Time Summary */}
-        {selectedDate && selectedTime && (
+        {selectedDate && selectedTimeRange && (
           <div className="p-5 rounded-xl bg-accent/10 border-2 border-accent">
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -100,10 +197,14 @@ const CalendarPage = () => {
                     day: "numeric",
                     year: "numeric",
                   })}{" "}
-                  at {selectedTime}
+                  at{" "}
+                  {selectedTimeRange.start.toLocaleTimeString([], {
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })}
                 </p>
                 <p className="text-accent-foreground/60 text-sm mt-1">
-                  with Diwanshu
+                  Duration: {totalDuration} minutes
                 </p>
               </div>
               <CalendarIcon className="w-8 h-8 text-accent" />

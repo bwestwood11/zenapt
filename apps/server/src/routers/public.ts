@@ -138,10 +138,11 @@ const getServiceDetails = publicProcedure
               price: true,
               duration: true,
               id: true,
-              addOns: {select: {id: true}},
+              locationEmployeeId: true,
+              addOns: { select: { id: true } },
               locationEmployee: {
                 select: {
-                  user: { select: { name: true, image: true, id: true, } },
+                  user: { select: { name: true, image: true, id: true } },
                 },
               },
             },
@@ -171,10 +172,11 @@ const getServiceDetails = publicProcedure
           price: service.price,
           duration: service.duration,
           id: service.id,
+          locationEmployeeId: service.locationEmployeeId,
           userName: service.locationEmployee?.user.name || null,
           userImage: service.locationEmployee?.user.image || null,
           userId: service.locationEmployee?.user.id || null,
-          addons: service.addOns
+          addons: service.addOns,
         })),
       };
 

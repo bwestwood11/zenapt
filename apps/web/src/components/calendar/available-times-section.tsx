@@ -14,6 +14,7 @@ export const AvailableTimesSection = ({
   selectedRange,
   onTimeSelect,
 }: AvailableTimesSectionProps) => {
+  console.log("AvailableTimesSection render", { date, timings, selectedRange });
   return (
     <div className="w-full">
       <div className="space-y-3">

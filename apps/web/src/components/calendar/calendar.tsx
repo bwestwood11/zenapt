@@ -320,6 +320,8 @@ const CalendarProvider = ({
           ...appointment,
           start: dateToLocalMinutes(new Date(appointment.startTime)),
           end: dateToLocalMinutes(new Date(appointment.endTime)),
+          bufferTime: appointment.bufferTime,
+          prepTime: appointment.prepTime,
           title:
             appointment.customer.firstName +
             " " +
@@ -328,6 +330,7 @@ const CalendarProvider = ({
             appointment.customer.firstName +
             " " +
             appointment.customer.lastName,
+          serviceNames: appointment.service.map((s) => s.name),
           status: appointment.status,
         });
         return acc;
@@ -476,6 +479,8 @@ export function EmployeeDayCalendar({
         originalEndTime: originalEndTime,
         originalStartTime: originalStartTime,
         originalLocationEmployeeId: drag.empId,
+        prepTime: drag.prepTime,
+        bufferTime: drag.bufferTime,
       });
       console.log({ drag });
       if (!res.accepted) {

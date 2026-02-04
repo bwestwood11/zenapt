@@ -3,21 +3,26 @@ import { useCheckoutStore, type Cart } from "./useStore";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "../../../../../server/src/routers";
 
-type Service = inferRouterOutputs<AppRouter>["public"]["getServiceDetails"]
-type Employee = Pick<NonNullable<Service>["employees"][number], "duration" | "price">
+type Service = inferRouterOutputs<AppRouter>["public"]["getServiceDetails"];
+type Employee = Pick<
+  NonNullable<Service>["employees"][number],
+  "duration" | "price"
+>;
 
-export function useCartCalculations(service: Pick<NonNullable<Service>, "addOns" | "employees"> | undefined, cart: Cart | null) {
+export function useCartCalculations(
+  service: Pick<NonNullable<Service>, "addOns" | "employees"> | undefined,
+  cart: Cart | null,
+) {
   const selectedAddons = cart?.addons ?? [];
-
 
   const addonPrice = useMemo(
     () => selectedAddons.reduce((sum, a) => sum + a.price, 0),
-    [selectedAddons]
+    [selectedAddons],
   );
 
   const addonDuration = useMemo(
     () => selectedAddons.reduce((sum, a) => sum + a.duration, 0),
-    [selectedAddons]
+    [selectedAddons],
   );
 
   const getEmployee = useCallback(
@@ -26,12 +31,10 @@ export function useCartCalculations(service: Pick<NonNullable<Service>, "addOns"
       const employee = service.employees.find((e) => e.id === employeeId);
       if (!employee) return undefined;
 
-      return employee
+      return employee;
     },
-    [service, addonPrice, addonDuration]
+    [service, addonPrice, addonDuration],
   );
-
-
 
   return {
     selectedAddons,
@@ -43,28 +46,43 @@ export function useCartCalculations(service: Pick<NonNullable<Service>, "addOns"
   };
 }
 
-
 export function useCartActions(cart: Cart | null) {
-const { updateCartItem } = useCheckoutStore();
+  const { updateCartItem } = useCheckoutStore();
 
-  const toggleAddOn = (addon: { id: string; price: number; duration: number, title: string }) => {
-  if (!cart) return;
+  const toggleAddOn = (addon: {
+    id: string;
+    price: number;
+    duration: number;
+    title: string;
+  }) => {
+    if (!cart) return;
 
-  updateCartItem(cart.id, ({ addons = [], ...rest }) => {
-    const exists = addons.some(a => a.id === addon.id);
+    updateCartItem(cart.id, ({ addons = [], ...rest }) => {
+      const exists = addons.some((a) => a.id === addon.id);
 
-    return {
-      ...rest,
-      addons: exists ? addons.filter(a => a.id !== addon.id) : [...addons, addon],
-      employeeServiceId: "",
-    };
-  });
-};
+      return {
+        ...rest,
+        addons: exists
+          ? addons.filter((a) => a.id !== addon.id)
+          : [...addons, addon],
+        employeeServiceId: "",
+      };
+    });
+  };
 
-
-  const selectEmployee = (employeeId: string, servicePrice: number, serviceDuration: number) => {
-    if(!cart) return
-    updateCartItem(cart.id, { employeeServiceId: employeeId, servicePrice, serviceDuration });
+  const selectEmployee = (
+    employeeServiceId: string,
+    employeeId: string | null | undefined,
+    servicePrice: number,
+    serviceDuration: number,
+  ) => {
+    if (!cart) return;
+    updateCartItem(cart.id, {
+      employeeServiceId,
+      employeeId: employeeId ?? undefined,
+      servicePrice,
+      serviceDuration,
+    });
   };
 
   return { toggleAddOn, selectEmployee };

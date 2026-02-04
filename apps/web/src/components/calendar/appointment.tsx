@@ -61,14 +61,26 @@ export function Appointment({
   end,
   title,
   customerName,
+  serviceNames,
   price,
   color,
   status,
+  bufferTime,
+  prepTime,
 }: Appointment & { color: string }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
     disabled: status !== "SCHEDULED",
-    data: { id, empId: employeeId, start, end, title, color },
+    data: {
+      id,
+      empId: employeeId,
+      start,
+      end,
+      title,
+      color,
+      prepTime,
+      bufferTime,
+    },
   });
   const { maxTime, minTime } = useLocationHours();
 
@@ -81,40 +93,131 @@ export function Appointment({
     end,
     title,
     customerName,
+    serviceNames,
     price,
     status,
+    bufferTime,
+    prepTime,
   };
+
+  const borderStart = prepTime > 0 ? start - prepTime : start;
+  const borderEnd = bufferTime > 0 ? end + bufferTime : end;
 
   return (
     <AppointmentProvider>
-      <ControlledHoverCard appointment={appointmentData}>
-        <button
-          disabled
-          ref={setNodeRef}
-          {...listeners}
-          {...attributes}
+      <>
+        {/* Border Container */}
+        <div
           style={{
-            gridRowStart: minuteToRow(start, { start: minTime, end: maxTime }),
-            gridRowEnd: minuteToRow(end, { start: minTime, end: maxTime }),
-            backgroundColor: color,
-            ...style,
+            gridRowStart: minuteToRow(borderStart, {
+              start: minTime,
+              end: maxTime,
+            }),
+            gridRowEnd: minuteToRow(borderEnd, {
+              start: minTime,
+              end: maxTime,
+            }),
+            opacity: transform ? 0 : 1,
+            boxShadow: `inset 0 0 0 2px ${color}`,
+            borderRadius: "0.5rem",
           }}
-          className="col-span-full overflow-hidden h-full rounded-lg hover:cursor-grab text-xs text-white p-1 z-10 absolute w-full"
-        >
-          <ControlledContextMenu appointment={appointmentData}>
-            <div className="flex relative w-full h-full flex-col text-left hover:cursor-grab">
-              <p className="line-clamp-1">{title}</p>
-              <p>
-                {minutesTo12Hour(start)} - {minutesTo12Hour(end)}
-              </p>
-              <p className="absolute top-2 right-2 capitalize">
-                {appointmentData.status[0] +
-                  appointmentData.status.slice(1).toLowerCase()}
-              </p>
-            </div>
-          </ControlledContextMenu>
-        </button>
-      </ControlledHoverCard>
+          className="col-span-full w-full relative z-20 pointer-events-none"
+        />
+
+        {/* Prep Time */}
+        {prepTime > 0 && (
+          <div
+            style={{
+              gridRowStart: minuteToRow(start - prepTime, {
+                start: minTime,
+                end: maxTime,
+              }),
+              gridRowEnd: minuteToRow(start, { start: minTime, end: maxTime }),
+              backgroundColor: color,
+              backgroundImage: `repeating-linear-gradient(
+                -45deg,
+                rgba(255, 255, 255, 0.25),
+                rgba(255, 255, 255, 0.25) 8px,
+                transparent 8px,
+                transparent 20px
+              )`,
+              opacity: transform ? 0 : 1,
+            }}
+            className="col-span-full w-full relative z-10"
+          >
+            {prepTime > 5 && (
+              <div className="absolute top-1 left-2 text-[9px] font-semibold uppercase tracking-wider text-white drop-shadow-sm">
+                Prep {prepTime}m
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Main Appointment */}
+        <ControlledHoverCard appointment={appointmentData}>
+          <button
+            disabled
+            ref={setNodeRef}
+            {...listeners}
+            {...attributes}
+            style={{
+              gridRowStart: minuteToRow(start, {
+                start: minTime,
+                end: maxTime,
+              }),
+              gridRowEnd: minuteToRow(end, { start: minTime, end: maxTime }),
+              backgroundColor: color,
+              ...style,
+            }}
+            className="col-span-full overflow-hidden h-full hover:cursor-grab text-xs text-white p-1 z-10 w-full shadow-sm"
+          >
+            <ControlledContextMenu appointment={appointmentData}>
+              <div className="flex relative w-full h-full flex-col text-left hover:cursor-grab gap-0.5">
+                <p className="font-semibold text-sm line-clamp-1">{title}</p>
+                <p className="text-xs font-medium">
+                  {minutesTo12Hour(start)} - {minutesTo12Hour(end)}
+                </p>
+                <p className="text-[11px] opacity-80 line-clamp-1 mt-0.5">
+                  {serviceNames.join(", ")}
+                </p>
+                <p className="absolute top-1.5 right-1.5 text-[10px] font-medium capitalize px-1.5 py-0.5 bg-white/20 rounded">
+                  {appointmentData.status[0] +
+                    appointmentData.status.slice(1).toLowerCase()}
+                </p>
+              </div>
+            </ControlledContextMenu>
+          </button>
+        </ControlledHoverCard>
+
+        {/* Buffer Time */}
+        {bufferTime > 0 && (
+          <div
+            style={{
+              gridRowStart: minuteToRow(end, { start: minTime, end: maxTime }),
+              gridRowEnd: minuteToRow(end + bufferTime, {
+                start: minTime,
+                end: maxTime,
+              }),
+              backgroundColor: color,
+              backgroundImage: `repeating-linear-gradient(
+                -45deg,
+                rgba(255, 255, 255, 0.25),
+                rgba(255, 255, 255, 0.25) 8px,
+                transparent 8px,
+                transparent 20px
+              )`,
+              opacity: transform ? 0 : 1,
+            }}
+            className="col-span-full w-full relative z-10"
+          >
+            {bufferTime > 5 && (
+              <div className="absolute bottom-1 left-2 text-[9px] font-semibold uppercase tracking-wider text-white drop-shadow-sm">
+                Buffer {bufferTime}m
+              </div>
+            )}
+          </div>
+        )}
+      </>
     </AppointmentProvider>
   );
 }
@@ -141,13 +244,60 @@ const ControlledHoverCard = ({
     >
       <HoverCardTrigger asChild>{children}</HoverCardTrigger>
       <HoverCardContent className="w-80" role="dialog" aria-modal="true">
-        <h3 className="font-semibold">{appointment.title}</h3>
-        <p>
-          {minutesTo12Hour(appointment.start)} -{" "}
-          {minutesTo12Hour(appointment.end)}
-        </p>
-        <p>Customer: {appointment.customerName}</p>
-        <p>Price: ${appointment.price / 100}</p>
+        <div className="space-y-3">
+          <div>
+            <h3 className="font-semibold text-base">{appointment.title}</h3>
+            <p className="text-sm text-muted-foreground">
+              {appointment.customerName}
+            </p>
+            <p className="text-sm font-medium text-foreground mt-1">
+              {appointment.serviceNames.join(", ")}
+            </p>
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Appointment:</span>
+              <span className="font-medium">
+                {minutesTo12Hour(appointment.start)} -{" "}
+                {minutesTo12Hour(appointment.end)}
+              </span>
+            </div>
+
+            {appointment.prepTime > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Prep Time:</span>
+                <span>{appointment.prepTime} min</span>
+              </div>
+            )}
+
+            {appointment.bufferTime > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Buffer Time:</span>
+                <span>{appointment.bufferTime} min</span>
+              </div>
+            )}
+
+            {(appointment.prepTime > 0 || appointment.bufferTime > 0) && (
+              <div className="flex justify-between text-sm pt-1 border-t">
+                <span className="text-muted-foreground font-medium">
+                  Overall Time:
+                </span>
+                <span className="font-medium">
+                  {minutesTo12Hour(appointment.start - appointment.prepTime)} -{" "}
+                  {minutesTo12Hour(appointment.end + appointment.bufferTime)}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-between text-sm pt-2 border-t">
+            <span className="text-muted-foreground">Price:</span>
+            <span className="font-semibold">
+              ${(appointment.price / 100).toFixed(2)}
+            </span>
+          </div>
+        </div>
       </HoverCardContent>
     </HoverCard>
   );

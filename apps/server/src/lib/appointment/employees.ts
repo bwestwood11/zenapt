@@ -8,7 +8,7 @@ function dayToBit(date: Date): number {
 
 function toMonthDay(date: Date): string {
   return `${String(date.getMonth() + 1).padStart(2, "0")}-${String(
-    date.getDate()
+    date.getDate(),
   ).padStart(2, "0")}`;
 }
 
@@ -21,7 +21,7 @@ type Appointment = {
   startTime: Date;
   endTime: Date;
   id: string;
-  status: AppointmentStatus
+  status: AppointmentStatus;
   price: number;
   employeeId: string;
   service: {
@@ -29,19 +29,23 @@ type Appointment = {
     locationEmployeeId: string;
     duration: number;
     id: string;
+    name: string;
   }[];
   customer: {
     firstName: string;
     lastName: string;
     id: string;
   };
+
+  bufferTime: number;
+  prepTime: number;
 };
 
 type AppointmentResponseType = Record<string, Appointment[]>;
 
 export async function getLocationSpecialistsSchedule(
   locationId: string,
-  date: Date
+  date: Date,
 ) {
   const dayBit = dayToBit(date);
   const monthDay = toMonthDay(date);
@@ -99,7 +103,7 @@ export async function getLocationSpecialistsSchedule(
       e.targetId === locationId &&
       e.isBreak &&
       e.startMinute == null &&
-      e.endMinute == null
+      e.endMinute == null,
   );
 
   const locationWorkRule = rules.find(
@@ -107,7 +111,7 @@ export async function getLocationSpecialistsSchedule(
       r.targetType === "LOCATION" &&
       r.targetId === locationId &&
       !r.isBreak &&
-      (r.daysMask & dayBit) !== 0
+      (r.daysMask & dayBit) !== 0,
   );
 
   if (locationClosedByException || !locationWorkRule) {
@@ -132,7 +136,7 @@ export async function getLocationSpecialistsSchedule(
         r.targetType === "EMPLOYEE" &&
         r.targetId === employeeId &&
         !r.isBreak &&
-        (r.daysMask & dayBit) !== 0
+        (r.daysMask & dayBit) !== 0,
     );
 
     const workRule = employeeWorkRule ?? locationWorkRule;
@@ -151,14 +155,14 @@ export async function getLocationSpecialistsSchedule(
         r.isBreak &&
         (r.daysMask & dayBit) !== 0 &&
         ((r.targetType === "EMPLOYEE" && r.targetId === employeeId) ||
-          (r.targetType === "LOCATION" && r.targetId === locationId))
+          (r.targetType === "LOCATION" && r.targetId === locationId)),
     );
 
     const exceptionBreaks = exceptions.filter(
       (e) =>
         e.isBreak &&
         ((e.targetType === "EMPLOYEE" && e.targetId === employeeId) ||
-          (e.targetType === "LOCATION" && e.targetId === locationId))
+          (e.targetType === "LOCATION" && e.targetId === locationId)),
     );
 
     const isExceptionBreak = exceptionBreaks.some(
@@ -166,7 +170,7 @@ export async function getLocationSpecialistsSchedule(
         !a.startMinute &&
         !a.endMinute &&
         a.isBreak &&
-        a.targetType === "EMPLOYEE"
+        a.targetType === "EMPLOYEE",
     );
     if (isExceptionBreak) {
       return {
@@ -237,12 +241,19 @@ export async function getAppointmentsInRange({
       id: true,
       status: true,
       price: true,
+      bufferTime: true,
+      prepTime: true,
       service: {
         select: {
           price: true,
           locationEmployeeId: true,
           duration: true,
           id: true,
+          serviceTerms: {
+            select: {
+              name: true,
+            },
+          },
         },
       },
       customer: {
@@ -265,27 +276,27 @@ export async function getAppointmentsInRange({
         0,
         0,
         0,
-        0
+        0,
       );
       if (!acc[currentDate.toISOString()]) {
         acc[currentDate.toISOString()] = [];
       }
       if (!appointment.service || appointment.service.length === 0) {
         console.error(
-          `Appointment ${appointment.id} has no services assigned.`
+          `Appointment ${appointment.id} has no services assigned.`,
         );
         return acc;
       }
       const employeeId = appointment.service.every(
         (a) =>
           a.locationEmployeeId &&
-          a.locationEmployeeId === appointment.service[0].locationEmployeeId
+          a.locationEmployeeId === appointment.service[0].locationEmployeeId,
       )
         ? appointment.service[0].locationEmployeeId
         : null;
       if (!employeeId) {
         console.error(
-          `Appointment ${appointment.id} has multiple employees assigned.`
+          `Appointment ${appointment.id} has multiple employees assigned.`,
         );
         return acc;
       }
@@ -297,13 +308,23 @@ export async function getAppointmentsInRange({
         employeeId: employeeId,
         price: appointment.price,
         status: appointment.status,
-        service: appointment.service as Appointment["service"],
+        bufferTime: appointment.bufferTime,
+        prepTime: appointment.prepTime,
+        service: appointment.service
+          .filter((s) => s.locationEmployeeId !== null)
+          .map((s) => ({
+            price: s.price,
+            locationEmployeeId: s.locationEmployeeId!,
+            duration: s.duration,
+            id: s.id,
+            name: s.serviceTerms.name,
+          })),
         customer: appointment.customer,
       };
       acc[currentDate.toISOString()].push(appointmentWithEmployee);
       return acc;
     },
-    {}
+    {},
   );
 
   return appointmentByEmployees;

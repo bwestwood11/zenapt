@@ -13,7 +13,8 @@ export enum StepIds {
   SERVICE,
   SERVICE_DETAILS,
   CART,
-  CALENDAR
+  REVIEW,
+  CALENDAR,
 }
 
 interface Store {
@@ -24,6 +25,9 @@ interface Store {
   location: string | null;
   setLocation: (l: string) => void;
 
+  appointmentTime: { start: Date; end: Date } | null;
+  setAppointmentTime: (time: { start: Date; end: Date } | null) => void;
+
   cart: (Partial<CartType> & { id: string })[];
   addCartItem: () => string;
 
@@ -31,14 +35,14 @@ interface Store {
     id: string,
     updater:
       | Partial<CartType>
-      | ((prev: Partial<CartType> & { id: string }) => Partial<CartType>)
+      | ((prev: Partial<CartType> & { id: string }) => Partial<CartType>),
   ) => void;
   handleNext: () => void;
   handleBack: () => void;
   hasPreviousStep: () => boolean;
-  addCartItemAndMoveToCart: () => void
-  removeCart: (id: string) => void
-  editCart: (id:string) => void
+  addCartItemAndMoveToCart: () => void;
+  removeCart: (id: string) => void;
+  editCart: (id: string) => void;
 }
 
 export const useCheckoutStore = create<Store>((set, get) => ({
@@ -49,6 +53,9 @@ export const useCheckoutStore = create<Store>((set, get) => ({
   location: null,
   setLocation: (l) => set({ location: l }),
 
+  appointmentTime: null,
+  setAppointmentTime: (time) => set({ appointmentTime: time }),
+
   cart: [],
   addCartItem: () => {
     const id = crypto.randomUUID();
@@ -57,24 +64,27 @@ export const useCheckoutStore = create<Store>((set, get) => ({
   },
 
   editCart(id) {
-    set(({cartItemId, step,cart}) => {
-      if(!cart.some(a => a.id === id)){
-        console.error("Not existing cart", id)
-        return {}
+    set(({ cartItemId, step, cart }) => {
+      if (!cart.some((a) => a.id === id)) {
+        console.error("Not existing cart", id);
+        return {};
       }
 
-      return {step: StepIds.SERVICE_GROUP, cartItemId: id}
-    })
+      return { step: StepIds.SERVICE_GROUP, cartItemId: id };
+    });
   },
 
   removeCart: (id) => {
-    set(({cartItemId,cart}) => {
-      return {cart: cart.filter(a => a.id !== id), cartItemId: cartItemId === id ? null : cartItemId}
-    })
+    set(({ cartItemId, cart }) => {
+      return {
+        cart: cart.filter((a) => a.id !== id),
+        cartItemId: cartItemId === id ? null : cartItemId,
+      };
+    });
   },
   addCartItemAndMoveToCart: () => {
-    const {addCartItem} = get()
-    const cartId = addCartItem()
+    const { addCartItem } = get();
+    const cartId = addCartItem();
     set({ step: StepIds.SERVICE_GROUP, cartItemId: cartId });
   },
 
@@ -115,7 +125,17 @@ export const useCheckoutStore = create<Store>((set, get) => ({
       case StepIds.CART:
         payload = { cart };
         break;
+
+      case StepIds.CALENDAR:
+        payload = { cart };
+        break;
+
+      case StepIds.REVIEW:
+        payload = { cart };
+        break;
     }
+
+
 
     // ---- VALIDATE BEFORE MOVING ----
     const result = Step.schema.safeParse(payload);
@@ -154,12 +174,18 @@ export const useCheckoutStore = create<Store>((set, get) => ({
       case StepIds.CART:
         set({ step: StepIds.CALENDAR, cartItemId: null });
         break;
+
+      case StepIds.CALENDAR:
+        set({ step: StepIds.REVIEW, cartItemId: null });
+        break;
+
+      case StepIds.REVIEW:
     }
   },
 
   hasPreviousStep: () => {
     const { step } = get();
-    const FIRST_STEPS = [StepIds.LOCATION, StepIds.CART];
+    const FIRST_STEPS = [StepIds.LOCATION];
     return !FIRST_STEPS.includes(step);
   },
 
@@ -194,6 +220,9 @@ export const useCheckoutStore = create<Store>((set, get) => ({
       case StepIds.CALENDAR:
         set({ step: StepIds.CART });
         break;
+      case StepIds.REVIEW:
+        set({ step: StepIds.CALENDAR });
+        break;
     }
   },
 }));
@@ -204,7 +233,7 @@ export const useWatchCart = (): Cart | null => {
 
   // Only select the cart item with the current id
   const currentItem = useCheckoutStore(
-    (s) => s.cart.find((c) => c.id === cartItemId) ?? null
+    (s) => s.cart.find((c) => c.id === cartItemId) ?? null,
   );
 
   return currentItem;
@@ -217,7 +246,7 @@ export type ParsedZodError = {
 const MAX_MESSAGE_LENGTH = 50; // adjust if needed
 
 export function extractSafeParseError<T>(
-  error: ZodError<T>
+  error: ZodError<T>,
 ): ParsedZodError | null {
   const issue = error.issues[0];
 

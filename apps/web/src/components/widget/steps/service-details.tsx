@@ -17,16 +17,18 @@ import { useCartActions, useCartCalculations } from "../hooks/useCart";
 const ServiceDetails = () => {
   const [addOnsExpanded, setAddOnsExpanded] = React.useState(false);
   const currentCart = useWatchCart();
-    const { data: service } = useQuery(
+  const { data: service } = useQuery(
     trpc.public.getServiceDetails.queryOptions(
       { serviceId: currentCart?.serviceId! },
-      { enabled: !!currentCart?.serviceId, staleTime: Infinity }
-    )
+      { enabled: !!currentCart?.serviceId, staleTime: Infinity },
+    ),
   );
 
-
-  const {selectEmployee, toggleAddOn} = useCartActions(currentCart)
-  const {addonPrice, addonDuration } = useCartCalculations(service, currentCart)
+  const { selectEmployee, toggleAddOn } = useCartActions(currentCart);
+  const { addonPrice, addonDuration } = useCartCalculations(
+    service,
+    currentCart,
+  );
 
   if (!service) return "NOT_FOUND";
 
@@ -83,14 +85,23 @@ const ServiceDetails = () => {
                   className={cn(
                     "flex gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all duration-200",
                     "hover:border-accent hover:bg-sidebar-accent/30",
-                    currentCart?.addons?.some(a => addOn.id === a.id)
+                    currentCart?.addons?.some((a) => addOn.id === a.id)
                       ? "border-accent bg-sidebar-accent/30 shadow-sm"
-                      : "border-sidebar-border bg-sidebar"
+                      : "border-sidebar-border bg-sidebar",
                   )}
                 >
                   <Checkbox
-                    checked={currentCart?.addons?.some(a => addOn.id === a.id)}
-                    onCheckedChange={() => toggleAddOn({duration: addOn.incrementalDuration, id: addOn.id, price: addOn.basePrice, title: addOn.name})}
+                    checked={currentCart?.addons?.some(
+                      (a) => addOn.id === a.id,
+                    )}
+                    onCheckedChange={() =>
+                      toggleAddOn({
+                        duration: addOn.incrementalDuration,
+                        id: addOn.id,
+                        price: addOn.basePrice,
+                        title: addOn.name,
+                      })
+                    }
                     className="mt-1 flex-shrink-0 border-primary"
                   />
 
@@ -110,7 +121,7 @@ const ServiceDetails = () => {
 
                         <div className="*:data-[slot=avatar]:ring-background py-2 -space-x-2 justify-end flex *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
                           {service.Service.filter((s) =>
-                            s.addOns.some((a) => a.id === addOn.id)
+                            s.addOns.some((a) => a.id === addOn.id),
                           ).map((a) => (
                             <Avatar key={a?.locationEmployee?.user.id}>
                               <AvatarImage
@@ -151,93 +162,101 @@ const ServiceDetails = () => {
       </div>
 
       <div className="space-y-3">
-      
-          {service.employees
-            .filter((e) =>
-              !!(currentCart?.addons ?? []).every((id) => e.addons.some((a) => a.id === id.id))
-            )
-            .map((professional) => {
-              const totalPrice = professional.price + addonPrice;
-              return (
-                <button
-                  key={professional.id}
-                  onClick={() => selectEmployee(professional.id, professional.price, professional.duration)}
-                  className={cn(
-                    "w-full text-left p-4 rounded-xl border-2 transition-all duration-200",
-                    "hover:bg-sidebar-accent/30",
-                    currentCart?.employeeServiceId === professional.id
-                      ? "border-accent bg-sidebar-accent/30 shadow-sm"
-                      : "border-sidebar-border bg-sidebar"
-                  )}
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                      <div
-                        className={cn(
-                          "w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 font-semibold text-lg",
-                          currentCart?.employeeServiceId === professional.id
-                            ? "bg-sidebar-accent text-accent"
-                            : "bg-accent/20 text-sidebar-foreground/40"
-                        )}
-                      >
-                        {professional.userName
-                          ?.split(" ")
-                          .map((n) => n[0])
-                          .join("") ?? "Bubba"}
-                      </div>
-                      <div className="flex-1">
-                        <h4
-                          className={cn(
-                            "font-semibold text-base",
-                            currentCart?.employeeServiceId === professional.id
-                              ? "text-accent-foreground"
-                              : "text-sidebar-foreground"
-                          )}
-                        >
-                          {professional.userName}
-                        </h4>
-                      </div>
+        {service.employees
+          .filter(
+            (e) =>
+              !!(currentCart?.addons ?? []).every((id) =>
+                e.addons.some((a) => a.id === id.id),
+              ),
+          )
+          .map((professional) => {
+            const totalPrice = professional.price + addonPrice;
+            return (
+              <button
+                key={professional.id}
+                onClick={() =>
+                  selectEmployee(
+                    professional.id,
+                    professional.locationEmployeeId,
+                    professional.price,
+                    professional.duration,
+                  )
+                }
+                className={cn(
+                  "w-full text-left p-4 rounded-xl border-2 transition-all duration-200",
+                  "hover:bg-sidebar-accent/30",
+                  currentCart?.employeeServiceId === professional.id
+                    ? "border-accent bg-sidebar-accent/30 shadow-sm"
+                    : "border-sidebar-border bg-sidebar",
+                )}
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div
+                      className={cn(
+                        "w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 font-semibold text-lg",
+                        currentCart?.employeeServiceId === professional.id
+                          ? "bg-sidebar-accent text-accent"
+                          : "bg-accent/20 text-sidebar-foreground/40",
+                      )}
+                    >
+                      {professional.userName
+                        ?.split(" ")
+                        .map((n) => n[0])
+                        .join("") ?? "Bubba"}
                     </div>
-                    <div className="text-right flex-shrink-0">
-                      <p
+                    <div className="flex-1">
+                      <h4
                         className={cn(
-                          "font-semibold text-lg",
+                          "font-semibold text-base",
                           currentCart?.employeeServiceId === professional.id
                             ? "text-accent-foreground"
-                            : "text-sidebar-foreground"
+                            : "text-sidebar-foreground",
                         )}
                       >
-                        ${totalPrice / 100}
-                      </p>
-                      {addonPrice > 0 && (
-                        <p
-                          className={cn(
-                            "text-xs",
-                            currentCart?.employeeServiceId === professional.id
-                              ? "text-accent-foreground/60"
-                              : "text-sidebar-foreground/40"
-                          )}
-                        >
-                          ${professional.price / 100} + ${addonPrice / 100}
-                        </p>
-                      )}
-                      <p
-                        className={cn(
-                          "text-sm flex items-center justify-end gap-1",
-                          currentCart?.employeeServiceId === professional.id
-                            ? "text-accent-foreground/70"
-                            : "text-sidebar-foreground/50"
-                        )}
-                      >
-                        <Clock className="w-3.5 h-3.5" />
-                        {professional.duration + addonDuration} min
-                      </p>
+                        {professional.userName}
+                      </h4>
                     </div>
                   </div>
-                </button>
-              );
-            })}
-      
+                  <div className="text-right flex-shrink-0">
+                    <p
+                      className={cn(
+                        "font-semibold text-lg",
+                        currentCart?.employeeServiceId === professional.id
+                          ? "text-accent-foreground"
+                          : "text-sidebar-foreground",
+                      )}
+                    >
+                      ${totalPrice / 100}
+                    </p>
+                    {addonPrice > 0 && (
+                      <p
+                        className={cn(
+                          "text-xs",
+                          currentCart?.employeeServiceId === professional.id
+                            ? "text-accent-foreground/60"
+                            : "text-sidebar-foreground/40",
+                        )}
+                      >
+                        ${professional.price / 100} + ${addonPrice / 100}
+                      </p>
+                    )}
+                    <p
+                      className={cn(
+                        "text-sm flex items-center justify-end gap-1",
+                        currentCart?.employeeServiceId === professional.id
+                          ? "text-accent-foreground/70"
+                          : "text-sidebar-foreground/50",
+                      )}
+                    >
+                      <Clock className="w-3.5 h-3.5" />
+                      {professional.duration + addonDuration} min
+                    </p>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
       </div>
     </div>
   );

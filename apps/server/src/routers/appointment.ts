@@ -10,6 +10,7 @@ import {
   getAvailableTimings,
   isEditConflictFastFail,
 } from "../lib/appointment/appointment";
+import { buffer } from "node:stream/consumers";
 
 export const appointmentRouter = router({
   fetchEmployeesSchedule: withPermissions([
@@ -201,6 +202,8 @@ export const appointmentRouter = router({
         locationEmployeeId: z.string(),
         proposedStartTime: z.date(),
         proposedEndTime: z.date(),
+        bufferTime: z.number().optional(),
+        prepTime: z.number().optional(),
       }),
     )
     .query(async ({ input }) => {
@@ -209,14 +212,16 @@ export const appointmentRouter = router({
         proposedStartTime,
         locationId,
         proposedEndTime,
+        bufferTime,
+        prepTime,
       } = input;
       const hasConflict = await isEditConflictFastFail({
         employeeId: locationEmployeeId,
         startTime: proposedStartTime,
         locationId,
         endTime: proposedEndTime,
-        bufferTime: 0,
-        prepTime: 0,
+        bufferTime: bufferTime,
+        prepTime: prepTime,
       });
       return { hasConflict };
     }),
@@ -314,6 +319,8 @@ export const appointmentRouter = router({
         proposedStartTime,
         proposedEndTime: estimatedEndTime,
         hasConflict,
+        prepTime: maxPrepTime,
+        bufferTime: maxBufferTime,
       };
     }),
   getCustomersForAppointment: withPermissions(["READ::CUSTOMERS"])
