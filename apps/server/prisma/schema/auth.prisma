@@ -11,9 +11,10 @@ model User {
   accounts          Account[]
   management        ManagementMembership[]
   locationEmployees LocationEmployee[]
-  // customer Customer?
+  customer          Customer?
   AuditLog          ActivityLog[]
   isTempPassword    Boolean                @default(false)
+  customerId        String?                @unique
 
   @@unique([email])
   @@map("user")
@@ -182,13 +183,9 @@ model EmployeeService {
 
 model Customer {
   id               String                       @id @default(cuid()) @map("_id")
-  locationId       String
-  location         Location                     @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  stripeCustomerId String                       @unique
+  location         Location[]
+  stripeCustomerId String?                       @unique
   status           String?
-  firstName        String
-  lastName         String
-  email            String?
   phoneNumber      String?
   dateOfBirth      DateTime?
   notes            String?
@@ -196,9 +193,8 @@ model Customer {
   updatedAt        DateTime                     @updatedAt
   appointments     Appointment[]
   customerPayments CustomerAppointmentPayment[]
-
-  @@unique([email, locationId])
-  @@index([firstName])
+  userId           String                       @unique
+  user             User                         @relation(fields: [userId], references: [id])
 }
 
 model CustomerAppointmentPayment {

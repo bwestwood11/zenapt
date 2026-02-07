@@ -336,11 +336,23 @@ export const appointmentRouter = router({
       const { locationId, cursor, limit, search } = input;
       console.log("Fetching customers for appointment:", input);
       const where = {
-        locationId,
+        location: { some: { id: locationId } },
         ...(search && {
           OR: [
-            { firstName: { contains: search, mode: "insensitive" as const } },
-            { email: { contains: search, mode: "insensitive" as const } },
+            {
+              user: {
+                is: {
+                  name: { contains: search, mode: "insensitive" as const },
+                },
+              },
+            },
+            {
+              user: {
+                is: {
+                  email: { contains: search, mode: "insensitive" as const },
+                },
+              },
+            },
           ],
         }),
       };
@@ -353,7 +365,15 @@ export const appointmentRouter = router({
           cursor: { id: cursor },
           skip: 1,
         }),
-        orderBy: { firstName: "asc" },
+        orderBy: { user: { name: "asc" } },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+        },
       });
 
       const hasNextPage = customers.length > limit;
@@ -421,7 +441,7 @@ export const appointmentRouter = router({
       const customer = await prisma.customer.findFirst({
         where: {
           id: customerId,
-          locationId,
+          location: { some: { id: locationId } },
         },
       });
 

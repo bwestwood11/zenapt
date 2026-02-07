@@ -722,18 +722,42 @@ export type LocationUpdateOneRequiredWithoutServiceNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LocationUpdateToOneWithWhereWithoutServiceInput, Prisma.LocationUpdateWithoutServiceInput>, Prisma.LocationUncheckedUpdateWithoutServiceInput>
 }
 
-export type LocationCreateNestedOneWithoutCustomersInput = {
-  create?: Prisma.XOR<Prisma.LocationCreateWithoutCustomersInput, Prisma.LocationUncheckedCreateWithoutCustomersInput>
-  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutCustomersInput
-  connect?: Prisma.LocationWhereUniqueInput
+export type LocationCreateNestedManyWithoutCustomersInput = {
+  create?: Prisma.XOR<Prisma.LocationCreateWithoutCustomersInput, Prisma.LocationUncheckedCreateWithoutCustomersInput> | Prisma.LocationCreateWithoutCustomersInput[] | Prisma.LocationUncheckedCreateWithoutCustomersInput[]
+  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutCustomersInput | Prisma.LocationCreateOrConnectWithoutCustomersInput[]
+  connect?: Prisma.LocationWhereUniqueInput | Prisma.LocationWhereUniqueInput[]
 }
 
-export type LocationUpdateOneRequiredWithoutCustomersNestedInput = {
-  create?: Prisma.XOR<Prisma.LocationCreateWithoutCustomersInput, Prisma.LocationUncheckedCreateWithoutCustomersInput>
-  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutCustomersInput
-  upsert?: Prisma.LocationUpsertWithoutCustomersInput
-  connect?: Prisma.LocationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.LocationUpdateToOneWithWhereWithoutCustomersInput, Prisma.LocationUpdateWithoutCustomersInput>, Prisma.LocationUncheckedUpdateWithoutCustomersInput>
+export type LocationUncheckedCreateNestedManyWithoutCustomersInput = {
+  create?: Prisma.XOR<Prisma.LocationCreateWithoutCustomersInput, Prisma.LocationUncheckedCreateWithoutCustomersInput> | Prisma.LocationCreateWithoutCustomersInput[] | Prisma.LocationUncheckedCreateWithoutCustomersInput[]
+  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutCustomersInput | Prisma.LocationCreateOrConnectWithoutCustomersInput[]
+  connect?: Prisma.LocationWhereUniqueInput | Prisma.LocationWhereUniqueInput[]
+}
+
+export type LocationUpdateManyWithoutCustomersNestedInput = {
+  create?: Prisma.XOR<Prisma.LocationCreateWithoutCustomersInput, Prisma.LocationUncheckedCreateWithoutCustomersInput> | Prisma.LocationCreateWithoutCustomersInput[] | Prisma.LocationUncheckedCreateWithoutCustomersInput[]
+  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutCustomersInput | Prisma.LocationCreateOrConnectWithoutCustomersInput[]
+  upsert?: Prisma.LocationUpsertWithWhereUniqueWithoutCustomersInput | Prisma.LocationUpsertWithWhereUniqueWithoutCustomersInput[]
+  set?: Prisma.LocationWhereUniqueInput | Prisma.LocationWhereUniqueInput[]
+  disconnect?: Prisma.LocationWhereUniqueInput | Prisma.LocationWhereUniqueInput[]
+  delete?: Prisma.LocationWhereUniqueInput | Prisma.LocationWhereUniqueInput[]
+  connect?: Prisma.LocationWhereUniqueInput | Prisma.LocationWhereUniqueInput[]
+  update?: Prisma.LocationUpdateWithWhereUniqueWithoutCustomersInput | Prisma.LocationUpdateWithWhereUniqueWithoutCustomersInput[]
+  updateMany?: Prisma.LocationUpdateManyWithWhereWithoutCustomersInput | Prisma.LocationUpdateManyWithWhereWithoutCustomersInput[]
+  deleteMany?: Prisma.LocationScalarWhereInput | Prisma.LocationScalarWhereInput[]
+}
+
+export type LocationUncheckedUpdateManyWithoutCustomersNestedInput = {
+  create?: Prisma.XOR<Prisma.LocationCreateWithoutCustomersInput, Prisma.LocationUncheckedCreateWithoutCustomersInput> | Prisma.LocationCreateWithoutCustomersInput[] | Prisma.LocationUncheckedCreateWithoutCustomersInput[]
+  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutCustomersInput | Prisma.LocationCreateOrConnectWithoutCustomersInput[]
+  upsert?: Prisma.LocationUpsertWithWhereUniqueWithoutCustomersInput | Prisma.LocationUpsertWithWhereUniqueWithoutCustomersInput[]
+  set?: Prisma.LocationWhereUniqueInput | Prisma.LocationWhereUniqueInput[]
+  disconnect?: Prisma.LocationWhereUniqueInput | Prisma.LocationWhereUniqueInput[]
+  delete?: Prisma.LocationWhereUniqueInput | Prisma.LocationWhereUniqueInput[]
+  connect?: Prisma.LocationWhereUniqueInput | Prisma.LocationWhereUniqueInput[]
+  update?: Prisma.LocationUpdateWithWhereUniqueWithoutCustomersInput | Prisma.LocationUpdateWithWhereUniqueWithoutCustomersInput[]
+  updateMany?: Prisma.LocationUpdateManyWithWhereWithoutCustomersInput | Prisma.LocationUpdateManyWithWhereWithoutCustomersInput[]
+  deleteMany?: Prisma.LocationScalarWhereInput | Prisma.LocationScalarWhereInput[]
 }
 
 export type LocationCreateNestedOneWithoutActivityLogInput = {
@@ -1498,65 +1522,20 @@ export type LocationCreateOrConnectWithoutCustomersInput = {
   create: Prisma.XOR<Prisma.LocationCreateWithoutCustomersInput, Prisma.LocationUncheckedCreateWithoutCustomersInput>
 }
 
-export type LocationUpsertWithoutCustomersInput = {
+export type LocationUpsertWithWhereUniqueWithoutCustomersInput = {
+  where: Prisma.LocationWhereUniqueInput
   update: Prisma.XOR<Prisma.LocationUpdateWithoutCustomersInput, Prisma.LocationUncheckedUpdateWithoutCustomersInput>
   create: Prisma.XOR<Prisma.LocationCreateWithoutCustomersInput, Prisma.LocationUncheckedCreateWithoutCustomersInput>
-  where?: Prisma.LocationWhereInput
 }
 
-export type LocationUpdateToOneWithWhereWithoutCustomersInput = {
-  where?: Prisma.LocationWhereInput
+export type LocationUpdateWithWhereUniqueWithoutCustomersInput = {
+  where: Prisma.LocationWhereUniqueInput
   data: Prisma.XOR<Prisma.LocationUpdateWithoutCustomersInput, Prisma.LocationUncheckedUpdateWithoutCustomersInput>
 }
 
-export type LocationUpdateWithoutCustomersInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  employees?: Prisma.LocationEmployeeUpdateManyWithoutLocationNestedInput
-  organization?: Prisma.OrganizationUpdateOneRequiredWithoutLocationsNestedInput
-  LocationInvitation?: Prisma.LocationInvitationUpdateManyWithoutLocationNestedInput
-  ActivityLog?: Prisma.ActivityLogUpdateManyWithoutLocationNestedInput
-  Service?: Prisma.EmployeeServiceUpdateManyWithoutLocationNestedInput
-  appointments?: Prisma.AppointmentUpdateManyWithoutLocationNestedInput
-  appointmentSettings?: Prisma.AppointmentSettingsUpdateOneWithoutLocationNestedInput
-  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutLocationNestedInput
-}
-
-export type LocationUncheckedUpdateWithoutCustomersInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  employees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutLocationNestedInput
-  LocationInvitation?: Prisma.LocationInvitationUncheckedUpdateManyWithoutLocationNestedInput
-  ActivityLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutLocationNestedInput
-  Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutLocationNestedInput
-  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutLocationNestedInput
-  appointmentSettings?: Prisma.AppointmentSettingsUncheckedUpdateOneWithoutLocationNestedInput
-  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutLocationNestedInput
+export type LocationUpdateManyWithWhereWithoutCustomersInput = {
+  where: Prisma.LocationScalarWhereInput
+  data: Prisma.XOR<Prisma.LocationUpdateManyMutationInput, Prisma.LocationUncheckedUpdateManyWithoutCustomersInput>
 }
 
 export type LocationCreateWithoutActivityLogInput = {
@@ -1861,6 +1840,74 @@ export type LocationUncheckedUpdateWithoutOrganizationInput = {
 export type LocationUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type LocationUpdateWithoutCustomersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employees?: Prisma.LocationEmployeeUpdateManyWithoutLocationNestedInput
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutLocationsNestedInput
+  LocationInvitation?: Prisma.LocationInvitationUpdateManyWithoutLocationNestedInput
+  ActivityLog?: Prisma.ActivityLogUpdateManyWithoutLocationNestedInput
+  Service?: Prisma.EmployeeServiceUpdateManyWithoutLocationNestedInput
+  appointments?: Prisma.AppointmentUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUpdateOneWithoutLocationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutLocationNestedInput
+}
+
+export type LocationUncheckedUpdateWithoutCustomersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutLocationNestedInput
+  LocationInvitation?: Prisma.LocationInvitationUncheckedUpdateManyWithoutLocationNestedInput
+  ActivityLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutLocationNestedInput
+  Service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutLocationNestedInput
+  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutLocationNestedInput
+  appointmentSettings?: Prisma.AppointmentSettingsUncheckedUpdateOneWithoutLocationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutLocationNestedInput
+}
+
+export type LocationUncheckedUpdateManyWithoutCustomersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null

@@ -32,8 +32,7 @@ type Appointment = {
     name: string;
   }[];
   customer: {
-    firstName: string;
-    lastName: string;
+    name: string;
     id: string;
   };
 
@@ -258,8 +257,12 @@ export async function getAppointmentsInRange({
       },
       customer: {
         select: {
-          firstName: true,
-          lastName: true,
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
           id: true,
         },
       },
@@ -319,7 +322,11 @@ export async function getAppointmentsInRange({
             id: s.id,
             name: s.serviceTerms.name,
           })),
-        customer: appointment.customer,
+        customer: {
+          name: appointment.customer.user.name,
+
+          id: appointment.customer.id,
+        },
       };
       acc[currentDate.toISOString()].push(appointmentWithEmployee);
       return acc;

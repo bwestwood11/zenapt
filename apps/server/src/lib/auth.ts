@@ -12,7 +12,7 @@ export const auth = betterAuth({
     additionalFields: {
       token: {
         type: "string",
-        required: true,
+        required: false,
       },
       isTempPassword: {
         type: "boolean",
@@ -21,7 +21,7 @@ export const auth = betterAuth({
       },
     },
   },
-  
+
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
@@ -62,65 +62,115 @@ export const auth = betterAuth({
       // Signup Route
       console.log(ctx.body.token);
       const token = ctx.body.token;
-      if (!token) {
-        throw new APIError("BAD_REQUEST", {
-          message: "Token is request for signup endpoint.",
-        });
-      }
+      console.log("Signup token:", token);
+      // If token is provided, verify it (for employee/management signup)
+      if (token) {
+        try {
+          const tokenPayload = verifyInvitationToken(token);
 
-      try {
-        const tokenPayload = verifyInvitationToken(token);
-
-        if (!tokenPayload) throw new Error("malformed token");
-      } catch (error) {
-        throw new APIError("BAD_REQUEST", {
-          message: "malformed token",
-        });
+          if (!tokenPayload) throw new Error("malformed token");
+        } catch (error) {
+          throw new APIError("BAD_REQUEST", {
+            message: "malformed token",
+          });
+        }
       }
+      // If no token, allow signup (for customer registration)
 
       return { context: ctx };
     }),
     after: createAuthMiddleware(async (ctx) => {
-      if (ctx.path.startsWith("/sign-up/email")) {
-        const newSession = ctx.context.newSession;
-        if (newSession) {
-          try {
-            const tokenPayload = verifyInvitationToken(newSession.user.token);
+      // Only process after email verification
+      if (!ctx.path.startsWith("/verify-email")) {
+        return;
+      }
 
-            if (!tokenPayload || !tokenPayload.data) {
-              throw new APIError("BAD_REQUEST", {
-                message: "token is invalid in after hook better auth",
-              });
-            }
+      const newSession = ctx.context.newSession;
+      if (!newSession?.user?.emailVerified) {
+        return;
+      }
 
-            if (tokenPayload.data.type === "MANAGEMENT") {
+      const userId = newSession.user.id;
+      const userToken = newSession.user.token;
+
+      try {
+        // If user has a token, create employee/management record
+        if (userToken) {
+          const tokenPayload = verifyInvitationToken(userToken);
+
+          if (!tokenPayload?.data) {
+            throw new APIError("BAD_REQUEST", {
+              message: "Invalid invitation token",
+            });
+          }
+
+          if (tokenPayload.data.type === "MANAGEMENT") {
+            // Check if management membership already exists
+            const existing = await prisma.managementMembership.findFirst({
+              where: { userId },
+            });
+
+            if (!existing) {
               await prisma.managementMembership.create({
                 data: {
-                  userId: newSession.user.id,
+                  userId,
                   role: tokenPayload.data.role,
                   organizationId: tokenPayload.data.organizationId,
                 },
               });
-            } else {
+            }
+          } else {
+            // Check if employee already exists for this location
+            const existing = await prisma.locationEmployee.findFirst({
+              where: {
+                userId,
+                locationId: tokenPayload.data.locationId,
+              },
+            });
+
+            if (!existing) {
               await prisma.locationEmployee.create({
                 data: {
-                  userId: newSession.user.id,
+                  userId,
                   role: tokenPayload.data.role,
                   locationId: tokenPayload.data.locationId,
                 },
               });
             }
-          } catch (error) {
-            console.log(error);
-            throw new APIError("BAD_REQUEST", {
-              message: "token is invalid in after hook better auth",
+          }
+        } else {
+          // No token means customer signup - create customer record
+          const existingCustomer = await prisma.customer.findUnique({
+            where: { userId },
+          });
+
+          if (!existingCustomer) {
+            await prisma.customer.create({
+              data: { userId },
             });
           }
         }
+      } catch (error) {
+        console.error("Error creating user record:", error);
+        throw new APIError("BAD_REQUEST", {
+          message:
+            error instanceof APIError
+              ? error.message
+              : "Failed to create user account",
+        });
       }
     }),
   },
+  emailVerification: {
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      // Implement your email sending logic here
+      console.log(`Send verification email to ${user.email} with link: ${url}`);
+    },
+  },
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
   },
 });

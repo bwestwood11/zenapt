@@ -2531,7 +2531,8 @@ export const UserScalarFieldEnum = {
   token: 'token',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  isTempPassword: 'isTempPassword'
+  isTempPassword: 'isTempPassword',
+  customerId: 'customerId'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -2665,17 +2666,14 @@ export type EmployeeServiceScalarFieldEnum = (typeof EmployeeServiceScalarFieldE
 
 export const CustomerScalarFieldEnum = {
   id: 'id',
-  locationId: 'locationId',
   stripeCustomerId: 'stripeCustomerId',
   status: 'status',
-  firstName: 'firstName',
-  lastName: 'lastName',
-  email: 'email',
   phoneNumber: 'phoneNumber',
   dateOfBirth: 'dateOfBirth',
   notes: 'notes',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  userId: 'userId'
 } as const
 
 export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum]

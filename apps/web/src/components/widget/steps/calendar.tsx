@@ -8,6 +8,7 @@ import { useCheckoutStore } from "../hooks/useStore";
 import { useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { motion } from "framer-motion";
+import { formatDuration } from "../utils/format-duration";
 
 const CalendarPage = () => {
   const location = useCheckoutStore((s) => s.location);
@@ -69,7 +70,7 @@ const CalendarPage = () => {
       <div className="space-y-2">
         <h2 className="text-sidebar-foreground text-2xl font-semibold flex items-center gap-2">
           <CalendarIcon className="w-6 h-6 text-accent" />
-          Select Date & Time {primaryEmployeeId}
+          Select Date & Time
         </h2>
         <p className="text-sidebar-foreground/60 text-sm">
           Choose your preferred appointment date and time.
@@ -204,7 +205,7 @@ const CalendarPage = () => {
                   })}
                 </p>
                 <p className="text-accent-foreground/60 text-sm mt-1">
-                  Duration: {totalDuration} minutes
+                  Duration: {formatDuration(totalDuration)}
                 </p>
               </div>
               <CalendarIcon className="w-8 h-8 text-accent" />

@@ -6,6 +6,7 @@ import { CalendarIcon, Clock, MapPin, User, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
+import { formatDuration } from "../utils/format-duration";
 
 const ReviewPage = () => {
   const location = useCheckoutStore((s) => s.location);
@@ -93,7 +94,7 @@ const ReviewPage = () => {
             Total Duration
           </div>
           <p className="text-sidebar-foreground text-2xl font-bold">
-            {totalDuration} min
+            {formatDuration(totalDuration)}
           </p>
         </div>
       </div>
@@ -136,7 +137,7 @@ const ReviewPage = () => {
                   </p>
                   <p className="text-sidebar-foreground/60 text-xs flex items-center justify-end gap-1">
                     <Clock className="w-3 h-3" />
-                    {itemDuration} min
+                    {formatDuration(itemDuration)}
                   </p>
                 </div>
               </div>
@@ -187,8 +188,7 @@ const ReviewPage = () => {
                           </span>
                           <span className="text-sidebar-foreground/70 text-xs">
                             +${(addon.price / 100).toFixed(2)} •{" "}
-                            {addon.duration}
-                            min
+                            {formatDuration(addon.duration)}
                           </span>
                         </div>
                       ))}
@@ -240,7 +240,7 @@ const ReviewPage = () => {
                 Total Duration
               </p>
               <p className="text-accent-foreground font-medium">
-                {totalDuration} minutes
+                {formatDuration(totalDuration)}
               </p>
             </div>
           </div>

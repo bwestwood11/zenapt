@@ -8,6 +8,9 @@ import { CartSchema, WidgetSchema } from "../schema";
 import type { ZodObject } from "zod";
 import ReviewPage from "./review";
 import CalendarPage from "./calendar";
+import AuthPage from "./auth";
+import PaymentPage from "./payment";
+import { z } from "zod";
 
 export enum StepIds {
   LOCATION,
@@ -17,6 +20,8 @@ export enum StepIds {
   CART,
   REVIEW,
   CALENDAR,
+  AUTH,
+  PAYMENT,
 }
 
 export enum StepType {
@@ -72,6 +77,22 @@ export const AFTER_CART_STEPS: MainStep[] = [
     description: " Review your appointment details before confirming.",
     type: StepType.AFTER_CART,
     schema: WidgetSchema.pick({ cart: true }),
+  },
+  {
+    component: <AuthPage />,
+    title: "Sign In",
+    id: StepIds.AUTH,
+    description: " Please sign in or create an account to continue.",
+    type: StepType.AFTER_CART,
+    schema: z.object({}),
+  },
+  {
+    component: <PaymentPage />,
+    title: "Payment",
+    id: StepIds.PAYMENT,
+    description: " Enter your payment details to complete your booking.",
+    type: StepType.AFTER_CART,
+    schema: z.object({}),
   },
 ];
 

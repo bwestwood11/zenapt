@@ -8,6 +8,7 @@ import { trpc } from "@/utils/trpc";
 import { Clock, Sparkles, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { add } from "date-fns";
+import { formatDuration } from "../utils/format-duration";
 
 const CartPage = () => {
   const { cart, addCartItemAndMoveToCart } = useCheckoutStore();
@@ -62,8 +63,8 @@ const CartItem = ({ cart }: { cart: Cart }) => {
   const { data: service } = useQuery(
     trpc.public.getServiceDetails.queryOptions(
       { serviceId: cart?.serviceId! },
-      { enabled: !!cart?.serviceId, staleTime: Infinity }
-    )
+      { enabled: !!cart?.serviceId, staleTime: Infinity },
+    ),
   );
   const { addonPrice, addonDuration, getEmployee, totalPrice, totalDuration } =
     useCartCalculations(service, cart);
@@ -91,7 +92,7 @@ const CartItem = ({ cart }: { cart: Cart }) => {
           </p>
           <p className="text-sidebar-foreground/50 text-xs flex items-center justify-end gap-1 mt-1">
             <Clock className="w-3 h-3" />
-            {totalDuration}
+            {formatDuration(totalDuration)}
           </p>
         </div>
       </div>

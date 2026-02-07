@@ -7,9 +7,8 @@ import { STEPS } from "./steps";
 import Footer from "./footer";
 
 const Widget = () => {
-
   return (
-    <div className="h-svh w-full flex flex-col"> 
+    <div className="h-svh w-full flex flex-col">
       <Header />
       <WidgetBody />
     </div>
@@ -17,12 +16,15 @@ const Widget = () => {
 };
 
 const WidgetBody = () => {
-  const {step} = useCheckoutStore()
+  const { step } = useCheckoutStore();
   // if (!!error) return <Error />;
-  const currentStep = React.useMemo(() => STEPS.find(v => v.id === step), [step]);
+  const currentStep = React.useMemo(
+    () => STEPS.find((v) => v.id === step),
+    [step],
+  );
 
-  if(!currentStep) return undefined
- 
+  if (!currentStep) return null;
+
   return (
     <div className="overflow-y-auto flex flex-1 p-6">
       <div className="space-y-6 h-full flex w-full flex-col animate-in fade-in slide-in-from-right-4 duration-500">

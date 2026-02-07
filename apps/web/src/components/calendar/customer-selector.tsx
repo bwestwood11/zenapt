@@ -15,7 +15,11 @@ import {
   CommandList,
 } from "../ui/command";
 import { cn } from "@/lib/utils";
-import type { Customer } from "../../../../server/prisma/generated/client";
+import type { inferRouterOutputs } from "@trpc/server";
+import type { AppRouter } from "../../../../server/src/routers";
+
+type Customer =
+  inferRouterOutputs<AppRouter>["appointment"]["getCustomersForAppointment"]["customers"][number];
 
 interface CustomerSelectorProps {
   locationId: string;
@@ -83,9 +87,7 @@ export const CustomerSelector = ({
             <div className="flex items-center gap-2">
               <User className="size-4 text-muted-foreground" />
               {selectedCustomer ? (
-                <span>
-                  {selectedCustomer.firstName} {selectedCustomer.lastName}
-                </span>
+                <span>{selectedCustomer.user.name}</span>
               ) : (
                 <span className="text-muted-foreground">
                   Select a customer...
@@ -125,7 +127,7 @@ export const CustomerSelector = ({
                 {customers.map((customer) => (
                   <CommandItem
                     key={customer.id}
-                    value={`${customer.firstName} ${customer.lastName} ${customer.email}`}
+                    value={`${customer.user.name} ${customer.user.email}`}
                     onSelect={() => handleSelectCustomer(customer)}
                   >
                     <Check
@@ -138,11 +140,9 @@ export const CustomerSelector = ({
                     />
 
                     <div className="flex flex-col">
-                      <span className="font-medium">
-                        {customer.firstName} {customer.lastName}
-                      </span>
+                      <span className="font-medium">{customer.user.name}</span>
                       <span className="text-xs text-muted-foreground">
-                        {customer.email} · {customer.phoneNumber}
+                        {customer.user.email} · {customer.phoneNumber}
                       </span>
                     </div>
                   </CommandItem>

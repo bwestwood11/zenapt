@@ -5,12 +5,89 @@ import React from "react";
 import { STEPS } from "./steps";
 import { Button } from "../ui/button";
 import { useCheckoutStore } from "./hooks/useStore";
+import { authClient } from "@/lib/auth-client";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { LogOut, Settings } from "lucide-react";
 
+type UserType = "customer" | "guest" | "unauthorized";
+
+const useCustomSession = () => {
+  const session = authClient.useSession();
+
+  // Determine user type based on session data
+  const getUserType = (): UserType => {
+    if (!session?.data?.user) return "guest";
+
+    const user = session.data.user;
+
+    // Check if user is a customer
+    if (user.customer !== null && user.customer !== undefined) {
+      return "customer";
+    }
+
+    // If logged in but not a customer (employee/management), they're unauthorized
+    return "unauthorized";
+  };
+
+  const userType = getUserType();
+
+  return {
+    userType,
+    isCustomer: userType === "customer",
+    isGuest: userType === "guest",
+    isUnauthorized: userType === "unauthorized",
+    data: session?.data || null,
+    isPending: session?.isPending || false,
+    error: session?.error || null,
+  } as const;
+};
 const Header = () => {
-  const {step} = useCheckoutStore()
+  const { step } = useCheckoutStore();
   const currentPageIndex = STEPS.findIndex((v) => v.id === step);
- const currentStep = STEPS.find((v) => v.id === step);
+  const currentStep = STEPS.find((v) => v.id === step);
   const totalSteps = STEPS.length;
+  const session = useCustomSession();
+  const user = session.data?.user;
+  const router = useRouter();
+  const userInitials = user?.name
+    ? user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : (user?.email?.slice(0, 2).toUpperCase() ?? "CU");
+
+  // Show error if user is logged in but not a customer
+  if (session.isUnauthorized) {
+    return (
+      <div className="w-full bg-sidebar border-r border-sidebar-border p-8 flex flex-col">
+        <div className="flex items-center justify-between mb-10">
+          <div className="flex items-center gap-3">
+            <div className="w-7 h-7 bg-primary rounded-md shadow-sm" />
+            <span className="font-semibold text-lg text-foreground">
+              Serenity Medspa
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center justify-center flex-1">
+          <div className="text-center space-y-3">
+            <div className="text-destructive font-semibold text-lg">
+              Access Denied
+            </div>
+            <p className="text-muted-foreground text-sm">
+              This booking portal is for customers only. Please log in with a
+              customer account.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full bg-sidebar border-r border-sidebar-border p-8 flex flex-col">
       {/* Header */}
@@ -21,9 +98,101 @@ const Header = () => {
             Serenity Medspa
           </span>
         </div>
-        <Button variant="ghost" size="icon" className="h-9 w-9 bg-primary/30 rounded-full" >
-          <User className="h-5 w-5" />
-        </Button>
+        {session.isCustomer && user ? (
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                className="group flex items-center gap-3 rounded-full border border-transparent bg-primary/5 px-2 py-1 transition-all hover:border-primary/20 hover:bg-primary/10"
+              >
+                <div className="relative">
+                  <Avatar className="h-9 w-9 ring-2 ring-primary/20 transition-transform group-hover:scale-105">
+                    <AvatarImage
+                      src={user.image ?? ""}
+                      alt={user.name ?? "User"}
+                    />
+                    <AvatarFallback>{userInitials}</AvatarFallback>
+                  </Avatar>
+                  <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-sidebar bg-emerald-500" />
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                    Logged in
+                  </div>
+                  <div className="text-sm font-semibold text-foreground">
+                    {user.name ?? user.email ?? "Customer"}
+                  </div>
+                </div>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-80 p-0">
+              <div className="overflow-hidden rounded-xl border border-border/60 bg-popover shadow-xl">
+                <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-4">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-12 w-12 ring-2 ring-primary/20">
+                      <AvatarImage
+                        src={user.image ?? ""}
+                        alt={user.name ?? "User"}
+                      />
+                      <AvatarFallback>{userInitials}</AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold truncate">
+                        {user.name ?? "Customer"}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {user.email}
+                      </p>
+                      <span className="mt-2 inline-flex items-center rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.2em] text-emerald-600">
+                        Customer
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="border-t border-border/60 p-3">
+                  <div className="grid grid-cols-1 gap-2">
+                    <Button
+                      asChild
+                      size="sm"
+                      variant="outline"
+                      className="justify-start"
+                    >
+                      <Link href="/dashboard/manage-account">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Manage account
+                      </Link>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="justify-start"
+                      onClick={() => {
+                        authClient.signOut({
+                          fetchOptions: {
+                            onSuccess: () => {
+                              router.push("/");
+                            },
+                          },
+                        });
+                      }}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign out
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        ) : (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 bg-primary/30 rounded-full"
+          >
+            <User className="h-5 w-5" />
+          </Button>
+        )}
       </div>
 
       {/* Progress */}

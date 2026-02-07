@@ -4,12 +4,19 @@ import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { useCheckoutStore } from "./hooks/useStore";
 import { ErrorWidget } from "./error";
+import { authClient } from "@/lib/auth-client";
 
 const Footer = () => {
   const { handleNext, step, handleBack, hasPreviousStep } = useCheckoutStore();
+  const session = authClient.useSession();
   const [showError, setShowError] = useState(false);
   const formErrors = [];
   const isPreviousStepDisabled = !hasPreviousStep();
+
+  // Check if user is a customer (authenticated for booking purposes)
+  const isAuthenticated =
+    session?.data?.user?.customer !== null &&
+    session?.data?.user?.customer !== undefined;
   // const hasStepError = currentStepFields.some(
   //   (field) => formErrors[field as keyof WidgetDataType]
   // );
@@ -36,7 +43,7 @@ const Footer = () => {
     //   setShowError(true);
     // }
 
-    handleNext();
+    handleNext(isAuthenticated);
   };
 
   // const isBackDisabled = !hasPreviousPage;

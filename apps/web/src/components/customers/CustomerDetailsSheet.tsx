@@ -69,7 +69,7 @@ export function CustomerDetailsSheet({
   const isLoading = detailsLoading || analyticsLoading;
 
   const handleEmailClick = () => {
-    const email = customerDetails?.email || customerEmail;
+    const email = customerDetails?.user.email || customerEmail;
     if (email) {
       window.location.href = `mailto:${email}`;
     }
@@ -116,8 +116,8 @@ export function CustomerDetailsSheet({
                 ) : (
                   <>
                     <h2 className="text-xl font-semibold">
-                      {customerDetails?.firstName && customerDetails?.lastName
-                        ? `${customerDetails.firstName} ${customerDetails.lastName}`
+                      {customerDetails?.user.name
+                        ? customerDetails.user.name
                         : customerName || "N/A"}
                     </h2>
                     <p className="text-sm text-muted-foreground mt-1">
@@ -134,13 +134,13 @@ export function CustomerDetailsSheet({
                 size="sm"
                 onClick={handleEmailClick}
                 disabled={
-                  !customerDetails?.email &&
+                  !customerDetails?.user.email &&
                   (!customerEmail || customerEmail === "N/A")
                 }
                 className="flex items-center gap-2"
               >
                 <Mail className="h-4 w-4" />
-                {customerDetails?.email || customerEmail || "No email"}
+                {customerDetails?.user.email || customerEmail || "No email"}
               </Button>
               <Button
                 variant="outline"
@@ -330,8 +330,8 @@ export function CustomerDetailsSheet({
                       <Skeleton className="h-4 w-48" />
                     ) : (
                       <p className="text-sm font-medium">
-                        {customerDetails?.firstName && customerDetails?.lastName
-                          ? `${customerDetails.firstName} ${customerDetails.lastName}`
+                        {customerDetails?.user.name
+                          ? customerDetails.user.name
                           : "N/A"}
                       </p>
                     )}
@@ -348,7 +348,7 @@ export function CustomerDetailsSheet({
                       <Skeleton className="h-4 w-48" />
                     ) : (
                       <p className="text-sm font-medium">
-                        {customerDetails?.email || "N/A"}
+                        {customerDetails?.user.email || "N/A"}
                       </p>
                     )}
                   </div>

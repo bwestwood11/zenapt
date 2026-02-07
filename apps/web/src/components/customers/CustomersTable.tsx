@@ -32,9 +32,8 @@ interface TableContentProps {
   customers:
     | Array<{
         id: string;
-        firstName: string;
-        email: string | null;
         phoneNumber: string | null;
+        user: { name: string | null; email: string | null } | null;
       }>
     | undefined;
   limit: number;
@@ -136,11 +135,11 @@ function TableContent({
               onClick={() => onCustomerClick(customer.id)}
               className="text-left hover:underline hover:text-primary transition-colors cursor-pointer"
             >
-              {customer.firstName}
+              {customer.user?.name ?? "N/A"}
             </button>
           </TableCell>
           <TableCell className="text-muted-foreground">
-            {customer.email ?? "N/A"}
+            {customer.user?.email ?? "N/A"}
           </TableCell>
           <TableCell className="text-muted-foreground">
             {customer.phoneNumber ?? "N/A"}
@@ -266,8 +265,8 @@ export function CustomersTable({ locationId }: CustomersTableProps) {
       <CustomerDetailsSheet
         customerId={selectedCustomerId}
         locationId={locationId}
-        customerName={selectedCustomer?.firstName}
-        customerEmail={selectedCustomer?.email ?? undefined}
+        customerName={selectedCustomer?.user?.name}
+        customerEmail={selectedCustomer?.user?.email ?? undefined}
         customerPhone={selectedCustomer?.phoneNumber ?? undefined}
         isOpen={selectedCustomerId !== null}
         onClose={handleCloseSheet}

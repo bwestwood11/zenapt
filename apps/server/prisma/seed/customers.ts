@@ -1,18 +1,27 @@
 import prisma from "..";
 import { Prisma } from "../generated/client";
+import crypto from "node:crypto";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 export async function createCustomers() {
-  const dummyCustomers = new Array(100).fill(undefined).map((_, index) => ({
-    firstName: `Customer${Math.floor(Math.random() * 1000)}`,
-    lastName: `Test${Math.floor(Math.random() * 1000)}`,
-    email: `customer${(Math.floor(Math.random() * 1000) + 1) * index}@example.com`,
+  const now = new Date();
+  const users = new Array(100).fill(undefined).map((_, index) => ({
+    id: crypto.randomUUID(),
+    name: `Customer ${index + 1}`,
+    email: `customer${index + 1}@example.com`,
+    emailVerified: false,
+    createdAt: now,
+    updatedAt: now,
+  })) satisfies Prisma.UserCreateManyInput[];
+
+  const customers = users.map((user) => ({
+    userId: user.id,
     phoneNumber: `555-010${Math.floor(Math.random() * 90 + 10)}`,
-    stripeCustomerId: `cus_${Math.random().toString(36).substring(2, 15)}`,
-    locationId: "cmhc4md0j0001xrrw7il1cnre",
+    stripeCustomerId: `cus_${crypto.randomUUID().replace(/-/g, "").slice(0, 14)}`,
   })) satisfies Prisma.CustomerCreateManyInput[];
 
-  await prisma.customer.createMany({ data: dummyCustomers });
+  await prisma.user.createMany({ data: users });
+  await prisma.customer.createMany({ data: customers });
 }

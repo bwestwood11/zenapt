@@ -14,7 +14,6 @@ import type { Employee } from "./types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { Sparkles } from "lucide-react";
-import type { Customer } from "../../../../server/prisma/generated/client";
 import { AvailableTimesSection } from "./available-times-section";
 import { CustomerSelector } from "./customer-selector";
 import { ServiceSelector } from "./service-selector";
@@ -34,6 +33,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
+import type { inferRouterOutputs } from "@trpc/server";
+import type { AppRouter } from "../../../../server/src/routers";
 
 type TimingMode = "available" | "custom";
 
@@ -54,7 +55,8 @@ const formatDuration = (minutes: number): string => {
   }
   return `${hours}h ${remainingMinutes}min`;
 };
-
+type Customer =
+  inferRouterOutputs<AppRouter>["appointment"]["getCustomersForAppointment"]["customers"][number];
 export const AddAppointmentDialog = ({
   employees,
   locationId,
@@ -543,7 +545,7 @@ export const AddAppointmentDialog = ({
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Customer</span>
                     <span className="font-medium">
-                      {selectedCustomer?.firstName} {selectedCustomer?.lastName}
+                      {selectedCustomer?.user.name}
                     </span>
                   </div>
                   <div className="flex justify-between">

@@ -322,14 +322,9 @@ const CalendarProvider = ({
           end: dateToLocalMinutes(new Date(appointment.endTime)),
           bufferTime: appointment.bufferTime,
           prepTime: appointment.prepTime,
-          title:
-            appointment.customer.firstName +
-            " " +
-            appointment.customer.lastName,
-          customerName:
-            appointment.customer.firstName +
-            " " +
-            appointment.customer.lastName,
+          title: appointment.customer.name,
+
+          customerName: appointment.customer.name,
           serviceNames: appointment.service.map((s) => s.name),
           status: appointment.status,
         });

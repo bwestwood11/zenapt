@@ -9,15 +9,17 @@ import { ChevronDown, ChevronUp, Clock, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useCheckoutStore, useWatchCart } from "../hooks/useStore";
 import { useCartActions, useCartCalculations } from "../hooks/useCart";
+import { formatDuration } from "../utils/format-duration";
 
 // Work on UI, fix colors, filter out unavailable employees, add profile images of employees to add-ons, store add-ons in form data, make sure description of service or add-on is not too long (truncate it)
 
 const ServiceDetails = () => {
   const [addOnsExpanded, setAddOnsExpanded] = React.useState(false);
   const currentCart = useWatchCart();
-  const { data: service } = useQuery(
+  const { data: service, isLoading } = useQuery(
     trpc.public.getServiceDetails.queryOptions(
       { serviceId: currentCart?.serviceId! },
       { enabled: !!currentCart?.serviceId, staleTime: Infinity },
@@ -30,6 +32,7 @@ const ServiceDetails = () => {
     currentCart,
   );
 
+  if (isLoading) return <ServiceDetailsSkeleton />;
   if (!service) return "NOT_FOUND";
 
   return (
@@ -57,7 +60,7 @@ const ServiceDetails = () => {
             {!!currentCart?.addons?.length && (
               <span className="block text-xs text-accent-foreground/70 mt-0.5">
                 {currentCart.addons.length} selected • +${addonPrice / 100} +
-                {addonDuration} min
+                {formatDuration(addonDuration)}
               </span>
             )}
           </span>
@@ -116,7 +119,7 @@ const ServiceDetails = () => {
                         </p>
                         <p className="text-xs text-sidebar-foreground/50 flex items-center justify-end gap-1">
                           <Clock className="w-3 h-3" />
-                          {addOn.incrementalDuration}
+                          {formatDuration(addOn.incrementalDuration)}
                         </p>
 
                         <div className="*:data-[slot=avatar]:ring-background py-2 -space-x-2 justify-end flex *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
@@ -250,7 +253,7 @@ const ServiceDetails = () => {
                       )}
                     >
                       <Clock className="w-3.5 h-3.5" />
-                      {professional.duration + addonDuration} min
+                      {formatDuration(professional.duration + addonDuration)}
                     </p>
                   </div>
                 </div>
@@ -263,3 +266,46 @@ const ServiceDetails = () => {
 };
 
 export default ServiceDetails;
+
+const ServiceDetailsSkeleton = () => {
+  return (
+    <div className="space-y-6">
+      <div className="space-y-3">
+        <Skeleton className="h-6 w-1/2" />
+        <Skeleton className="h-4 w-4/5" />
+        <Skeleton className="h-4 w-2/3" />
+      </div>
+
+      <div className="space-y-3">
+        <Skeleton className="h-12 w-full rounded-xl" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-1/3" />
+          <Skeleton className="h-3 w-2/3" />
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div
+            key={i}
+            className="w-full rounded-xl border-2 border-sidebar-border bg-sidebar p-4"
+          >
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <Skeleton className="h-12 w-12 rounded-full" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-3 w-20" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};

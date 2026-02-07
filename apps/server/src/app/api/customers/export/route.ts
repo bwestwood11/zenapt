@@ -49,13 +49,23 @@ export async function GET(request: NextRequest) {
           let hasMore = true;
 
           const where: Prisma.CustomerWhereInput = {
-            locationId,
+            location: { some: { id: locationId } },
             ...(search && {
               OR: [
                 {
-                  firstName: { contains: search, mode: "insensitive" as const },
+                  user: {
+                    is: {
+                      name: { contains: search, mode: "insensitive" as const },
+                    },
+                  },
                 },
-                { email: { contains: search, mode: "insensitive" as const } },
+                {
+                  user: {
+                    is: {
+                      email: { contains: search, mode: "insensitive" as const },
+                    },
+                  },
+                },
                 {
                   phoneNumber: {
                     contains: search,
@@ -75,15 +85,18 @@ export async function GET(request: NextRequest) {
               orderBy: { createdAt: "desc" },
               select: {
                 id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
                 phoneNumber: true,
                 dateOfBirth: true,
                 status: true,
                 notes: true,
                 createdAt: true,
                 updatedAt: true,
+                user: {
+                  select: {
+                    name: true,
+                    email: true,
+                  },
+                },
               },
             });
 
@@ -94,11 +107,17 @@ export async function GET(request: NextRequest) {
 
             // Convert each customer to CSV row
             for (const customer of customers) {
+              const [firstName = "", ...lastNameParts] = (
+                customer.user?.name ?? ""
+              )
+                .trim()
+                .split(/\s+/);
+              const lastName = lastNameParts.join(" ");
               const row = [
                 customer.id,
-                escapeCSV(customer.firstName),
-                escapeCSV(customer.lastName),
-                escapeCSV(customer.email || ""),
+                escapeCSV(firstName),
+                escapeCSV(lastName),
+                escapeCSV(customer.user?.email || ""),
                 escapeCSV(customer.phoneNumber || ""),
                 customer.dateOfBirth ? customer.dateOfBirth.toISOString() : "",
                 escapeCSV(customer.status || ""),

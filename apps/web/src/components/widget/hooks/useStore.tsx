@@ -15,6 +15,8 @@ export enum StepIds {
   CART,
   REVIEW,
   CALENDAR,
+  AUTH,
+  PAYMENT,
 }
 
 interface Store {
@@ -37,7 +39,7 @@ interface Store {
       | Partial<CartType>
       | ((prev: Partial<CartType> & { id: string }) => Partial<CartType>),
   ) => void;
-  handleNext: () => void;
+  handleNext: (isAuthenticated?: boolean) => void;
   handleBack: () => void;
   hasPreviousStep: () => boolean;
   addCartItemAndMoveToCart: () => void;
@@ -99,7 +101,7 @@ export const useCheckoutStore = create<Store>((set, get) => ({
       }),
     })),
 
-  handleNext: () => {
+  handleNext: (isAuthenticated?: boolean) => {
     const { step: stepId, cart, cartItemId, location } = get();
 
     const Step = STEPS.find((s) => s.id === stepId);
@@ -178,6 +180,22 @@ export const useCheckoutStore = create<Store>((set, get) => ({
         break;
 
       case StepIds.REVIEW:
+        // Check if user is authenticated before proceeding to payment
+        if (isAuthenticated) {
+          set({ step: StepIds.PAYMENT, cartItemId: null });
+        } else {
+          set({ step: StepIds.AUTH, cartItemId: null });
+        }
+        break;
+
+      case StepIds.AUTH:
+        // After successful login, proceed to payment
+        set({ step: StepIds.PAYMENT, cartItemId: null });
+        break;
+
+      case StepIds.PAYMENT:
+        // Final step - handle payment completion
+        break;
     }
   },
 
@@ -201,6 +219,12 @@ export const useCheckoutStore = create<Store>((set, get) => ({
         console.error("No back");
         break;
 
+      case StepIds.AUTH:
+        set({ step: StepIds.REVIEW });
+        break;
+      case StepIds.PAYMENT:
+        set({ step: StepIds.REVIEW });
+        break;
       case StepIds.SERVICE_GROUP:
         set({ step: StepIds.LOCATION, cartItemId: null });
         break;

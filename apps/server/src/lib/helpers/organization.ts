@@ -15,7 +15,7 @@ type Response =
       role: EmployeeRole;
       locationId?: string;
       organizationId: undefined;
-      locationSlug:string;
+      locationSlug: string;
     };
 
 type MembershipResponse = {
@@ -31,9 +31,14 @@ type MembershipResponse = {
         role: EmployeeRole;
         locationId: string;
         organizationId: string;
-        locationSlug:string;
+        locationSlug: string;
       }[]
     | null;
+  customer: {
+    id: string;
+    phoneNumber: string | null;
+    stripeCustomerId: string | null;
+  } | null;
 };
 
 export async function getOrganizationWithSubscription(organizationId: string) {
@@ -48,7 +53,7 @@ export async function getOrganizationWithSubscription(organizationId: string) {
           status: true,
           currentPeriodEnd: true,
           currentPeriodStart: true,
-          maximumLocations:true
+          maximumLocations: true,
         },
       },
       id: true,
@@ -74,7 +79,7 @@ export const cache__getOrganizationWithSubscription = async (orgId: string) => {
 };
 
 export async function getOrganizationByUserId(
-  userId: string
+  userId: string,
 ): Promise<MembershipResponse | null> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -92,10 +97,17 @@ export async function getOrganizationByUserId(
           location: { select: { organizationId: true, slug: true } }, // because loc → org
         },
       },
+      customer: {
+        select: {
+          id: true,
+          phoneNumber: true,
+          stripeCustomerId: true,
+        },
+      },
     },
   });
 
-  if (!user) return { management: null, employees: null };
+  if (!user) return { management: null, employees: null, customer: null };
 
   return {
     management: user.management[0]?.organizationId
@@ -108,7 +120,14 @@ export async function getOrganizationByUserId(
       role: e.role,
       locationId: e.locationId,
       organizationId: e.location.organizationId,
-      locationSlug: e.location.slug
+      locationSlug: e.location.slug,
     })),
+    customer: user.customer
+      ? {
+          id: user.customer.id,
+          phoneNumber: user.customer.phoneNumber,
+          stripeCustomerId: user.customer.stripeCustomerId,
+        }
+      : null,
   };
 }
