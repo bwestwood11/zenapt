@@ -30,6 +30,7 @@ export type OrganizationMinAggregateOutputType = {
   companySize: string | null
   businessWebsite: string | null
   logo: string | null
+  stripeAccountId: string | null
   slug: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -42,6 +43,7 @@ export type OrganizationMaxAggregateOutputType = {
   companySize: string | null
   businessWebsite: string | null
   logo: string | null
+  stripeAccountId: string | null
   slug: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -54,6 +56,7 @@ export type OrganizationCountAggregateOutputType = {
   companySize: number
   businessWebsite: number
   logo: number
+  stripeAccountId: number
   slug: number
   createdAt: number
   updatedAt: number
@@ -68,6 +71,7 @@ export type OrganizationMinAggregateInputType = {
   companySize?: true
   businessWebsite?: true
   logo?: true
+  stripeAccountId?: true
   slug?: true
   createdAt?: true
   updatedAt?: true
@@ -80,6 +84,7 @@ export type OrganizationMaxAggregateInputType = {
   companySize?: true
   businessWebsite?: true
   logo?: true
+  stripeAccountId?: true
   slug?: true
   createdAt?: true
   updatedAt?: true
@@ -92,6 +97,7 @@ export type OrganizationCountAggregateInputType = {
   companySize?: true
   businessWebsite?: true
   logo?: true
+  stripeAccountId?: true
   slug?: true
   createdAt?: true
   updatedAt?: true
@@ -177,6 +183,7 @@ export type OrganizationGroupByOutputType = {
   companySize: string | null
   businessWebsite: string | null
   logo: string | null
+  stripeAccountId: string | null
   slug: string
   createdAt: Date
   updatedAt: Date
@@ -210,6 +217,7 @@ export type OrganizationWhereInput = {
   companySize?: Prisma.StringNullableFilter<"Organization"> | string | null
   businessWebsite?: Prisma.StringNullableFilter<"Organization"> | string | null
   logo?: Prisma.StringNullableFilter<"Organization"> | string | null
+  stripeAccountId?: Prisma.StringNullableFilter<"Organization"> | string | null
   slug?: Prisma.StringFilter<"Organization"> | string
   createdAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
@@ -221,6 +229,8 @@ export type OrganizationWhereInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationListRelationFilter
   ServiceTerms?: Prisma.ServiceTermsListRelationFilter
   ServiceGroup?: Prisma.ServiceGroupListRelationFilter
+  customers?: Prisma.CustomerListRelationFilter
+  customerAuths?: Prisma.CustomerAuthListRelationFilter
 }
 
 export type OrganizationOrderByWithRelationInput = {
@@ -230,6 +240,7 @@ export type OrganizationOrderByWithRelationInput = {
   companySize?: Prisma.SortOrderInput | Prisma.SortOrder
   businessWebsite?: Prisma.SortOrderInput | Prisma.SortOrder
   logo?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -241,10 +252,13 @@ export type OrganizationOrderByWithRelationInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationOrderByRelationAggregateInput
   ServiceTerms?: Prisma.ServiceTermsOrderByRelationAggregateInput
   ServiceGroup?: Prisma.ServiceGroupOrderByRelationAggregateInput
+  customers?: Prisma.CustomerOrderByRelationAggregateInput
+  customerAuths?: Prisma.CustomerAuthOrderByRelationAggregateInput
 }
 
 export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  stripeAccountId?: string
   slug?: string
   AND?: Prisma.OrganizationWhereInput | Prisma.OrganizationWhereInput[]
   OR?: Prisma.OrganizationWhereInput[]
@@ -264,7 +278,9 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   OrganizationInvitation?: Prisma.OrganizationInvitationListRelationFilter
   ServiceTerms?: Prisma.ServiceTermsListRelationFilter
   ServiceGroup?: Prisma.ServiceGroupListRelationFilter
-}, "id" | "slug">
+  customers?: Prisma.CustomerListRelationFilter
+  customerAuths?: Prisma.CustomerAuthListRelationFilter
+}, "id" | "stripeAccountId" | "slug">
 
 export type OrganizationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -273,6 +289,7 @@ export type OrganizationOrderByWithAggregationInput = {
   companySize?: Prisma.SortOrderInput | Prisma.SortOrder
   businessWebsite?: Prisma.SortOrderInput | Prisma.SortOrder
   logo?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -291,6 +308,7 @@ export type OrganizationScalarWhereWithAggregatesInput = {
   companySize?: Prisma.StringNullableWithAggregatesFilter<"Organization"> | string | null
   businessWebsite?: Prisma.StringNullableWithAggregatesFilter<"Organization"> | string | null
   logo?: Prisma.StringNullableWithAggregatesFilter<"Organization"> | string | null
+  stripeAccountId?: Prisma.StringNullableWithAggregatesFilter<"Organization"> | string | null
   slug?: Prisma.StringWithAggregatesFilter<"Organization"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Organization"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Organization"> | Date | string
@@ -303,6 +321,7 @@ export type OrganizationCreateInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -314,6 +333,8 @@ export type OrganizationCreateInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateInput = {
@@ -323,6 +344,7 @@ export type OrganizationUncheckedCreateInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -334,6 +356,8 @@ export type OrganizationUncheckedCreateInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUpdateInput = {
@@ -343,6 +367,7 @@ export type OrganizationUpdateInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -354,6 +379,8 @@ export type OrganizationUpdateInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateInput = {
@@ -363,6 +390,7 @@ export type OrganizationUncheckedUpdateInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -374,6 +402,8 @@ export type OrganizationUncheckedUpdateInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateManyInput = {
@@ -383,6 +413,7 @@ export type OrganizationCreateManyInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -395,6 +426,7 @@ export type OrganizationUpdateManyMutationInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -407,6 +439,7 @@ export type OrganizationUncheckedUpdateManyInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -424,6 +457,7 @@ export type OrganizationCountOrderByAggregateInput = {
   companySize?: Prisma.SortOrder
   businessWebsite?: Prisma.SortOrder
   logo?: Prisma.SortOrder
+  stripeAccountId?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -436,6 +470,7 @@ export type OrganizationMaxOrderByAggregateInput = {
   companySize?: Prisma.SortOrder
   businessWebsite?: Prisma.SortOrder
   logo?: Prisma.SortOrder
+  stripeAccountId?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -448,6 +483,7 @@ export type OrganizationMinOrderByAggregateInput = {
   companySize?: Prisma.SortOrder
   businessWebsite?: Prisma.SortOrder
   logo?: Prisma.SortOrder
+  stripeAccountId?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -544,6 +580,34 @@ export type OrganizationUpdateOneRequiredWithoutServiceGroupNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutServiceGroupInput, Prisma.OrganizationUpdateWithoutServiceGroupInput>, Prisma.OrganizationUncheckedUpdateWithoutServiceGroupInput>
 }
 
+export type OrganizationCreateNestedOneWithoutCustomersInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCustomersInput, Prisma.OrganizationUncheckedCreateWithoutCustomersInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCustomersInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutCustomersNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCustomersInput, Prisma.OrganizationUncheckedCreateWithoutCustomersInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCustomersInput
+  upsert?: Prisma.OrganizationUpsertWithoutCustomersInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutCustomersInput, Prisma.OrganizationUpdateWithoutCustomersInput>, Prisma.OrganizationUncheckedUpdateWithoutCustomersInput>
+}
+
+export type OrganizationCreateNestedOneWithoutCustomerAuthsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCustomerAuthsInput, Prisma.OrganizationUncheckedCreateWithoutCustomerAuthsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCustomerAuthsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutCustomerAuthsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCustomerAuthsInput, Prisma.OrganizationUncheckedCreateWithoutCustomerAuthsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCustomerAuthsInput
+  upsert?: Prisma.OrganizationUpsertWithoutCustomerAuthsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutCustomerAuthsInput, Prisma.OrganizationUpdateWithoutCustomerAuthsInput>, Prisma.OrganizationUncheckedUpdateWithoutCustomerAuthsInput>
+}
+
 export type OrganizationCreateNestedOneWithoutActivityLogsInput = {
   create?: Prisma.XOR<Prisma.OrganizationCreateWithoutActivityLogsInput, Prisma.OrganizationUncheckedCreateWithoutActivityLogsInput>
   connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutActivityLogsInput
@@ -579,6 +643,7 @@ export type OrganizationCreateWithoutPromoCodesInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -589,6 +654,8 @@ export type OrganizationCreateWithoutPromoCodesInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutPromoCodesInput = {
@@ -598,6 +665,7 @@ export type OrganizationUncheckedCreateWithoutPromoCodesInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -608,6 +676,8 @@ export type OrganizationUncheckedCreateWithoutPromoCodesInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutPromoCodesInput = {
@@ -633,6 +703,7 @@ export type OrganizationUpdateWithoutPromoCodesInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -643,6 +714,8 @@ export type OrganizationUpdateWithoutPromoCodesInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutPromoCodesInput = {
@@ -652,6 +725,7 @@ export type OrganizationUncheckedUpdateWithoutPromoCodesInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -662,6 +736,8 @@ export type OrganizationUncheckedUpdateWithoutPromoCodesInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutSubscriptionInput = {
@@ -671,6 +747,7 @@ export type OrganizationCreateWithoutSubscriptionInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -681,6 +758,8 @@ export type OrganizationCreateWithoutSubscriptionInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutSubscriptionInput = {
@@ -690,6 +769,7 @@ export type OrganizationUncheckedCreateWithoutSubscriptionInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -700,6 +780,8 @@ export type OrganizationUncheckedCreateWithoutSubscriptionInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutSubscriptionInput = {
@@ -725,6 +807,7 @@ export type OrganizationUpdateWithoutSubscriptionInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -735,6 +818,8 @@ export type OrganizationUpdateWithoutSubscriptionInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutSubscriptionInput = {
@@ -744,6 +829,7 @@ export type OrganizationUncheckedUpdateWithoutSubscriptionInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -754,6 +840,8 @@ export type OrganizationUncheckedUpdateWithoutSubscriptionInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutManagementInput = {
@@ -763,6 +851,7 @@ export type OrganizationCreateWithoutManagementInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -773,6 +862,8 @@ export type OrganizationCreateWithoutManagementInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutManagementInput = {
@@ -782,6 +873,7 @@ export type OrganizationUncheckedCreateWithoutManagementInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -792,6 +884,8 @@ export type OrganizationUncheckedCreateWithoutManagementInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutManagementInput = {
@@ -817,6 +911,7 @@ export type OrganizationUpdateWithoutManagementInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -827,6 +922,8 @@ export type OrganizationUpdateWithoutManagementInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutManagementInput = {
@@ -836,6 +933,7 @@ export type OrganizationUncheckedUpdateWithoutManagementInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -846,6 +944,8 @@ export type OrganizationUncheckedUpdateWithoutManagementInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutLocationsInput = {
@@ -855,6 +955,7 @@ export type OrganizationCreateWithoutLocationsInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -865,6 +966,8 @@ export type OrganizationCreateWithoutLocationsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutLocationsInput = {
@@ -874,6 +977,7 @@ export type OrganizationUncheckedCreateWithoutLocationsInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -884,6 +988,8 @@ export type OrganizationUncheckedCreateWithoutLocationsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutLocationsInput = {
@@ -909,6 +1015,7 @@ export type OrganizationUpdateWithoutLocationsInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -919,6 +1026,8 @@ export type OrganizationUpdateWithoutLocationsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutLocationsInput = {
@@ -928,6 +1037,7 @@ export type OrganizationUncheckedUpdateWithoutLocationsInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -938,6 +1048,8 @@ export type OrganizationUncheckedUpdateWithoutLocationsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutServiceTermsInput = {
@@ -947,6 +1059,7 @@ export type OrganizationCreateWithoutServiceTermsInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -957,6 +1070,8 @@ export type OrganizationCreateWithoutServiceTermsInput = {
   PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutServiceTermsInput = {
@@ -966,6 +1081,7 @@ export type OrganizationUncheckedCreateWithoutServiceTermsInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -976,6 +1092,8 @@ export type OrganizationUncheckedCreateWithoutServiceTermsInput = {
   PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutServiceTermsInput = {
@@ -1001,6 +1119,7 @@ export type OrganizationUpdateWithoutServiceTermsInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1011,6 +1130,8 @@ export type OrganizationUpdateWithoutServiceTermsInput = {
   PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutServiceTermsInput = {
@@ -1020,6 +1141,7 @@ export type OrganizationUncheckedUpdateWithoutServiceTermsInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1030,6 +1152,8 @@ export type OrganizationUncheckedUpdateWithoutServiceTermsInput = {
   PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutServiceGroupInput = {
@@ -1039,6 +1163,7 @@ export type OrganizationCreateWithoutServiceGroupInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1049,6 +1174,8 @@ export type OrganizationCreateWithoutServiceGroupInput = {
   PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutServiceGroupInput = {
@@ -1058,6 +1185,7 @@ export type OrganizationUncheckedCreateWithoutServiceGroupInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1068,6 +1196,8 @@ export type OrganizationUncheckedCreateWithoutServiceGroupInput = {
   PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutServiceGroupInput = {
@@ -1093,6 +1223,7 @@ export type OrganizationUpdateWithoutServiceGroupInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1103,6 +1234,8 @@ export type OrganizationUpdateWithoutServiceGroupInput = {
   PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutServiceGroupInput = {
@@ -1112,6 +1245,7 @@ export type OrganizationUncheckedUpdateWithoutServiceGroupInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1122,6 +1256,216 @@ export type OrganizationUncheckedUpdateWithoutServiceGroupInput = {
   PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutCustomersInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  stripeAccountId?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutCustomersInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  stripeAccountId?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationUncheckedCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutCustomersInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCustomersInput, Prisma.OrganizationUncheckedCreateWithoutCustomersInput>
+}
+
+export type OrganizationUpsertWithoutCustomersInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutCustomersInput, Prisma.OrganizationUncheckedUpdateWithoutCustomersInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCustomersInput, Prisma.OrganizationUncheckedCreateWithoutCustomersInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutCustomersInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutCustomersInput, Prisma.OrganizationUncheckedUpdateWithoutCustomersInput>
+}
+
+export type OrganizationUpdateWithoutCustomersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutCustomersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutCustomerAuthsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  stripeAccountId?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutCustomerAuthsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  stripeAccountId?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationUncheckedCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutCustomerAuthsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCustomerAuthsInput, Prisma.OrganizationUncheckedCreateWithoutCustomerAuthsInput>
+}
+
+export type OrganizationUpsertWithoutCustomerAuthsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutCustomerAuthsInput, Prisma.OrganizationUncheckedUpdateWithoutCustomerAuthsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCustomerAuthsInput, Prisma.OrganizationUncheckedCreateWithoutCustomerAuthsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutCustomerAuthsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutCustomerAuthsInput, Prisma.OrganizationUncheckedUpdateWithoutCustomerAuthsInput>
+}
+
+export type OrganizationUpdateWithoutCustomerAuthsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutCustomerAuthsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutActivityLogsInput = {
@@ -1131,6 +1475,7 @@ export type OrganizationCreateWithoutActivityLogsInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1141,6 +1486,8 @@ export type OrganizationCreateWithoutActivityLogsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutActivityLogsInput = {
@@ -1150,6 +1497,7 @@ export type OrganizationUncheckedCreateWithoutActivityLogsInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1160,6 +1508,8 @@ export type OrganizationUncheckedCreateWithoutActivityLogsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutActivityLogsInput = {
@@ -1185,6 +1535,7 @@ export type OrganizationUpdateWithoutActivityLogsInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1195,6 +1546,8 @@ export type OrganizationUpdateWithoutActivityLogsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutActivityLogsInput = {
@@ -1204,6 +1557,7 @@ export type OrganizationUncheckedUpdateWithoutActivityLogsInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1214,6 +1568,8 @@ export type OrganizationUncheckedUpdateWithoutActivityLogsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutOrganizationInvitationInput = {
@@ -1223,6 +1579,7 @@ export type OrganizationCreateWithoutOrganizationInvitationInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1233,6 +1590,8 @@ export type OrganizationCreateWithoutOrganizationInvitationInput = {
   PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutOrganizationInvitationInput = {
@@ -1242,6 +1601,7 @@ export type OrganizationUncheckedCreateWithoutOrganizationInvitationInput = {
   companySize?: string | null
   businessWebsite?: string | null
   logo?: string | null
+  stripeAccountId?: string | null
   slug: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1252,6 +1612,8 @@ export type OrganizationUncheckedCreateWithoutOrganizationInvitationInput = {
   PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutOrganizationInvitationInput = {
@@ -1277,6 +1639,7 @@ export type OrganizationUpdateWithoutOrganizationInvitationInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1287,6 +1650,8 @@ export type OrganizationUpdateWithoutOrganizationInvitationInput = {
   PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutOrganizationInvitationInput = {
@@ -1296,6 +1661,7 @@ export type OrganizationUncheckedUpdateWithoutOrganizationInvitationInput = {
   companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1306,6 +1672,8 @@ export type OrganizationUncheckedUpdateWithoutOrganizationInvitationInput = {
   PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 
@@ -1321,6 +1689,8 @@ export type OrganizationCountOutputType = {
   OrganizationInvitation: number
   ServiceTerms: number
   ServiceGroup: number
+  customers: number
+  customerAuths: number
 }
 
 export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1331,6 +1701,8 @@ export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Exte
   OrganizationInvitation?: boolean | OrganizationCountOutputTypeCountOrganizationInvitationArgs
   ServiceTerms?: boolean | OrganizationCountOutputTypeCountServiceTermsArgs
   ServiceGroup?: boolean | OrganizationCountOutputTypeCountServiceGroupArgs
+  customers?: boolean | OrganizationCountOutputTypeCountCustomersArgs
+  customerAuths?: boolean | OrganizationCountOutputTypeCountCustomerAuthsArgs
 }
 
 /**
@@ -1392,6 +1764,20 @@ export type OrganizationCountOutputTypeCountServiceGroupArgs<ExtArgs extends run
   where?: Prisma.ServiceGroupWhereInput
 }
 
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountCustomersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CustomerWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountCustomerAuthsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CustomerAuthWhereInput
+}
+
 
 export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1400,6 +1786,7 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   companySize?: boolean
   businessWebsite?: boolean
   logo?: boolean
+  stripeAccountId?: boolean
   slug?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1411,6 +1798,8 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   OrganizationInvitation?: boolean | Prisma.Organization$OrganizationInvitationArgs<ExtArgs>
   ServiceTerms?: boolean | Prisma.Organization$ServiceTermsArgs<ExtArgs>
   ServiceGroup?: boolean | Prisma.Organization$ServiceGroupArgs<ExtArgs>
+  customers?: boolean | Prisma.Organization$customersArgs<ExtArgs>
+  customerAuths?: boolean | Prisma.Organization$customerAuthsArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["organization"]>
 
@@ -1421,6 +1810,7 @@ export type OrganizationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   companySize?: boolean
   businessWebsite?: boolean
   logo?: boolean
+  stripeAccountId?: boolean
   slug?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1433,6 +1823,7 @@ export type OrganizationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   companySize?: boolean
   businessWebsite?: boolean
   logo?: boolean
+  stripeAccountId?: boolean
   slug?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1445,12 +1836,13 @@ export type OrganizationSelectScalar = {
   companySize?: boolean
   businessWebsite?: boolean
   logo?: boolean
+  stripeAccountId?: boolean
   slug?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OrganizationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "companySize" | "businessWebsite" | "logo" | "slug" | "createdAt" | "updatedAt", ExtArgs["result"]["organization"]>
+export type OrganizationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "companySize" | "businessWebsite" | "logo" | "stripeAccountId" | "slug" | "createdAt" | "updatedAt", ExtArgs["result"]["organization"]>
 export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   management?: boolean | Prisma.Organization$managementArgs<ExtArgs>
   subscription?: boolean | Prisma.Organization$subscriptionArgs<ExtArgs>
@@ -1460,6 +1852,8 @@ export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   OrganizationInvitation?: boolean | Prisma.Organization$OrganizationInvitationArgs<ExtArgs>
   ServiceTerms?: boolean | Prisma.Organization$ServiceTermsArgs<ExtArgs>
   ServiceGroup?: boolean | Prisma.Organization$ServiceGroupArgs<ExtArgs>
+  customers?: boolean | Prisma.Organization$customersArgs<ExtArgs>
+  customerAuths?: boolean | Prisma.Organization$customerAuthsArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1476,6 +1870,8 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     OrganizationInvitation: Prisma.$OrganizationInvitationPayload<ExtArgs>[]
     ServiceTerms: Prisma.$ServiceTermsPayload<ExtArgs>[]
     ServiceGroup: Prisma.$ServiceGroupPayload<ExtArgs>[]
+    customers: Prisma.$CustomerPayload<ExtArgs>[]
+    customerAuths: Prisma.$CustomerAuthPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1484,6 +1880,7 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     companySize: string | null
     businessWebsite: string | null
     logo: string | null
+    stripeAccountId: string | null
     slug: string
     createdAt: Date
     updatedAt: Date
@@ -1889,6 +2286,8 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   OrganizationInvitation<T extends Prisma.Organization$OrganizationInvitationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$OrganizationInvitationArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ServiceTerms<T extends Prisma.Organization$ServiceTermsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$ServiceTermsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceTermsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ServiceGroup<T extends Prisma.Organization$ServiceGroupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$ServiceGroupArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  customers<T extends Prisma.Organization$customersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$customersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  customerAuths<T extends Prisma.Organization$customerAuthsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$customerAuthsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerAuthPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1924,6 +2323,7 @@ export interface OrganizationFieldRefs {
   readonly companySize: Prisma.FieldRef<"Organization", 'String'>
   readonly businessWebsite: Prisma.FieldRef<"Organization", 'String'>
   readonly logo: Prisma.FieldRef<"Organization", 'String'>
+  readonly stripeAccountId: Prisma.FieldRef<"Organization", 'String'>
   readonly slug: Prisma.FieldRef<"Organization", 'String'>
   readonly createdAt: Prisma.FieldRef<"Organization", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Organization", 'DateTime'>
@@ -2499,6 +2899,54 @@ export type Organization$ServiceGroupArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.ServiceGroupScalarFieldEnum | Prisma.ServiceGroupScalarFieldEnum[]
+}
+
+/**
+ * Organization.customers
+ */
+export type Organization$customersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Customer
+   */
+  select?: Prisma.CustomerSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Customer
+   */
+  omit?: Prisma.CustomerOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomerInclude<ExtArgs> | null
+  where?: Prisma.CustomerWhereInput
+  orderBy?: Prisma.CustomerOrderByWithRelationInput | Prisma.CustomerOrderByWithRelationInput[]
+  cursor?: Prisma.CustomerWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CustomerScalarFieldEnum | Prisma.CustomerScalarFieldEnum[]
+}
+
+/**
+ * Organization.customerAuths
+ */
+export type Organization$customerAuthsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CustomerAuth
+   */
+  select?: Prisma.CustomerAuthSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CustomerAuth
+   */
+  omit?: Prisma.CustomerAuthOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomerAuthInclude<ExtArgs> | null
+  where?: Prisma.CustomerAuthWhereInput
+  orderBy?: Prisma.CustomerAuthOrderByWithRelationInput | Prisma.CustomerAuthOrderByWithRelationInput[]
+  cursor?: Prisma.CustomerAuthWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CustomerAuthScalarFieldEnum | Prisma.CustomerAuthScalarFieldEnum[]
 }
 
 /**

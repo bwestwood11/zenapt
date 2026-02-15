@@ -2,6 +2,8 @@ import { protectedProcedure, router } from "../lib/trpc";
 import { adminRouter } from "./admin";
 import { appointmentRouter } from "./appointment";
 import { authRouter } from "./auth";
+import { customerAuthRouter } from "./customer-auth";
+import { customerPaymentsRouter } from "./customer-payments";
 import { customerRouter } from "./customers";
 import { invitationRouter } from "./invitations";
 import { locationRouter } from "./location";
@@ -20,7 +22,9 @@ export const appRouter = router({
   admin: adminRouter,
   marketing: marketingRouter,
   auth: authRouter,
+  customerAuth: customerAuthRouter,
   organization: organizationRouter,
+  customerPayments: customerPaymentsRouter,
   payments: paymentRouter,
   permissions: permissionRouter,
   location: locationRouter,
@@ -29,7 +33,7 @@ export const appRouter = router({
   logs: logsRouter,
   public: publicRouter,
   appointment: appointmentRouter,
-  customers: customerRouter
+  customers: customerRouter,
 });
 
 export type AppRouter = typeof appRouter;

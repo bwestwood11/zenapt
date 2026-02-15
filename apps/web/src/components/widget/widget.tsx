@@ -5,13 +5,22 @@ import Header from "./header";
 import { useCheckoutStore } from "./hooks/useStore";
 import { STEPS } from "./steps";
 import Footer from "./footer";
+import { OrganizationProvider } from "./hooks/useOrganization";
 
-const Widget = () => {
+type WidgetProps = {
+  orgId: string;
+};
+
+
+
+const Widget = ({ orgId }: WidgetProps) => {
   return (
-    <div className="h-svh w-full flex flex-col">
-      <Header />
-      <WidgetBody />
-    </div>
+    <OrganizationProvider orgId={orgId}>
+      <div className="h-svh w-full flex flex-col" data-org-id={orgId}>
+        <Header />
+        <WidgetBody />
+      </div>
+    </OrganizationProvider>
   );
 };
 

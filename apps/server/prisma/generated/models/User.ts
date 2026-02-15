@@ -33,7 +33,6 @@ export type UserMinAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   isTempPassword: boolean | null
-  customerId: string | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -46,7 +45,6 @@ export type UserMaxAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   isTempPassword: boolean | null
-  customerId: string | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -59,7 +57,6 @@ export type UserCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   isTempPassword: number
-  customerId: number
   _all: number
 }
 
@@ -74,7 +71,6 @@ export type UserMinAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   isTempPassword?: true
-  customerId?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -87,7 +83,6 @@ export type UserMaxAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   isTempPassword?: true
-  customerId?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -100,7 +95,6 @@ export type UserCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   isTempPassword?: true
-  customerId?: true
   _all?: true
 }
 
@@ -186,7 +180,6 @@ export type UserGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   isTempPassword: boolean
-  customerId: string | null
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
@@ -220,13 +213,13 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   isTempPassword?: Prisma.BoolFilter<"User"> | boolean
-  customerId?: Prisma.StringNullableFilter<"User"> | string | null
   sessions?: Prisma.SessionListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
   management?: Prisma.ManagementMembershipListRelationFilter
   locationEmployees?: Prisma.LocationEmployeeListRelationFilter
-  customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
+  customer?: Prisma.CustomerListRelationFilter
   AuditLog?: Prisma.ActivityLogListRelationFilter
+  customerAuths?: Prisma.CustomerAuthListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -239,19 +232,18 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isTempPassword?: Prisma.SortOrder
-  customerId?: Prisma.SortOrderInput | Prisma.SortOrder
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   accounts?: Prisma.AccountOrderByRelationAggregateInput
   management?: Prisma.ManagementMembershipOrderByRelationAggregateInput
   locationEmployees?: Prisma.LocationEmployeeOrderByRelationAggregateInput
-  customer?: Prisma.CustomerOrderByWithRelationInput
+  customer?: Prisma.CustomerOrderByRelationAggregateInput
   AuditLog?: Prisma.ActivityLogOrderByRelationAggregateInput
+  customerAuths?: Prisma.CustomerAuthOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   email?: string
-  customerId?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
@@ -266,9 +258,10 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   accounts?: Prisma.AccountListRelationFilter
   management?: Prisma.ManagementMembershipListRelationFilter
   locationEmployees?: Prisma.LocationEmployeeListRelationFilter
-  customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
+  customer?: Prisma.CustomerListRelationFilter
   AuditLog?: Prisma.ActivityLogListRelationFilter
-}, "id" | "customerId" | "email">
+  customerAuths?: Prisma.CustomerAuthListRelationFilter
+}, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -280,7 +273,6 @@ export type UserOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isTempPassword?: Prisma.SortOrder
-  customerId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
@@ -299,7 +291,6 @@ export type UserScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   isTempPassword?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
-  customerId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
 }
 
 export type UserCreateInput = {
@@ -312,13 +303,13 @@ export type UserCreateInput = {
   createdAt: Date | string
   updatedAt: Date | string
   isTempPassword?: boolean
-  customerId?: string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeCreateNestedManyWithoutUserInput
-  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
+  customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -331,13 +322,13 @@ export type UserUncheckedCreateInput = {
   createdAt: Date | string
   updatedAt: Date | string
   isTempPassword?: boolean
-  customerId?: string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutUserInput
-  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
+  customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -350,13 +341,13 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUpdateManyWithoutUserNestedInput
-  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
+  customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -369,13 +360,13 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutUserNestedInput
-  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
+  customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -388,7 +379,6 @@ export type UserCreateManyInput = {
   createdAt: Date | string
   updatedAt: Date | string
   isTempPassword?: boolean
-  customerId?: string | null
 }
 
 export type UserUpdateManyMutationInput = {
@@ -401,7 +391,6 @@ export type UserUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -414,7 +403,6 @@ export type UserUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -427,7 +415,6 @@ export type UserCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isTempPassword?: Prisma.SortOrder
-  customerId?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -440,7 +427,6 @@ export type UserMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isTempPassword?: Prisma.SortOrder
-  customerId?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -453,7 +439,6 @@ export type UserMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isTempPassword?: Prisma.SortOrder
-  customerId?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -501,6 +486,20 @@ export type UserUpdateOneRequiredWithoutCustomerNestedInput = {
   upsert?: Prisma.UserUpsertWithoutCustomerInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCustomerInput, Prisma.UserUpdateWithoutCustomerInput>, Prisma.UserUncheckedUpdateWithoutCustomerInput>
+}
+
+export type UserCreateNestedOneWithoutCustomerAuthsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCustomerAuthsInput, Prisma.UserUncheckedCreateWithoutCustomerAuthsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCustomerAuthsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCustomerAuthsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCustomerAuthsInput, Prisma.UserUncheckedCreateWithoutCustomerAuthsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCustomerAuthsInput
+  upsert?: Prisma.UserUpsertWithoutCustomerAuthsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCustomerAuthsInput, Prisma.UserUpdateWithoutCustomerAuthsInput>, Prisma.UserUncheckedUpdateWithoutCustomerAuthsInput>
 }
 
 export type UserCreateNestedOneWithoutAuditLogInput = {
@@ -555,12 +554,12 @@ export type UserCreateWithoutManagementInput = {
   createdAt: Date | string
   updatedAt: Date | string
   isTempPassword?: boolean
-  customerId?: string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeCreateNestedManyWithoutUserInput
-  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
+  customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutManagementInput = {
@@ -573,12 +572,12 @@ export type UserUncheckedCreateWithoutManagementInput = {
   createdAt: Date | string
   updatedAt: Date | string
   isTempPassword?: boolean
-  customerId?: string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutUserInput
-  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
+  customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutManagementInput = {
@@ -607,12 +606,12 @@ export type UserUpdateWithoutManagementInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUpdateManyWithoutUserNestedInput
-  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
+  customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutManagementInput = {
@@ -625,12 +624,12 @@ export type UserUncheckedUpdateWithoutManagementInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutUserNestedInput
-  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
+  customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLocationEmployeesInput = {
@@ -643,12 +642,12 @@ export type UserCreateWithoutLocationEmployeesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   isTempPassword?: boolean
-  customerId?: string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipCreateNestedManyWithoutUserInput
-  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
+  customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLocationEmployeesInput = {
@@ -661,12 +660,12 @@ export type UserUncheckedCreateWithoutLocationEmployeesInput = {
   createdAt: Date | string
   updatedAt: Date | string
   isTempPassword?: boolean
-  customerId?: string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutUserInput
-  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
+  customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLocationEmployeesInput = {
@@ -695,12 +694,12 @@ export type UserUpdateWithoutLocationEmployeesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUpdateManyWithoutUserNestedInput
-  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
+  customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLocationEmployeesInput = {
@@ -713,12 +712,12 @@ export type UserUncheckedUpdateWithoutLocationEmployeesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutUserNestedInput
-  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
+  customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCustomerInput = {
@@ -731,12 +730,12 @@ export type UserCreateWithoutCustomerInput = {
   createdAt: Date | string
   updatedAt: Date | string
   isTempPassword?: boolean
-  customerId?: string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCustomerInput = {
@@ -749,12 +748,12 @@ export type UserUncheckedCreateWithoutCustomerInput = {
   createdAt: Date | string
   updatedAt: Date | string
   isTempPassword?: boolean
-  customerId?: string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCustomerInput = {
@@ -783,12 +782,12 @@ export type UserUpdateWithoutCustomerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCustomerInput = {
@@ -801,11 +800,99 @@ export type UserUncheckedUpdateWithoutCustomerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutUserNestedInput
+  AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCustomerAuthsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified: boolean
+  image?: string | null
+  token?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  isTempPassword?: boolean
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  management?: Prisma.ManagementMembershipCreateNestedManyWithoutUserInput
+  locationEmployees?: Prisma.LocationEmployeeCreateNestedManyWithoutUserInput
+  customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
+  AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCustomerAuthsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified: boolean
+  image?: string | null
+  token?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  isTempPassword?: boolean
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutUserInput
+  locationEmployees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutUserInput
+  customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
+  AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCustomerAuthsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCustomerAuthsInput, Prisma.UserUncheckedCreateWithoutCustomerAuthsInput>
+}
+
+export type UserUpsertWithoutCustomerAuthsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCustomerAuthsInput, Prisma.UserUncheckedUpdateWithoutCustomerAuthsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCustomerAuthsInput, Prisma.UserUncheckedCreateWithoutCustomerAuthsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCustomerAuthsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCustomerAuthsInput, Prisma.UserUncheckedUpdateWithoutCustomerAuthsInput>
+}
+
+export type UserUpdateWithoutCustomerAuthsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  management?: Prisma.ManagementMembershipUpdateManyWithoutUserNestedInput
+  locationEmployees?: Prisma.LocationEmployeeUpdateManyWithoutUserNestedInput
+  customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
+  AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCustomerAuthsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutUserNestedInput
+  locationEmployees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutUserNestedInput
+  customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -819,12 +906,12 @@ export type UserCreateWithoutAuditLogInput = {
   createdAt: Date | string
   updatedAt: Date | string
   isTempPassword?: boolean
-  customerId?: string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeCreateNestedManyWithoutUserInput
-  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
+  customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogInput = {
@@ -837,12 +924,12 @@ export type UserUncheckedCreateWithoutAuditLogInput = {
   createdAt: Date | string
   updatedAt: Date | string
   isTempPassword?: boolean
-  customerId?: string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutUserInput
-  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
+  customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogInput = {
@@ -871,12 +958,12 @@ export type UserUpdateWithoutAuditLogInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUpdateManyWithoutUserNestedInput
-  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
+  customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogInput = {
@@ -889,12 +976,12 @@ export type UserUncheckedUpdateWithoutAuditLogInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutUserNestedInput
-  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
+  customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -907,12 +994,12 @@ export type UserCreateWithoutSessionsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   isTempPassword?: boolean
-  customerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeCreateNestedManyWithoutUserInput
-  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
+  customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -925,12 +1012,12 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   isTempPassword?: boolean
-  customerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutUserInput
-  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
+  customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -959,12 +1046,12 @@ export type UserUpdateWithoutSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUpdateManyWithoutUserNestedInput
-  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
+  customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -977,12 +1064,12 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutUserNestedInput
-  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
+  customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -995,12 +1082,12 @@ export type UserCreateWithoutAccountsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   isTempPassword?: boolean
-  customerId?: string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeCreateNestedManyWithoutUserInput
-  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
+  customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -1013,12 +1100,12 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   createdAt: Date | string
   updatedAt: Date | string
   isTempPassword?: boolean
-  customerId?: string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutUserInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutUserInput
-  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
+  customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -1047,12 +1134,12 @@ export type UserUpdateWithoutAccountsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUpdateManyWithoutUserNestedInput
-  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
+  customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -1065,12 +1152,12 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutUserNestedInput
   locationEmployees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutUserNestedInput
-  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
+  customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1083,7 +1170,9 @@ export type UserCountOutputType = {
   accounts: number
   management: number
   locationEmployees: number
+  customer: number
   AuditLog: number
+  customerAuths: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1091,7 +1180,9 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   accounts?: boolean | UserCountOutputTypeCountAccountsArgs
   management?: boolean | UserCountOutputTypeCountManagementArgs
   locationEmployees?: boolean | UserCountOutputTypeCountLocationEmployeesArgs
+  customer?: boolean | UserCountOutputTypeCountCustomerArgs
   AuditLog?: boolean | UserCountOutputTypeCountAuditLogArgs
+  customerAuths?: boolean | UserCountOutputTypeCountCustomerAuthsArgs
 }
 
 /**
@@ -1135,8 +1226,22 @@ export type UserCountOutputTypeCountLocationEmployeesArgs<ExtArgs extends runtim
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountCustomerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CustomerWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountAuditLogArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ActivityLogWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCustomerAuthsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CustomerAuthWhereInput
 }
 
 
@@ -1150,13 +1255,13 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   isTempPassword?: boolean
-  customerId?: boolean
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   management?: boolean | Prisma.User$managementArgs<ExtArgs>
   locationEmployees?: boolean | Prisma.User$locationEmployeesArgs<ExtArgs>
   customer?: boolean | Prisma.User$customerArgs<ExtArgs>
   AuditLog?: boolean | Prisma.User$AuditLogArgs<ExtArgs>
+  customerAuths?: boolean | Prisma.User$customerAuthsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1170,7 +1275,6 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdAt?: boolean
   updatedAt?: boolean
   isTempPassword?: boolean
-  customerId?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1183,7 +1287,6 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdAt?: boolean
   updatedAt?: boolean
   isTempPassword?: boolean
-  customerId?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -1196,10 +1299,9 @@ export type UserSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   isTempPassword?: boolean
-  customerId?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "token" | "createdAt" | "updatedAt" | "isTempPassword" | "customerId", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "token" | "createdAt" | "updatedAt" | "isTempPassword", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
@@ -1207,6 +1309,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   locationEmployees?: boolean | Prisma.User$locationEmployeesArgs<ExtArgs>
   customer?: boolean | Prisma.User$customerArgs<ExtArgs>
   AuditLog?: boolean | Prisma.User$AuditLogArgs<ExtArgs>
+  customerAuths?: boolean | Prisma.User$customerAuthsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1219,8 +1322,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     accounts: Prisma.$AccountPayload<ExtArgs>[]
     management: Prisma.$ManagementMembershipPayload<ExtArgs>[]
     locationEmployees: Prisma.$LocationEmployeePayload<ExtArgs>[]
-    customer: Prisma.$CustomerPayload<ExtArgs> | null
+    customer: Prisma.$CustomerPayload<ExtArgs>[]
     AuditLog: Prisma.$ActivityLogPayload<ExtArgs>[]
+    customerAuths: Prisma.$CustomerAuthPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1232,7 +1336,6 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     createdAt: Date
     updatedAt: Date
     isTempPassword: boolean
-    customerId: string | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1631,8 +1734,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   accounts<T extends Prisma.User$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   management<T extends Prisma.User$managementArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$managementArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ManagementMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   locationEmployees<T extends Prisma.User$locationEmployeesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$locationEmployeesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LocationEmployeePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  customer<T extends Prisma.User$customerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$customerArgs<ExtArgs>>): Prisma.Prisma__CustomerClient<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  customer<T extends Prisma.User$customerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$customerArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   AuditLog<T extends Prisma.User$AuditLogArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$AuditLogArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  customerAuths<T extends Prisma.User$customerAuthsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$customerAuthsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerAuthPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1671,7 +1775,6 @@ export interface UserFieldRefs {
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly isTempPassword: Prisma.FieldRef<"User", 'Boolean'>
-  readonly customerId: Prisma.FieldRef<"User", 'String'>
 }
     
 
@@ -2172,6 +2275,11 @@ export type User$customerArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   include?: Prisma.CustomerInclude<ExtArgs> | null
   where?: Prisma.CustomerWhereInput
+  orderBy?: Prisma.CustomerOrderByWithRelationInput | Prisma.CustomerOrderByWithRelationInput[]
+  cursor?: Prisma.CustomerWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CustomerScalarFieldEnum | Prisma.CustomerScalarFieldEnum[]
 }
 
 /**
@@ -2196,6 +2304,30 @@ export type User$AuditLogArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.ActivityLogScalarFieldEnum | Prisma.ActivityLogScalarFieldEnum[]
+}
+
+/**
+ * User.customerAuths
+ */
+export type User$customerAuthsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CustomerAuth
+   */
+  select?: Prisma.CustomerAuthSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CustomerAuth
+   */
+  omit?: Prisma.CustomerAuthOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomerAuthInclude<ExtArgs> | null
+  where?: Prisma.CustomerAuthWhereInput
+  orderBy?: Prisma.CustomerAuthOrderByWithRelationInput | Prisma.CustomerAuthOrderByWithRelationInput[]
+  cursor?: Prisma.CustomerAuthWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CustomerAuthScalarFieldEnum | Prisma.CustomerAuthScalarFieldEnum[]
 }
 
 /**

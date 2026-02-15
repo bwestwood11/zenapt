@@ -132,6 +132,11 @@ export type EmployeeService = Prisma.EmployeeServiceModel
  */
 export type Customer = Prisma.CustomerModel
 /**
+ * Model CustomerAuth
+ * 
+ */
+export type CustomerAuth = Prisma.CustomerAuthModel
+/**
  * Model CustomerAppointmentPayment
  * 
  */

@@ -45,9 +45,14 @@ const businessSchema = z.object({
 
 type BusinessFormValues = z.infer<typeof businessSchema>;
 
+type OrganizationDetails = BusinessFormValues & {
+  updatedAt: Date;
+  stripeAccountId?: string | null;
+};
+
 export function BusinessProfile() {
   const { data: businessDetails, isLoading } = useQuery(
-    trpc.organization.getOrganizationDetails.queryOptions()
+    trpc.organization.getOrganizationDetails.queryOptions(),
   );
 
   if (isLoading) {
@@ -60,7 +65,7 @@ export function BusinessProfile() {
 
   return (
     <BusinessForm
-      businessDetails={businessDetails}
+      businessDetails={businessDetails as OrganizationDetails}
       businessUpdatedAt={businessDetails.updatedAt}
     />
   );
@@ -95,14 +100,14 @@ function BusinessForm({
   const router = useRouter();
 
   const { mutateAsync: initLogo } = useMutation(
-    trpc.organization.initLogoUpload.mutationOptions()
+    trpc.organization.initLogoUpload.mutationOptions(),
   );
   const { mutateAsync: updateBusiness } = useMutation(
     trpc.organization.updateOrganizationGeneralInfo.mutationOptions({
       onSuccess: (data) => {
         console.log("Business info updated:", data);
       },
-    })
+    }),
   );
 
   const onSubmit = async (values: BusinessFormValues) => {
@@ -139,7 +144,7 @@ function BusinessForm({
       });
 
       // invalidate and force refetch a query
-     await queryClient.refetchQueries({
+      await queryClient.refetchQueries({
         queryKey: trpc.organization.getOrganizationDetails.queryKey(),
       });
 

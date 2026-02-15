@@ -527,7 +527,14 @@ export const appointmentRouter = router({
       const totalPrice =
         employeeServices.reduce((sum, service) => sum + service.price, 0) +
         addOnsPrice;
-
+      console.log({
+        locationEmployeeId,
+        startTime,
+        endTime,
+        locationId,
+        bufferTime: maxBufferTime,
+        prepTime: maxPrepTime,
+      });
       // Check for conflicts
       const hasConflict = await isEditConflictFastFail({
         employeeId: locationEmployeeId,

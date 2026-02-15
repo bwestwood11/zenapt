@@ -15,11 +15,12 @@ export async function createCustomers() {
     createdAt: now,
     updatedAt: now,
   })) satisfies Prisma.UserCreateManyInput[];
-
+  const organization = await prisma.organization.findFirst();
   const customers = users.map((user) => ({
     userId: user.id,
     phoneNumber: `555-010${Math.floor(Math.random() * 90 + 10)}`,
     stripeCustomerId: `cus_${crypto.randomUUID().replace(/-/g, "").slice(0, 14)}`,
+    orgId: organization?.id || "",
   })) satisfies Prisma.CustomerCreateManyInput[];
 
   await prisma.user.createMany({ data: users });

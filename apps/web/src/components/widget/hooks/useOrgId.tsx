@@ -1,3 +1,3 @@
-import { useParams } from "next/navigation";
+import { useOrganization } from "./useOrganization";
 
-export const useOrgId = () => useParams<{orgId:string}>().orgId
+export const useOrgId = () => useOrganization().orgId;

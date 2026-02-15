@@ -5,26 +5,26 @@ import React from "react";
 import { STEPS } from "./steps";
 import { Button } from "../ui/button";
 import { useCheckoutStore } from "./hooks/useStore";
-import { authClient } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut, Settings } from "lucide-react";
+import { useOrganization } from "./hooks/useOrganization";
+import { useCustomerSession } from "./hooks/useCustomerSession";
+import { useMutation } from "@tanstack/react-query";
+import { trpc } from "@/utils/trpc";
 
 type UserType = "customer" | "guest" | "unauthorized";
 
 const useCustomSession = () => {
-  const session = authClient.useSession();
+  const session = useCustomerSession();
 
   // Determine user type based on session data
   const getUserType = (): UserType => {
     if (!session?.data?.user) return "guest";
 
-    const user = session.data.user;
-
-    // Check if user is a customer
-    if (user.customer !== null && user.customer !== undefined) {
+    if (session.data.customer) {
       return "customer";
     }
 
@@ -40,11 +40,13 @@ const useCustomSession = () => {
     isGuest: userType === "guest",
     isUnauthorized: userType === "unauthorized",
     data: session?.data || null,
-    isPending: session?.isPending || false,
+    isPending: session?.isLoading || false,
     error: session?.error || null,
+    refetch: session?.refetch,
   } as const;
 };
 const Header = () => {
+  const organization = useOrganization().organization;
   const { step } = useCheckoutStore();
   const currentPageIndex = STEPS.findIndex((v) => v.id === step);
   const currentStep = STEPS.find((v) => v.id === step);
@@ -52,6 +54,9 @@ const Header = () => {
   const session = useCustomSession();
   const user = session.data?.user;
   const router = useRouter();
+  const { mutateAsync: logout } = useMutation(
+    trpc.customerAuth.logout.mutationOptions(),
+  );
   const userInitials = user?.name
     ? user.name
         .split(" ")
@@ -60,6 +65,15 @@ const Header = () => {
         .slice(0, 2)
         .toUpperCase()
     : (user?.email?.slice(0, 2).toUpperCase() ?? "CU");
+
+  const handleLoginClick = () => {
+    // Get current widget URL to return to after login
+    const returnUrl = window.location.href;
+    window.open(
+      `${window.location.origin}/customer-login?return=${encodeURIComponent(returnUrl)}`,
+      "_blank",
+    );
+  };
 
   // Show error if user is logged in but not a customer
   if (session.isUnauthorized) {
@@ -95,7 +109,7 @@ const Header = () => {
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 bg-primary rounded-md shadow-sm" />
           <span className="font-semibold text-lg text-foreground">
-            Serenity Medspa
+            {organization?.name ?? "Serenity Medspa"}
           </span>
         </div>
         {session.isCustomer && user ? (
@@ -167,12 +181,9 @@ const Header = () => {
                       variant="outline"
                       className="justify-start"
                       onClick={() => {
-                        authClient.signOut({
-                          fetchOptions: {
-                            onSuccess: () => {
-                              router.push("/");
-                            },
-                          },
+                        void logout().then(() => {
+                          session.refetch?.();
+                          router.push("/");
                         });
                       }}
                     >
@@ -188,7 +199,9 @@ const Header = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="h-9 w-9 bg-primary/30 rounded-full"
+            className="h-9 w-9 bg-primary/30 rounded-full hover:bg-primary/50 transition-colors cursor-pointer"
+            onClick={handleLoginClick}
+            title="Sign in to your account"
           >
             <User className="h-5 w-5" />
           </Button>

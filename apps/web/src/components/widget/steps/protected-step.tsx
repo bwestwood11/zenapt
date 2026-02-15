@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { authClient } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
+import { useCustomerSession } from "../hooks/useCustomerSession";
 
 interface ProtectedStepProps {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ export const ProtectedStep: React.FC<ProtectedStepProps> = ({
   children,
   fallback,
 }) => {
-  const session = authClient.useSession();
+  const session = useCustomerSession();
 
   // Force session refresh on mount
   React.useEffect(() => {
@@ -21,15 +21,12 @@ export const ProtectedStep: React.FC<ProtectedStepProps> = ({
       session.refetch();
     };
     refreshSession();
-  }, []);
+  }, [session.refetch]);
 
-  // Check if user is authenticated as a customer
-  const isCustomer =
-    session?.data?.user?.customer !== null &&
-    session?.data?.user?.customer !== undefined;
+  const isCustomer = Boolean(session?.data?.customer);
 
   // Show loading state while checking session
-  if (session?.isPending) {
+  if (session?.isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-4">

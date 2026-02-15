@@ -37,6 +37,41 @@ const getAllLocations = publicProcedure
     }
   });
 
+const getOrganization = publicProcedure
+  .input(z.object({ orgId: z.string().min(2).max(60) }))
+  .query(async ({ input }) => {
+    try {
+      const organization = await prisma.organization.findUnique({
+        where: {
+          id: input.orgId,
+        },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          logo: true,
+          slug: true,
+        },
+      });
+
+      if (!organization) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Organization not found",
+        });
+      }
+
+      return organization;
+    } catch (error) {
+      console.error(error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message:
+          "Something went wrong. Try contacting support or retry after some time",
+      });
+    }
+  });
+
 const getServicesByLocation = publicProcedure
   .input(z.object({ locationId: z.string().min(2).max(60) }))
   .query(async ({ ctx, input }) => {
@@ -186,6 +221,7 @@ const getServiceDetails = publicProcedure
 
 export const publicRouter = router({
   getAllLocations,
+  getOrganization,
   getServicesByLocation,
   getServiceDetails,
 });

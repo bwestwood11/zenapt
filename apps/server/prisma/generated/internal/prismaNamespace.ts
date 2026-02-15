@@ -412,6 +412,7 @@ export const ModelName = {
   ServiceGroup: 'ServiceGroup',
   EmployeeService: 'EmployeeService',
   Customer: 'Customer',
+  CustomerAuth: 'CustomerAuth',
   CustomerAppointmentPayment: 'CustomerAppointmentPayment',
   ActivityLog: 'ActivityLog',
   Session: 'Session',
@@ -435,7 +436,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "admin" | "appointment" | "addOn" | "promoCode" | "scheduleRule" | "scheduleException" | "timeOff" | "appointmentSettings" | "user" | "subscription" | "organization" | "managementMembership" | "location" | "locationEmployee" | "serviceTerms" | "serviceGroup" | "employeeService" | "customer" | "customerAppointmentPayment" | "activityLog" | "session" | "account" | "verification" | "organizationInvitation" | "locationInvitation" | "demoRequest"
+    modelProps: "admin" | "appointment" | "addOn" | "promoCode" | "scheduleRule" | "scheduleException" | "timeOff" | "appointmentSettings" | "user" | "subscription" | "organization" | "managementMembership" | "location" | "locationEmployee" | "serviceTerms" | "serviceGroup" | "employeeService" | "customer" | "customerAuth" | "customerAppointmentPayment" | "activityLog" | "session" | "account" | "verification" | "organizationInvitation" | "locationInvitation" | "demoRequest"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1771,6 +1772,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CustomerAuth: {
+      payload: Prisma.$CustomerAuthPayload<ExtArgs>
+      fields: Prisma.CustomerAuthFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CustomerAuthFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerAuthPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CustomerAuthFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerAuthPayload>
+        }
+        findFirst: {
+          args: Prisma.CustomerAuthFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerAuthPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CustomerAuthFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerAuthPayload>
+        }
+        findMany: {
+          args: Prisma.CustomerAuthFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerAuthPayload>[]
+        }
+        create: {
+          args: Prisma.CustomerAuthCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerAuthPayload>
+        }
+        createMany: {
+          args: Prisma.CustomerAuthCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CustomerAuthCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerAuthPayload>[]
+        }
+        delete: {
+          args: Prisma.CustomerAuthDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerAuthPayload>
+        }
+        update: {
+          args: Prisma.CustomerAuthUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerAuthPayload>
+        }
+        deleteMany: {
+          args: Prisma.CustomerAuthDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CustomerAuthUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CustomerAuthUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerAuthPayload>[]
+        }
+        upsert: {
+          args: Prisma.CustomerAuthUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerAuthPayload>
+        }
+        aggregate: {
+          args: Prisma.CustomerAuthAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCustomerAuth>
+        }
+        groupBy: {
+          args: Prisma.CustomerAuthGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomerAuthGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CustomerAuthCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomerAuthCountAggregateOutputType> | number
+        }
+      }
+    }
     CustomerAppointmentPayment: {
       payload: Prisma.$CustomerAppointmentPaymentPayload<ExtArgs>
       fields: Prisma.CustomerAppointmentPaymentFieldRefs
@@ -2531,8 +2606,7 @@ export const UserScalarFieldEnum = {
   token: 'token',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  isTempPassword: 'isTempPassword',
-  customerId: 'customerId'
+  isTempPassword: 'isTempPassword'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -2571,6 +2645,7 @@ export const OrganizationScalarFieldEnum = {
   companySize: 'companySize',
   businessWebsite: 'businessWebsite',
   logo: 'logo',
+  stripeAccountId: 'stripeAccountId',
   slug: 'slug',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -2673,10 +2748,27 @@ export const CustomerScalarFieldEnum = {
   notes: 'notes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  userId: 'userId'
+  userId: 'userId',
+  orgId: 'orgId'
 } as const
 
 export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum]
+
+
+export const CustomerAuthScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  passwordHash: 'passwordHash',
+  refreshTokenHash: 'refreshTokenHash',
+  refreshTokenExpiresAt: 'refreshTokenExpiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  customerId: 'customerId',
+  userId: 'userId',
+  orgId: 'orgId'
+} as const
+
+export type CustomerAuthScalarFieldEnum = (typeof CustomerAuthScalarFieldEnum)[keyof typeof CustomerAuthScalarFieldEnum]
 
 
 export const CustomerAppointmentPaymentScalarFieldEnum = {
@@ -3076,6 +3168,7 @@ export type GlobalOmitConfig = {
   serviceGroup?: Prisma.ServiceGroupOmit
   employeeService?: Prisma.EmployeeServiceOmit
   customer?: Prisma.CustomerOmit
+  customerAuth?: Prisma.CustomerAuthOmit
   customerAppointmentPayment?: Prisma.CustomerAppointmentPaymentOmit
   activityLog?: Prisma.ActivityLogOmit
   session?: Prisma.SessionOmit

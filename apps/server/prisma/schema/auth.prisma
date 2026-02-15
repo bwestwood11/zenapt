@@ -11,10 +11,10 @@ model User {
   accounts          Account[]
   management        ManagementMembership[]
   locationEmployees LocationEmployee[]
-  customer          Customer?
+  customer          Customer[]
   AuditLog          ActivityLog[]
   isTempPassword    Boolean                @default(false)
-  customerId        String?                @unique
+  customerAuths     CustomerAuth[]
 
   @@unique([email])
   @@map("user")
@@ -60,6 +60,7 @@ model Organization {
   companySize            String?                  @default("1-10")
   businessWebsite        String?
   logo                   String?
+  stripeAccountId        String?                  @unique
   slug                   String                   @unique
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @updatedAt
@@ -71,6 +72,8 @@ model Organization {
   OrganizationInvitation OrganizationInvitation[]
   ServiceTerms           ServiceTerms[]
   ServiceGroup           ServiceGroup[]
+  customers              Customer[]
+  customerAuths          CustomerAuth[]
 }
 
 model ManagementMembership {
@@ -184,7 +187,7 @@ model EmployeeService {
 model Customer {
   id               String                       @id @default(cuid()) @map("_id")
   location         Location[]
-  stripeCustomerId String?                       @unique
+  stripeCustomerId String?                      @unique
   status           String?
   phoneNumber      String?
   dateOfBirth      DateTime?
@@ -193,8 +196,29 @@ model Customer {
   updatedAt        DateTime                     @updatedAt
   appointments     Appointment[]
   customerPayments CustomerAppointmentPayment[]
-  userId           String                       @unique
+  userId           String
   user             User                         @relation(fields: [userId], references: [id])
+  orgId            String
+  organization     Organization                 @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  auth             CustomerAuth?
+
+  @@unique([userId, orgId])
+}
+
+model CustomerAuth {
+  id                    String       @id @default(cuid()) @map("_id")
+  email                 String       @unique
+  passwordHash          String
+  refreshTokenHash      String?
+  refreshTokenExpiresAt DateTime?
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  customerId            String       @unique
+  customer              Customer     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  userId                String
+  user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orgId                 String
+  organization          Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
 
 model CustomerAppointmentPayment {

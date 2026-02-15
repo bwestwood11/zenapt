@@ -38,7 +38,7 @@ type MembershipResponse = {
     id: string;
     phoneNumber: string | null;
     stripeCustomerId: string | null;
-  } | null;
+  }[] | null;
 };
 
 export async function getOrganizationWithSubscription(organizationId: string) {
@@ -122,12 +122,11 @@ export async function getOrganizationByUserId(
       organizationId: e.location.organizationId,
       locationSlug: e.location.slug,
     })),
-    customer: user.customer
-      ? {
-          id: user.customer.id,
-          phoneNumber: user.customer.phoneNumber,
-          stripeCustomerId: user.customer.stripeCustomerId,
-        }
-      : null,
+    customer: user.customer.map((c) => ({
+      id: c.id,
+      phoneNumber: c.phoneNumber,
+      stripeCustomerId: c.stripeCustomerId,
+    })) || null,
   };
 }
+      

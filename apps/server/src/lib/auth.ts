@@ -139,16 +139,9 @@ export const auth = betterAuth({
             }
           }
         } else {
-          // No token means customer signup - create customer record
-          const existingCustomer = await prisma.customer.findUnique({
-            where: { userId },
+          throw new APIError("BAD_REQUEST", {
+            message: "No invitation token provided",
           });
-
-          if (!existingCustomer) {
-            await prisma.customer.create({
-              data: { userId },
-            });
-          }
         }
       } catch (error) {
         console.error("Error creating user record:", error);

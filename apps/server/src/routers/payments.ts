@@ -9,7 +9,6 @@ import Stripe from "stripe";
 import { validateSubscription } from "../lib/subscription/subscription";
 import { revalidateTag } from "next/cache";
 
-
 const initializePayment = protectedProcedure.mutation(async ({ ctx }) => {
   const { session } = ctx;
 
@@ -39,7 +38,7 @@ const getCheckoutSession = protectedProcedure
   .input(
     z.object({
       numberOfLocations: z.number().min(1).max(50).default(1),
-    })
+    }),
   )
   .mutation(async ({ ctx, input }) => {
     const { session } = ctx;
@@ -119,8 +118,8 @@ const getCheckoutSession = protectedProcedure
           stripeCustomerId: customerId,
         },
       });
-      
-      revalidateTag(organization.id)
+
+      revalidateTag(organization.id);
     }
 
     if (!customerId) {
@@ -197,7 +196,7 @@ const getSessionDetails = protectedProcedure
 
     await syncStripeCustomer(sessionCustomer);
 
-    revalidateTag(ctx.session.user.organizationId)
+    revalidateTag(ctx.session.user.organizationId);
 
     const subscription = session.subscription as Stripe.Subscription;
     const metadata = subscription.items.data[0].price.metadata as {
@@ -223,40 +222,43 @@ const getSessionDetails = protectedProcedure
         (subscription.items.data[0].quantity ?? 1),
       monthlyPricePerLocation: subscription.items.data[0].plan.amount ?? 50000,
       currentPeriodEnd: new Date(
-        subscription.items.data[0].current_period_end * 1000
+        subscription.items.data[0].current_period_end * 1000,
       ),
       currentPeriodStart: new Date(
-        subscription.items.data[0].current_period_start * 1000
+        subscription.items.data[0].current_period_start * 1000,
       ),
     };
   });
 
-  const getSubscriptionDetails = protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx.session?.user.organizationId) {
-      throw new TRPCError({
-        message: "You are not allowed",
-        code: "FORBIDDEN",
-      });
-    }
-
-    const organization = await prisma.organization.findUnique({
-      where: {
-        id: ctx.session.user.organizationId,
-      },
-      include: {
-        subscription: true,
-      },
+const getSubscriptionDetails = protectedProcedure.query(async ({ ctx }) => {
+  if (!ctx.session?.user.organizationId) {
+    throw new TRPCError({
+      message: "You are not allowed",
+      code: "FORBIDDEN",
     });
+  }
 
-    if (!organization || !organization.subscription?.stripeCustomerId) {
-      return {isActive: false}
-    }
+  const organization = await prisma.organization.findUnique({
+    where: {
+      id: ctx.session.user.organizationId,
+    },
+    include: {
+      subscription: true,
+    },
+  });
 
-    const {isActive} = validateSubscription(organization.subscription)
+  if (!organization || !organization.subscription?.stripeCustomerId) {
+    return { isActive: false };
+  }
 
-    return {isActive, ...organization.subscription, organization: {...organization, subscription: undefined}}
+  const { isActive } = validateSubscription(organization.subscription);
 
-  })
+  return {
+    isActive,
+    ...organization.subscription,
+    organization: { ...organization, subscription: undefined },
+  };
+});
 
 export const paymentRouter = router({
   initializePayment: initializePayment,

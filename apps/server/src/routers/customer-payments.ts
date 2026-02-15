@@ -1,0 +1,544 @@
+import { TRPCError } from "@trpc/server";
+import prisma from "../../prisma";
+import { stripe } from "../lib/stripe/server-stripe";
+import { isEditConflictFastFail } from "../lib/appointment/appointment";
+import { customerJwtProcedure, router } from "../lib/trpc";
+import z from "zod";
+
+const getSavedCardSummary = async (
+  stripeCustomerId: string,
+  stripeAccountId: string,
+) => {
+  const customer = await stripe.customers.retrieve(
+    stripeCustomerId,
+    {
+      expand: ["invoice_settings.default_payment_method"],
+    },
+    {
+      stripeAccount: stripeAccountId,
+    },
+  );
+
+  if ("deleted" in customer && customer.deleted) {
+    return null;
+  }
+
+  const defaultPaymentMethod =
+    customer.invoice_settings?.default_payment_method &&
+    typeof customer.invoice_settings.default_payment_method !== "string"
+      ? customer.invoice_settings.default_payment_method
+      : null;
+
+  if (defaultPaymentMethod?.card) {
+    if (defaultPaymentMethod.allow_redisplay !== "always") {
+      await stripe.paymentMethods.update(
+        defaultPaymentMethod.id,
+        {
+          allow_redisplay: "always",
+        },
+        {
+          stripeAccount: stripeAccountId,
+        },
+      );
+    }
+    return {
+      brand: defaultPaymentMethod.card.brand,
+      last4: defaultPaymentMethod.card.last4,
+    };
+  }
+
+  const paymentMethods = await stripe.paymentMethods.list(
+    {
+      customer: stripeCustomerId,
+      type: "card",
+      limit: 1,
+    },
+    {
+      stripeAccount: stripeAccountId,
+    },
+  );
+
+  const firstPaymentMethod = paymentMethods.data[0];
+  const card = firstPaymentMethod?.card;
+  if (!card) {
+    return null;
+  }
+
+  if (firstPaymentMethod.allow_redisplay !== "always") {
+    await stripe.paymentMethods.update(
+      firstPaymentMethod.id,
+      {
+        allow_redisplay: "always",
+      },
+      {
+        stripeAccount: stripeAccountId,
+      },
+    );
+  }
+
+  return {
+    brand: card.brand,
+    last4: card.last4,
+  };
+};
+
+const createSetupIntent = customerJwtProcedure
+  .input(
+    z.object({
+      organizationId: z.string().min(2).max(90).optional(),
+    }),
+  )
+  .mutation(async ({ ctx, input }) => {
+    console.log("[createSetupIntent] Payload received - customerAuth:", {
+      customerAuthId: ctx.customerAuth?.id,
+      customerId: ctx.customer?.id,
+      userId: ctx.customer?.userId,
+      orgId: ctx.customer?.orgId,
+    });
+
+    const organizationId = input.organizationId ?? ctx.customer.orgId;
+    const organization = await prisma.organization.findUnique({
+      where: {
+        id: organizationId,
+      },
+    });
+    if (!organization) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Organization not found",
+      });
+    }
+    if (!organization.stripeAccountId) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Organization is not set up",
+      });
+    }
+
+    const customer = ctx.customer;
+    if (!customer?.id || !customer.user) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Customer record not found",
+      });
+    }
+
+    if (customer.orgId !== organizationId) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Customer record not found",
+      });
+    }
+
+    let stripeCustomerId = customer.stripeCustomerId;
+
+    if (!stripeCustomerId) {
+      const stripeCustomer = await stripe.customers.create(
+        {
+          email: customer.user.email ?? undefined,
+          name: customer.user.name ?? undefined,
+          metadata: {
+            userId: customer.user.id,
+            customerId: customer.id,
+          },
+        },
+        {
+          stripeAccount: organization.stripeAccountId,
+        },
+      );
+
+      stripeCustomerId = stripeCustomer.id;
+
+      await prisma.customer.update({
+        where: { id: customer.id },
+        data: { stripeCustomerId },
+      });
+    }
+
+    const setupIntent = await stripe.setupIntents.create(
+      {
+        customer: stripeCustomerId,
+        payment_method_types: ["card"],
+        usage: "off_session",
+        metadata: {
+          userId: customer.user.id,
+          customerId: customer.id,
+        },
+      },
+      {
+        stripeAccount: organization.stripeAccountId,
+      },
+    );
+
+    const customerSession = await stripe.customerSessions.create(
+      {
+        customer: stripeCustomerId,
+        components: {
+          payment_element: {
+            enabled: true,
+          },
+        },
+      },
+      {
+        stripeAccount: organization.stripeAccountId,
+      },
+    );
+
+    if (!setupIntent.client_secret) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Unable to create setup intent",
+      });
+    }
+
+    const savedCard = await getSavedCardSummary(
+      stripeCustomerId,
+      organization.stripeAccountId,
+    );
+
+    return {
+      clientSecret: setupIntent.client_secret,
+      savedCard,
+      customerSessionClientSecret: customerSession.client_secret,
+      stripeAccountId: organization.stripeAccountId,
+    };
+  });
+
+const finalizeSetupIntent = customerJwtProcedure
+  .input(
+    z.object({
+      setupIntentId: z.string().min(1),
+      organizationId: z.string().min(2).max(90).optional(),
+    }),
+  )
+  .mutation(async ({ ctx, input }) => {
+    const organizationId = input.organizationId ?? ctx.customer.orgId;
+    const customer = ctx.customer;
+    if (!customer?.id) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Customer record not found",
+      });
+    }
+
+    if (customer.orgId !== organizationId) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Customer record not found",
+      });
+    }
+
+    const organization = await prisma.organization.findUnique({
+      where: {
+        id: organizationId,
+      },
+    });
+    if (!organization) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Organization not found",
+      });
+    }
+    if (!organization.stripeAccountId) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Organization is not set up",
+      });
+    }
+
+    const stripeCustomerId = customer.stripeCustomerId;
+    if (!stripeCustomerId) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Stripe customer not found",
+      });
+    }
+
+    const setupIntent = await stripe.setupIntents.retrieve(
+      input.setupIntentId,
+      {
+        expand: ["payment_method"],
+      },
+      {
+        stripeAccount: organization.stripeAccountId,
+      },
+    );
+
+    const newPaymentMethod =
+      setupIntent.payment_method &&
+      typeof setupIntent.payment_method !== "string"
+        ? setupIntent.payment_method
+        : null;
+
+    if (!newPaymentMethod || newPaymentMethod.type !== "card") {
+      return { deduped: false };
+    }
+
+    const fingerprint = newPaymentMethod.card?.fingerprint;
+    if (!fingerprint) {
+      return { deduped: false };
+    }
+
+    const existingPaymentMethods = await stripe.paymentMethods.list(
+      {
+        customer: stripeCustomerId,
+        type: "card",
+        limit: 20,
+      },
+      {
+        stripeAccount: organization.stripeAccountId,
+      },
+    );
+
+    const duplicate = existingPaymentMethods.data.find(
+      (method) =>
+        method.id !== newPaymentMethod.id &&
+        method.card?.fingerprint === fingerprint,
+    );
+
+    if (duplicate) {
+      await stripe.paymentMethods.detach(newPaymentMethod.id, {
+        stripeAccount: organization.stripeAccountId,
+      });
+      await stripe.customers.update(
+        stripeCustomerId,
+        {
+          invoice_settings: {
+            default_payment_method: duplicate.id,
+          },
+        },
+        {
+          stripeAccount: organization.stripeAccountId,
+        },
+      );
+
+      if (duplicate.allow_redisplay !== "always") {
+        await stripe.paymentMethods.update(
+          duplicate.id,
+          {
+            allow_redisplay: "always",
+          },
+          {
+            stripeAccount: organization.stripeAccountId,
+          },
+        );
+      }
+
+      return {
+        deduped: true,
+        card: {
+          brand: duplicate.card?.brand ?? null,
+          last4: duplicate.card?.last4 ?? null,
+        },
+      };
+    }
+
+    if (newPaymentMethod.allow_redisplay !== "always") {
+      await stripe.paymentMethods.update(
+        newPaymentMethod.id,
+        {
+          allow_redisplay: "always",
+        },
+        {
+          stripeAccount: organization.stripeAccountId,
+        },
+      );
+    }
+
+    return {
+      deduped: false,
+      card: {
+        brand: newPaymentMethod.card?.brand ?? null,
+        last4: newPaymentMethod.card?.last4 ?? null,
+      },
+    };
+  });
+
+const createAppointment = customerJwtProcedure
+  .input(
+    z.object({
+      locationId: z.string().min(1),
+      locationEmployeeId: z.string().min(1),
+      serviceIds: z.array(z.string().min(1)).min(1),
+      addOnIds: z.array(z.string().min(1)).optional(),
+      startTime: z.date(),
+      endTime: z.date(),
+      organizationId: z.string().min(2).max(90).optional(),
+    }),
+  )
+  .mutation(async ({ ctx, input }) => {
+    const organizationId = input.organizationId ?? ctx.customer.orgId;
+    const customer = ctx.customer;
+
+    if (!customer?.id) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Customer record not found",
+      });
+    }
+
+    if (customer.orgId !== organizationId) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Customer record not found",
+      });
+    }
+
+    if (
+      input.startTime.getMinutes() % 5 !== 0 ||
+      input.endTime.getMinutes() % 5 !== 0
+    ) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Appointment times must be in 5-minute intervals",
+      });
+    }
+
+    if (input.startTime.getTime() >= input.endTime.getTime()) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Start time must be before end time",
+      });
+    }
+
+    const location = await prisma.location.findFirst({
+      where: {
+        id: input.locationId,
+        organizationId,
+      },
+      select: { id: true },
+    });
+
+    if (!location) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Location not found",
+      });
+    }
+
+    const employeeServices = await prisma.employeeService.findMany({
+      where: {
+        id: { in: input.serviceIds },
+        locationEmployeeId: input.locationEmployeeId,
+        locationId: input.locationId,
+      },
+      include: {
+        addOns: {
+          select: {
+            id: true,
+            basePrice: true,
+          },
+        },
+      },
+    });
+
+    if (employeeServices.length !== input.serviceIds.length) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message:
+          "One or more services are invalid for the selected professional",
+      });
+    }
+
+    const maxBufferTime = Math.max(
+      ...employeeServices.map((service) => service.bufferTime),
+      0,
+    );
+    const maxPrepTime = Math.max(
+      ...employeeServices.map((service) => service.prepTime),
+      0,
+    );
+
+    const addOnIds = input.addOnIds ?? [];
+    let validatedAddOnIds: string[] = [];
+    let addOnsPrice = 0;
+
+    if (addOnIds.length > 0) {
+      const availableAddOnIds = new Set(
+        employeeServices.flatMap((service) =>
+          service.addOns.map((addOn) => addOn.id),
+        ),
+      );
+
+      const invalidAddOns = addOnIds.filter((id) => !availableAddOnIds.has(id));
+      if (invalidAddOns.length > 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "One or more add-ons are not available for the selected services",
+        });
+      }
+
+      validatedAddOnIds = addOnIds;
+      addOnsPrice = employeeServices.reduce((sum, service) => {
+        const serviceAddOnPrice = service.addOns
+          .filter((addOn) => validatedAddOnIds.includes(addOn.id))
+          .reduce((inner, addOn) => inner + addOn.basePrice, 0);
+
+        return sum + serviceAddOnPrice;
+      }, 0);
+    }
+
+    const totalPrice =
+      employeeServices.reduce((sum, service) => sum + service.price, 0) +
+      addOnsPrice;
+
+    const hasConflict = await isEditConflictFastFail({
+      employeeId: input.locationEmployeeId,
+      startTime: input.startTime,
+      endTime: input.endTime,
+      locationId: input.locationId,
+    });
+
+    if (hasConflict) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message:
+          "Selected time is no longer available due to an existing booking",
+      });
+    }
+
+    const appointment = await prisma.appointment.create({
+      data: {
+        startTime: input.startTime,
+        endTime: input.endTime,
+        bufferTime: maxBufferTime,
+        prepTime: maxPrepTime,
+        customerId: customer.id,
+        locationId: input.locationId,
+        price: totalPrice,
+        service: {
+          connect: input.serviceIds.map((id) => ({ id })),
+        },
+        ...(validatedAddOnIds.length > 0 && {
+          addOns: {
+            connect: validatedAddOnIds.map((id) => ({ id })),
+          },
+        }),
+        status: "SCHEDULED",
+      },
+      include: {
+        service: {
+          select: {
+            id: true,
+          },
+        },
+        addOns: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      appointmentId: appointment.id,
+    };
+  });
+
+export const customerPaymentsRouter = router({
+  createSetupIntent,
+  finalizeSetupIntent,
+  createAppointment,
+});

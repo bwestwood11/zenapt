@@ -14,6 +14,7 @@ import {
 } from "../lib/s3/utils";
 import { deleteFile } from "../lib/s3/commands";
 import { revalidateTag } from "next/cache";
+import { stripe } from "../lib/stripe/server-stripe";
 
 const CompanySizeSchema = z
   .enum(["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"])
@@ -33,7 +34,7 @@ export const organizationRouter = router({
           .refine((url) => !url || url.startsWith("https://"), {
             message: "Logo URL must use https://",
           }),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
@@ -122,7 +123,7 @@ export const organizationRouter = router({
         businessDescription: z.string().trim().optional(),
         companySize: CompanySizeSchema,
         logo: z.url().nullable(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
@@ -140,8 +141,7 @@ export const organizationRouter = router({
           },
         });
 
-
-        revalidateTag(ctx.orgWithSub.id)
+        revalidateTag(ctx.orgWithSub.id);
         return organization;
       } catch (error) {
         if (error instanceof TRPCError) throw error;
@@ -157,7 +157,7 @@ export const organizationRouter = router({
         mimeType: z.string().min(1),
         filesize: z.number().min(1),
         checksum: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { mimeType, filesize, checksum } = input;
@@ -177,7 +177,7 @@ export const organizationRouter = router({
       const extension = mimeTypeToExtension(mimeType);
       if (!extension) {
         console.error(
-          "This should not happened there is a flow in code while uploading file"
+          "This should not happened there is a flow in code while uploading file",
         );
         throw new TRPCError({
           message: "Something Went Wrong",
@@ -219,6 +219,7 @@ export const organizationRouter = router({
           description: true,
           companySize: true,
           logo: true,
+          stripeAccountId: true,
           updatedAt: true,
           createdAt: true,
         },
@@ -232,11 +233,76 @@ export const organizationRouter = router({
       }
 
       const companySize = CompanySizeSchema.safeParse(
-        organization.companySize
+        organization.companySize,
       ).data;
 
       return { ...organization, companySize };
-    }
+    },
+  ),
+  createStripeConnectAccount: withPermissions("UPDATE::SUBSCRIPTION").mutation(
+    async ({ ctx }) => {
+      const dashboardUrl = process.env.DASHBOARD_URL;
+      if (!dashboardUrl) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Missing DASHBOARD_URL configuration",
+        });
+      }
+
+      const organization = await prisma.organization.findUnique({
+        where: {
+          id: ctx.orgWithSub.id,
+        },
+        select: {
+          id: true,
+          name: true,
+          stripeAccountId: true,
+        },
+      });
+
+      if (!organization) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Organization not found",
+        });
+      }
+
+      let stripeAccountId = organization.stripeAccountId;
+      if (!stripeAccountId) {
+        const account = await stripe.accounts.create({
+          type: "express",
+          capabilities: {
+            card_payments: { requested: true },
+            transfers: { requested: true },
+          },
+          email: ctx.session.user.email,
+          business_profile: {
+            name: organization.name,
+          },
+          metadata: {
+            organizationId: organization.id,
+          },
+        });
+
+        stripeAccountId = account.id;
+        await prisma.organization.update({
+          where: { id: organization.id },
+          data: { stripeAccountId },
+        });
+      }
+
+      const accountLink = await stripe.accountLinks.create({
+        account: stripeAccountId,
+        refresh_url: `${dashboardUrl}/settings?tab=billing`,
+        return_url: `${dashboardUrl}/settings?tab=billing`,
+        type: "account_onboarding",
+      });
+
+      return {
+        accountId: stripeAccountId,
+        url: accountLink.url,
+      };
+    },
   ),
   getOrganizationUsers: withPermissions("READ::MEMBERS").query(
     async ({ ctx }) => {
@@ -262,7 +328,7 @@ export const organizationRouter = router({
         },
       });
       return users;
-    }
+    },
   ),
 
   removeOrganizationMember: withPermissions("DELETE::MEMBERS")

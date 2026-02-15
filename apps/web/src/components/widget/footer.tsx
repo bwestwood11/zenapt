@@ -2,21 +2,20 @@
 
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { useCheckoutStore } from "./hooks/useStore";
+import { StepIds, useCheckoutStore } from "./hooks/useStore";
 import { ErrorWidget } from "./error";
-import { authClient } from "@/lib/auth-client";
+import { useCustomerSession } from "./hooks/useCustomerSession";
 
 const Footer = () => {
   const { handleNext, step, handleBack, hasPreviousStep } = useCheckoutStore();
-  const session = authClient.useSession();
+  const session = useCustomerSession();
   const [showError, setShowError] = useState(false);
   const formErrors = [];
   const isPreviousStepDisabled = !hasPreviousStep();
+  const isPaymentStep = step === StepIds.PAYMENT;
 
   // Check if user is a customer (authenticated for booking purposes)
-  const isAuthenticated =
-    session?.data?.user?.customer !== null &&
-    session?.data?.user?.customer !== undefined;
+  const isAuthenticated = Boolean(session?.data?.customer);
   // const hasStepError = currentStepFields.some(
   //   (field) => formErrors[field as keyof WidgetDataType]
   // );
@@ -66,11 +65,12 @@ const Footer = () => {
         Back
       </Button>
       <Button
-        type="button"
-        onClick={handleNextStep}
+        type={isPaymentStep ? "submit" : "button"}
+        onClick={isPaymentStep ? undefined : handleNextStep}
+        form={isPaymentStep ? "payment-book-appointment-form" : undefined}
         className="bg-primary text-primary-foreground flex-1 hover:bg-accent shadow-md hover:shadow-lg transition-all"
       >
-        Next
+        {isPaymentStep ? "Book Appointment" : "Next"}
       </Button>
     </div>
   );
