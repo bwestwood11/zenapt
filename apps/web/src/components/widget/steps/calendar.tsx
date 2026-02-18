@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { useCheckoutStore } from "../hooks/useStore";
 import { useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { formatDuration } from "../utils/format-duration";
 
 const CalendarPage = () => {

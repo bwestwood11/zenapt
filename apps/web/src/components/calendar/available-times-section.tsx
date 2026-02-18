@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import  {motion}  from "motion/react";
 
 interface AvailableTimesSectionProps {
   date: Date;
@@ -7,6 +7,7 @@ interface AvailableTimesSectionProps {
   selectedRange: { start: Date; end: Date } | null;
   onTimeSelect: (range: { start: Date; end: Date }) => void;
 }
+
 
 export const AvailableTimesSection = ({
   date,

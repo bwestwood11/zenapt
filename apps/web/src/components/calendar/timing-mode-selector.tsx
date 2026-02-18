@@ -1,5 +1,5 @@
 import { Button } from "../ui/button";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 type TimingMode = "available" | "custom";
 

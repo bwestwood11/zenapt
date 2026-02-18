@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { z } from "zod";
 import prisma from "../../prisma";
 import { stripe } from "../lib/stripe/server-stripe";
+import { resend } from "../lib/resend";
 import {
   CUSTOMER_ACCESS_COOKIE,
   CUSTOMER_REFRESH_COOKIE,
@@ -19,6 +20,8 @@ import { publicProcedure, router } from "../lib/trpc";
 import type { CustomerJWTPayload } from "../lib/types";
 
 const ACCESS_COOKIE_TTL_SECONDS = 60 * 15;
+const OTP_LENGTH = 6;
+const OTP_TTL_MINUTES = 10;
 const CUSTOMER_COOKIE_SECURE =
   process.env.CUSTOMER_COOKIE_SECURE === "true" ||
   process.env.NODE_ENV === "production";
@@ -62,6 +65,123 @@ const clearCustomerAuthCookies = async () => {
     sameSite: CUSTOMER_COOKIE_SAMESITE,
     maxAge: 0,
   });
+};
+
+const normalizeEmail = (email: string) => email.trim();
+
+const buildOtpIdentifier = (organizationId: string, email: string) =>
+  `customer-signup-otp:${organizationId}:${normalizeEmail(email)}`;
+
+const generateOtpCode = () =>
+  crypto
+    .randomInt(0, Math.pow(10, OTP_LENGTH))
+    .toString()
+    .padStart(OTP_LENGTH, "0");
+
+const sendCustomerOtpEmail = async (input: {
+  email: string;
+  organizationName: string;
+  otpCode: string;
+  expiresInMinutes: number;
+}) => {
+  const { email, organizationName, otpCode, expiresInMinutes } = input;
+
+  if (process.env.NODE_ENV === "development") {
+    console.log(
+      `[customerAuth] OTP for ${email} (${organizationName}) => ${otpCode} (expires in ${expiresInMinutes}m)`,
+    );
+  }
+
+  await resend.emails.send({
+    from: process.env.FROM_EMAIL || "support@zenapt.com",
+    to:
+      process.env.NODE_ENV === "development"
+        ? `delivered+${encodeURIComponent(email)}@resend.dev`
+        : email,
+    subject: `${organizationName} verification code`,
+    text: `Your ${organizationName} verification code is ${otpCode}. It expires in ${expiresInMinutes} minutes.`,
+  });
+};
+
+const createAndSendSignupOtp = async (input: {
+  email: string;
+  organizationId: string;
+}) => {
+  const normalizedEmail = normalizeEmail(input.email);
+
+  const organization = await prisma.organization.findUnique({
+    where: { id: input.organizationId },
+    select: { id: true, stripeAccountId: true, name: true },
+  });
+
+  if (!organization) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Organization not found",
+    });
+  }
+
+  if (!organization?.stripeAccountId) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Organization is not properly configured for payments",
+    });
+  }
+
+  const existingAuth = await prisma.customerAuth.findUnique({
+    where: { email: normalizedEmail },
+  });
+
+  if (existingAuth) {
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: "An account with this email already exists",
+    });
+  }
+
+  const existingUser = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+    select: { id: true },
+  });
+
+  if (existingUser) {
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: "An account with this email already exists",
+    });
+  }
+
+  const otpCode = generateOtpCode();
+  const identifier = buildOtpIdentifier(input.organizationId, normalizedEmail);
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + OTP_TTL_MINUTES * 60 * 1000);
+
+  await prisma.verification.deleteMany({
+    where: { identifier },
+  });
+
+  await prisma.verification.create({
+    data: {
+      id: crypto.randomUUID(),
+      identifier,
+      value: await hashToken(otpCode),
+      expiresAt,
+      createdAt: now,
+      updatedAt: now,
+    },
+  });
+
+  await sendCustomerOtpEmail({
+    email: normalizedEmail,
+    organizationName: organization.name,
+    otpCode,
+    expiresInMinutes: OTP_TTL_MINUTES,
+  });
+
+  return {
+    email: normalizedEmail,
+    expiresAt,
+  };
 };
 
 const buildPayload = (input: {
@@ -110,17 +230,35 @@ const getSessionFromAccessToken = async (token: string) => {
 };
 
 export const customerAuthRouter = router({
+  requestSignUpOtp: publicProcedure
+    .input(
+      z.object({
+        email: z.email(),
+        organizationId: z.string().min(2).max(90),
+      }),
+    )
+    .mutation(async ({ input }) => createAndSendSignupOtp(input)),
+  resendSignUpOtp: publicProcedure
+    .input(
+      z.object({
+        email: z.email(),
+        organizationId: z.string().min(2).max(90),
+      }),
+    )
+    .mutation(async ({ input }) => createAndSendSignupOtp(input)),
   signUp: publicProcedure
     .input(
       z.object({
         name: z.string().min(1),
         email: z.email(),
         password: z.string().min(8),
+        otp: z.string().regex(/^\d{6}$/),
         organizationId: z.string().min(2).max(90),
       }),
     )
     .mutation(async ({ input }) => {
-      const { name, email, password, organizationId } = input;
+      const { name, email, password, organizationId, otp } = input;
+      const normalizedEmail = normalizeEmail(email);
 
       const organization = await prisma.organization.findUnique({
         where: { id: organizationId },
@@ -142,7 +280,7 @@ export const customerAuthRouter = router({
       }
 
       const existingAuth = await prisma.customerAuth.findUnique({
-        where: { email },
+        where: { email: normalizedEmail },
       });
 
       if (existingAuth) {
@@ -153,7 +291,7 @@ export const customerAuthRouter = router({
       }
 
       const existingUser = await prisma.user.findUnique({
-        where: { email },
+        where: { email: normalizedEmail },
         select: { id: true },
       });
 
@@ -165,13 +303,36 @@ export const customerAuthRouter = router({
       }
 
       const now = new Date();
+      const otpIdentifier = buildOtpIdentifier(organizationId, normalizedEmail);
+      const verification = await prisma.verification.findFirst({
+        where: {
+          identifier: otpIdentifier,
+          expiresAt: { gt: now },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      if (!verification) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid or expired verification code",
+        });
+      }
+
+      const isOtpValid = await verifyTokenHash(otp, verification.value);
+      if (!isOtpValid) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid or expired verification code",
+        });
+      }
       const userId = crypto.randomUUID();
       const user = await prisma.user.create({
         data: {
           id: userId,
           name,
-          email,
-          emailVerified: true,
+          email: normalizedEmail,
+          emailVerified: false,
           image: null,
           token: null,
           createdAt: now,
@@ -217,7 +378,7 @@ export const customerAuthRouter = router({
       const passwordHash = await bcrypt.hash(password, 10);
       const customerAuth = await prisma.customerAuth.create({
         data: {
-          email,
+          email: normalizedEmail,
           passwordHash,
           customerId: customer.id,
           userId: user.id,
@@ -231,6 +392,11 @@ export const customerAuthRouter = router({
         customerId: customer.id,
         userId: user.id,
         orgId: organizationId,
+      });
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { emailVerified: true },
       });
 
       const payload = buildPayload({
@@ -257,6 +423,10 @@ export const customerAuthRouter = router({
       });
 
       await setCustomerAuthCookies(accessToken, refreshToken);
+
+      await prisma.verification.deleteMany({
+        where: { identifier: otpIdentifier },
+      });
 
       return {
         customer: {
@@ -295,6 +465,13 @@ export const customerAuthRouter = router({
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Invalid email or password",
+        });
+      }
+
+      if (!customerAuth.customer.user.emailVerified) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Email verification required",
         });
       }
 

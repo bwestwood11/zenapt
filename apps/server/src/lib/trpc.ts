@@ -139,6 +139,13 @@ export const customerJwtProcedure = t.procedure.use(async ({ ctx, next }) => {
     });
   }
 
+  if (!customerAuth.customer.user.emailVerified) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Email verification required",
+    });
+  }
+
   return next({
     ctx: {
       ...ctx,

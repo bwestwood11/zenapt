@@ -6,7 +6,7 @@ import { STRIPE_STATUS } from "./types";
 import { revalidateTag } from "next/cache";
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-07-30.basil",
+  apiVersion: "2025-08-27.basil",
   typescript: true,
 });
 

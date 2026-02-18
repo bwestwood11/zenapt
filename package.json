@@ -22,6 +22,7 @@
     "db:reset": "turbo -F server db:reset"
   },
   "dependencies": {
+    "input-otp": "^1.4.2",
     "superjson": "^2.2.2"
   },
   "devDependencies": {

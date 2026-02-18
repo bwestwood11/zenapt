@@ -20,7 +20,8 @@ import { ServiceSelector } from "./service-selector";
 import { AddOnSelector } from "./addon-selector";
 import { TimingModeSelector } from "./timing-mode-selector";
 import { CustomTimePicker } from "./custom-time-picker";
-import { AnimatePresence, motion } from "framer-motion";
+import  {motion, AnimatePresence}  from "motion/react";
+
 import { Calendar } from "../ui/calendar";
 import { Button } from "../ui/button";
 import {
