@@ -10,14 +10,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Lock } from "lucide-react";
+import { Lock, CreditCard } from "lucide-react";
 import { ProtectedStep } from "./protected-step";
 import getStripe from "@/lib/stripe/config";
 import { trpc } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { useOrgId } from "../hooks/useOrgId";
 import { useCustomerSession } from "../hooks/useCustomerSession";
-import { useCheckoutStore } from "../hooks/useStore";
+import { useCheckoutStore, StepIds } from "../hooks/useStore";
 
 const SetupIntentForm = ({
   onFinalize,
@@ -38,9 +38,8 @@ const SetupIntentForm = ({
   const [cardholderName, setCardholderName] = React.useState(defaultName ?? "");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-  const [isSaved, setIsSaved] = React.useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!stripe || !elements) {
       return;
@@ -85,8 +84,6 @@ const SetupIntentForm = ({
           return;
         }
       }
-
-      setIsSaved(true);
     }
 
     setIsSubmitting(false);
@@ -126,17 +123,13 @@ const SetupIntentForm = ({
         <div className="text-sm text-destructive">{errorMessage}</div>
       )}
 
-      {isSaved && (
-        <div className="text-sm text-primary">Card saved successfully.</div>
-      )}
-
       <Button
         type="submit"
         className="w-full"
         size="lg"
-        disabled={isSubmitting || isSaved}
+        disabled={isSubmitting}
       >
-        {isSaved ? "Card Saved" : isSubmitting ? "Saving Card..." : "Save Card"}
+        {isSubmitting ? "Saving Card..." : "Save Card"}
       </Button>
     </form>
   );
@@ -148,6 +141,7 @@ const PaymentPage = () => {
   const location = useCheckoutStore((state) => state.location);
   const cart = useCheckoutStore((state) => state.cart);
   const appointmentTime = useCheckoutStore((state) => state.appointmentTime);
+  const setStep = useCheckoutStore((state) => state.setStep);
 
   const [clientSecret, setClientSecret] = React.useState<string | null>(null);
   const [customerSessionClientSecret, setCustomerSessionClientSecret] =
@@ -162,9 +156,23 @@ const PaymentPage = () => {
   const [bookingSuccess, setBookingSuccess] = React.useState(false);
 
   const [savedCard, setSavedCard] = React.useState<{
+    id?: string | null;
     brand?: string | null;
     last4?: string | null;
   } | null>(null);
+  const [allSavedCards, setAllSavedCards] = React.useState<
+    Array<{
+      id: string;
+      brand: string;
+      last4: string;
+      expMonth: number;
+      expYear: number;
+    }>
+  >([]);
+  const [selectedCardId, setSelectedCardId] = React.useState<string | null>(
+    null,
+  );
+  const [useNewCard, setUseNewCard] = React.useState(false);
 
   const { mutateAsync: createSetupIntent } = useMutation(
     trpc.customerPayments.createSetupIntent.mutationOptions(),
@@ -191,6 +199,8 @@ const PaymentPage = () => {
         if (isMounted) {
           setClientSecret(data.clientSecret ?? null);
           setSavedCard(data.savedCard ?? null);
+          setAllSavedCards(data.allSavedCards ?? []);
+          setSelectedCardId(data.savedCard?.id ?? null);
           setCustomerSessionClientSecret(
             data.customerSessionClientSecret ?? null,
           );
@@ -220,8 +230,8 @@ const PaymentPage = () => {
     };
   }, [createSetupIntent, orgId, session?.data?.customer, session?.isLoading]);
 
-  const handleBookAppointment = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleBookAppointment = async (e?: React.MouseEvent<HTMLButtonElement>) => {
+    e?.preventDefault();
 
     if (bookingSuccess) {
       return;
@@ -229,8 +239,8 @@ const PaymentPage = () => {
 
     setBookingError(null);
 
-    if (!savedCard?.last4) {
-      setBookingError("Please save your card before booking the appointment.");
+    if (!selectedCardId) {
+      setBookingError("Please select a payment method before booking.");
       return;
     }
 
@@ -283,9 +293,21 @@ const PaymentPage = () => {
         addOnIds: addOnIds.length > 0 ? addOnIds : undefined,
         startTime: appointmentTime.start,
         endTime: appointmentTime.end,
+        paymentMethodId: selectedCardId,
       });
 
       setBookingSuccess(true);
+      
+      // Store saved card info for confirmation page
+      const cardToStore = allSavedCards.find((c) => c.id === selectedCardId);
+      if (globalThis.window !== undefined && cardToStore) {
+        sessionStorage.setItem("savedCard", JSON.stringify(cardToStore));
+      }
+      
+      // Navigate to confirmation page
+      setTimeout(() => {
+        setStep(StepIds.CONFIRMATION);
+      }, 1500);
     } catch (error) {
       setBookingError(
         error instanceof Error ? error.message : "Failed to book appointment.",
@@ -320,10 +342,93 @@ const PaymentPage = () => {
           </div>
         )}
 
-        {savedCard?.last4 && (
-          <div className="text-sm text-muted-foreground text-center">
-            Saved {savedCard.brand ? savedCard.brand + " " : ""}card ending in{" "}
-            {savedCard.last4}
+        {allSavedCards.length > 0 && !useNewCard && (
+          <div className="space-y-4">
+            <h3 className="text-sm font-medium text-foreground">
+              Select Payment Method
+            </h3>
+            <div className="space-y-3">
+              {allSavedCards.map((card) => (
+                <button
+                  key={card.id}
+                  type="button"
+                  onClick={() => setSelectedCardId(card.id)}
+                  className={`w-full p-4 rounded-lg border-2 transition-all ${
+                    selectedCardId === card.id
+                      ? "border-primary bg-primary/5 shadow-md"
+                      : "border-border hover:border-primary/50 hover:bg-muted/50"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`p-2 rounded-lg ${
+                        selectedCardId === card.id
+                          ? "bg-primary/20"
+                          : "bg-muted"
+                      }`}
+                    >
+                      <CreditCard
+                        className={`h-5 w-5 ${
+                          selectedCardId === card.id
+                            ? "text-primary"
+                            : "text-muted-foreground"
+                        }`}
+                      />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <p className="text-sm font-semibold text-foreground capitalize">
+                        {card.brand}
+                      </p>
+                      <p className="text-xs text-muted-foreground font-mono">
+                        •••• {card.last4}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-muted-foreground">
+                        Expires {card.expMonth}/{card.expYear % 100}
+                      </p>
+                      {selectedCardId === card.id && (
+                        <div className="mt-1">
+                          <svg
+                            className="h-5 w-5 text-primary"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              size="sm"
+              onClick={() => setUseNewCard(true)}
+            >
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add a New Card
+            </Button>
           </div>
         )}
 
@@ -334,12 +439,51 @@ const PaymentPage = () => {
         )}
 
         {bookingSuccess && (
-          <div className="text-sm text-primary text-center">
-            Appointment created successfully.
+          <div className="p-6 rounded-lg bg-primary/10 border border-primary space-y-4">
+            <div className="text-center space-y-2">
+              <h3 className="text-lg font-semibold text-primary">
+                Appointment Booked! ✓
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Your appointment has been successfully confirmed
+              </p>
+            </div>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">Services:</span>
+                <span className="font-medium text-foreground">
+                  {cart.length} service{cart.length === 1 ? "" : "s"}
+                </span>
+              </div>
+              {appointmentTime && (
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Time:</span>
+                  <span className="font-medium text-foreground">
+                    {new Date(appointmentTime.start).toLocaleString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+              )}
+              {savedCard?.last4 && (
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Payment:</span>
+                  <span className="font-medium text-foreground">
+                    {savedCard.brand
+                      ? `${savedCard.brand.charAt(0).toUpperCase() + savedCard.brand.slice(1)} `
+                      : "Card "}
+                    ••••{savedCard.last4}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
-        {clientSecret && (
+        {clientSecret && (allSavedCards.length === 0 || useNewCard) && (
           <Elements
             stripe={getStripe(stripeAccountId)}
             options={{
@@ -375,10 +519,23 @@ const PaymentPage = () => {
 
                 if (result?.card?.last4) {
                   const nextCard = {
+                    id: result.card.id ?? null,
                     brand: result.card.brand ?? null,
                     last4: result.card.last4 ?? null,
                   };
                   setSavedCard(nextCard);
+                  setAllSavedCards((prev) => [
+                    {
+                      id: result.card.id!,
+                      brand: result.card.brand!,
+                      last4: result.card.last4!,
+                      expMonth: 12,
+                      expYear: new Date().getFullYear() + 5,
+                    },
+                    ...prev,
+                  ]);
+                  setSelectedCardId(nextCard.id);
+                  setUseNewCard(false);
                   return nextCard;
                 }
 
@@ -388,19 +545,23 @@ const PaymentPage = () => {
           </Elements>
         )}
 
-        <form
-          id="payment-book-appointment-form"
-          onSubmit={handleBookAppointment}
-        >
-          <input type="hidden" name="bookAppointment" value="1" />
-          <button
-            type="submit"
-            style={{ display: "none" }}
-            disabled={isBooking || bookingSuccess}
-            aria-hidden
-            tabIndex={-1}
-          />
-        </form>
+        {allSavedCards.length > 0 && !useNewCard && !bookingSuccess && (
+          <Button
+            onClick={handleBookAppointment}
+            className="w-full"
+            size="lg"
+            disabled={isBooking || !selectedCardId}
+          >
+            {isBooking ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-background mr-2"></div>
+                Booking Appointment...
+              </>
+            ) : (
+              "Book Appointment"
+            )}
+          </Button>
+        )}
 
         <div className="text-center">
           <p className="text-xs text-muted-foreground">

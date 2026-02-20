@@ -20,12 +20,6 @@ const Locations = () => {
   } = useQuery(trpc.public.getAllLocations.queryOptions({ orgId }));
   const {location: selectedLocation, setLocation} = useCheckoutStore()
 
-  useEffect(() => {
-    // console.log({ isError });
-    // if (isError)
-      // setError(error.message || "Something is not good. Try again later");
-  }, [isError]);
-
   if (isLoading) return <LocationSkeletonList count={2} />;
   if (!locations?.length) return "NO LOCATIONS";
 

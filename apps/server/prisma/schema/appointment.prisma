@@ -28,6 +28,8 @@ model Appointment {
   customerAppointmentPayment CustomerAppointmentPayment? @relation(fields: [customerPaymentId], references: [id], onDelete: Restrict)
   promoCodeId                String?
   promoCode                  PromoCode?                  @relation(fields: [promoCodeId], references: [id], onDelete: SetNull)
+  paymentMethodId            String?
+  paymentMethodLast4         String?
 }
 
 model AddOn {

@@ -17,6 +17,7 @@ export enum StepIds {
   CALENDAR,
   AUTH,
   PAYMENT,
+  CONFIRMATION,
 }
 
 interface Store {

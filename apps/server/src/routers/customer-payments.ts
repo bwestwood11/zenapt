@@ -42,6 +42,7 @@ const getSavedCardSummary = async (
       );
     }
     return {
+      id: defaultPaymentMethod.id,
       brand: defaultPaymentMethod.card.brand,
       last4: defaultPaymentMethod.card.last4,
     };
@@ -77,9 +78,38 @@ const getSavedCardSummary = async (
   }
 
   return {
+    id: firstPaymentMethod.id,
     brand: card.brand,
     last4: card.last4,
-  };
+  }
+};
+
+const getAllSavedCards = async (
+  stripeCustomerId: string,
+  stripeAccountId: string,
+) => {
+  const paymentMethods = await stripe.paymentMethods.list(
+    {
+      customer: stripeCustomerId,
+      type: "card",
+      limit: 10,
+    },
+    {
+      stripeAccount: stripeAccountId,
+    },
+  );
+
+  const cards = paymentMethods.data
+    .filter((pm) => pm.card)
+    .map((pm) => ({
+      id: pm.id,
+      brand: pm.card!.brand,
+      last4: pm.card!.last4,
+      expMonth: pm.card!.exp_month,
+      expYear: pm.card!.exp_year,
+    }));
+
+  return cards;
 };
 
 const createSetupIntent = customerJwtProcedure
@@ -196,9 +226,15 @@ const createSetupIntent = customerJwtProcedure
       organization.stripeAccountId,
     );
 
+    const allSavedCards = await getAllSavedCards(
+      stripeCustomerId,
+      organization.stripeAccountId,
+    );
+
     return {
       clientSecret: setupIntent.client_secret,
       savedCard,
+      allSavedCards,
       customerSessionClientSecret: customerSession.client_secret,
       stripeAccountId: organization.stripeAccountId,
     };
@@ -327,6 +363,7 @@ const finalizeSetupIntent = customerJwtProcedure
       return {
         deduped: true,
         card: {
+          id: duplicate.id,
           brand: duplicate.card?.brand ?? null,
           last4: duplicate.card?.last4 ?? null,
         },
@@ -348,6 +385,7 @@ const finalizeSetupIntent = customerJwtProcedure
     return {
       deduped: false,
       card: {
+        id: newPaymentMethod.id,
         brand: newPaymentMethod.card?.brand ?? null,
         last4: newPaymentMethod.card?.last4 ?? null,
       },
@@ -364,6 +402,7 @@ const createAppointment = customerJwtProcedure
       startTime: z.date(),
       endTime: z.date(),
       organizationId: z.string().min(2).max(90).optional(),
+      paymentMethodId: z.string().min(1).optional(),
     }),
   )
   .mutation(async ({ ctx, input }) => {
@@ -498,6 +537,38 @@ const createAppointment = customerJwtProcedure
       });
     }
 
+    let customerPaymentId: string | undefined;
+    let paymentMethodLast4: string | undefined;
+
+    if (input.paymentMethodId) {
+      const organization = await prisma.organization.findUnique({
+        where: { id: organizationId },
+        select: { stripeAccountId: true },
+      });
+
+      if (organization?.stripeAccountId) {
+        try {
+          const paymentMethod = await stripe.paymentMethods.retrieve(
+            input.paymentMethodId,
+            { stripeAccount: organization.stripeAccountId },
+          );
+          paymentMethodLast4 = paymentMethod.card?.last4;
+        } catch (error) {
+          console.error("Failed to retrieve payment method details:", error);
+        }
+      }
+
+      const customerPayment = await prisma.customerAppointmentPayment.create({
+        data: {
+          customerId: customer.id,
+          amountPaid: totalPrice,
+          paymentMethod: input.paymentMethodId,
+          transactionId: null,
+        },
+      });
+      customerPaymentId = customerPayment.id;
+    }
+
     const appointment = await prisma.appointment.create({
       data: {
         startTime: input.startTime,
@@ -514,6 +585,13 @@ const createAppointment = customerJwtProcedure
           addOns: {
             connect: validatedAddOnIds.map((id) => ({ id })),
           },
+        }),
+        ...(customerPaymentId && {
+          customerPaymentId,
+        }),
+        ...(input.paymentMethodId && {
+          paymentMethodId: input.paymentMethodId,
+          paymentMethodLast4,
         }),
         status: "SCHEDULED",
       },

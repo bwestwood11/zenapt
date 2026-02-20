@@ -10,6 +10,7 @@ import ReviewPage from "./review";
 import CalendarPage from "./calendar";
 import AuthPage from "./auth";
 import PaymentPage from "./payment";
+import ConfirmationPage from "./confirmation";
 import { z } from "zod";
 
 export enum StepIds {
@@ -22,6 +23,7 @@ export enum StepIds {
   CALENDAR,
   AUTH,
   PAYMENT,
+  CONFIRMATION,
 }
 
 export enum StepType {
@@ -91,6 +93,14 @@ export const AFTER_CART_STEPS: MainStep[] = [
     title: "Payment",
     id: StepIds.PAYMENT,
     description: " Enter your payment details to complete your booking.",
+    type: StepType.AFTER_CART,
+    schema: z.object({}),
+  },
+  {
+    component: <ConfirmationPage />,
+    title: "Confirmation",
+    id: StepIds.CONFIRMATION,
+    description: " Your appointment has been confirmed.",
     type: StepType.AFTER_CART,
     schema: z.object({}),
   },

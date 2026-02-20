@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "lucide-react";
+import { User, LogOut, Settings } from "lucide-react";
 import React from "react";
 import { STEPS } from "./steps";
 import { Button } from "../ui/button";
@@ -9,7 +9,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, Settings } from "lucide-react";
 import { useOrganization } from "./hooks/useOrganization";
 import { useCustomerSession } from "./hooks/useCustomerSession";
 import { useMutation } from "@tanstack/react-query";
@@ -68,9 +67,9 @@ const Header = () => {
 
   const handleLoginClick = () => {
     // Get current widget URL to return to after login
-    const returnUrl = window.location.href;
-    window.open(
-      `${window.location.origin}/customer-login?return=${encodeURIComponent(returnUrl)}`,
+    const returnUrl = globalThis.window.location.href;
+    globalThis.window.open(
+      `${globalThis.window.location.origin}/customer-login?return=${encodeURIComponent(returnUrl)}`,
       "_blank",
     );
   };
@@ -103,12 +102,16 @@ const Header = () => {
   }
 
   return (
-    <div className="w-full bg-sidebar border-r border-sidebar-border p-8 flex flex-col">
+    <div className="w-full bg-gradient-to-b from-sidebar/50 to-sidebar border-b border-sidebar-border p-6 lg:p-8 flex flex-col shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between mb-10">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 bg-primary rounded-md shadow-sm" />
-          <span className="font-semibold text-lg text-foreground">
+          <div className="w-9 h-9 bg-gradient-to-br from-primary to-primary/80 rounded-lg shadow-md flex items-center justify-center">
+            <svg className="w-5 h-5 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z"/>
+            </svg>
+          </div>
+          <span className="font-bold text-xl text-foreground tracking-tight">
             {organization?.name ?? "Serenity Medspa"}
           </span>
         </div>
