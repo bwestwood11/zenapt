@@ -81,17 +81,24 @@ export const auth = betterAuth({
     }),
     after: createAuthMiddleware(async (ctx) => {
       // Only process after email verification
-      if (!ctx.path.startsWith("/verify-email")) {
+      if (!ctx.path.startsWith("/sign-up/email")) {
         return;
       }
 
       const newSession = ctx.context.newSession;
-      if (!newSession?.user?.emailVerified) {
+      if (!newSession?.user?.id) {
         return;
       }
 
       const userId = newSession.user.id;
       const userToken = newSession.user.token;
+
+      if (!newSession.user.emailVerified) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: { emailVerified: true },
+        });
+      }
 
       try {
         // If user has a token, create employee/management record
@@ -103,7 +110,7 @@ export const auth = betterAuth({
               message: "Invalid invitation token",
             });
           }
-
+          console.log("Token payload:", tokenPayload);
           if (tokenPayload.data.type === "MANAGEMENT") {
             // Check if management membership already exists
             const existing = await prisma.managementMembership.findFirst({
@@ -154,16 +161,16 @@ export const auth = betterAuth({
       }
     }),
   },
-  emailVerification: {
-    sendOnSignUp: true,
-    autoSignInAfterVerification: true,
-    sendVerificationEmail: async ({ user, url }) => {
-      // Implement your email sending logic here
-      console.log(`Send verification email to ${user.email} with link: ${url}`);
-    },
-  },
+  // emailVerification: {
+  //   sendOnSignUp: true,
+  //   autoSignInAfterVerification: true,
+  //   sendVerificationEmail: async ({ user, url }) => {
+  //     // Implement your email sending logic here
+  //     console.log(`Send verification email to ${user.email} with link: ${url}`);
+  //   },
+  // },
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
+    // requireEmailVerification: true,
   },
 });
