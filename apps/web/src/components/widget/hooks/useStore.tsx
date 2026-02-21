@@ -26,7 +26,8 @@ interface Store {
   setStep: (s: StepIds, CartIndex?: string | null) => void;
 
   location: string | null;
-  setLocation: (l: string) => void;
+  locationTimeZone: string | null;
+  setLocation: (locationId: string, timeZone: string) => void;
 
   appointmentTime: { start: Date; end: Date } | null;
   setAppointmentTime: (time: { start: Date; end: Date } | null) => void;
@@ -54,7 +55,9 @@ export const useCheckoutStore = create<Store>((set, get) => ({
   setStep: (s, c) => set({ step: s, cartItemId: c }),
 
   location: null,
-  setLocation: (l) => set({ location: l }),
+  locationTimeZone: null,
+  setLocation: (locationId, timeZone) =>
+    set({ location: locationId, locationTimeZone: timeZone }),
 
   appointmentTime: null,
   setAppointmentTime: (time) => set({ appointmentTime: time }),

@@ -29,7 +29,7 @@ const Locations = () => {
               <button
                 type="button"
                 key={location.id}
-                onClick={() => setLocation(location.id)}
+                onClick={() => setLocation(location.id, location.timeZone)}
                 className={`w-full text-left transition-all duration-300 ${
                   selectedLocation === location.id
                     ? "border-2 border border-primary shadow-lg shadow-primary/20"

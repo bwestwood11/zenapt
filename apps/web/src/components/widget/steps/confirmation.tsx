@@ -4,10 +4,27 @@ import React from "react";
 import { CheckCircle2, Calendar, Clock, CreditCard, MapPin } from "lucide-react";
 import { useCheckoutStore } from "../hooks/useStore";
 import { Button } from "@/components/ui/button";
+import {
+  formatDateInTimeZone,
+  formatTimeRangeInTimeZone,
+  getLocalTimeZone,
+  shouldShowLocationTime,
+} from "../utils/timezone-display";
 
 const ConfirmationPage = () => {
   const cart = useCheckoutStore((state) => state.cart);
   const appointmentTime = useCheckoutStore((state) => state.appointmentTime);
+  const locationTimeZone = useCheckoutStore((state) => state.locationTimeZone);
+  const localTimeZone = getLocalTimeZone();
+  const effectiveLocationTimeZone = locationTimeZone ?? localTimeZone;
+  const showLocationDateTime =
+    !!appointmentTime &&
+    shouldShowLocationTime(
+      new Date(appointmentTime.start),
+      new Date(appointmentTime.end),
+      localTimeZone,
+      effectiveLocationTimeZone,
+    );
 
   // Get saved card info from session storage or state if needed
   const [savedCard] = React.useState<{
@@ -59,33 +76,31 @@ const ConfirmationPage = () => {
                     Date & Time
                   </p>
                   <p className="text-base font-semibold text-foreground">
-                    {new Date(appointmentTime.start).toLocaleDateString(
-                      "en-US",
-                      {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      },
+                    Local: {formatDateInTimeZone(new Date(appointmentTime.start), localTimeZone)}
+                    {showLocationDateTime && (
+                      <>
+                        <br />
+                        Location: {formatDateInTimeZone(new Date(appointmentTime.start), effectiveLocationTimeZone)}
+                      </>
                     )}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
                     <Clock className="h-4 w-4 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">
-                      {new Date(appointmentTime.start).toLocaleTimeString(
-                        "en-US",
-                        {
-                          hour: "numeric",
-                          minute: "2-digit",
-                        },
-                      )}{" "}
-                      -{" "}
-                      {new Date(appointmentTime.end).toLocaleTimeString(
-                        "en-US",
-                        {
-                          hour: "numeric",
-                          minute: "2-digit",
-                        },
+                      Local: {formatTimeRangeInTimeZone(
+                        new Date(appointmentTime.start),
+                        new Date(appointmentTime.end),
+                        localTimeZone,
+                      )}
+                      {showLocationDateTime && (
+                        <>
+                          <br />
+                          Location: {formatTimeRangeInTimeZone(
+                            new Date(appointmentTime.start),
+                            new Date(appointmentTime.end),
+                            effectiveLocationTimeZone,
+                          )}
+                        </>
                       )}
                     </p>
                   </div>

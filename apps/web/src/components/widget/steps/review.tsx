@@ -7,11 +7,28 @@ import { cn } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { formatDuration } from "../utils/format-duration";
+import {
+  formatDateInTimeZone,
+  formatTimeRangeInTimeZone,
+  getLocalTimeZone,
+  shouldShowLocationTime,
+} from "../utils/timezone-display";
 
 const ReviewPage = () => {
   const location = useCheckoutStore((s) => s.location);
+  const locationTimeZone = useCheckoutStore((s) => s.locationTimeZone);
   const cart = useCheckoutStore((s) => s.cart);
   const appointmentTime = useCheckoutStore((s) => s.appointmentTime);
+  const localTimeZone = getLocalTimeZone();
+  const effectiveLocationTimeZone = locationTimeZone ?? localTimeZone;
+  const showLocationDateTime =
+    !!appointmentTime &&
+    shouldShowLocationTime(
+      appointmentTime.start,
+      appointmentTime.end,
+      localTimeZone,
+      effectiveLocationTimeZone,
+    );
 
   console.log("Review Page - appointmentTime:", appointmentTime);
 
@@ -214,17 +231,23 @@ const ReviewPage = () => {
               <p className="text-accent-foreground font-medium">
                 {appointmentTime ? (
                   <>
-                    {appointmentTime.start.toLocaleDateString("en-US", {
-                      weekday: "long",
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                    {" at "}
-                    {appointmentTime.start.toLocaleTimeString([], {
-                      hour: "numeric",
-                      minute: "2-digit",
-                    })}
+                    Local: {formatDateInTimeZone(appointmentTime.start, localTimeZone)} at{" "}
+                    {formatTimeRangeInTimeZone(
+                      appointmentTime.start,
+                      appointmentTime.end,
+                      localTimeZone,
+                    )}
+                    {showLocationDateTime && (
+                      <>
+                        <br />
+                        Location: {formatDateInTimeZone(appointmentTime.start, effectiveLocationTimeZone)} at{" "}
+                        {formatTimeRangeInTimeZone(
+                          appointmentTime.start,
+                          appointmentTime.end,
+                          effectiveLocationTimeZone,
+                        )}
+                      </>
+                    )}
                   </>
                 ) : (
                   "Not selected"

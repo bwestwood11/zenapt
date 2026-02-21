@@ -18,6 +18,11 @@ import { useMutation } from "@tanstack/react-query";
 import { useOrgId } from "../hooks/useOrgId";
 import { useCustomerSession } from "../hooks/useCustomerSession";
 import { useCheckoutStore, StepIds } from "../hooks/useStore";
+import {
+  formatShortDateTimeInTimeZone,
+  getLocalTimeZone,
+  shouldShowLocationTime,
+} from "../utils/timezone-display";
 
 const SetupIntentForm = ({
   onFinalize,
@@ -139,8 +144,19 @@ const PaymentPage = () => {
   const orgId = useOrgId();
   const session = useCustomerSession();
   const location = useCheckoutStore((state) => state.location);
+  const locationTimeZone = useCheckoutStore((state) => state.locationTimeZone);
   const cart = useCheckoutStore((state) => state.cart);
   const appointmentTime = useCheckoutStore((state) => state.appointmentTime);
+  const localTimeZone = getLocalTimeZone();
+  const effectiveLocationTimeZone = locationTimeZone ?? localTimeZone;
+  const showLocationDateTime =
+    !!appointmentTime &&
+    shouldShowLocationTime(
+      appointmentTime.start,
+      appointmentTime.end,
+      localTimeZone,
+      effectiveLocationTimeZone,
+    );
   const setStep = useCheckoutStore((state) => state.setStep);
 
   const [clientSecret, setClientSecret] = React.useState<string | null>(null);
@@ -456,15 +472,17 @@ const PaymentPage = () => {
                 </span>
               </div>
               {appointmentTime && (
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-start">
                   <span className="text-muted-foreground">Time:</span>
-                  <span className="font-medium text-foreground">
-                    {new Date(appointmentTime.start).toLocaleString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "2-digit",
-                    })}
+                  <span className="font-medium text-foreground text-right">
+                    <span className="block">
+                      Local: {formatShortDateTimeInTimeZone(appointmentTime.start, localTimeZone)}
+                    </span>
+                    {showLocationDateTime && (
+                      <span className="block text-xs text-muted-foreground mt-0.5">
+                        Location: {formatShortDateTimeInTimeZone(appointmentTime.start, effectiveLocationTimeZone)}
+                      </span>
+                    )}
                   </span>
                 </div>
               )}

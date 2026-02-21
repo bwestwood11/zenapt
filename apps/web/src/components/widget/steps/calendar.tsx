@@ -9,9 +9,16 @@ import { useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { motion } from "motion/react";
 import { formatDuration } from "../utils/format-duration";
+import {
+  formatDateInTimeZone,
+  formatTimeRangeInTimeZone,
+  getLocalTimeZone,
+  shouldShowLocationTime,
+} from "../utils/timezone-display";
 
 const CalendarPage = () => {
   const location = useCheckoutStore((s) => s.location);
+  const locationTimeZone = useCheckoutStore((s) => s.locationTimeZone);
   const cart = useCheckoutStore((s) => s.cart);
   const appointmentTime = useCheckoutStore((s) => s.appointmentTime);
   const setAppointmentTime = useCheckoutStore((s) => s.setAppointmentTime);
@@ -23,6 +30,16 @@ const CalendarPage = () => {
     start: Date;
     end: Date;
   } | null>(appointmentTime);
+  const localTimeZone = getLocalTimeZone();
+  const effectiveLocationTimeZone = locationTimeZone ?? localTimeZone;
+  const showLocationDateTime =
+    !!selectedTimeRange &&
+    shouldShowLocationTime(
+      selectedTimeRange.start,
+      selectedTimeRange.end,
+      localTimeZone,
+      effectiveLocationTimeZone,
+    );
 
   // Calculate total duration from all cart items
   const totalDuration = useMemo(() => {
@@ -109,13 +126,14 @@ const CalendarPage = () => {
               Available Times
             </h3>
             <p className="text-sidebar-foreground/60 text-sm">
-              {selectedDate.toLocaleDateString("en-US", {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })}
+              Local date: {formatDateInTimeZone(selectedDate, localTimeZone)}
             </p>
+            {formatDateInTimeZone(selectedDate, localTimeZone) !==
+              formatDateInTimeZone(selectedDate, effectiveLocationTimeZone) && (
+              <p className="text-sidebar-foreground/60 text-xs">
+                Location date: {formatDateInTimeZone(selectedDate, effectiveLocationTimeZone)}
+              </p>
+            )}
 
             {isLoading ? (
               <div className="flex items-center justify-center min-h-[200px] text-sm text-sidebar-foreground/60">
@@ -157,15 +175,23 @@ const CalendarPage = () => {
                             : "bg-sidebar-accent/20 border-sidebar-border text-sidebar-foreground hover:border-accent/50 hover:bg-accent/10",
                         )}
                       >
-                        {time.start.toLocaleTimeString([], {
-                          hour: "numeric",
-                          minute: "2-digit",
-                        })}{" "}
-                        -{" "}
-                        {time.end.toLocaleTimeString([], {
-                          hour: "numeric",
-                          minute: "2-digit",
-                        })}
+                        <span className="block leading-tight">
+                          {formatTimeRangeInTimeZone(time.start, time.end, localTimeZone)}
+                        </span>
+                        {shouldShowLocationTime(
+                          time.start,
+                          time.end,
+                          localTimeZone,
+                          effectiveLocationTimeZone,
+                        ) && (
+                          <span className="block text-[11px] opacity-80 leading-tight mt-0.5">
+                            {formatTimeRangeInTimeZone(
+                              time.start,
+                              time.end,
+                              effectiveLocationTimeZone,
+                            )}
+                          </span>
+                        )}
                       </motion.button>
                     );
                   })
@@ -192,18 +218,24 @@ const CalendarPage = () => {
                 <p className="text-accent-foreground/70 text-sm mb-1">
                   Selected Appointment
                 </p>
-                <p className="text-accent-foreground text-lg font-semibold">
-                  {selectedDate.toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })}{" "}
-                  at{" "}
-                  {selectedTimeRange.start.toLocaleTimeString([], {
-                    hour: "numeric",
-                    minute: "2-digit",
-                  })}
+                <p className="text-accent-foreground text-base font-semibold">
+                  Local: {formatDateInTimeZone(selectedDate, localTimeZone)} at{" "}
+                  {formatTimeRangeInTimeZone(
+                    selectedTimeRange.start,
+                    selectedTimeRange.end,
+                    localTimeZone,
+                  )}
                 </p>
+                {showLocationDateTime && (
+                  <p className="text-accent-foreground/70 text-sm mt-1">
+                    Location: {formatDateInTimeZone(selectedDate, effectiveLocationTimeZone)} at{" "}
+                    {formatTimeRangeInTimeZone(
+                      selectedTimeRange.start,
+                      selectedTimeRange.end,
+                      effectiveLocationTimeZone,
+                    )}
+                  </p>
+                )}
                 <p className="text-accent-foreground/60 text-sm mt-1">
                   Duration: {formatDuration(totalDuration)}
                 </p>

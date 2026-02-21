@@ -261,12 +261,14 @@ export const MasterCalendar = ({ locationId }: { locationId: string }) => {
       {!!employees && employees.code === "SUCCESS" ? (
         <CalendarProvider
           date={date}
+          locationTimeZone={employees.timeZone}
           employees={employees.schedule}
           appointmentsByEmployee={appointments || {}}
         >
           <EmployeeDayCalendar
             locationId={locationId}
             employees={employees.schedule}
+            locationTimeZone={employees.timeZone}
           />
         </CalendarProvider>
       ) : null}
@@ -278,15 +280,54 @@ function dateToLocalMinutes(date: Date): number {
   return date.getHours() * 60 + date.getMinutes();
 }
 
+function getDatePartsInTimeZone(date: Date, timeZone: string) {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  });
+
+  const parts = formatter.formatToParts(date);
+  const values = Object.fromEntries(
+    parts
+      .filter((part) => part.type !== "literal")
+      .map((part) => [part.type, Number.parseInt(part.value, 10)]),
+  );
+
+  return {
+    year: values.year,
+    month: values.month,
+    day: values.day,
+    hour: values.hour,
+    minute: values.minute,
+  };
+}
+
+function getDateKeyInTimeZone(date: Date, timeZone: string): string {
+  const { year, month, day } = getDatePartsInTimeZone(date, timeZone);
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
+function dateToMinutesInTimeZone(date: Date, timeZone: string): number {
+  const { hour, minute } = getDatePartsInTimeZone(date, timeZone);
+  return hour * 60 + minute;
+}
+
 type AppointmentResponseType =
   inferRouterOutputs<AppRouter>["appointment"]["fetchAppointments"];
 const CalendarProvider = ({
   date,
+  locationTimeZone,
   employees,
   appointmentsByEmployee,
   children,
 }: {
   date: Date;
+  locationTimeZone: string;
   employees: Employee[];
   appointmentsByEmployee: AppointmentResponseType | undefined;
   children: React.ReactNode;
@@ -307,8 +348,9 @@ const CalendarProvider = ({
 
   const appointments = useMemo(() => {
     if (!appointmentsByEmployee) return {};
-    const appointmentForDate =
-      appointmentsByEmployee[date?.toISOString() || ""];
+    const appointmentForDate = appointmentsByEmployee[
+      getDateKeyInTimeZone(date, locationTimeZone)
+    ];
     if (!appointmentForDate) return {};
     return appointmentForDate.reduce(
       (acc, appointment) => {
@@ -318,8 +360,14 @@ const CalendarProvider = ({
         }
         acc[employeeId].push({
           ...appointment,
-          start: dateToLocalMinutes(new Date(appointment.startTime)),
-          end: dateToLocalMinutes(new Date(appointment.endTime)),
+          start: dateToMinutesInTimeZone(
+            new Date(appointment.startTime),
+            locationTimeZone,
+          ),
+          end: dateToMinutesInTimeZone(
+            new Date(appointment.endTime),
+            locationTimeZone,
+          ),
           bufferTime: appointment.bufferTime,
           prepTime: appointment.prepTime,
           title: appointment.customer.name,
@@ -332,7 +380,7 @@ const CalendarProvider = ({
       },
       {} as Record<string, Appointment[]>,
     );
-  }, [appointmentsByEmployee, date]);
+  }, [appointmentsByEmployee, date, locationTimeZone]);
 
   return (
     <LocationHoursContext.Provider value={locationHours}>
@@ -364,9 +412,11 @@ const getFetchAppointmentTRPCKey = (selectedDate: Date, locationId: string) => {
 export function EmployeeDayCalendar({
   locationId,
   employees,
+  locationTimeZone,
 }: {
   locationId: string;
   employees: Employee[];
+  locationTimeZone: string;
 }) {
   const update = useAppointmentStore((s) => s.update);
   const resolveCollisions = useAppointmentStore((s) => s.getResolvedTimings);
@@ -497,12 +547,12 @@ export function EmployeeDayCalendar({
       });
 
       update(fromEmployee, toEmployee, drag.id, {
-        start: dateToLocalMinutes(res.newStartTime),
-        end: dateToLocalMinutes(res.newEndTime),
+        start: dateToMinutesInTimeZone(res.newStartTime, locationTimeZone),
+        end: dateToMinutesInTimeZone(res.newEndTime, locationTimeZone),
         employeeId: drop.empId,
       });
     },
-    [employees, update],
+    [employees, update, locationTimeZone],
   );
 
   if (!locationHours) return <p>Location is off </p>;
@@ -522,7 +572,11 @@ export function EmployeeDayCalendar({
           gridTemplateColumns: `80px repeat(${employees.length}, 1fr)`,
         }}
       >
-        <CurrentTimeLine date={selectedDate} locationHours={locationHours} />
+        <CurrentTimeLine
+          date={selectedDate}
+          locationHours={locationHours}
+          locationTimeZone={locationTimeZone}
+        />
         <TimeColumn />
 
         <DndContext
@@ -580,24 +634,28 @@ export function OverlayPlaceholder() {
 export function CurrentTimeLine({
   date,
   locationHours,
+  locationTimeZone,
 }: {
   date: Date;
   locationHours: LocationHours;
+  locationTimeZone: string;
 }) {
-  const [currentMinutes, setCurrentMinutes] = useState(getCurrentMinutes());
+  const [currentMinutes, setCurrentMinutes] = useState(
+    getCurrentMinutes(locationTimeZone),
+  );
 
   useEffect(() => {
-    if (!isToday(date)) return;
+    if (!isToday(date, locationTimeZone)) return;
 
     const id = setInterval(
-      () => setCurrentMinutes(getCurrentMinutes()),
+      () => setCurrentMinutes(getCurrentMinutes(locationTimeZone)),
       60_000,
     );
 
     return () => clearInterval(id);
-  }, [date]);
+  }, [date, locationTimeZone]);
 
-  if (!isToday(date)) return null;
+  if (!isToday(date, locationTimeZone)) return null;
 
   const minutesSinceStart = currentMinutes - locationHours.minTime;
   if (minutesSinceStart < 0) return null;
@@ -623,12 +681,13 @@ export function CurrentTimeLine({
 
 /* ───────────────────────── utils ───────────────────────── */
 
-function getCurrentMinutes() {
-  const now = new Date();
-  return now.getHours() * 60 + now.getMinutes();
+function getCurrentMinutes(timeZone: string) {
+  return dateToMinutesInTimeZone(new Date(), timeZone);
 }
 
-function isToday(date: Date) {
-  const today = new Date();
-  return today.toDateString() === date.toDateString();
+function isToday(date: Date, timeZone: string) {
+  return (
+    getDateKeyInTimeZone(new Date(), timeZone) ===
+    getDateKeyInTimeZone(date, timeZone)
+  );
 }

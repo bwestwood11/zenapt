@@ -1,16 +1,11 @@
-import App from "next/app";
 import prisma from "../../../prisma";
 import { AppointmentStatus } from "../../../prisma/generated/enums";
-
-function dayToBit(date: Date): number {
-  return 1 << date.getDay();
-}
-
-function toMonthDay(date: Date): string {
-  return `${String(date.getMonth() + 1).padStart(2, "0")}-${String(
-    date.getDate(),
-  ).padStart(2, "0")}`;
-}
+import {
+  getDateKeyInTimeZone,
+  getDayBitInTimeZone,
+  getMonthDayInTimeZone,
+  getZonedDayRangeUtc,
+} from "../datetime/timezone";
 
 type MinuteRange = {
   startMinute: number;
@@ -46,8 +41,23 @@ export async function getLocationSpecialistsSchedule(
   locationId: string,
   date: Date,
 ) {
-  const dayBit = dayToBit(date);
-  const monthDay = toMonthDay(date);
+  const location = await prisma.location.findUnique({
+    where: { id: locationId },
+    select: { timeZone: true },
+  });
+
+  if (!location) {
+    return { code: "LOCATION_OFF" as const, timeZone: "UTC" };
+  }
+
+  const locationTimeZone = location.timeZone || "UTC";
+
+  const dayBit = getDayBitInTimeZone(date, locationTimeZone);
+  const monthDay = getMonthDayInTimeZone(date, locationTimeZone);
+  const { dayStartUtc, dayEndUtc } = getZonedDayRangeUtc(
+    date,
+    locationTimeZone,
+  );
 
   const employees = await prisma.locationEmployee.findMany({
     where: { locationId, role: "LOCATION_SPECIALIST" },
@@ -89,8 +99,8 @@ export async function getLocationSpecialistsSchedule(
       where: {
         targetType: "EMPLOYEE",
         targetId: { in: employeeIds },
-        startDate: { lte: date },
-        endDate: { gte: date },
+        startDate: { lte: dayEndUtc },
+        endDate: { gte: dayStartUtc },
       },
     }),
   ]);
@@ -114,7 +124,7 @@ export async function getLocationSpecialistsSchedule(
   );
 
   if (locationClosedByException || !locationWorkRule) {
-    return { code: "LOCATION_OFF" as const };
+    return { code: "LOCATION_OFF" as const, timeZone: locationTimeZone };
   }
 
   // ---------- EMPLOYEE SCHEDULE ----------
@@ -215,6 +225,7 @@ export async function getLocationSpecialistsSchedule(
 
   return {
     code: "SUCCESS" as const,
+    timeZone: locationTimeZone,
     schedule,
   };
 }
@@ -228,11 +239,26 @@ export async function getAppointmentsInRange({
   endDate: Date;
   locationId: string;
 }) {
+  const location = await prisma.location.findUnique({
+    where: { id: locationId },
+    select: { timeZone: true },
+  });
+
+  const locationTimeZone = location?.timeZone ?? "UTC";
+  const { dayStartUtc: rangeStartUtc } = getZonedDayRangeUtc(
+    startDate,
+    locationTimeZone,
+  );
+  const { dayEndUtc: rangeEndUtc } = getZonedDayRangeUtc(
+    endDate,
+    locationTimeZone,
+  );
+
   const appointments = await prisma.appointment.findMany({
     where: {
       locationId,
-      startTime: { gte: startDate },
-      endTime: { lte: endDate },
+      startTime: { gte: rangeStartUtc },
+      endTime: { lt: rangeEndUtc },
     },
     select: {
       endTime: true,
@@ -272,17 +298,13 @@ export async function getAppointmentsInRange({
 
   const appointmentByEmployees = appointments.reduce<AppointmentResponseType>(
     (acc, appointment) => {
-      const currentDate = new Date(
-        appointment.startTime.getFullYear(),
-        appointment.startTime.getMonth(),
-        appointment.startTime.getDate(),
-        0,
-        0,
-        0,
-        0,
+      const currentDateKey = getDateKeyInTimeZone(
+        appointment.startTime,
+        locationTimeZone,
       );
-      if (!acc[currentDate.toISOString()]) {
-        acc[currentDate.toISOString()] = [];
+
+      if (!acc[currentDateKey]) {
+        acc[currentDateKey] = [];
       }
       if (!appointment.service || appointment.service.length === 0) {
         console.error(
@@ -328,7 +350,7 @@ export async function getAppointmentsInRange({
           id: appointment.customer.id,
         },
       };
-      acc[currentDate.toISOString()].push(appointmentWithEmployee);
+      acc[currentDateKey].push(appointmentWithEmployee);
       return acc;
     },
     {},
