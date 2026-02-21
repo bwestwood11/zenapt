@@ -97,7 +97,13 @@ export const ROLE_PERMISSIONS: RolePermission = {
       ...addFeature("APPOINTMENTS"),
       ...addFeature("CUSTOMERS"),
     ],
-    LOCATION_SPECIALIST: ["READ::SERVICE"],
+    LOCATION_SPECIALIST: [
+      "READ::LOCATION",
+      "READ::SERVICE",
+      "CREATE::SERVICE",
+      "UPDATE::SERVICE",
+      "READ::SERVICES_TERMS",
+    ],
     ORGANIZATION_MANAGEMENT: [
       "READ::LOCATION",
       "UPDATE::LOCATION",
@@ -159,7 +165,6 @@ export function canAccess(
   target: { organizationId?: string; locationId?: string },
 ): boolean {
   const { organizationId, locationId } = target;
-  console.log(target);
   // Helper
   const hasPerms = (perms?: Permission[]) =>
     required.every((perm) => perms?.includes(perm));
@@ -169,17 +174,14 @@ export function canAccess(
   if (!organizationId) {
     return false;
   }
-  // 1️⃣ Org-level
+  // 1️⃣ Org-level (optional for location-only users)
   if (organizationId) {
     const orgRoles = ctx.orgRoles[organizationId];
 
-    if (!orgRoles || orgRoles.length === 0) {
-      // User isn’t part of this org at all
-      return false;
-    }
-
-    for (const role of orgRoles) {
-      granted = granted.concat(ROLE_PERMISSIONS.ORG[role] || []);
+    if (orgRoles && orgRoles.length > 0) {
+      for (const role of orgRoles) {
+        granted = granted.concat(ROLE_PERMISSIONS.ORG[role] || []);
+      }
     }
   }
 

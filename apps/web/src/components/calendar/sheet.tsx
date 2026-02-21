@@ -40,7 +40,7 @@ export const EditSheet = () => {
                 <input
                     type="number"
                     id="price"
-                    defaultValue={appointment.price}
+                  defaultValue={appointment.price / 100}
                     className="border p-2 rounded"
                 />
                 <CalendarComponent />

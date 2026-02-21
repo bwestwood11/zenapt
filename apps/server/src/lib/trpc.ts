@@ -261,7 +261,6 @@ export const permissionMiddleware = t.middleware(
     const accessCtx = await getUserAccessContext(user.id);
 
     const betterInput = input ?? {};
-    console.log(betterInput);
     const locationId =
       typeof betterInput === "object" &&
       "locationId" in betterInput &&
@@ -269,9 +268,20 @@ export const permissionMiddleware = t.middleware(
         ? betterInput.locationId
         : undefined;
 
+    const slug =
+      typeof betterInput === "object" &&
+      "slug" in betterInput &&
+      typeof betterInput?.slug === "string"
+        ? betterInput.slug
+        : undefined;
+
+    const locationIdFromSlug = slug
+      ? user.employees?.find((emp) => emp.locationSlug === slug)?.locationId
+      : undefined;
+
     const ok = canAccess(accessCtx, requiredPermissions, {
       organizationId: user.organizationId,
-      locationId,
+      locationId: locationId ?? locationIdFromSlug,
     });
 
     if (!ok) {

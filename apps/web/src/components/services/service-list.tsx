@@ -108,7 +108,7 @@ export function ServiceList() {
                       {service.name}
                     </h3>
                     <span className="text-base font-medium text-primary">
-                      ${service.minimumPrice}
+                      ${(service.minimumPrice / 100).toFixed(2)}
                     </span>
                   </div>
                   <p>{service.excerpt}</p>
