@@ -3,6 +3,8 @@ import prisma from "../../prisma";
 import { stripe } from "../lib/stripe/server-stripe";
 import { isEditConflictFastFail } from "../lib/appointment/appointment";
 import { customerJwtProcedure, router } from "../lib/trpc";
+import { sendAppointmentBookedEmail } from "../lib/email/appointment";
+import { after } from "next/server";
 import z from "zod";
 
 const getSavedCardSummary = async (
@@ -607,6 +609,17 @@ const createAppointment = customerJwtProcedure
           },
         },
       },
+    });
+
+    after(async () => {
+      try {
+        await sendAppointmentBookedEmail(appointment.id);
+      } catch (error) {
+        console.error(
+          "[customerPayments.createAppointment] Failed to send appointment confirmation email",
+          error,
+        );
+      }
     });
 
     return {

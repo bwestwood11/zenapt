@@ -16,6 +16,8 @@ import {
   getAvailableTimings,
   isEditConflictFastFail,
 } from "../lib/appointment/appointment";
+import { sendAppointmentBookedEmail } from "../lib/email/appointment";
+import { after } from "next/server";
 
 export const appointmentRouter = router({
   fetchSpecialistUpcomingAppointments: withPermissions(["READ::APPOINTMENTS"], z.object({
@@ -721,6 +723,17 @@ export const appointmentRouter = router({
           },
           addOns: true,
         },
+      });
+
+      after(async () => {
+        try {
+          await sendAppointmentBookedEmail(appointment.id);
+        } catch (error) {
+          console.error(
+            "[appointment.createAppointment] Failed to send appointment confirmation email",
+            error,
+          );
+        }
       });
 
       return {

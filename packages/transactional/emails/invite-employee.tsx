@@ -20,7 +20,7 @@ type InvitationEmailProps = {
   supportEmail?: string;
 };
 
-export function InvitationEmail({
+export default function InvitationEmail({
   userEmail,
   password,
   inviteLink,
@@ -28,7 +28,7 @@ export function InvitationEmail({
   role,
   logoUrl,
   supportEmail = "support@example.com",
-}: InvitationEmailProps) {
+}: Readonly<InvitationEmailProps>) {
   return (
     <Html>
       <Head />
