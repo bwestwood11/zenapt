@@ -99,7 +99,10 @@ export const ROLE_PERMISSIONS: RolePermission = {
     ],
     LOCATION_SPECIALIST: [
       "READ::LOCATION",
+      "READ::EMPLOYEES",
       "READ::SERVICE",
+      "READ::MASTER_CALENDAR",
+      "READ::APPOINTMENTS",
       "CREATE::SERVICE",
       "UPDATE::SERVICE",
       "READ::SERVICES_TERMS",

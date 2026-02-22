@@ -3,16 +3,155 @@ import {
   getAppointmentsInRange,
   getLocationSpecialistsSchedule,
 } from "../lib/appointment/employees";
-import { publicProcedure, router, withPermissions } from "../lib/trpc";
+import {
+  permissionMiddleware,
+  protectedProcedure,
+  publicProcedure,
+  router,
+  withPermissions,
+} from "../lib/trpc";
 import prisma from "../../prisma";
 import { TRPCError } from "@trpc/server";
 import {
   getAvailableTimings,
   isEditConflictFastFail,
 } from "../lib/appointment/appointment";
-import { buffer } from "node:stream/consumers";
 
 export const appointmentRouter = router({
+  fetchSpecialistUpcomingAppointments: withPermissions(["READ::APPOINTMENTS"], z.object({
+    locationId: z.string(),
+    startDate: z.date(),
+    endDate: z.date(),
+  }))
+    .query(async ({ ctx, input }) => {
+      const specialist = await prisma.locationEmployee.findFirst({
+        where: {
+          locationId: input.locationId,
+          userId: ctx.session.user.id,
+          role: "LOCATION_SPECIALIST",
+        },
+        select: { id: true },
+      });
+
+
+      console.log("Specialist ID:", specialist?.id);
+
+      if (!specialist) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only specialists can access specialist appointment data",
+        });
+      }
+
+      const appointments = await prisma.appointment.findMany({
+        where: {
+          locationId: input.locationId,
+          startTime: { gte: input.startDate },
+          endTime: { lte: input.endDate },
+          service: {
+            some: { locationEmployeeId: specialist.id },
+          },
+        },
+        orderBy: { startTime: "asc" },
+        select: {
+          id: true,
+          startTime: true,
+          endTime: true,
+          status: true,
+          customer: {
+            select: {
+              user: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          service: {
+            where: {
+              locationEmployeeId: specialist.id,
+            },
+            select: {
+              serviceTerms: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      return appointments.map((appointment) => ({
+        id: appointment.id,
+        startTime: appointment.startTime,
+        endTime: appointment.endTime,
+        status: appointment.status,
+        customerName: appointment.customer.user.name,
+        serviceNames: appointment.service.map((item) => item.serviceTerms.name),
+      }));
+    }),
+
+  fetchSpecialistDailySchedule: withPermissions(["READ::LOCATION", "READ::MASTER_CALENDAR"], z.object({
+    locationId: z.string(),
+    date: z.date(),
+  }))
+    .query(async ({ ctx, input }) => {
+      const specialist = await prisma.locationEmployee.findFirst({
+        where: {
+          locationId: input.locationId,
+          userId: ctx.session.user.id,
+          role: "LOCATION_SPECIALIST",
+        },
+        select: { id: true },
+      });
+
+      if (!specialist) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only specialists can access specialist schedule data",
+        });
+      }
+
+      const schedule = await getLocationSpecialistsSchedule(
+        input.locationId,
+        input.date,
+      );
+
+      if (schedule.code !== "SUCCESS") {
+        return {
+          code: schedule.code,
+          timeZone: schedule.timeZone,
+          workHours: null,
+          breaks: [],
+        };
+      }
+
+      const specialistSchedule = schedule.schedule.find(
+        (item) =>
+          "employee" in item &&
+          (("userId" in item.employee &&
+            item.employee.userId === ctx.session.user.id) ||
+            item.employee.id === specialist.id),
+      );
+
+      if (specialistSchedule?.code !== "WORKING") {
+        return {
+          code: "EMPLOYEE_OFF" as const,
+          timeZone: schedule.timeZone,
+          workHours: null,
+          breaks: [],
+        };
+      }
+
+      return {
+        code: "WORKING" as const,
+        timeZone: schedule.timeZone,
+        workHours: specialistSchedule.workHours,
+        breaks: specialistSchedule.breaks,
+      };
+    }),
+
   fetchEmployeesSchedule: withPermissions([
     "READ::MASTER_CALENDAR",
     "READ::EMPLOYEES",

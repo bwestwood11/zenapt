@@ -239,6 +239,7 @@ export const permissionMiddleware = t.middleware(
     if (!user || !user.organizationId) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
+    
 
     if (!meta?.requiredPermissions) {
       return next({ ctx: { ...ctx, session: { ...ctx.session, user } } });
@@ -257,6 +258,8 @@ export const permissionMiddleware = t.middleware(
     const requiredPermissions: Permission[] = parsePermission(
       meta?.requiredPermissions,
     );
+
+    console.log("Required permissions for this route:", requiredPermissions);
 
     const accessCtx = await getUserAccessContext(user.id);
 
@@ -279,6 +282,13 @@ export const permissionMiddleware = t.middleware(
       ? user.employees?.find((emp) => emp.locationSlug === slug)?.locationId
       : undefined;
 
+    console.log("Checking permissions for user:", user.id, {
+      requiredPermissions,
+      locationId,
+      slug,
+      locationIdFromSlug,
+    });
+    
     const ok = canAccess(accessCtx, requiredPermissions, {
       organizationId: user.organizationId,
       locationId: locationId ?? locationIdFromSlug,
