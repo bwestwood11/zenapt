@@ -148,6 +148,9 @@ const updateLocationOperatingHours = withPermissions(
     prepTime: z.number().min(0).max(30),
     advanceBookingLimitDays: z.number().min(1).max(365),
     bookingCutOff: z.number().min(1).max(10080),
+    downpaymentPercentage: z.number().min(0).max(100).optional(),
+    cancellationPercent: z.number().min(0).max(100).optional(),
+    cancellationDuration: z.number().min(1).max(10080).optional(),
     rules: z.array(
       z.object({
         day: z.number(), // 0 = Sun ... 6 = Sat
@@ -165,6 +168,9 @@ const updateLocationOperatingHours = withPermissions(
     bufferTime,
     advanceBookingLimitDays,
     prepTime,
+    downpaymentPercentage,
+    cancellationPercent,
+    cancellationDuration,
   } = input;
   await updateWeeklySchedule({ locationId, rules });
   await prisma.appointmentSettings.upsert({
@@ -177,12 +183,26 @@ const updateLocationOperatingHours = withPermissions(
       prepTime,
       advanceBookingLimitDays,
       bookingCutOff,
+      ...(typeof downpaymentPercentage === "number" && {
+        downpaymentPercentage,
+      }),
+      ...(typeof cancellationPercent === "number" && { cancellationPercent }),
+      ...(typeof cancellationDuration === "number" && {
+        cancellationDuration,
+      }),
     },
     update: {
       bufferTime,
       prepTime,
       advanceBookingLimitDays,
       bookingCutOff,
+      ...(typeof downpaymentPercentage === "number" && {
+        downpaymentPercentage,
+      }),
+      ...(typeof cancellationPercent === "number" && { cancellationPercent }),
+      ...(typeof cancellationDuration === "number" && {
+        cancellationDuration,
+      }),
     },
   });
 });

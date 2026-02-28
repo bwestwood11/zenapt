@@ -24,8 +24,7 @@ model Appointment {
   price                      Int
   createdAt                  DateTime                    @default(now())
   updatedAt                  DateTime                    @updatedAt
-  customerPaymentId          String?                     @unique
-  customerAppointmentPayment CustomerAppointmentPayment? @relation(fields: [customerPaymentId], references: [id], onDelete: Restrict)
+  customerPayments           CustomerAppointmentPayment[]
   promoCodeId                String?
   promoCode                  PromoCode?                  @relation(fields: [promoCodeId], references: [id], onDelete: SetNull)
   paymentMethodId            String?
@@ -143,6 +142,9 @@ model AppointmentSettings {
   prepTime                Int      @default(0) // in minutes
   advanceBookingLimitDays Int      @default(60) // in days
   bookingCutOff           Int      @default(60) // in minutes
+  downpaymentPercentage   Int      @default(0) // in percent (0-100)
+  cancellationPercent     Int      @default(100) // in percent (0-100)
+  cancellationDuration    Int      @default(60) // in minutes before appointment
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 

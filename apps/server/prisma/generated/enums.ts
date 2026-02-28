@@ -53,6 +53,26 @@ export const EmployeeRole = {
 export type EmployeeRole = (typeof EmployeeRole)[keyof typeof EmployeeRole]
 
 
+export const CustomerPaymentType = {
+  DOWNPAYMENT: 'DOWNPAYMENT',
+  BALANCE: 'BALANCE',
+  CANCELLATION: 'CANCELLATION',
+  REFUND: 'REFUND'
+} as const
+
+export type CustomerPaymentType = (typeof CustomerPaymentType)[keyof typeof CustomerPaymentType]
+
+
+export const CustomerPaymentStatus = {
+  PENDING: 'PENDING',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED',
+  REFUNDED: 'REFUNDED'
+} as const
+
+export type CustomerPaymentStatus = (typeof CustomerPaymentStatus)[keyof typeof CustomerPaymentStatus]
+
+
 export const InvitationStatus = {
   PENDING: 'PENDING',
   ACCEPTED: 'ACCEPTED',

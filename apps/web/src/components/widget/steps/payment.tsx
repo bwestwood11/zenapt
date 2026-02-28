@@ -14,7 +14,7 @@ import { Lock, CreditCard } from "lucide-react";
 import { ProtectedStep } from "./protected-step";
 import getStripe from "@/lib/stripe/config";
 import { trpc } from "@/utils/trpc";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useOrgId } from "../hooks/useOrgId";
 import { useCustomerSession } from "../hooks/useCustomerSession";
 import { useCheckoutStore, StepIds } from "../hooks/useStore";
@@ -44,7 +44,7 @@ const SetupIntentForm = ({
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!stripe || !elements) {
       return;
@@ -180,7 +180,7 @@ const PaymentPage = () => {
     Array<{
       id: string;
       brand: string;
-      last4: string;
+      last4: string;    
       expMonth: number;
       expYear: number;
     }>
@@ -189,6 +189,47 @@ const PaymentPage = () => {
     null,
   );
   const [useNewCard, setUseNewCard] = React.useState(false);
+
+  const totalAmount = React.useMemo(() => {
+    return cart.reduce((sum, item) => {
+      const servicePrice =  item.servicePrice ? item.servicePrice / 100 : 0;
+      const addonsPrice = (item.addons ?? []).reduce(
+        (addonSum, addon) => addonSum + (addon.price ? addon.price / 100 : 0),
+        0,
+      );
+      return sum + servicePrice + addonsPrice;
+    }, 0);
+  }, [cart]);
+
+  const formatUSD = React.useCallback((amount: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
+  }, []);
+
+  const { data: bookingPolicy } = useQuery({
+    ...trpc.public.getLocationBookingPolicy.queryOptions({
+      locationId: location ?? "",
+    }),
+    enabled: !!location,
+  });
+
+  const cancellationPercent = bookingPolicy?.cancellationPercent ?? 100;
+  const cancellationDuration = bookingPolicy?.cancellationDuration ?? 60;
+  const downpaymentPercentage = bookingPolicy?.downpaymentPercentage ?? 0;
+  const amountDueNow =
+    downpaymentPercentage > 0
+      ? Number(((totalAmount * downpaymentPercentage) / 100).toFixed(2))
+      : 0;
+
+  const formatDurationLabel = React.useCallback((minutes: number) => {
+    if (minutes % 60 === 0) {
+      const hours = minutes / 60;
+      return `${hours} hour${hours === 1 ? "" : "s"}`;
+    }
+    return `${minutes} minute${minutes === 1 ? "" : "s"}`;
+  }, []);
 
   const { mutateAsync: createSetupIntent } = useMutation(
     trpc.customerPayments.createSetupIntent.mutationOptions(),
@@ -564,21 +605,58 @@ const PaymentPage = () => {
         )}
 
         {allSavedCards.length > 0 && !useNewCard && !bookingSuccess && (
-          <Button
-            onClick={handleBookAppointment}
-            className="w-full"
-            size="lg"
-            disabled={isBooking || !selectedCardId}
-          >
-            {isBooking ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-background mr-2"></div>
-                Booking Appointment...
-              </>
-            ) : (
-              "Book Appointment"
-            )}
-          </Button>
+          <div className="space-y-4">
+            <div className="rounded-lg border bg-muted/40 p-4 space-y-3">
+              <h3 className="text-sm font-semibold text-foreground">
+                Payment Details
+              </h3>
+
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Total booking amount</span>
+                  <span className="font-semibold text-foreground">
+                    {formatUSD(totalAmount)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Amount due now</span>
+                  <span className="font-semibold text-foreground">
+                    {formatUSD(amountDueNow)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-1 rounded-md bg-muted/50 p-3">
+                <p className="text-xs text-muted-foreground">
+                  {downpaymentPercentage > 0
+                    ? `Your selected card will be charged ${downpaymentPercentage}% now as downpayment. Remaining balance can be charged later.`
+                    : "No downpayment is charged now. Your card will still be saved for future charges."}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Cancellation & no-show policy: If you cancel within{" "}
+                  {formatDurationLabel(cancellationDuration)} before your
+                  appointment start time, or do not show up, up to{" "}
+                  {cancellationPercent}% of the booked amount may be charged.
+                </p>
+              </div>
+            </div>
+
+            <Button
+              onClick={handleBookAppointment}
+              className="w-full"
+              size="lg"
+              disabled={isBooking || !selectedCardId}
+            >
+              {isBooking ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-background mr-2"></div>
+                  Booking Appointment...
+                </>
+              ) : (
+                "Book Appointment"
+              )}
+            </Button>
+          </div>
         )}
 
         <div className="text-center">

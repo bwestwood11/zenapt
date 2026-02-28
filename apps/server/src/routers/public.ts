@@ -219,9 +219,29 @@ const getServiceDetails = publicProcedure
     } catch (error) {}
   });
 
+const getLocationBookingPolicy = publicProcedure
+  .input(z.object({ locationId: z.string().min(2).max(60) }))
+  .query(async ({ input }) => {
+    const settings = await prisma.appointmentSettings.findUnique({
+      where: { locationId: input.locationId },
+      select: {
+        downpaymentPercentage: true,
+        cancellationPercent: true,
+        cancellationDuration: true,
+      },
+    });
+
+    return {
+      downpaymentPercentage: settings?.downpaymentPercentage ?? 0,
+      cancellationPercent: settings?.cancellationPercent ?? 100,
+      cancellationDuration: settings?.cancellationDuration ?? 60,
+    };
+  });
+
 export const publicRouter = router({
   getAllLocations,
   getOrganization,
   getServicesByLocation,
   getServiceDetails,
+  getLocationBookingPolicy,
 });

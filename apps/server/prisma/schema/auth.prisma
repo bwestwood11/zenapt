@@ -221,17 +221,36 @@ model CustomerAuth {
   organization          Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
 
+enum CustomerPaymentType {
+  DOWNPAYMENT
+  BALANCE
+  CANCELLATION
+  REFUND
+}
+
+enum CustomerPaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
 model CustomerAppointmentPayment {
   id            String   @id @default(cuid()) @map("_id")
   customerId    String
   customer      Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  appointmentId String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
   amountPaid    Int
+  paymentType   CustomerPaymentType   @default(DOWNPAYMENT)
+  status        CustomerPaymentStatus @default(PENDING)
   paymentMethod String
-  transactionId String?
+  transactionId String? // provider reference id (e.g., stripe payment intent id)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  appointment Appointment?
+  @@index([appointmentId])
+  @@index([customerId, appointmentId])
 }
 
 model ActivityLog {

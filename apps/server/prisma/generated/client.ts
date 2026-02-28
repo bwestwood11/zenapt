@@ -38,8 +38,8 @@ export { Prisma }
 
 
 // file annotations for bundling tools to include these files
-path.join(__dirname, "query_engine-windows.dll.node")
-path.join(process.cwd(), "prisma/generated/query_engine-windows.dll.node")
+path.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node")
+path.join(process.cwd(), "prisma/generated/libquery_engine-debian-openssl-3.0.x.so.node")
 
 /**
  * Model Admin
@@ -191,6 +191,12 @@ export const OrgRole = $Enums.OrgRole
 
 export type EmployeeRole = $Enums.EmployeeRole
 export const EmployeeRole = $Enums.EmployeeRole
+
+export type CustomerPaymentType = $Enums.CustomerPaymentType
+export const CustomerPaymentType = $Enums.CustomerPaymentType
+
+export type CustomerPaymentStatus = $Enums.CustomerPaymentStatus
+export const CustomerPaymentStatus = $Enums.CustomerPaymentStatus
 
 export type InvitationStatus = $Enums.InvitationStatus
 export const InvitationStatus = $Enums.InvitationStatus

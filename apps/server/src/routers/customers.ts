@@ -16,8 +16,15 @@ const getAllCustomers = withPermissions("READ::CUSTOMERS")
     const { page, limit, search, locationId } = input;
     const skip = (page - 1) * limit;
 
+    const locationScope: Prisma.CustomerWhereInput = {
+      OR: [
+        { location: { some: { id: locationId } } },
+        { appointments: { some: { locationId } } },
+      ],
+    };
+
     const where: Prisma.CustomerWhereInput = {
-      location: { some: { id: locationId } },
+      ...locationScope,
       ...(search && {
         OR: [
           {
@@ -53,6 +60,7 @@ const getAllCustomers = withPermissions("READ::CUSTOMERS")
           notes: true,
           createdAt: true,
           updatedAt: true,
+          
           user: {
             select: {
               name: true,
@@ -63,6 +71,8 @@ const getAllCustomers = withPermissions("READ::CUSTOMERS")
       }),
       prisma.customer.count({ where }),
     ]);
+
+
 
     return {
       customers,
@@ -88,7 +98,10 @@ const getCustomerDetails = withPermissions("READ::CUSTOMERS")
     const customer = await prisma.customer.findFirst({
       where: {
         id: customerId,
-        location: { some: { id: locationId } },
+        OR: [
+          { location: { some: { id: locationId } } },
+          { appointments: { some: { locationId } } },
+        ],
       },
       select: {
         id: true,
@@ -142,7 +155,10 @@ const getCustomerAnalytics = withPermissions("READ::CUSTOMERS")
       prisma.customer.findFirst({
         where: {
           id: customerId,
-          location: { some: { id: locationId } },
+          OR: [
+            { location: { some: { id: locationId } } },
+            { appointments: { some: { locationId } } },
+          ],
         },
         select: { id: true },
       }),

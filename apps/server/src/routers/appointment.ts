@@ -539,6 +539,66 @@ export const appointmentRouter = router({
       return getAvailableTimings(input);
     }),
 
+  getFirstAvailableProfessional: publicProcedure
+    .input(
+      z.object({
+        locationId: z.string(),
+        candidates: z
+          .array(
+            z.object({
+              employeeId: z.string(),
+              duration: z.number().min(1),
+            }),
+          )
+          .min(1),
+        startDate: z.date().optional(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const startDate = new Date(input.startDate ?? new Date());
+      startDate.setHours(0, 0, 0, 0);
+
+      const maxDaysToCheck = 30;
+
+      for (let offset = 0; offset < maxDaysToCheck; offset++) {
+        const date = new Date(startDate);
+        date.setDate(startDate.getDate() + offset);
+
+        const availabilityPerEmployee = await Promise.all(
+          input.candidates.map(async (candidate) => {
+            const timings = await getAvailableTimings({
+              locationId: input.locationId,
+              employeeId: candidate.employeeId,
+              date,
+              duration: candidate.duration,
+            });
+
+            const firstTiming = timings[0];
+            if (!firstTiming) {
+              return null;
+            }
+
+            return {
+              employeeId: candidate.employeeId,
+              start: firstTiming.start,
+              end: firstTiming.end,
+            };
+          }),
+        );
+
+        const sortedByEarliest = availabilityPerEmployee
+          .filter((entry): entry is NonNullable<typeof entry> => !!entry)
+          .sort((a, b) => a.start.getTime() - b.start.getTime());
+
+        const earliest = sortedByEarliest[0];
+        if (earliest) {
+          return earliest;
+        }
+      }
+
+      return null;
+    }),
+
   createAppointment: withPermissions(["CREATE::APPOINTMENTS"])
     .input(
       z.object({

@@ -30,6 +30,9 @@ export type AppointmentSettingsAvgAggregateOutputType = {
   prepTime: number | null
   advanceBookingLimitDays: number | null
   bookingCutOff: number | null
+  downpaymentPercentage: number | null
+  cancellationPercent: number | null
+  cancellationDuration: number | null
 }
 
 export type AppointmentSettingsSumAggregateOutputType = {
@@ -37,6 +40,9 @@ export type AppointmentSettingsSumAggregateOutputType = {
   prepTime: number | null
   advanceBookingLimitDays: number | null
   bookingCutOff: number | null
+  downpaymentPercentage: number | null
+  cancellationPercent: number | null
+  cancellationDuration: number | null
 }
 
 export type AppointmentSettingsMinAggregateOutputType = {
@@ -46,6 +52,9 @@ export type AppointmentSettingsMinAggregateOutputType = {
   prepTime: number | null
   advanceBookingLimitDays: number | null
   bookingCutOff: number | null
+  downpaymentPercentage: number | null
+  cancellationPercent: number | null
+  cancellationDuration: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -57,6 +66,9 @@ export type AppointmentSettingsMaxAggregateOutputType = {
   prepTime: number | null
   advanceBookingLimitDays: number | null
   bookingCutOff: number | null
+  downpaymentPercentage: number | null
+  cancellationPercent: number | null
+  cancellationDuration: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -68,6 +80,9 @@ export type AppointmentSettingsCountAggregateOutputType = {
   prepTime: number
   advanceBookingLimitDays: number
   bookingCutOff: number
+  downpaymentPercentage: number
+  cancellationPercent: number
+  cancellationDuration: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -79,6 +94,9 @@ export type AppointmentSettingsAvgAggregateInputType = {
   prepTime?: true
   advanceBookingLimitDays?: true
   bookingCutOff?: true
+  downpaymentPercentage?: true
+  cancellationPercent?: true
+  cancellationDuration?: true
 }
 
 export type AppointmentSettingsSumAggregateInputType = {
@@ -86,6 +104,9 @@ export type AppointmentSettingsSumAggregateInputType = {
   prepTime?: true
   advanceBookingLimitDays?: true
   bookingCutOff?: true
+  downpaymentPercentage?: true
+  cancellationPercent?: true
+  cancellationDuration?: true
 }
 
 export type AppointmentSettingsMinAggregateInputType = {
@@ -95,6 +116,9 @@ export type AppointmentSettingsMinAggregateInputType = {
   prepTime?: true
   advanceBookingLimitDays?: true
   bookingCutOff?: true
+  downpaymentPercentage?: true
+  cancellationPercent?: true
+  cancellationDuration?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -106,6 +130,9 @@ export type AppointmentSettingsMaxAggregateInputType = {
   prepTime?: true
   advanceBookingLimitDays?: true
   bookingCutOff?: true
+  downpaymentPercentage?: true
+  cancellationPercent?: true
+  cancellationDuration?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -117,6 +144,9 @@ export type AppointmentSettingsCountAggregateInputType = {
   prepTime?: true
   advanceBookingLimitDays?: true
   bookingCutOff?: true
+  downpaymentPercentage?: true
+  cancellationPercent?: true
+  cancellationDuration?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -215,6 +245,9 @@ export type AppointmentSettingsGroupByOutputType = {
   prepTime: number
   advanceBookingLimitDays: number
   bookingCutOff: number
+  downpaymentPercentage: number
+  cancellationPercent: number
+  cancellationDuration: number
   createdAt: Date
   updatedAt: Date
   _count: AppointmentSettingsCountAggregateOutputType | null
@@ -249,6 +282,9 @@ export type AppointmentSettingsWhereInput = {
   prepTime?: Prisma.IntFilter<"AppointmentSettings"> | number
   advanceBookingLimitDays?: Prisma.IntFilter<"AppointmentSettings"> | number
   bookingCutOff?: Prisma.IntFilter<"AppointmentSettings"> | number
+  downpaymentPercentage?: Prisma.IntFilter<"AppointmentSettings"> | number
+  cancellationPercent?: Prisma.IntFilter<"AppointmentSettings"> | number
+  cancellationDuration?: Prisma.IntFilter<"AppointmentSettings"> | number
   createdAt?: Prisma.DateTimeFilter<"AppointmentSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AppointmentSettings"> | Date | string
   location?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.LocationWhereInput>
@@ -261,6 +297,9 @@ export type AppointmentSettingsOrderByWithRelationInput = {
   prepTime?: Prisma.SortOrder
   advanceBookingLimitDays?: Prisma.SortOrder
   bookingCutOff?: Prisma.SortOrder
+  downpaymentPercentage?: Prisma.SortOrder
+  cancellationPercent?: Prisma.SortOrder
+  cancellationDuration?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   location?: Prisma.LocationOrderByWithRelationInput
@@ -276,6 +315,9 @@ export type AppointmentSettingsWhereUniqueInput = Prisma.AtLeast<{
   prepTime?: Prisma.IntFilter<"AppointmentSettings"> | number
   advanceBookingLimitDays?: Prisma.IntFilter<"AppointmentSettings"> | number
   bookingCutOff?: Prisma.IntFilter<"AppointmentSettings"> | number
+  downpaymentPercentage?: Prisma.IntFilter<"AppointmentSettings"> | number
+  cancellationPercent?: Prisma.IntFilter<"AppointmentSettings"> | number
+  cancellationDuration?: Prisma.IntFilter<"AppointmentSettings"> | number
   createdAt?: Prisma.DateTimeFilter<"AppointmentSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AppointmentSettings"> | Date | string
   location?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.LocationWhereInput>
@@ -288,6 +330,9 @@ export type AppointmentSettingsOrderByWithAggregationInput = {
   prepTime?: Prisma.SortOrder
   advanceBookingLimitDays?: Prisma.SortOrder
   bookingCutOff?: Prisma.SortOrder
+  downpaymentPercentage?: Prisma.SortOrder
+  cancellationPercent?: Prisma.SortOrder
+  cancellationDuration?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.AppointmentSettingsCountOrderByAggregateInput
@@ -307,6 +352,9 @@ export type AppointmentSettingsScalarWhereWithAggregatesInput = {
   prepTime?: Prisma.IntWithAggregatesFilter<"AppointmentSettings"> | number
   advanceBookingLimitDays?: Prisma.IntWithAggregatesFilter<"AppointmentSettings"> | number
   bookingCutOff?: Prisma.IntWithAggregatesFilter<"AppointmentSettings"> | number
+  downpaymentPercentage?: Prisma.IntWithAggregatesFilter<"AppointmentSettings"> | number
+  cancellationPercent?: Prisma.IntWithAggregatesFilter<"AppointmentSettings"> | number
+  cancellationDuration?: Prisma.IntWithAggregatesFilter<"AppointmentSettings"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AppointmentSettings"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"AppointmentSettings"> | Date | string
 }
@@ -317,6 +365,9 @@ export type AppointmentSettingsCreateInput = {
   prepTime?: number
   advanceBookingLimitDays?: number
   bookingCutOff?: number
+  downpaymentPercentage?: number
+  cancellationPercent?: number
+  cancellationDuration?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   location: Prisma.LocationCreateNestedOneWithoutAppointmentSettingsInput
@@ -329,6 +380,9 @@ export type AppointmentSettingsUncheckedCreateInput = {
   prepTime?: number
   advanceBookingLimitDays?: number
   bookingCutOff?: number
+  downpaymentPercentage?: number
+  cancellationPercent?: number
+  cancellationDuration?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -339,6 +393,9 @@ export type AppointmentSettingsUpdateInput = {
   prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   advanceBookingLimitDays?: Prisma.IntFieldUpdateOperationsInput | number
   bookingCutOff?: Prisma.IntFieldUpdateOperationsInput | number
+  downpaymentPercentage?: Prisma.IntFieldUpdateOperationsInput | number
+  cancellationPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cancellationDuration?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   location?: Prisma.LocationUpdateOneRequiredWithoutAppointmentSettingsNestedInput
@@ -351,6 +408,9 @@ export type AppointmentSettingsUncheckedUpdateInput = {
   prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   advanceBookingLimitDays?: Prisma.IntFieldUpdateOperationsInput | number
   bookingCutOff?: Prisma.IntFieldUpdateOperationsInput | number
+  downpaymentPercentage?: Prisma.IntFieldUpdateOperationsInput | number
+  cancellationPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cancellationDuration?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -362,6 +422,9 @@ export type AppointmentSettingsCreateManyInput = {
   prepTime?: number
   advanceBookingLimitDays?: number
   bookingCutOff?: number
+  downpaymentPercentage?: number
+  cancellationPercent?: number
+  cancellationDuration?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -372,6 +435,9 @@ export type AppointmentSettingsUpdateManyMutationInput = {
   prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   advanceBookingLimitDays?: Prisma.IntFieldUpdateOperationsInput | number
   bookingCutOff?: Prisma.IntFieldUpdateOperationsInput | number
+  downpaymentPercentage?: Prisma.IntFieldUpdateOperationsInput | number
+  cancellationPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cancellationDuration?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -383,6 +449,9 @@ export type AppointmentSettingsUncheckedUpdateManyInput = {
   prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   advanceBookingLimitDays?: Prisma.IntFieldUpdateOperationsInput | number
   bookingCutOff?: Prisma.IntFieldUpdateOperationsInput | number
+  downpaymentPercentage?: Prisma.IntFieldUpdateOperationsInput | number
+  cancellationPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cancellationDuration?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -394,6 +463,9 @@ export type AppointmentSettingsCountOrderByAggregateInput = {
   prepTime?: Prisma.SortOrder
   advanceBookingLimitDays?: Prisma.SortOrder
   bookingCutOff?: Prisma.SortOrder
+  downpaymentPercentage?: Prisma.SortOrder
+  cancellationPercent?: Prisma.SortOrder
+  cancellationDuration?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -403,6 +475,9 @@ export type AppointmentSettingsAvgOrderByAggregateInput = {
   prepTime?: Prisma.SortOrder
   advanceBookingLimitDays?: Prisma.SortOrder
   bookingCutOff?: Prisma.SortOrder
+  downpaymentPercentage?: Prisma.SortOrder
+  cancellationPercent?: Prisma.SortOrder
+  cancellationDuration?: Prisma.SortOrder
 }
 
 export type AppointmentSettingsMaxOrderByAggregateInput = {
@@ -412,6 +487,9 @@ export type AppointmentSettingsMaxOrderByAggregateInput = {
   prepTime?: Prisma.SortOrder
   advanceBookingLimitDays?: Prisma.SortOrder
   bookingCutOff?: Prisma.SortOrder
+  downpaymentPercentage?: Prisma.SortOrder
+  cancellationPercent?: Prisma.SortOrder
+  cancellationDuration?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -423,6 +501,9 @@ export type AppointmentSettingsMinOrderByAggregateInput = {
   prepTime?: Prisma.SortOrder
   advanceBookingLimitDays?: Prisma.SortOrder
   bookingCutOff?: Prisma.SortOrder
+  downpaymentPercentage?: Prisma.SortOrder
+  cancellationPercent?: Prisma.SortOrder
+  cancellationDuration?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -432,6 +513,9 @@ export type AppointmentSettingsSumOrderByAggregateInput = {
   prepTime?: Prisma.SortOrder
   advanceBookingLimitDays?: Prisma.SortOrder
   bookingCutOff?: Prisma.SortOrder
+  downpaymentPercentage?: Prisma.SortOrder
+  cancellationPercent?: Prisma.SortOrder
+  cancellationDuration?: Prisma.SortOrder
 }
 
 export type AppointmentSettingsNullableScalarRelationFilter = {
@@ -477,6 +561,9 @@ export type AppointmentSettingsCreateWithoutLocationInput = {
   prepTime?: number
   advanceBookingLimitDays?: number
   bookingCutOff?: number
+  downpaymentPercentage?: number
+  cancellationPercent?: number
+  cancellationDuration?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -487,6 +574,9 @@ export type AppointmentSettingsUncheckedCreateWithoutLocationInput = {
   prepTime?: number
   advanceBookingLimitDays?: number
   bookingCutOff?: number
+  downpaymentPercentage?: number
+  cancellationPercent?: number
+  cancellationDuration?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -513,6 +603,9 @@ export type AppointmentSettingsUpdateWithoutLocationInput = {
   prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   advanceBookingLimitDays?: Prisma.IntFieldUpdateOperationsInput | number
   bookingCutOff?: Prisma.IntFieldUpdateOperationsInput | number
+  downpaymentPercentage?: Prisma.IntFieldUpdateOperationsInput | number
+  cancellationPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cancellationDuration?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -523,6 +616,9 @@ export type AppointmentSettingsUncheckedUpdateWithoutLocationInput = {
   prepTime?: Prisma.IntFieldUpdateOperationsInput | number
   advanceBookingLimitDays?: Prisma.IntFieldUpdateOperationsInput | number
   bookingCutOff?: Prisma.IntFieldUpdateOperationsInput | number
+  downpaymentPercentage?: Prisma.IntFieldUpdateOperationsInput | number
+  cancellationPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cancellationDuration?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -536,6 +632,9 @@ export type AppointmentSettingsSelect<ExtArgs extends runtime.Types.Extensions.I
   prepTime?: boolean
   advanceBookingLimitDays?: boolean
   bookingCutOff?: boolean
+  downpaymentPercentage?: boolean
+  cancellationPercent?: boolean
+  cancellationDuration?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
@@ -548,6 +647,9 @@ export type AppointmentSettingsSelectCreateManyAndReturn<ExtArgs extends runtime
   prepTime?: boolean
   advanceBookingLimitDays?: boolean
   bookingCutOff?: boolean
+  downpaymentPercentage?: boolean
+  cancellationPercent?: boolean
+  cancellationDuration?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
@@ -560,6 +662,9 @@ export type AppointmentSettingsSelectUpdateManyAndReturn<ExtArgs extends runtime
   prepTime?: boolean
   advanceBookingLimitDays?: boolean
   bookingCutOff?: boolean
+  downpaymentPercentage?: boolean
+  cancellationPercent?: boolean
+  cancellationDuration?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
@@ -572,11 +677,14 @@ export type AppointmentSettingsSelectScalar = {
   prepTime?: boolean
   advanceBookingLimitDays?: boolean
   bookingCutOff?: boolean
+  downpaymentPercentage?: boolean
+  cancellationPercent?: boolean
+  cancellationDuration?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type AppointmentSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "locationId" | "bufferTime" | "prepTime" | "advanceBookingLimitDays" | "bookingCutOff" | "createdAt" | "updatedAt", ExtArgs["result"]["appointmentSettings"]>
+export type AppointmentSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "locationId" | "bufferTime" | "prepTime" | "advanceBookingLimitDays" | "bookingCutOff" | "downpaymentPercentage" | "cancellationPercent" | "cancellationDuration" | "createdAt" | "updatedAt", ExtArgs["result"]["appointmentSettings"]>
 export type AppointmentSettingsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
 }
@@ -599,6 +707,9 @@ export type $AppointmentSettingsPayload<ExtArgs extends runtime.Types.Extensions
     prepTime: number
     advanceBookingLimitDays: number
     bookingCutOff: number
+    downpaymentPercentage: number
+    cancellationPercent: number
+    cancellationDuration: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["appointmentSettings"]>
@@ -1031,6 +1142,9 @@ export interface AppointmentSettingsFieldRefs {
   readonly prepTime: Prisma.FieldRef<"AppointmentSettings", 'Int'>
   readonly advanceBookingLimitDays: Prisma.FieldRef<"AppointmentSettings", 'Int'>
   readonly bookingCutOff: Prisma.FieldRef<"AppointmentSettings", 'Int'>
+  readonly downpaymentPercentage: Prisma.FieldRef<"AppointmentSettings", 'Int'>
+  readonly cancellationPercent: Prisma.FieldRef<"AppointmentSettings", 'Int'>
+  readonly cancellationDuration: Prisma.FieldRef<"AppointmentSettings", 'Int'>
   readonly createdAt: Prisma.FieldRef<"AppointmentSettings", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"AppointmentSettings", 'DateTime'>
 }

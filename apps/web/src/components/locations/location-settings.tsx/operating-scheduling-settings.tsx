@@ -62,6 +62,9 @@ export const formDataSchema = daysSchema.extend({
   prepCleanup: z.number().int().min(0).max(30),
   advanceBooking: z.number().int().min(1).max(365),
   lastMinuteCutoff: z.number().int().min(1).max(10080),
+  downpaymentPercentage: z.number().int().min(0).max(100),
+  cancellationPercent: z.number().int().min(0).max(100),
+  cancellationDurationHours: z.number().int().min(1).max(168),
 });
 
 type DaysSchema = z.infer<typeof daysSchema>;
@@ -88,9 +91,9 @@ const defaultDay: z.infer<typeof daySchema> = {
 
 export function OperatingSchedulingSettings({
   locationId,
-}: {
+}: Readonly<{
   locationId: string;
-}) {
+}>) {
   const { data: location, isLoading } = useQuery(
     trpc.location.fetchLocationAppointmentSettings.queryOptions({ locationId })
   );
@@ -106,6 +109,11 @@ export function OperatingSchedulingSettings({
       lastMinuteCutoff: appointmentSettings?.bookingCutOff
         ? Math.floor(appointmentSettings.bookingCutOff / 60)
         : 1,
+      downpaymentPercentage: appointmentSettings?.downpaymentPercentage ?? 0,
+      cancellationPercent: appointmentSettings?.cancellationPercent ?? 100,
+      cancellationDurationHours: appointmentSettings?.cancellationDuration
+        ? Math.max(1, Math.floor(appointmentSettings.cancellationDuration / 60))
+        : 24,
     };
 
     // generate all days structure upfront
@@ -148,10 +156,10 @@ export function OperatingSchedulingSettings({
 export function OperatingSchedulingForm({
   locationId,
   defaultValues,
-}: {
+}: Readonly<{
   locationId: string;
   defaultValues: FormData;
-}) {
+}>) {
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation(
     trpc.location.updateLocationOperatingHours.mutationOptions({
@@ -189,6 +197,9 @@ export function OperatingSchedulingForm({
       prepTime: values.prepCleanup,
       advanceBookingLimitDays: values.advanceBooking,
       bookingCutOff: values.lastMinuteCutoff * 60, // convert hours to minutes
+      downpaymentPercentage: values.downpaymentPercentage,
+      cancellationPercent: values.cancellationPercent,
+      cancellationDuration: values.cancellationDurationHours * 60,
       rules: days.map(({ key, name }) => ({
         day: key, // convert to 0=Sun ... 6=Sat
         enabled: values[name].enabled,
@@ -391,6 +402,90 @@ export function OperatingSchedulingForm({
                           <SelectItem value="2">2 hour</SelectItem>
                           <SelectItem value="4">4 hours</SelectItem>
                           <SelectItem value="24">24 hours</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="cancellationDurationHours"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Late Cancellation Window</FormLabel>
+                    <FormControl>
+                      <Select
+                        defaultValue={String(field.value)}
+                        onValueChange={(v) => field.onChange(Number(v))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1 hour</SelectItem>
+                          <SelectItem value="2">2 hours</SelectItem>
+                          <SelectItem value="4">4 hours</SelectItem>
+                          <SelectItem value="12">12 hours</SelectItem>
+                          <SelectItem value="24">24 hours</SelectItem>
+                          <SelectItem value="48">48 hours</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="downpaymentPercentage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Downpayment Percentage</FormLabel>
+                    <FormControl>
+                      <Select
+                        defaultValue={String(field.value)}
+                        onValueChange={(v) => field.onChange(Number(v))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0">No downpayment (0%)</SelectItem>
+                          <SelectItem value="10">10%</SelectItem>
+                          <SelectItem value="20">20%</SelectItem>
+                          <SelectItem value="25">25%</SelectItem>
+                          <SelectItem value="30">30%</SelectItem>
+                          <SelectItem value="50">50%</SelectItem>
+                          <SelectItem value="100">100%</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="cancellationPercent"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cancellation Charge Percent</FormLabel>
+                    <FormControl>
+                      <Select
+                        defaultValue={String(field.value)}
+                        onValueChange={(v) => field.onChange(Number(v))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0">0%</SelectItem>
+                          <SelectItem value="25">25%</SelectItem>
+                          <SelectItem value="50">50%</SelectItem>
+                          <SelectItem value="75">75%</SelectItem>
+                          <SelectItem value="100">100%</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>

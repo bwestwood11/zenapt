@@ -36,6 +36,7 @@ const LocationPage = async ({
       {isSpecialist ? (
         <SpecialistDashboardClient
           locationId={locationAccess.locationId}
+          slug={slug}
           role={role}
         />
       ) : (

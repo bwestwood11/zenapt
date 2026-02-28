@@ -1,11 +1,9 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { Controller, useFormContext, useWatch } from "react-hook-form";
-import type { WidgetDataType } from "../schema";
 import { useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
-import { ChevronDown, ChevronUp, Clock, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Plus, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -18,7 +16,12 @@ import { formatDuration } from "../utils/format-duration";
 
 const ServiceDetails = () => {
   const [addOnsExpanded, setAddOnsExpanded] = React.useState(false);
+  const [isSelectingFirstAvailable, setIsSelectingFirstAvailable] =
+    React.useState(false);
+  const [firstAvailableEmployeeName, setFirstAvailableEmployeeName] =
+    React.useState<string | null>(null);
   const currentCart = useWatchCart();
+  const location = useCheckoutStore((s) => s.location);
   const { data: service, isLoading } = useQuery(
     trpc.public.getServiceDetails.queryOptions(
       { serviceId: currentCart?.serviceId! },
@@ -31,6 +34,105 @@ const ServiceDetails = () => {
     service,
     currentCart,
   );
+
+  const selectedAddonIds = useMemo(
+    () => (currentCart?.addons ?? []).map((addon) => addon.id),
+    [currentCart?.addons],
+  );
+
+  const availableProfessionals = useMemo(() => {
+    return (service?.employees ?? []).filter((employee) => {
+      const employeeAddonIds = new Set(employee.addons.map((addon) => addon.id));
+      return selectedAddonIds.every((selectedAddonId) =>
+        employeeAddonIds.has(selectedAddonId),
+      );
+    });
+  }, [service?.employees, selectedAddonIds]);
+
+  const firstAvailableCandidates = useMemo(
+    () =>
+      availableProfessionals.reduce<
+        Array<{ employeeId: string; duration: number }>
+      >((accumulator, professional) => {
+        if (!professional.locationEmployeeId) {
+          return accumulator;
+        }
+
+        accumulator.push({
+          employeeId: professional.locationEmployeeId,
+          duration: professional.duration + addonDuration,
+        });
+
+        return accumulator;
+      }, []),
+    [availableProfessionals, addonDuration],
+  );
+
+  const { refetch: refetchFirstAvailableProfessional } = useQuery(
+    trpc.appointment.getFirstAvailableProfessional.queryOptions(
+      {
+        locationId: location ?? "",
+        candidates: firstAvailableCandidates,
+      },
+      {
+        enabled: false,
+      },
+    ),
+  );
+
+  const isFirstAvailableHighlighted =
+    isSelectingFirstAvailable || !!firstAvailableEmployeeName;
+  let firstAvailableTitle = "First Available";
+  let firstAvailableDescription =
+    "Automatically picks the earliest available professional";
+
+  if (isSelectingFirstAvailable) {
+    firstAvailableTitle = "Finding...";
+    firstAvailableDescription = "Searching earliest slot";
+  } else if (firstAvailableEmployeeName) {
+    firstAvailableTitle = firstAvailableEmployeeName;
+    firstAvailableDescription = "Earliest available professional selected";
+  }
+
+  const handleSelectFirstAvailableProfessional = async () => {
+    if (!location || !service || !currentCart) {
+      return;
+    }
+
+    if (firstAvailableCandidates.length === 0) {
+      return;
+    }
+
+    setIsSelectingFirstAvailable(true);
+    try {
+      setFirstAvailableEmployeeName(null);
+      const result = await refetchFirstAvailableProfessional();
+      const response = result.data;
+
+      if (!response) {
+        return;
+      }
+
+      const professional = availableProfessionals.find(
+        (candidate) => candidate.locationEmployeeId === response.employeeId,
+      );
+
+      if (!professional) {
+        return;
+      }
+
+      selectEmployee(
+        professional.id,
+        professional.locationEmployeeId,
+        professional.price,
+        professional.duration,
+      );
+
+      setFirstAvailableEmployeeName(professional.userName ?? null);
+    } finally {
+      setIsSelectingFirstAvailable(false);
+    }
+  };
 
   if (isLoading) return <ServiceDetailsSkeleton />;
   if (!service) return "NOT_FOUND";
@@ -156,23 +258,70 @@ const ServiceDetails = () => {
         )}
       </div>
       <div className="mb-4">
-        <h3 className="text-sidebar-foreground text-lg font-semibold mb-2 tracking-tight">
-          Choose a Professional
-        </h3>
+        <div className="flex items-center justify-between gap-3 mb-2">
+          <h3 className="text-sidebar-foreground text-lg font-semibold tracking-tight">
+            Choose a Professional
+          </h3>
+        </div>
         <p className="text-sidebar-foreground/60 text-sm">
           Select a professional to perform your service.
         </p>
       </div>
 
       <div className="space-y-3">
-        {service.employees
-          .filter(
-            (e) =>
-              !!(currentCart?.addons ?? []).every((id) =>
-                e.addons.some((a) => a.id === id.id),
-              ),
-          )
-          .map((professional) => {
+        <button
+          type="button"
+          onClick={handleSelectFirstAvailableProfessional}
+          disabled={
+            isSelectingFirstAvailable || firstAvailableCandidates.length === 0
+          }
+          className={cn(
+            "w-full text-left p-4 rounded-xl border-2 transition-all duration-200",
+            "hover:bg-sidebar-accent/30 disabled:opacity-60 disabled:cursor-not-allowed",
+            isFirstAvailableHighlighted
+              ? "border-accent bg-sidebar-accent/30 shadow-sm"
+              : "border-sidebar-border bg-sidebar",
+          )}
+        >
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div
+                className={cn(
+                  "w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 font-semibold text-lg",
+                  isFirstAvailableHighlighted
+                    ? "bg-sidebar-accent text-accent"
+                    : "bg-accent/20 text-sidebar-foreground/40",
+                )}
+              >
+                <Star className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <h4
+                  className={cn(
+                    "font-semibold text-base",
+                    isFirstAvailableHighlighted
+                      ? "text-accent-foreground"
+                      : "text-sidebar-foreground",
+                  )}
+                >
+                  {firstAvailableTitle}
+                </h4>
+                <p
+                  className={cn(
+                    "text-xs",
+                    isFirstAvailableHighlighted
+                      ? "text-accent-foreground/70"
+                      : "text-sidebar-foreground/60",
+                  )}
+                >
+                  {firstAvailableDescription}
+                </p>
+              </div>
+            </div>
+          </div>
+        </button>
+
+        {availableProfessionals.map((professional) => {
             const totalPrice = professional.price + addonPrice;
             return (
               <button

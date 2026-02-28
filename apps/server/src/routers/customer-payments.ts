@@ -6,6 +6,7 @@ import { customerJwtProcedure, router } from "../lib/trpc";
 import { sendAppointmentBookedEmail } from "../lib/email/appointment";
 import { after } from "next/server";
 import z from "zod";
+import Stripe from "stripe";
 
 const getSavedCardSummary = async (
   stripeCustomerId: string,
@@ -447,7 +448,14 @@ const createAppointment = customerJwtProcedure
         id: input.locationId,
         organizationId,
       },
-      select: { id: true },
+      select: {
+        id: true,
+        appointmentSettings: {
+          select: {
+            downpaymentPercentage: true,
+          },
+        },
+      },
     });
 
     if (!location) {
@@ -524,6 +532,23 @@ const createAppointment = customerJwtProcedure
       employeeServices.reduce((sum, service) => sum + service.price, 0) +
       addOnsPrice;
 
+    const downpaymentPercentage = Math.min(
+      100,
+      Math.max(0, location.appointmentSettings?.downpaymentPercentage ?? 0),
+    );
+    const amountToChargeNow =
+      downpaymentPercentage > 0 && totalPrice > 0
+        ? Math.max(1, Math.round((totalPrice * downpaymentPercentage) / 100))
+        : 0;
+
+    if (amountToChargeNow > 0 && !input.paymentMethodId) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message:
+          "A saved payment method is required to charge the downpayment",
+      });
+    }
+
     const hasConflict = await isEditConflictFastFail({
       employeeId: input.locationEmployeeId,
       startTime: input.startTime,
@@ -539,36 +564,153 @@ const createAppointment = customerJwtProcedure
       });
     }
 
-    let customerPaymentId: string | undefined;
+    const isCustomerConnectedToLocation = await prisma.customer.findFirst({
+      where: {
+        id: customer.id,
+        location: { some: { id: input.locationId } },
+      },
+      select: { id: true },
+    });
+
+    if (!isCustomerConnectedToLocation) {
+      await prisma.customer.update({
+        where: { id: customer.id },
+        data: {
+          location: {
+            connect: { id: input.locationId },
+          },
+        },
+      });
+    }
+
     let paymentMethodLast4: string | undefined;
+    let stripeTransactionId: string | undefined;
 
     if (input.paymentMethodId) {
+      if (!customer.stripeCustomerId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Customer payment profile not found. Please add a card again.",
+        });
+      }
+
       const organization = await prisma.organization.findUnique({
         where: { id: organizationId },
         select: { stripeAccountId: true },
       });
 
+      if (amountToChargeNow > 0 && !organization?.stripeAccountId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Organization payments are not configured",
+        });
+      }
+
       if (organization?.stripeAccountId) {
+        let retrievedPaymentMethodCustomerId: string | null = null;
+
         try {
           const paymentMethod = await stripe.paymentMethods.retrieve(
             input.paymentMethodId,
             { stripeAccount: organization.stripeAccountId },
           );
+
+          retrievedPaymentMethodCustomerId =
+            typeof paymentMethod.customer === "string"
+              ? paymentMethod.customer
+              : null;
+
+          if (
+            retrievedPaymentMethodCustomerId &&
+            retrievedPaymentMethodCustomerId !== customer.stripeCustomerId
+          ) {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message: "Selected card does not belong to this customer",
+            });
+          }
+
+          if (!retrievedPaymentMethodCustomerId) {
+            await stripe.paymentMethods.attach(
+              input.paymentMethodId,
+              {
+                customer: customer.stripeCustomerId,
+              },
+              {
+                stripeAccount: organization.stripeAccountId,
+              },
+            );
+          }
+
+          await stripe.customers.update(
+            customer.stripeCustomerId,
+            {
+              invoice_settings: {
+                default_payment_method: input.paymentMethodId,
+              },
+            },
+            {
+              stripeAccount: organization.stripeAccountId,
+            },
+          );
+
           paymentMethodLast4 = paymentMethod.card?.last4;
         } catch (error) {
+          if (error instanceof TRPCError) {
+            throw error;
+          }
           console.error("Failed to retrieve payment method details:", error);
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Unable to verify the selected payment method",
+          });
+        }
+
+        if (amountToChargeNow > 0) {
+          try {
+            const paymentIntent = await stripe.paymentIntents.create(
+              {
+                amount: amountToChargeNow,
+                currency: "usd",
+                customer: customer.stripeCustomerId,
+                payment_method: input.paymentMethodId,
+                confirm: true,
+                off_session: true,
+                description: `Appointment downpayment for location ${input.locationId}`,
+                metadata: {
+                  paymentScope: "CUSTOMER_APPOINTMENT",
+                  organizationId,
+                  customerId: customer.id,
+                  locationId: input.locationId,
+                  locationEmployeeId: input.locationEmployeeId,
+                  downpaymentPercentage: String(downpaymentPercentage),
+                  totalPrice: String(totalPrice),
+                },
+              },
+              {
+                stripeAccount: organization.stripeAccountId,
+              },
+            );
+            stripeTransactionId = paymentIntent.id;
+          } catch (error) {
+            if (error instanceof Stripe.errors.StripeError) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message:
+                  error.message ||
+                  "Failed to charge downpayment. Please try another card.",
+              });
+            }
+
+            console.error("Failed to charge downpayment:", error);
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to process payment",
+            });
+          }
         }
       }
 
-      const customerPayment = await prisma.customerAppointmentPayment.create({
-        data: {
-          customerId: customer.id,
-          amountPaid: totalPrice,
-          paymentMethod: input.paymentMethodId,
-          transactionId: null,
-        },
-      });
-      customerPaymentId = customerPayment.id;
     }
 
     const appointment = await prisma.appointment.create({
@@ -587,9 +729,6 @@ const createAppointment = customerJwtProcedure
           addOns: {
             connect: validatedAddOnIds.map((id) => ({ id })),
           },
-        }),
-        ...(customerPaymentId && {
-          customerPaymentId,
         }),
         ...(input.paymentMethodId && {
           paymentMethodId: input.paymentMethodId,
@@ -611,6 +750,27 @@ const createAppointment = customerJwtProcedure
       },
     });
 
+    if (input.paymentMethodId) {
+      if (amountToChargeNow > 0 && !stripeTransactionId) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Payment reference missing for downpayment",
+        });
+      }
+
+      await prisma.customerAppointmentPayment.create({
+        data: {
+          customerId: customer.id,
+          appointmentId: appointment.id,
+          amountPaid: amountToChargeNow,
+          paymentType: "DOWNPAYMENT",
+          status: "PENDING",
+          paymentMethod: input.paymentMethodId,
+          transactionId: stripeTransactionId ?? null,
+        },
+      });
+    }
+
     after(async () => {
       try {
         await sendAppointmentBookedEmail(appointment.id);
@@ -625,6 +785,8 @@ const createAppointment = customerJwtProcedure
     return {
       success: true,
       appointmentId: appointment.id,
+      amountCharged: amountToChargeNow,
+      downpaymentPercentage,
     };
   });
 
