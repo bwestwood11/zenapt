@@ -29,12 +29,16 @@ export type AppointmentAvgAggregateOutputType = {
   bufferTime: number | null
   prepTime: number | null
   price: number | null
+  discountPercentageApplied: number | null
+  discountAmountApplied: number | null
 }
 
 export type AppointmentSumAggregateOutputType = {
   bufferTime: number | null
   prepTime: number | null
   price: number | null
+  discountPercentageApplied: number | null
+  discountAmountApplied: number | null
 }
 
 export type AppointmentMinAggregateOutputType = {
@@ -51,6 +55,8 @@ export type AppointmentMinAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   promoCodeId: string | null
+  discountPercentageApplied: number | null
+  discountAmountApplied: number | null
   paymentMethodId: string | null
   paymentMethodLast4: string | null
 }
@@ -69,6 +75,8 @@ export type AppointmentMaxAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   promoCodeId: string | null
+  discountPercentageApplied: number | null
+  discountAmountApplied: number | null
   paymentMethodId: string | null
   paymentMethodLast4: string | null
 }
@@ -87,6 +95,8 @@ export type AppointmentCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   promoCodeId: number
+  discountPercentageApplied: number
+  discountAmountApplied: number
   paymentMethodId: number
   paymentMethodLast4: number
   _all: number
@@ -97,12 +107,16 @@ export type AppointmentAvgAggregateInputType = {
   bufferTime?: true
   prepTime?: true
   price?: true
+  discountPercentageApplied?: true
+  discountAmountApplied?: true
 }
 
 export type AppointmentSumAggregateInputType = {
   bufferTime?: true
   prepTime?: true
   price?: true
+  discountPercentageApplied?: true
+  discountAmountApplied?: true
 }
 
 export type AppointmentMinAggregateInputType = {
@@ -119,6 +133,8 @@ export type AppointmentMinAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   promoCodeId?: true
+  discountPercentageApplied?: true
+  discountAmountApplied?: true
   paymentMethodId?: true
   paymentMethodLast4?: true
 }
@@ -137,6 +153,8 @@ export type AppointmentMaxAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   promoCodeId?: true
+  discountPercentageApplied?: true
+  discountAmountApplied?: true
   paymentMethodId?: true
   paymentMethodLast4?: true
 }
@@ -155,6 +173,8 @@ export type AppointmentCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   promoCodeId?: true
+  discountPercentageApplied?: true
+  discountAmountApplied?: true
   paymentMethodId?: true
   paymentMethodLast4?: true
   _all?: true
@@ -260,6 +280,8 @@ export type AppointmentGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   promoCodeId: string | null
+  discountPercentageApplied: number | null
+  discountAmountApplied: number | null
   paymentMethodId: string | null
   paymentMethodLast4: string | null
   _count: AppointmentCountAggregateOutputType | null
@@ -301,6 +323,8 @@ export type AppointmentWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Appointment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Appointment"> | Date | string
   promoCodeId?: Prisma.StringNullableFilter<"Appointment"> | string | null
+  discountPercentageApplied?: Prisma.IntNullableFilter<"Appointment"> | number | null
+  discountAmountApplied?: Prisma.IntNullableFilter<"Appointment"> | number | null
   paymentMethodId?: Prisma.StringNullableFilter<"Appointment"> | string | null
   paymentMethodLast4?: Prisma.StringNullableFilter<"Appointment"> | string | null
   location?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.LocationWhereInput>
@@ -308,6 +332,7 @@ export type AppointmentWhereInput = {
   service?: Prisma.EmployeeServiceListRelationFilter
   addOns?: Prisma.AddOnListRelationFilter
   customerPayments?: Prisma.CustomerAppointmentPaymentListRelationFilter
+  tipCharges?: Prisma.AppointmentTipChargeListRelationFilter
   promoCode?: Prisma.XOR<Prisma.PromoCodeNullableScalarRelationFilter, Prisma.PromoCodeWhereInput> | null
 }
 
@@ -325,6 +350,8 @@ export type AppointmentOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   promoCodeId?: Prisma.SortOrderInput | Prisma.SortOrder
+  discountPercentageApplied?: Prisma.SortOrderInput | Prisma.SortOrder
+  discountAmountApplied?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentMethodId?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentMethodLast4?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.LocationOrderByWithRelationInput
@@ -332,6 +359,7 @@ export type AppointmentOrderByWithRelationInput = {
   service?: Prisma.EmployeeServiceOrderByRelationAggregateInput
   addOns?: Prisma.AddOnOrderByRelationAggregateInput
   customerPayments?: Prisma.CustomerAppointmentPaymentOrderByRelationAggregateInput
+  tipCharges?: Prisma.AppointmentTipChargeOrderByRelationAggregateInput
   promoCode?: Prisma.PromoCodeOrderByWithRelationInput
 }
 
@@ -352,6 +380,8 @@ export type AppointmentWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Appointment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Appointment"> | Date | string
   promoCodeId?: Prisma.StringNullableFilter<"Appointment"> | string | null
+  discountPercentageApplied?: Prisma.IntNullableFilter<"Appointment"> | number | null
+  discountAmountApplied?: Prisma.IntNullableFilter<"Appointment"> | number | null
   paymentMethodId?: Prisma.StringNullableFilter<"Appointment"> | string | null
   paymentMethodLast4?: Prisma.StringNullableFilter<"Appointment"> | string | null
   location?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.LocationWhereInput>
@@ -359,6 +389,7 @@ export type AppointmentWhereUniqueInput = Prisma.AtLeast<{
   service?: Prisma.EmployeeServiceListRelationFilter
   addOns?: Prisma.AddOnListRelationFilter
   customerPayments?: Prisma.CustomerAppointmentPaymentListRelationFilter
+  tipCharges?: Prisma.AppointmentTipChargeListRelationFilter
   promoCode?: Prisma.XOR<Prisma.PromoCodeNullableScalarRelationFilter, Prisma.PromoCodeWhereInput> | null
 }, "id">
 
@@ -376,6 +407,8 @@ export type AppointmentOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   promoCodeId?: Prisma.SortOrderInput | Prisma.SortOrder
+  discountPercentageApplied?: Prisma.SortOrderInput | Prisma.SortOrder
+  discountAmountApplied?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentMethodId?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentMethodLast4?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AppointmentCountOrderByAggregateInput
@@ -402,6 +435,8 @@ export type AppointmentScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Appointment"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Appointment"> | Date | string
   promoCodeId?: Prisma.StringNullableWithAggregatesFilter<"Appointment"> | string | null
+  discountPercentageApplied?: Prisma.IntNullableWithAggregatesFilter<"Appointment"> | number | null
+  discountAmountApplied?: Prisma.IntNullableWithAggregatesFilter<"Appointment"> | number | null
   paymentMethodId?: Prisma.StringNullableWithAggregatesFilter<"Appointment"> | string | null
   paymentMethodLast4?: Prisma.StringNullableWithAggregatesFilter<"Appointment"> | string | null
 }
@@ -417,6 +452,8 @@ export type AppointmentCreateInput = {
   price: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
   location: Prisma.LocationCreateNestedOneWithoutAppointmentsInput
@@ -424,6 +461,7 @@ export type AppointmentCreateInput = {
   service?: Prisma.EmployeeServiceCreateNestedManyWithoutAppointmentsInput
   addOns?: Prisma.AddOnCreateNestedManyWithoutAppointmentsInput
   customerPayments?: Prisma.CustomerAppointmentPaymentCreateNestedManyWithoutAppointmentInput
+  tipCharges?: Prisma.AppointmentTipChargeCreateNestedManyWithoutAppointmentInput
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutAppointmentsInput
 }
 
@@ -441,11 +479,14 @@ export type AppointmentUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   promoCodeId?: string | null
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
   service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutAppointmentsInput
   addOns?: Prisma.AddOnUncheckedCreateNestedManyWithoutAppointmentsInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutAppointmentInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedCreateNestedManyWithoutAppointmentInput
 }
 
 export type AppointmentUpdateInput = {
@@ -459,6 +500,8 @@ export type AppointmentUpdateInput = {
   price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.LocationUpdateOneRequiredWithoutAppointmentsNestedInput
@@ -466,6 +509,7 @@ export type AppointmentUpdateInput = {
   service?: Prisma.EmployeeServiceUpdateManyWithoutAppointmentsNestedInput
   addOns?: Prisma.AddOnUpdateManyWithoutAppointmentsNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUpdateManyWithoutAppointmentNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUpdateManyWithoutAppointmentNestedInput
   promoCode?: Prisma.PromoCodeUpdateOneWithoutAppointmentsNestedInput
 }
 
@@ -483,11 +527,14 @@ export type AppointmentUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   promoCodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutAppointmentsNestedInput
   addOns?: Prisma.AddOnUncheckedUpdateManyWithoutAppointmentsNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutAppointmentNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedUpdateManyWithoutAppointmentNestedInput
 }
 
 export type AppointmentCreateManyInput = {
@@ -504,6 +551,8 @@ export type AppointmentCreateManyInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   promoCodeId?: string | null
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
 }
@@ -519,6 +568,8 @@ export type AppointmentUpdateManyMutationInput = {
   price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -537,6 +588,8 @@ export type AppointmentUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   promoCodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -555,6 +608,8 @@ export type AppointmentCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   promoCodeId?: Prisma.SortOrder
+  discountPercentageApplied?: Prisma.SortOrder
+  discountAmountApplied?: Prisma.SortOrder
   paymentMethodId?: Prisma.SortOrder
   paymentMethodLast4?: Prisma.SortOrder
 }
@@ -563,6 +618,8 @@ export type AppointmentAvgOrderByAggregateInput = {
   bufferTime?: Prisma.SortOrder
   prepTime?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  discountPercentageApplied?: Prisma.SortOrder
+  discountAmountApplied?: Prisma.SortOrder
 }
 
 export type AppointmentMaxOrderByAggregateInput = {
@@ -579,6 +636,8 @@ export type AppointmentMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   promoCodeId?: Prisma.SortOrder
+  discountPercentageApplied?: Prisma.SortOrder
+  discountAmountApplied?: Prisma.SortOrder
   paymentMethodId?: Prisma.SortOrder
   paymentMethodLast4?: Prisma.SortOrder
 }
@@ -597,6 +656,8 @@ export type AppointmentMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   promoCodeId?: Prisma.SortOrder
+  discountPercentageApplied?: Prisma.SortOrder
+  discountAmountApplied?: Prisma.SortOrder
   paymentMethodId?: Prisma.SortOrder
   paymentMethodLast4?: Prisma.SortOrder
 }
@@ -605,6 +666,8 @@ export type AppointmentSumOrderByAggregateInput = {
   bufferTime?: Prisma.SortOrder
   prepTime?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  discountPercentageApplied?: Prisma.SortOrder
+  discountAmountApplied?: Prisma.SortOrder
 }
 
 export type AppointmentListRelationFilter = {
@@ -636,6 +699,14 @@ export type EnumAppointmentStatusFieldUpdateOperationsInput = {
 
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type AppointmentCreateNestedManyWithoutAddOnsInput = {
@@ -716,6 +787,20 @@ export type AppointmentUncheckedUpdateManyWithoutPromoCodeNestedInput = {
   update?: Prisma.AppointmentUpdateWithWhereUniqueWithoutPromoCodeInput | Prisma.AppointmentUpdateWithWhereUniqueWithoutPromoCodeInput[]
   updateMany?: Prisma.AppointmentUpdateManyWithWhereWithoutPromoCodeInput | Prisma.AppointmentUpdateManyWithWhereWithoutPromoCodeInput[]
   deleteMany?: Prisma.AppointmentScalarWhereInput | Prisma.AppointmentScalarWhereInput[]
+}
+
+export type AppointmentCreateNestedOneWithoutTipChargesInput = {
+  create?: Prisma.XOR<Prisma.AppointmentCreateWithoutTipChargesInput, Prisma.AppointmentUncheckedCreateWithoutTipChargesInput>
+  connectOrCreate?: Prisma.AppointmentCreateOrConnectWithoutTipChargesInput
+  connect?: Prisma.AppointmentWhereUniqueInput
+}
+
+export type AppointmentUpdateOneRequiredWithoutTipChargesNestedInput = {
+  create?: Prisma.XOR<Prisma.AppointmentCreateWithoutTipChargesInput, Prisma.AppointmentUncheckedCreateWithoutTipChargesInput>
+  connectOrCreate?: Prisma.AppointmentCreateOrConnectWithoutTipChargesInput
+  upsert?: Prisma.AppointmentUpsertWithoutTipChargesInput
+  connect?: Prisma.AppointmentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AppointmentUpdateToOneWithWhereWithoutTipChargesInput, Prisma.AppointmentUpdateWithoutTipChargesInput>, Prisma.AppointmentUncheckedUpdateWithoutTipChargesInput>
 }
 
 export type AppointmentCreateNestedManyWithoutLocationInput = {
@@ -865,12 +950,15 @@ export type AppointmentCreateWithoutAddOnsInput = {
   price: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
   location: Prisma.LocationCreateNestedOneWithoutAppointmentsInput
   customer: Prisma.CustomerCreateNestedOneWithoutAppointmentsInput
   service?: Prisma.EmployeeServiceCreateNestedManyWithoutAppointmentsInput
   customerPayments?: Prisma.CustomerAppointmentPaymentCreateNestedManyWithoutAppointmentInput
+  tipCharges?: Prisma.AppointmentTipChargeCreateNestedManyWithoutAppointmentInput
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutAppointmentsInput
 }
 
@@ -888,10 +976,13 @@ export type AppointmentUncheckedCreateWithoutAddOnsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   promoCodeId?: string | null
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
   service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutAppointmentsInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutAppointmentInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedCreateNestedManyWithoutAppointmentInput
 }
 
 export type AppointmentCreateOrConnectWithoutAddOnsInput = {
@@ -932,6 +1023,8 @@ export type AppointmentScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Appointment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Appointment"> | Date | string
   promoCodeId?: Prisma.StringNullableFilter<"Appointment"> | string | null
+  discountPercentageApplied?: Prisma.IntNullableFilter<"Appointment"> | number | null
+  discountAmountApplied?: Prisma.IntNullableFilter<"Appointment"> | number | null
   paymentMethodId?: Prisma.StringNullableFilter<"Appointment"> | string | null
   paymentMethodLast4?: Prisma.StringNullableFilter<"Appointment"> | string | null
 }
@@ -947,6 +1040,8 @@ export type AppointmentCreateWithoutPromoCodeInput = {
   price: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
   location: Prisma.LocationCreateNestedOneWithoutAppointmentsInput
@@ -954,6 +1049,7 @@ export type AppointmentCreateWithoutPromoCodeInput = {
   service?: Prisma.EmployeeServiceCreateNestedManyWithoutAppointmentsInput
   addOns?: Prisma.AddOnCreateNestedManyWithoutAppointmentsInput
   customerPayments?: Prisma.CustomerAppointmentPaymentCreateNestedManyWithoutAppointmentInput
+  tipCharges?: Prisma.AppointmentTipChargeCreateNestedManyWithoutAppointmentInput
 }
 
 export type AppointmentUncheckedCreateWithoutPromoCodeInput = {
@@ -969,11 +1065,14 @@ export type AppointmentUncheckedCreateWithoutPromoCodeInput = {
   price: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
   service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutAppointmentsInput
   addOns?: Prisma.AddOnUncheckedCreateNestedManyWithoutAppointmentsInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutAppointmentInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedCreateNestedManyWithoutAppointmentInput
 }
 
 export type AppointmentCreateOrConnectWithoutPromoCodeInput = {
@@ -1002,6 +1101,114 @@ export type AppointmentUpdateManyWithWhereWithoutPromoCodeInput = {
   data: Prisma.XOR<Prisma.AppointmentUpdateManyMutationInput, Prisma.AppointmentUncheckedUpdateManyWithoutPromoCodeInput>
 }
 
+export type AppointmentCreateWithoutTipChargesInput = {
+  id?: string
+  startTime: Date | string
+  endTime: Date | string
+  bufferTime?: number
+  prepTime?: number
+  status?: $Enums.AppointmentStatus
+  notes?: string | null
+  price: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
+  paymentMethodId?: string | null
+  paymentMethodLast4?: string | null
+  location: Prisma.LocationCreateNestedOneWithoutAppointmentsInput
+  customer: Prisma.CustomerCreateNestedOneWithoutAppointmentsInput
+  service?: Prisma.EmployeeServiceCreateNestedManyWithoutAppointmentsInput
+  addOns?: Prisma.AddOnCreateNestedManyWithoutAppointmentsInput
+  customerPayments?: Prisma.CustomerAppointmentPaymentCreateNestedManyWithoutAppointmentInput
+  promoCode?: Prisma.PromoCodeCreateNestedOneWithoutAppointmentsInput
+}
+
+export type AppointmentUncheckedCreateWithoutTipChargesInput = {
+  id?: string
+  locationId: string
+  customerId: string
+  startTime: Date | string
+  endTime: Date | string
+  bufferTime?: number
+  prepTime?: number
+  status?: $Enums.AppointmentStatus
+  notes?: string | null
+  price: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  promoCodeId?: string | null
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
+  paymentMethodId?: string | null
+  paymentMethodLast4?: string | null
+  service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutAppointmentsInput
+  addOns?: Prisma.AddOnUncheckedCreateNestedManyWithoutAppointmentsInput
+  customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutAppointmentInput
+}
+
+export type AppointmentCreateOrConnectWithoutTipChargesInput = {
+  where: Prisma.AppointmentWhereUniqueInput
+  create: Prisma.XOR<Prisma.AppointmentCreateWithoutTipChargesInput, Prisma.AppointmentUncheckedCreateWithoutTipChargesInput>
+}
+
+export type AppointmentUpsertWithoutTipChargesInput = {
+  update: Prisma.XOR<Prisma.AppointmentUpdateWithoutTipChargesInput, Prisma.AppointmentUncheckedUpdateWithoutTipChargesInput>
+  create: Prisma.XOR<Prisma.AppointmentCreateWithoutTipChargesInput, Prisma.AppointmentUncheckedCreateWithoutTipChargesInput>
+  where?: Prisma.AppointmentWhereInput
+}
+
+export type AppointmentUpdateToOneWithWhereWithoutTipChargesInput = {
+  where?: Prisma.AppointmentWhereInput
+  data: Prisma.XOR<Prisma.AppointmentUpdateWithoutTipChargesInput, Prisma.AppointmentUncheckedUpdateWithoutTipChargesInput>
+}
+
+export type AppointmentUpdateWithoutTipChargesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.LocationUpdateOneRequiredWithoutAppointmentsNestedInput
+  customer?: Prisma.CustomerUpdateOneRequiredWithoutAppointmentsNestedInput
+  service?: Prisma.EmployeeServiceUpdateManyWithoutAppointmentsNestedInput
+  addOns?: Prisma.AddOnUpdateManyWithoutAppointmentsNestedInput
+  customerPayments?: Prisma.CustomerAppointmentPaymentUpdateManyWithoutAppointmentNestedInput
+  promoCode?: Prisma.PromoCodeUpdateOneWithoutAppointmentsNestedInput
+}
+
+export type AppointmentUncheckedUpdateWithoutTipChargesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  locationId?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string
+  startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bufferTime?: Prisma.IntFieldUpdateOperationsInput | number
+  prepTime?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumAppointmentStatusFieldUpdateOperationsInput | $Enums.AppointmentStatus
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  promoCodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutAppointmentsNestedInput
+  addOns?: Prisma.AddOnUncheckedUpdateManyWithoutAppointmentsNestedInput
+  customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutAppointmentNestedInput
+}
+
 export type AppointmentCreateWithoutLocationInput = {
   id?: string
   startTime: Date | string
@@ -1013,12 +1220,15 @@ export type AppointmentCreateWithoutLocationInput = {
   price: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
   customer: Prisma.CustomerCreateNestedOneWithoutAppointmentsInput
   service?: Prisma.EmployeeServiceCreateNestedManyWithoutAppointmentsInput
   addOns?: Prisma.AddOnCreateNestedManyWithoutAppointmentsInput
   customerPayments?: Prisma.CustomerAppointmentPaymentCreateNestedManyWithoutAppointmentInput
+  tipCharges?: Prisma.AppointmentTipChargeCreateNestedManyWithoutAppointmentInput
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutAppointmentsInput
 }
 
@@ -1035,11 +1245,14 @@ export type AppointmentUncheckedCreateWithoutLocationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   promoCodeId?: string | null
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
   service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutAppointmentsInput
   addOns?: Prisma.AddOnUncheckedCreateNestedManyWithoutAppointmentsInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutAppointmentInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedCreateNestedManyWithoutAppointmentInput
 }
 
 export type AppointmentCreateOrConnectWithoutLocationInput = {
@@ -1079,12 +1292,15 @@ export type AppointmentCreateWithoutServiceInput = {
   price: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
   location: Prisma.LocationCreateNestedOneWithoutAppointmentsInput
   customer: Prisma.CustomerCreateNestedOneWithoutAppointmentsInput
   addOns?: Prisma.AddOnCreateNestedManyWithoutAppointmentsInput
   customerPayments?: Prisma.CustomerAppointmentPaymentCreateNestedManyWithoutAppointmentInput
+  tipCharges?: Prisma.AppointmentTipChargeCreateNestedManyWithoutAppointmentInput
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutAppointmentsInput
 }
 
@@ -1102,10 +1318,13 @@ export type AppointmentUncheckedCreateWithoutServiceInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   promoCodeId?: string | null
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
   addOns?: Prisma.AddOnUncheckedCreateNestedManyWithoutAppointmentsInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutAppointmentInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedCreateNestedManyWithoutAppointmentInput
 }
 
 export type AppointmentCreateOrConnectWithoutServiceInput = {
@@ -1140,12 +1359,15 @@ export type AppointmentCreateWithoutCustomerInput = {
   price: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
   location: Prisma.LocationCreateNestedOneWithoutAppointmentsInput
   service?: Prisma.EmployeeServiceCreateNestedManyWithoutAppointmentsInput
   addOns?: Prisma.AddOnCreateNestedManyWithoutAppointmentsInput
   customerPayments?: Prisma.CustomerAppointmentPaymentCreateNestedManyWithoutAppointmentInput
+  tipCharges?: Prisma.AppointmentTipChargeCreateNestedManyWithoutAppointmentInput
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutAppointmentsInput
 }
 
@@ -1162,11 +1384,14 @@ export type AppointmentUncheckedCreateWithoutCustomerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   promoCodeId?: string | null
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
   service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutAppointmentsInput
   addOns?: Prisma.AddOnUncheckedCreateNestedManyWithoutAppointmentsInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutAppointmentInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedCreateNestedManyWithoutAppointmentInput
 }
 
 export type AppointmentCreateOrConnectWithoutCustomerInput = {
@@ -1206,12 +1431,15 @@ export type AppointmentCreateWithoutCustomerPaymentsInput = {
   price: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
   location: Prisma.LocationCreateNestedOneWithoutAppointmentsInput
   customer: Prisma.CustomerCreateNestedOneWithoutAppointmentsInput
   service?: Prisma.EmployeeServiceCreateNestedManyWithoutAppointmentsInput
   addOns?: Prisma.AddOnCreateNestedManyWithoutAppointmentsInput
+  tipCharges?: Prisma.AppointmentTipChargeCreateNestedManyWithoutAppointmentInput
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutAppointmentsInput
 }
 
@@ -1229,10 +1457,13 @@ export type AppointmentUncheckedCreateWithoutCustomerPaymentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   promoCodeId?: string | null
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
   service?: Prisma.EmployeeServiceUncheckedCreateNestedManyWithoutAppointmentsInput
   addOns?: Prisma.AddOnUncheckedCreateNestedManyWithoutAppointmentsInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedCreateNestedManyWithoutAppointmentInput
 }
 
 export type AppointmentCreateOrConnectWithoutCustomerPaymentsInput = {
@@ -1262,12 +1493,15 @@ export type AppointmentUpdateWithoutCustomerPaymentsInput = {
   price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.LocationUpdateOneRequiredWithoutAppointmentsNestedInput
   customer?: Prisma.CustomerUpdateOneRequiredWithoutAppointmentsNestedInput
   service?: Prisma.EmployeeServiceUpdateManyWithoutAppointmentsNestedInput
   addOns?: Prisma.AddOnUpdateManyWithoutAppointmentsNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUpdateManyWithoutAppointmentNestedInput
   promoCode?: Prisma.PromoCodeUpdateOneWithoutAppointmentsNestedInput
 }
 
@@ -1285,10 +1519,13 @@ export type AppointmentUncheckedUpdateWithoutCustomerPaymentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   promoCodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutAppointmentsNestedInput
   addOns?: Prisma.AddOnUncheckedUpdateManyWithoutAppointmentsNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedUpdateManyWithoutAppointmentNestedInput
 }
 
 export type AppointmentUpdateWithoutAddOnsInput = {
@@ -1302,12 +1539,15 @@ export type AppointmentUpdateWithoutAddOnsInput = {
   price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.LocationUpdateOneRequiredWithoutAppointmentsNestedInput
   customer?: Prisma.CustomerUpdateOneRequiredWithoutAppointmentsNestedInput
   service?: Prisma.EmployeeServiceUpdateManyWithoutAppointmentsNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUpdateManyWithoutAppointmentNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUpdateManyWithoutAppointmentNestedInput
   promoCode?: Prisma.PromoCodeUpdateOneWithoutAppointmentsNestedInput
 }
 
@@ -1325,10 +1565,13 @@ export type AppointmentUncheckedUpdateWithoutAddOnsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   promoCodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutAppointmentsNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutAppointmentNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedUpdateManyWithoutAppointmentNestedInput
 }
 
 export type AppointmentUncheckedUpdateManyWithoutAddOnsInput = {
@@ -1345,6 +1588,8 @@ export type AppointmentUncheckedUpdateManyWithoutAddOnsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   promoCodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -1362,6 +1607,8 @@ export type AppointmentCreateManyPromoCodeInput = {
   price: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
 }
@@ -1377,6 +1624,8 @@ export type AppointmentUpdateWithoutPromoCodeInput = {
   price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.LocationUpdateOneRequiredWithoutAppointmentsNestedInput
@@ -1384,6 +1633,7 @@ export type AppointmentUpdateWithoutPromoCodeInput = {
   service?: Prisma.EmployeeServiceUpdateManyWithoutAppointmentsNestedInput
   addOns?: Prisma.AddOnUpdateManyWithoutAppointmentsNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUpdateManyWithoutAppointmentNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUpdateManyWithoutAppointmentNestedInput
 }
 
 export type AppointmentUncheckedUpdateWithoutPromoCodeInput = {
@@ -1399,11 +1649,14 @@ export type AppointmentUncheckedUpdateWithoutPromoCodeInput = {
   price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutAppointmentsNestedInput
   addOns?: Prisma.AddOnUncheckedUpdateManyWithoutAppointmentsNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutAppointmentNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedUpdateManyWithoutAppointmentNestedInput
 }
 
 export type AppointmentUncheckedUpdateManyWithoutPromoCodeInput = {
@@ -1419,6 +1672,8 @@ export type AppointmentUncheckedUpdateManyWithoutPromoCodeInput = {
   price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -1436,6 +1691,8 @@ export type AppointmentCreateManyLocationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   promoCodeId?: string | null
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
 }
@@ -1451,12 +1708,15 @@ export type AppointmentUpdateWithoutLocationInput = {
   price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer?: Prisma.CustomerUpdateOneRequiredWithoutAppointmentsNestedInput
   service?: Prisma.EmployeeServiceUpdateManyWithoutAppointmentsNestedInput
   addOns?: Prisma.AddOnUpdateManyWithoutAppointmentsNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUpdateManyWithoutAppointmentNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUpdateManyWithoutAppointmentNestedInput
   promoCode?: Prisma.PromoCodeUpdateOneWithoutAppointmentsNestedInput
 }
 
@@ -1473,11 +1733,14 @@ export type AppointmentUncheckedUpdateWithoutLocationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   promoCodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutAppointmentsNestedInput
   addOns?: Prisma.AddOnUncheckedUpdateManyWithoutAppointmentsNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutAppointmentNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedUpdateManyWithoutAppointmentNestedInput
 }
 
 export type AppointmentUncheckedUpdateManyWithoutLocationInput = {
@@ -1493,6 +1756,8 @@ export type AppointmentUncheckedUpdateManyWithoutLocationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   promoCodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -1508,12 +1773,15 @@ export type AppointmentUpdateWithoutServiceInput = {
   price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.LocationUpdateOneRequiredWithoutAppointmentsNestedInput
   customer?: Prisma.CustomerUpdateOneRequiredWithoutAppointmentsNestedInput
   addOns?: Prisma.AddOnUpdateManyWithoutAppointmentsNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUpdateManyWithoutAppointmentNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUpdateManyWithoutAppointmentNestedInput
   promoCode?: Prisma.PromoCodeUpdateOneWithoutAppointmentsNestedInput
 }
 
@@ -1531,10 +1799,13 @@ export type AppointmentUncheckedUpdateWithoutServiceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   promoCodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addOns?: Prisma.AddOnUncheckedUpdateManyWithoutAppointmentsNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutAppointmentNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedUpdateManyWithoutAppointmentNestedInput
 }
 
 export type AppointmentUncheckedUpdateManyWithoutServiceInput = {
@@ -1551,6 +1822,8 @@ export type AppointmentUncheckedUpdateManyWithoutServiceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   promoCodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -1568,6 +1841,8 @@ export type AppointmentCreateManyCustomerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   promoCodeId?: string | null
+  discountPercentageApplied?: number | null
+  discountAmountApplied?: number | null
   paymentMethodId?: string | null
   paymentMethodLast4?: string | null
 }
@@ -1583,12 +1858,15 @@ export type AppointmentUpdateWithoutCustomerInput = {
   price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.LocationUpdateOneRequiredWithoutAppointmentsNestedInput
   service?: Prisma.EmployeeServiceUpdateManyWithoutAppointmentsNestedInput
   addOns?: Prisma.AddOnUpdateManyWithoutAppointmentsNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUpdateManyWithoutAppointmentNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUpdateManyWithoutAppointmentNestedInput
   promoCode?: Prisma.PromoCodeUpdateOneWithoutAppointmentsNestedInput
 }
 
@@ -1605,11 +1883,14 @@ export type AppointmentUncheckedUpdateWithoutCustomerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   promoCodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   service?: Prisma.EmployeeServiceUncheckedUpdateManyWithoutAppointmentsNestedInput
   addOns?: Prisma.AddOnUncheckedUpdateManyWithoutAppointmentsNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutAppointmentNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedUpdateManyWithoutAppointmentNestedInput
 }
 
 export type AppointmentUncheckedUpdateManyWithoutCustomerInput = {
@@ -1625,6 +1906,8 @@ export type AppointmentUncheckedUpdateManyWithoutCustomerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   promoCodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discountPercentageApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  discountAmountApplied?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -1638,12 +1921,14 @@ export type AppointmentCountOutputType = {
   service: number
   addOns: number
   customerPayments: number
+  tipCharges: number
 }
 
 export type AppointmentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   service?: boolean | AppointmentCountOutputTypeCountServiceArgs
   addOns?: boolean | AppointmentCountOutputTypeCountAddOnsArgs
   customerPayments?: boolean | AppointmentCountOutputTypeCountCustomerPaymentsArgs
+  tipCharges?: boolean | AppointmentCountOutputTypeCountTipChargesArgs
 }
 
 /**
@@ -1677,6 +1962,13 @@ export type AppointmentCountOutputTypeCountCustomerPaymentsArgs<ExtArgs extends 
   where?: Prisma.CustomerAppointmentPaymentWhereInput
 }
 
+/**
+ * AppointmentCountOutputType without action
+ */
+export type AppointmentCountOutputTypeCountTipChargesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AppointmentTipChargeWhereInput
+}
+
 
 export type AppointmentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1692,6 +1984,8 @@ export type AppointmentSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   createdAt?: boolean
   updatedAt?: boolean
   promoCodeId?: boolean
+  discountPercentageApplied?: boolean
+  discountAmountApplied?: boolean
   paymentMethodId?: boolean
   paymentMethodLast4?: boolean
   location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
@@ -1699,6 +1993,7 @@ export type AppointmentSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   service?: boolean | Prisma.Appointment$serviceArgs<ExtArgs>
   addOns?: boolean | Prisma.Appointment$addOnsArgs<ExtArgs>
   customerPayments?: boolean | Prisma.Appointment$customerPaymentsArgs<ExtArgs>
+  tipCharges?: boolean | Prisma.Appointment$tipChargesArgs<ExtArgs>
   promoCode?: boolean | Prisma.Appointment$promoCodeArgs<ExtArgs>
   _count?: boolean | Prisma.AppointmentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["appointment"]>
@@ -1717,6 +2012,8 @@ export type AppointmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   createdAt?: boolean
   updatedAt?: boolean
   promoCodeId?: boolean
+  discountPercentageApplied?: boolean
+  discountAmountApplied?: boolean
   paymentMethodId?: boolean
   paymentMethodLast4?: boolean
   location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
@@ -1738,6 +2035,8 @@ export type AppointmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   createdAt?: boolean
   updatedAt?: boolean
   promoCodeId?: boolean
+  discountPercentageApplied?: boolean
+  discountAmountApplied?: boolean
   paymentMethodId?: boolean
   paymentMethodLast4?: boolean
   location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
@@ -1759,17 +2058,20 @@ export type AppointmentSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   promoCodeId?: boolean
+  discountPercentageApplied?: boolean
+  discountAmountApplied?: boolean
   paymentMethodId?: boolean
   paymentMethodLast4?: boolean
 }
 
-export type AppointmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "locationId" | "customerId" | "startTime" | "endTime" | "bufferTime" | "prepTime" | "status" | "notes" | "price" | "createdAt" | "updatedAt" | "promoCodeId" | "paymentMethodId" | "paymentMethodLast4", ExtArgs["result"]["appointment"]>
+export type AppointmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "locationId" | "customerId" | "startTime" | "endTime" | "bufferTime" | "prepTime" | "status" | "notes" | "price" | "createdAt" | "updatedAt" | "promoCodeId" | "discountPercentageApplied" | "discountAmountApplied" | "paymentMethodId" | "paymentMethodLast4", ExtArgs["result"]["appointment"]>
 export type AppointmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
   service?: boolean | Prisma.Appointment$serviceArgs<ExtArgs>
   addOns?: boolean | Prisma.Appointment$addOnsArgs<ExtArgs>
   customerPayments?: boolean | Prisma.Appointment$customerPaymentsArgs<ExtArgs>
+  tipCharges?: boolean | Prisma.Appointment$tipChargesArgs<ExtArgs>
   promoCode?: boolean | Prisma.Appointment$promoCodeArgs<ExtArgs>
   _count?: boolean | Prisma.AppointmentCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1792,6 +2094,7 @@ export type $AppointmentPayload<ExtArgs extends runtime.Types.Extensions.Interna
     service: Prisma.$EmployeeServicePayload<ExtArgs>[]
     addOns: Prisma.$AddOnPayload<ExtArgs>[]
     customerPayments: Prisma.$CustomerAppointmentPaymentPayload<ExtArgs>[]
+    tipCharges: Prisma.$AppointmentTipChargePayload<ExtArgs>[]
     promoCode: Prisma.$PromoCodePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1808,6 +2111,8 @@ export type $AppointmentPayload<ExtArgs extends runtime.Types.Extensions.Interna
     createdAt: Date
     updatedAt: Date
     promoCodeId: string | null
+    discountPercentageApplied: number | null
+    discountAmountApplied: number | null
     paymentMethodId: string | null
     paymentMethodLast4: string | null
   }, ExtArgs["result"]["appointment"]>
@@ -2209,6 +2514,7 @@ export interface Prisma__AppointmentClient<T, Null = never, ExtArgs extends runt
   service<T extends Prisma.Appointment$serviceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Appointment$serviceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   addOns<T extends Prisma.Appointment$addOnsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Appointment$addOnsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AddOnPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customerPayments<T extends Prisma.Appointment$customerPaymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Appointment$customerPaymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerAppointmentPaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tipCharges<T extends Prisma.Appointment$tipChargesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Appointment$tipChargesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AppointmentTipChargePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   promoCode<T extends Prisma.Appointment$promoCodeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Appointment$promoCodeArgs<ExtArgs>>): Prisma.Prisma__PromoCodeClient<runtime.Types.Result.GetResult<Prisma.$PromoCodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2252,6 +2558,8 @@ export interface AppointmentFieldRefs {
   readonly createdAt: Prisma.FieldRef<"Appointment", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Appointment", 'DateTime'>
   readonly promoCodeId: Prisma.FieldRef<"Appointment", 'String'>
+  readonly discountPercentageApplied: Prisma.FieldRef<"Appointment", 'Int'>
+  readonly discountAmountApplied: Prisma.FieldRef<"Appointment", 'Int'>
   readonly paymentMethodId: Prisma.FieldRef<"Appointment", 'String'>
   readonly paymentMethodLast4: Prisma.FieldRef<"Appointment", 'String'>
 }
@@ -2719,6 +3027,30 @@ export type Appointment$customerPaymentsArgs<ExtArgs extends runtime.Types.Exten
   take?: number
   skip?: number
   distinct?: Prisma.CustomerAppointmentPaymentScalarFieldEnum | Prisma.CustomerAppointmentPaymentScalarFieldEnum[]
+}
+
+/**
+ * Appointment.tipCharges
+ */
+export type Appointment$tipChargesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AppointmentTipCharge
+   */
+  select?: Prisma.AppointmentTipChargeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AppointmentTipCharge
+   */
+  omit?: Prisma.AppointmentTipChargeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppointmentTipChargeInclude<ExtArgs> | null
+  where?: Prisma.AppointmentTipChargeWhereInput
+  orderBy?: Prisma.AppointmentTipChargeOrderByWithRelationInput | Prisma.AppointmentTipChargeOrderByWithRelationInput[]
+  cursor?: Prisma.AppointmentTipChargeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AppointmentTipChargeScalarFieldEnum | Prisma.AppointmentTipChargeScalarFieldEnum[]
 }
 
 /**

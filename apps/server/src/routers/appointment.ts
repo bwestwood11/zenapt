@@ -4,8 +4,6 @@ import {
   getLocationSpecialistsSchedule,
 } from "../lib/appointment/employees";
 import {
-  permissionMiddleware,
-  protectedProcedure,
   publicProcedure,
   router,
   withPermissions,
@@ -18,6 +16,33 @@ import {
 } from "../lib/appointment/appointment";
 import { sendAppointmentBookedEmail } from "../lib/email/appointment";
 import { after } from "next/server";
+import { stripe } from "../lib/stripe/server-stripe";
+import Stripe from "stripe";
+import {
+  calculateDiscountedTotal,
+  resolveActivePromoCode,
+} from "../lib/payments/promo";
+
+const CHARGEABLE_PAYMENT_TYPES = ["DOWNPAYMENT", "BALANCE", "CANCELLATION"] as const;
+
+async function getAppointmentCollectedAmount(appointmentId: string) {
+  const payments = await prisma.customerAppointmentPayment.aggregate({
+    where: {
+      appointmentId,
+      paymentType: {
+        in: [...CHARGEABLE_PAYMENT_TYPES],
+      },
+      status: {
+        in: ["PENDING", "SUCCEEDED"],
+      },
+    },
+    _sum: {
+      amountPaid: true,
+    },
+  });
+
+  return payments._sum.amountPaid ?? 0;
+}
 
 export const appointmentRouter = router({
   fetchSpecialistUpcomingAppointments: withPermissions(["READ::APPOINTMENTS"], z.object({
@@ -522,7 +547,7 @@ export const appointmentRouter = router({
 
       return {
         customers: items,
-        nextCursor: hasNextPage ? items[items.length - 1].id : undefined,
+        nextCursor: hasNextPage ? items.at(-1)?.id : undefined,
       };
     }),
 
@@ -597,6 +622,760 @@ export const appointmentRouter = router({
       }
 
       return null;
+    }),
+
+  getAppointmentChargeSummary: withPermissions(["READ::APPOINTMENTS"])
+    .input(
+      z.object({
+        appointmentId: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const appointment = await prisma.appointment.findUnique({
+        where: { id: input.appointmentId },
+        select: {
+          id: true,
+          price: true,
+          promoCodeId: true,
+          discountPercentageApplied: true,
+          discountAmountApplied: true,
+          paymentMethodId: true,
+          paymentMethodLast4: true,
+          promoCode: {
+            select: {
+              code: true,
+              discount: true,
+            },
+          },
+          service: {
+            where: {
+              locationEmployeeId: {
+                not: null,
+              },
+            },
+            select: {
+              locationEmployee: {
+                select: {
+                  id: true,
+                  user: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          customer: {
+            select: {
+              stripeCustomerId: true,
+              user: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          location: {
+            select: {
+              id:true,
+              organizationId: true,
+              appointmentSettings: {
+                select: {
+                  tipEnabled: true,
+                  tipPresetPercentages: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!appointment) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Appointment not found",
+        });
+      }
+
+      const organization = await prisma.organization.findUnique({
+        where: { id: appointment.location.organizationId },
+        select: {
+          stripeAccountId: true,
+        },
+      });
+
+      const savedPaymentMethods =
+        appointment.customer.stripeCustomerId && organization?.stripeAccountId
+          ? await stripe.paymentMethods
+              .list(
+                {
+                  customer: appointment.customer.stripeCustomerId,
+                  type: "card",
+                },
+                {
+                  stripeAccount: organization.stripeAccountId,
+                },
+              )
+              .then((result) =>
+                result.data
+                  .filter((paymentMethod) => Boolean(paymentMethod.card))
+                  .map((paymentMethod) => ({
+                    id: paymentMethod.id,
+                    brand: paymentMethod.card?.brand ?? "card",
+                    last4: paymentMethod.card?.last4 ?? "****",
+                    expMonth: paymentMethod.card?.exp_month ?? 0,
+                    expYear: paymentMethod.card?.exp_year ?? 0,
+                  })),
+              )
+          : [];
+
+      const [alreadyChargedAmount, tipCollected] = await Promise.all([
+        getAppointmentCollectedAmount(appointment.id),
+        prisma.appointmentTipCharge.aggregate({
+          where: {
+            appointmentId: appointment.id,
+            status: {
+              in: ["PENDING", "SUCCEEDED"],
+            },
+          },
+          _sum: {
+            amount: true,
+          },
+        }),
+      ]);
+
+      const uniqueTipEmployees = Array.from(
+        new Map(
+          appointment.service
+            .map((service) => service.locationEmployee)
+            .filter(
+              (
+                employee,
+              ): employee is NonNullable<(typeof appointment.service)[number]["locationEmployee"]> =>
+                Boolean(employee),
+            )
+            .map((employee) => [employee.id, employee]),
+        ).values(),
+      );
+
+      const fallbackDiscountAmount = calculateDiscountedTotal(
+        appointment.price,
+        appointment.promoCode?.discount ?? 0,
+      ).discountAmount;
+      const discountAmount = Math.max(
+        0,
+        appointment.discountAmountApplied ?? fallbackDiscountAmount,
+      );
+      const discountedTotal = Math.max(0, appointment.price - discountAmount);
+
+      return {
+        appointmentId: appointment.id,
+        locationId: appointment.location.id,
+        customerName: appointment.customer.user.name,
+        totalAmount: appointment.price,
+        discountAmount,
+        discountedTotalAmount: discountedTotal,
+        alreadyChargedAmount,
+        remainingAmount: Math.max(0, discountedTotal - alreadyChargedAmount),
+        tipCollectedAmount: tipCollected._sum.amount ?? 0,
+        promoCode: appointment.promoCode?.code ?? null,
+        promoDiscountPercentage:
+          (appointment.discountPercentageApplied ?? 0) > 0
+            ? appointment.discountPercentageApplied
+            : null,
+        selectedPaymentMethodId: appointment.paymentMethodId,
+        savedPaymentMethods,
+        hasPaymentMethod: Boolean(appointment.paymentMethodId),
+        paymentMethodLast4: appointment.paymentMethodLast4,
+        tipEnabled: appointment.location.appointmentSettings?.tipEnabled ?? false,
+        tipPresetPercentages:
+          appointment.location.appointmentSettings?.tipPresetPercentages ?? [],
+        tipEmployeeName:
+          uniqueTipEmployees.length === 1
+            ? uniqueTipEmployees[0].user.name
+            : null,
+        hasMultipleTipEmployees: uniqueTipEmployees.length > 1,
+      };
+    }),
+
+  createAppointmentCardSetupIntent: withPermissions(["UPDATE::APPOINTMENTS"])
+    .input(
+      z.object({
+        appointmentId: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const appointment = await prisma.appointment.findUnique({
+        where: { id: input.appointmentId },
+        select: {
+          id: true,
+          customerId: true,
+          customer: {
+            select: {
+              stripeCustomerId: true,
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+          },
+          location: {
+            select: {
+              id: true,
+              organizationId: true,
+            },
+          },
+        },
+      });
+
+      if (!appointment) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Appointment not found",
+        });
+      }
+
+      const organization = await prisma.organization.findUnique({
+        where: { id: appointment.location.organizationId },
+        select: {
+          stripeAccountId: true,
+        },
+      });
+
+      if (!organization?.stripeAccountId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Organization payments are not configured",
+        });
+      }
+
+      let stripeCustomerId = appointment.customer.stripeCustomerId;
+
+      if (!stripeCustomerId) {
+        const stripeCustomer = await stripe.customers.create(
+          {
+            email: appointment.customer.user.email ?? undefined,
+            name: appointment.customer.user.name ?? undefined,
+            metadata: {
+              userId: appointment.customer.user.id,
+              customerId: appointment.customerId,
+            },
+          },
+          {
+            stripeAccount: organization.stripeAccountId,
+          },
+        );
+
+        stripeCustomerId = stripeCustomer.id;
+
+        await prisma.customer.update({
+          where: { id: appointment.customerId },
+          data: {
+            stripeCustomerId,
+          },
+        });
+      }
+
+      const setupIntent = await stripe.setupIntents.create(
+        {
+          customer: stripeCustomerId,
+          payment_method_types: ["card"],
+          usage: "off_session",
+          metadata: {
+            paymentScope: "APPOINTMENT_BALANCE_AND_TIP",
+            appointmentId: appointment.id,
+            customerId: appointment.customerId,
+            locationId: appointment.location.id,
+            organizationId: appointment.location.organizationId,
+          },
+        },
+        {
+          stripeAccount: organization.stripeAccountId,
+        },
+      );
+
+      const customerSession = await stripe.customerSessions.create(
+        {
+          customer: stripeCustomerId,
+          components: {
+            payment_element: {
+              enabled: true,
+            },
+          },
+        },
+        {
+          stripeAccount: organization.stripeAccountId,
+        },
+      );
+
+      if (!setupIntent.client_secret) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Unable to create setup intent",
+        });
+      }
+
+      return {
+        clientSecret: setupIntent.client_secret,
+        customerSessionClientSecret: customerSession.client_secret,
+        stripeAccountId: organization.stripeAccountId,
+      };
+    }),
+
+  finalizeAppointmentCardSetupIntent: withPermissions(["UPDATE::APPOINTMENTS"])
+    .input(
+      z.object({
+        appointmentId: z.string(),
+        setupIntentId: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const appointment = await prisma.appointment.findUnique({
+        where: { id: input.appointmentId },
+        select: {
+          id: true,
+          customerId: true,
+          customer: {
+            select: {
+              stripeCustomerId: true,
+            },
+          },
+          location: {
+            select: {
+              id: true,
+              organizationId: true,
+            },
+          },
+        },
+      });
+
+      if (!appointment) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Appointment not found",
+        });
+      }
+
+      const organization = await prisma.organization.findUnique({
+        where: { id: appointment.location.organizationId },
+        select: {
+          stripeAccountId: true,
+        },
+      });
+
+      if (!organization?.stripeAccountId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Organization payments are not configured",
+        });
+      }
+
+      const stripeCustomerId = appointment.customer.stripeCustomerId;
+      if (!stripeCustomerId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Customer payment profile is not configured",
+        });
+      }
+
+      const setupIntent = await stripe.setupIntents.retrieve(
+        input.setupIntentId,
+        {
+          expand: ["payment_method"],
+        },
+        {
+          stripeAccount: organization.stripeAccountId,
+        },
+      );
+
+      const setupIntentCustomerId =
+        typeof setupIntent.customer === "string" ? setupIntent.customer : null;
+
+      if (setupIntentCustomerId !== stripeCustomerId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Setup intent does not belong to this customer",
+        });
+      }
+
+      const newPaymentMethod =
+        setupIntent.payment_method &&
+        typeof setupIntent.payment_method !== "string"
+          ? setupIntent.payment_method
+          : null;
+
+      if (newPaymentMethod?.type !== "card") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No valid card payment method found",
+        });
+      }
+
+      const fingerprint = newPaymentMethod.card?.fingerprint;
+
+      let resolvedPaymentMethod = newPaymentMethod;
+
+      if (fingerprint) {
+        const existingPaymentMethods = await stripe.paymentMethods.list(
+          {
+            customer: stripeCustomerId,
+            type: "card",
+            limit: 20,
+          },
+          {
+            stripeAccount: organization.stripeAccountId,
+          },
+        );
+
+        const duplicate = existingPaymentMethods.data.find(
+          (method) =>
+            method.id !== newPaymentMethod.id &&
+            method.card?.fingerprint === fingerprint,
+        );
+
+        if (duplicate) {
+          await stripe.paymentMethods.detach(newPaymentMethod.id, {
+            stripeAccount: organization.stripeAccountId,
+          });
+
+          resolvedPaymentMethod = duplicate;
+        }
+      }
+
+      await stripe.customers.update(
+        stripeCustomerId,
+        {
+          invoice_settings: {
+            default_payment_method: resolvedPaymentMethod.id,
+          },
+        },
+        {
+          stripeAccount: organization.stripeAccountId,
+        },
+      );
+
+      if (resolvedPaymentMethod.allow_redisplay !== "always") {
+        await stripe.paymentMethods.update(
+          resolvedPaymentMethod.id,
+          {
+            allow_redisplay: "always",
+          },
+          {
+            stripeAccount: organization.stripeAccountId,
+          },
+        );
+      }
+
+      await prisma.appointment.update({
+        where: {
+          id: appointment.id,
+        },
+        data: {
+          paymentMethodId: resolvedPaymentMethod.id,
+          paymentMethodLast4: resolvedPaymentMethod.card?.last4 ?? null,
+        },
+      });
+
+      return {
+        card: {
+          id: resolvedPaymentMethod.id,
+          brand: resolvedPaymentMethod.card?.brand ?? null,
+          last4: resolvedPaymentMethod.card?.last4 ?? null,
+          expMonth: resolvedPaymentMethod.card?.exp_month ?? null,
+          expYear: resolvedPaymentMethod.card?.exp_year ?? null,
+        },
+      };
+    }),
+
+  chargeAppointmentRemainingBalance: withPermissions(["UPDATE::APPOINTMENTS"])
+    .input(
+      z.object({
+        appointmentId: z.string(),
+        tipAmount: z.number().int().min(0).max(500000),
+        paymentMethodId: z.string().optional(),
+        promoCode: z.string().trim().min(1).max(64).optional(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const appointment = await prisma.appointment.findUnique({
+        where: { id: input.appointmentId },
+        select: {
+          id: true,
+          status: true,
+          price: true,
+          customerId: true,
+          paymentMethodId: true,
+          promoCodeId: true,
+          discountPercentageApplied: true,
+          discountAmountApplied: true,
+          promoCode: {
+            select: {
+              discount: true,
+              code: true,
+            },
+          },
+          service: {
+            select: {
+              locationEmployeeId: true,
+            },
+          },
+          customer: {
+            select: {
+              stripeCustomerId: true,
+              user: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          location: {
+            select: {
+              id: true,
+              organizationId: true,
+            },
+          },
+        },
+      });
+
+      if (!appointment) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Appointment not found",
+        });
+      }
+
+      if (appointment.status === "CANCELED") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot charge a canceled appointment",
+        });
+      }
+
+      if (!appointment.customer.stripeCustomerId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Customer payment profile is not configured",
+        });
+      }
+
+      const resolvedPaymentMethodId =
+        input.paymentMethodId ?? appointment.paymentMethodId;
+
+      if (!resolvedPaymentMethodId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No saved payment method is available for this appointment",
+        });
+      }
+
+      const organization = await prisma.organization.findUnique({
+        where: { id: appointment.location.organizationId },
+        select: {
+          stripeAccountId: true,
+        },
+      });
+
+      if (!organization?.stripeAccountId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Organization payments are not configured",
+        });
+      }
+
+      const selectedPaymentMethod = await stripe.paymentMethods.retrieve(
+        resolvedPaymentMethodId,
+        {
+          stripeAccount: organization.stripeAccountId,
+        },
+      );
+
+      const paymentMethodCustomerId =
+        typeof selectedPaymentMethod.customer === "string"
+          ? selectedPaymentMethod.customer
+          : null;
+
+      if (paymentMethodCustomerId !== appointment.customer.stripeCustomerId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Selected card does not belong to this customer",
+        });
+      }
+
+      let resolvedPromoCode:
+        | {
+            id: string;
+            code: string;
+            discountPercentage: number;
+          }
+        | null = null;
+
+      if (input.promoCode) {
+        resolvedPromoCode = await resolveActivePromoCode({
+          code: input.promoCode,
+          organizationId: appointment.location.organizationId,
+          locationId: appointment.location.id,
+        });
+      } else if (appointment.promoCode && appointment.promoCodeId) {
+        resolvedPromoCode = {
+          id: appointment.promoCodeId,
+          code: appointment.promoCode.code,
+          discountPercentage: appointment.promoCode.discount,
+        };
+      }
+
+      const appliedDiscountPercentage =
+        resolvedPromoCode?.discountPercentage ??
+        appointment.discountPercentageApplied ??
+        appointment.promoCode?.discount ??
+        0;
+
+      const { discountAmount, discountedTotal } = calculateDiscountedTotal(
+        appointment.price,
+        appliedDiscountPercentage,
+      );
+      const hasAppliedDiscount = discountAmount > 0;
+
+      const alreadyChargedAmount = await getAppointmentCollectedAmount(appointment.id);
+      const tipEmployeeIds = Array.from(
+        new Set(
+          appointment.service
+            .map((service) => service.locationEmployeeId)
+            .filter((value): value is string => Boolean(value)),
+        ),
+      );
+      const tipEmployeeId = tipEmployeeIds[0] ?? null;
+      const remainingAmount = Math.max(0, discountedTotal - alreadyChargedAmount);
+      const tipAmount = input.tipAmount;
+      const chargeAmount = remainingAmount + tipAmount;
+
+      if (chargeAmount <= 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No chargeable amount remains for this appointment",
+        });
+      }
+
+      if (tipAmount > 0 && tipEmployeeIds.length === 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No assigned employee found for this appointment tip",
+        });
+      }
+
+      if (tipAmount > 0 && tipEmployeeIds.length > 1) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "This appointment has multiple employees. Please split services before charging tip.",
+        });
+      }
+
+      try {
+        const paymentIntent = await stripe.paymentIntents.create(
+          {
+            amount: chargeAmount,
+            currency: "usd",
+            customer: appointment.customer.stripeCustomerId,
+            payment_method: resolvedPaymentMethodId,
+            confirm: true,
+            off_session: true,
+            
+            description: `Appointment remaining balance charge for ${appointment.id}`,
+            metadata: {
+              paymentScope: "APPOINTMENT_BALANCE_AND_TIP",
+              appointmentId: appointment.id,
+              customerId: appointment.customerId,
+              locationId: appointment.location.id,
+              organizationId: appointment.location.organizationId,
+              remainingAmount: String(remainingAmount),
+              tipAmount: String(tipAmount),
+              discountAmount: String(discountAmount),
+              discountedTotal: String(discountedTotal),
+              promoCode: resolvedPromoCode?.code ?? "",
+            },
+          },
+          {
+            stripeAccount: organization.stripeAccountId,
+          },
+        );
+
+        await prisma.$transaction(async (tx) => {
+          await tx.appointment.update({
+            where: {
+              id: appointment.id,
+            },
+            data: {
+              paymentMethodId: resolvedPaymentMethodId,
+              paymentMethodLast4: selectedPaymentMethod.card?.last4 ?? null,
+              promoCodeId: resolvedPromoCode?.id ?? appointment.promoCodeId,
+              discountPercentageApplied: hasAppliedDiscount
+                ? appliedDiscountPercentage
+                : null,
+              discountAmountApplied: hasAppliedDiscount ? discountAmount : null,
+            },
+          });
+
+          if (remainingAmount > 0) {
+            await tx.customerAppointmentPayment.create({
+              data: {
+                customerId: appointment.customerId,
+                appointmentId: appointment.id,
+                amountPaid: remainingAmount,
+                paymentType: "BALANCE",
+                status: "PENDING",
+                paymentMethod: resolvedPaymentMethodId,
+                transactionId: paymentIntent.id,
+              },
+            });
+          }
+
+          if (tipAmount > 0) {
+            await tx.appointmentTipCharge.create({
+              data: {
+                customerId: appointment.customerId,
+                appointmentId: appointment.id,
+                locationEmployeeId: tipEmployeeId,
+                amount: tipAmount,
+                status: "PENDING",
+                paymentMethod: resolvedPaymentMethodId,
+                transactionId: paymentIntent.id,
+              },
+            });
+          }
+        });
+
+        return {
+          success: true,
+          appointmentId: appointment.id,
+          chargedAmount: chargeAmount,
+          remainingAmount,
+          tipAmount,
+          discountAmount,
+          discountedTotal,
+          discountPercentageApplied: appliedDiscountPercentage,
+          promoCode: resolvedPromoCode?.code ?? null,
+          customerName: appointment.customer.user.name,
+        };
+      } catch (error) {
+        if (error instanceof Stripe.errors.StripeError) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message:
+              error.message ||
+              "Failed to charge the saved card. Please ask customer to update payment method.",
+          });
+        }
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to process charge",
+        });
+      }
     }),
 
   createAppointment: withPermissions(["CREATE::APPOINTMENTS"])

@@ -2,6 +2,10 @@ import z from "zod";
 import prisma from "../../prisma";
 import { publicProcedure, router } from "../lib/trpc";
 import { TRPCError } from "@trpc/server";
+import {
+  calculateDiscountedTotal,
+  resolveActivePromoCode,
+} from "../lib/payments/promo";
 
 // TODO Implement Rate Limit and throttle as well as caching
 
@@ -238,10 +242,53 @@ const getLocationBookingPolicy = publicProcedure
     };
   });
 
+const validatePromoCode = publicProcedure
+  .input(
+    z.object({
+      locationId: z.string().min(2).max(60),
+      code: z.string().trim().min(1).max(64),
+      totalAmount: z.number().int().min(0),
+    }),
+  )
+  .mutation(async ({ input }) => {
+    const location = await prisma.location.findUnique({
+      where: { id: input.locationId },
+      select: {
+        organizationId: true,
+      },
+    });
+
+    if (!location) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Location not found",
+      });
+    }
+
+    const promoCode = await resolveActivePromoCode({
+      code: input.code,
+      organizationId: location.organizationId,
+      locationId: input.locationId,
+    });
+
+    const { discountAmount, discountedTotal } = calculateDiscountedTotal(
+      input.totalAmount,
+      promoCode.discountPercentage,
+    );
+
+    return {
+      code: promoCode.code,
+      discountPercentage: promoCode.discountPercentage,
+      discountAmount,
+      discountedTotal,
+    };
+  });
+
 export const publicRouter = router({
   getAllLocations,
   getOrganization,
   getServicesByLocation,
   getServiceDetails,
   getLocationBookingPolicy,
+  validatePromoCode,
 });

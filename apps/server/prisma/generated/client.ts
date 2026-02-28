@@ -82,6 +82,11 @@ export type TimeOff = Prisma.TimeOffModel
  */
 export type AppointmentSettings = Prisma.AppointmentSettingsModel
 /**
+ * Model AppointmentTipCharge
+ * 
+ */
+export type AppointmentTipCharge = Prisma.AppointmentTipChargeModel
+/**
  * Model User
  * 
  */

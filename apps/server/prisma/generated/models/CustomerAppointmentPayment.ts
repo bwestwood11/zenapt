@@ -560,10 +560,6 @@ export type EnumCustomerPaymentTypeFieldUpdateOperationsInput = {
   set?: $Enums.CustomerPaymentType
 }
 
-export type EnumCustomerPaymentStatusFieldUpdateOperationsInput = {
-  set?: $Enums.CustomerPaymentStatus
-}
-
 export type CustomerAppointmentPaymentCreateWithoutAppointmentInput = {
   id?: string
   amountPaid: number

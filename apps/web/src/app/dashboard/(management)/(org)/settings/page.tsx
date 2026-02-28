@@ -10,6 +10,7 @@ import { Loader2 } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { OrganizationPromoCodes } from "@/components/business-settings/promo-codes";
 
 const settingsTabs = [
   {
@@ -31,6 +32,11 @@ const settingsTabs = [
     key: "privacy",
     label: "Privacy",
     requiredPermissions: [] as Permission[],
+  },
+  {
+    key: "promo",
+    label: "Promo Codes",
+    requiredPermissions: ["UPDATE::ORGANIZATION"] as Permission[],
   },
 ] as const;
 
@@ -121,7 +127,7 @@ export default function SettingsPage() {
                     onClick={async () => {
                       const result = await createStripeConnectAccount();
                       if (result.url) {
-                        window.location.assign(result.url);
+                        globalThis.location.assign(result.url);
                       }
                     }}
                   >
@@ -137,6 +143,7 @@ export default function SettingsPage() {
                   Privacy settings content
                 </p>
               )}
+              {tab.key === "promo" && <OrganizationPromoCodes />}
             </TabsContent>
           ))}
         </Tabs>

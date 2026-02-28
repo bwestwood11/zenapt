@@ -1,7 +1,6 @@
 import { protectedProcedure, router, withPermissions } from "../lib/trpc";
 import prisma from "../../prisma";
 import z from "zod";
-import { OrgRole } from "../../prisma/generated/enums";
 import { TRPCError } from "@trpc/server";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -15,6 +14,18 @@ import {
 import { deleteFile } from "../lib/s3/commands";
 import { revalidateTag } from "next/cache";
 import { stripe } from "../lib/stripe/server-stripe";
+
+const promoCodeInputSchema = z.object({
+  code: z
+    .string()
+    .trim()
+    .min(3)
+    .max(30)
+    .regex(/^[A-Z0-9_-]+$/, "Use only uppercase letters, numbers, _ or -"),
+  description: z.string().trim().max(200).optional(),
+  discount: z.number().int().min(1).max(100),
+  maxUsage: z.number().int().min(1).max(100000).optional(),
+});
 
 const CompanySizeSchema = z
   .enum(["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"])
@@ -368,8 +379,6 @@ export const organizationRouter = router({
         });
       }
 
-      // TODO: Remove all assets to the user
-
       await prisma.user.delete({
         where: {
           id: userId,
@@ -377,6 +386,153 @@ export const organizationRouter = router({
       });
 
       revalidateTag(ctx.orgWithSub.id);
+      return { success: true };
+    }),
+
+  listOrganizationPromoCodes: withPermissions("READ::ORGANIZATION").query(
+    async ({ ctx }) => {
+      return prisma.promoCode.findMany({
+        where: {
+          organizationId: ctx.orgWithSub.id,
+          appliesToLevel: "ORGANIZATION",
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        select: {
+          id: true,
+          code: true,
+          description: true,
+          discount: true,
+          maxUsage: true,
+          isActive: true,
+          createdAt: true,
+        },
+      });
+    },
+  ),
+
+  createOrganizationPromoCode: withPermissions("UPDATE::ORGANIZATION")
+    .input(promoCodeInputSchema)
+    .mutation(async ({ ctx, input }) => {
+      const normalizedCode = input.code.toUpperCase();
+
+      try {
+        return await prisma.promoCode.create({
+          data: {
+            code: normalizedCode,
+            description: input.description,
+            discount: input.discount,
+            maxUsage: input.maxUsage,
+            organizationId: ctx.orgWithSub.id,
+            appliesToLevel: "ORGANIZATION",
+          },
+          select: {
+            id: true,
+            code: true,
+            description: true,
+            discount: true,
+            maxUsage: true,
+            isActive: true,
+          },
+        });
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          "code" in error &&
+          (error as { code?: string }).code === "P2002"
+        ) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Promo code already exists",
+          });
+        }
+
+        throw error;
+      }
+    }),
+
+  updateOrganizationPromoCode: withPermissions("UPDATE::ORGANIZATION")
+    .input(
+      z.object({
+        promoCodeId: z.string(),
+        isActive: z.boolean().optional(),
+        description: z.string().trim().max(200).optional(),
+        discount: z.number().int().min(1).max(100).optional(),
+        maxUsage: z.number().int().min(1).max(100000).nullable().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const existing = await prisma.promoCode.findFirst({
+        where: {
+          id: input.promoCodeId,
+          organizationId: ctx.orgWithSub.id,
+          appliesToLevel: "ORGANIZATION",
+        },
+        select: { id: true },
+      });
+
+      if (!existing) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Promo code not found",
+        });
+      }
+
+      return prisma.promoCode.update({
+        where: { id: input.promoCodeId },
+        data: {
+          ...(typeof input.isActive === "boolean" && {
+            isActive: input.isActive,
+          }),
+          ...(typeof input.description === "string" && {
+            description: input.description,
+          }),
+          ...(typeof input.discount === "number" && {
+            discount: input.discount,
+          }),
+          ...(input.maxUsage !== undefined && {
+            maxUsage: input.maxUsage,
+          }),
+        },
+        select: {
+          id: true,
+          code: true,
+          description: true,
+          discount: true,
+          maxUsage: true,
+          isActive: true,
+        },
+      });
+    }),
+
+  deleteOrganizationPromoCode: withPermissions("UPDATE::ORGANIZATION")
+    .input(
+      z.object({
+        promoCodeId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const existing = await prisma.promoCode.findFirst({
+        where: {
+          id: input.promoCodeId,
+          organizationId: ctx.orgWithSub.id,
+          appliesToLevel: "ORGANIZATION",
+        },
+        select: { id: true },
+      });
+
+      if (!existing) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Promo code not found",
+        });
+      }
+
+      await prisma.promoCode.delete({
+        where: { id: input.promoCodeId },
+      });
+
       return { success: true };
     }),
 });

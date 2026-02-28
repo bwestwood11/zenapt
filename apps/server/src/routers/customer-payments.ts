@@ -7,6 +7,10 @@ import { sendAppointmentBookedEmail } from "../lib/email/appointment";
 import { after } from "next/server";
 import z from "zod";
 import Stripe from "stripe";
+import {
+  calculateDiscountedTotal,
+  resolveActivePromoCode,
+} from "../lib/payments/promo";
 
 const getSavedCardSummary = async (
   stripeCustomerId: string,
@@ -309,7 +313,7 @@ const finalizeSetupIntent = customerJwtProcedure
         ? setupIntent.payment_method
         : null;
 
-    if (!newPaymentMethod || newPaymentMethod.type !== "card") {
+    if (newPaymentMethod?.type !== "card") {
       return { deduped: false };
     }
 
@@ -406,6 +410,7 @@ const createAppointment = customerJwtProcedure
       endTime: z.date(),
       organizationId: z.string().min(2).max(90).optional(),
       paymentMethodId: z.string().min(1).optional(),
+      promoCode: z.string().trim().min(1).max(64).optional(),
     }),
   )
   .mutation(async ({ ctx, input }) => {
@@ -532,13 +537,34 @@ const createAppointment = customerJwtProcedure
       employeeServices.reduce((sum, service) => sum + service.price, 0) +
       addOnsPrice;
 
+    let appliedPromoCode:
+      | {
+          id: string;
+          code: string;
+          discountPercentage: number;
+        }
+      | null = null;
+
+    if (input.promoCode) {
+      appliedPromoCode = await resolveActivePromoCode({
+        code: input.promoCode,
+        organizationId,
+        locationId: input.locationId,
+      });
+    }
+
+    const { discountAmount, discountedTotal } = calculateDiscountedTotal(
+      totalPrice,
+      appliedPromoCode?.discountPercentage ?? 0,
+    );
+
     const downpaymentPercentage = Math.min(
       100,
       Math.max(0, location.appointmentSettings?.downpaymentPercentage ?? 0),
     );
     const amountToChargeNow =
-      downpaymentPercentage > 0 && totalPrice > 0
-        ? Math.max(1, Math.round((totalPrice * downpaymentPercentage) / 100))
+      downpaymentPercentage > 0 && discountedTotal > 0
+        ? Math.max(1, Math.round((discountedTotal * downpaymentPercentage) / 100))
         : 0;
 
     if (amountToChargeNow > 0 && !input.paymentMethodId) {
@@ -685,6 +711,9 @@ const createAppointment = customerJwtProcedure
                   locationEmployeeId: input.locationEmployeeId,
                   downpaymentPercentage: String(downpaymentPercentage),
                   totalPrice: String(totalPrice),
+                  discountAmount: String(discountAmount),
+                  discountedTotal: String(discountedTotal),
+                  promoCode: appliedPromoCode?.code ?? "",
                 },
               },
               {
@@ -722,6 +751,12 @@ const createAppointment = customerJwtProcedure
         customerId: customer.id,
         locationId: input.locationId,
         price: totalPrice,
+        promoCodeId: appliedPromoCode?.id,
+        discountPercentageApplied:
+          appliedPromoCode && discountAmount > 0
+            ? appliedPromoCode.discountPercentage
+            : null,
+        discountAmountApplied: discountAmount > 0 ? discountAmount : null,
         service: {
           connect: input.serviceIds.map((id) => ({ id })),
         },
@@ -787,6 +822,10 @@ const createAppointment = customerJwtProcedure
       appointmentId: appointment.id,
       amountCharged: amountToChargeNow,
       downpaymentPercentage,
+      totalPrice,
+      discountAmount,
+      discountedTotal,
+      appliedPromoCode: appliedPromoCode?.code ?? null,
     };
   });
 

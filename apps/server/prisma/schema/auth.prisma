@@ -137,6 +137,7 @@ model LocationEmployee {
   location Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
   user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   Service  EmployeeService[]
+  tipCharges AppointmentTipCharge[]
 
   @@unique([userId, locationId])
 }
@@ -196,6 +197,7 @@ model Customer {
   updatedAt        DateTime                     @updatedAt
   appointments     Appointment[]
   customerPayments CustomerAppointmentPayment[]
+  tipCharges       AppointmentTipCharge[]
   userId           String
   user             User                         @relation(fields: [userId], references: [id])
   orgId            String

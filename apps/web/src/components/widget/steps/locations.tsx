@@ -6,8 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { Controller, useFormContext } from "react-hook-form";
-import type { WidgetDataType } from "../schema";
 import { useCheckoutStore } from "../hooks/useStore";
 
 const Locations = () => {
@@ -23,13 +21,15 @@ const Locations = () => {
   if (isLoading) return <LocationSkeletonList count={2} />;
   if (!locations?.length) return "NO LOCATIONS";
 
+
+
   return (
     <div className="grid grid-cols-2 gap-5 min-w-0 ">
         {locations.map((location) => (
               <button
                 type="button"
                 key={location.id}
-                onClick={() => setLocation(location.id, location.timeZone)}
+                onClick={() => setLocation(location.id, location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone)}
                 className={`w-full text-left transition-all duration-300 ${
                   selectedLocation === location.id
                     ? "border-2 border border-primary shadow-lg shadow-primary/20"

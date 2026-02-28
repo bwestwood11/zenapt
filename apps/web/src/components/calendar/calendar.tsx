@@ -21,6 +21,7 @@ import React, {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
 import { AbsentEmployeeColumn, EmployeeColumn } from "./employee-column";
+import { AppointmentChargeModalProvider } from "./appointment";
 import { Header } from "./header";
 import { TimeColumn } from "./timeCol";
 import { EditSheet } from "./sheet";
@@ -584,11 +585,13 @@ export function EmployeeDayCalendar({
           collisionDetection={closestCorners}
           onDragEnd={handleDragEnd}
         >
-          {employees.map((emp) => {
-            if (emp.code === "EMPLOYEE_OFF")
-              return <AbsentEmployeeColumn key={emp.employee.id} />;
-            return <EmployeeColumn key={emp.employee.id} emp={emp} />;
-          })}
+          <AppointmentChargeModalProvider>
+            {employees.map((emp) => {
+              if (emp.code === "EMPLOYEE_OFF")
+                return <AbsentEmployeeColumn key={emp.employee.id} />;
+              return <EmployeeColumn key={emp.employee.id} emp={emp} />;
+            })}
+          </AppointmentChargeModalProvider>
 
           <OverlayPlaceholder />
         </DndContext>

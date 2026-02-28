@@ -170,6 +170,12 @@ const PaymentPage = () => {
   const [isBooking, setIsBooking] = React.useState(false);
   const [bookingError, setBookingError] = React.useState<string | null>(null);
   const [bookingSuccess, setBookingSuccess] = React.useState(false);
+  const [promoCodeInput, setPromoCodeInput] = React.useState("");
+  const [appliedPromoCode, setAppliedPromoCode] = React.useState<string | null>(
+    null,
+  );
+  const [promoDiscountAmount, setPromoDiscountAmount] = React.useState(0);
+  const [promoError, setPromoError] = React.useState<string | null>(null);
 
   const [savedCard, setSavedCard] = React.useState<{
     id?: string | null;
@@ -218,9 +224,12 @@ const PaymentPage = () => {
   const cancellationPercent = bookingPolicy?.cancellationPercent ?? 100;
   const cancellationDuration = bookingPolicy?.cancellationDuration ?? 60;
   const downpaymentPercentage = bookingPolicy?.downpaymentPercentage ?? 0;
+  const discountedTotalAmount = Math.max(0, totalAmount - promoDiscountAmount);
   const amountDueNow =
     downpaymentPercentage > 0
-      ? Number(((totalAmount * downpaymentPercentage) / 100).toFixed(2))
+      ? Number(
+          ((discountedTotalAmount * downpaymentPercentage) / 100).toFixed(2),
+        )
       : 0;
 
   const formatDurationLabel = React.useCallback((minutes: number) => {
@@ -240,6 +249,8 @@ const PaymentPage = () => {
   const { mutateAsync: createAppointment } = useMutation(
     trpc.customerPayments.createAppointment.mutationOptions(),
   );
+  const { mutateAsync: validatePromoCode, isPending: isValidatingPromoCode } =
+    useMutation(trpc.public.validatePromoCode.mutationOptions());
 
   React.useEffect(() => {
     let isMounted = true;
@@ -286,6 +297,53 @@ const PaymentPage = () => {
       isMounted = false;
     };
   }, [createSetupIntent, orgId, session?.data?.customer, session?.isLoading]);
+
+  React.useEffect(() => {
+    setAppliedPromoCode(null);
+    setPromoDiscountAmount(0);
+    setPromoError(null);
+  }, [location, totalAmount]);
+
+  const handleApplyPromoCode = async () => {
+    const normalizedCode = promoCodeInput.trim().toUpperCase();
+
+    if (!normalizedCode) {
+      setPromoError("Enter a coupon code.");
+      return;
+    }
+
+    if (!location) {
+      setPromoError("Select a location before applying coupon.");
+      return;
+    }
+
+    setPromoError(null);
+
+    try {
+      const result = await validatePromoCode({
+        locationId: location,
+        code: normalizedCode,
+        totalAmount: Math.round(totalAmount * 100),
+      });
+
+      setAppliedPromoCode(result.code);
+      setPromoDiscountAmount(result.discountAmount / 100);
+      setPromoCodeInput(result.code);
+    } catch (error) {
+      setAppliedPromoCode(null);
+      setPromoDiscountAmount(0);
+      setPromoError(
+        error instanceof Error ? error.message : "Unable to apply coupon.",
+      );
+    }
+  };
+
+  const handleRemovePromoCode = () => {
+    setAppliedPromoCode(null);
+    setPromoDiscountAmount(0);
+    setPromoError(null);
+    setPromoCodeInput("");
+  };
 
   const handleBookAppointment = async (e?: React.MouseEvent<HTMLButtonElement>) => {
     e?.preventDefault();
@@ -351,6 +409,7 @@ const PaymentPage = () => {
         startTime: appointmentTime.start,
         endTime: appointmentTime.end,
         paymentMethodId: selectedCardId,
+        promoCode: appliedPromoCode ?? undefined,
       });
 
       setBookingSuccess(true);
@@ -611,11 +670,69 @@ const PaymentPage = () => {
                 Payment Details
               </h3>
 
+              <div className="space-y-2">
+                <label
+                  className="text-xs font-medium text-foreground"
+                  htmlFor="coupon-code-input"
+                >
+                  Coupon code
+                </label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="coupon-code-input"
+                    value={promoCodeInput}
+                    onChange={(event) =>
+                      setPromoCodeInput(event.target.value.toUpperCase())
+                    }
+                    placeholder="Enter code"
+                    disabled={isValidatingPromoCode || isBooking}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleApplyPromoCode}
+                    disabled={isValidatingPromoCode || isBooking}
+                  >
+                    {isValidatingPromoCode ? "Applying..." : "Apply"}
+                  </Button>
+                </div>
+                {promoError ? (
+                  <p className="text-xs text-destructive">{promoError}</p>
+                ) : null}
+                {appliedPromoCode ? (
+                  <div className="flex items-center justify-between text-xs text-foreground">
+                    <span>Applied: {appliedPromoCode}</span>
+                    <button
+                      type="button"
+                      className="text-muted-foreground underline"
+                      onClick={handleRemovePromoCode}
+                      disabled={isBooking}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Total booking amount</span>
                   <span className="font-semibold text-foreground">
                     {formatUSD(totalAmount)}
+                  </span>
+                </div>
+                {promoDiscountAmount > 0 ? (
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Coupon discount</span>
+                    <span className="font-semibold text-foreground">
+                      -{formatUSD(promoDiscountAmount)}
+                    </span>
+                  </div>
+                ) : null}
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Discounted total</span>
+                  <span className="font-semibold text-foreground">
+                    {formatUSD(discountedTotalAmount)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">

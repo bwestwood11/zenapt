@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { useDndContext, useDraggable } from "@dnd-kit/core";
 
 import { openEditSheet } from "./sheet.state";
@@ -15,7 +21,9 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "../ui/context-menu";
+import { Button } from "../ui/button";
 import { useLocationHours } from "./calendar";
+import { ChargeBalanceModal } from "./charge-balance-modal";
 
 interface AppointmentContextValue {
   openHover: boolean;
@@ -24,23 +32,61 @@ interface AppointmentContextValue {
   setOpenContextMenu: (open: boolean) => void;
 }
 
+interface AppointmentChargeModalContextValue {
+  openChargeModal: (appointmentId: string) => void;
+}
+
 const AppointmentContext = createContext<AppointmentContextValue | undefined>(
   undefined,
 );
 
+const AppointmentChargeModalContext =
+  createContext<AppointmentChargeModalContextValue | undefined>(undefined);
+
+export const AppointmentChargeModalProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
+  const [chargeModalOpen, setChargeModalOpen] = useState(false);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(
+    null,
+  );
+
+  const value = useMemo(
+    () => ({
+      openChargeModal: (appointmentId: string) => {
+        setSelectedAppointmentId(appointmentId);
+        setChargeModalOpen(true);
+      },
+    }),
+    [],
+  );
+
+  return (
+    <AppointmentChargeModalContext.Provider value={value}>
+      {children}
+      {selectedAppointmentId ? (
+        <ChargeBalanceModal
+          open={chargeModalOpen}
+          onOpenChange={setChargeModalOpen}
+          appointmentId={selectedAppointmentId}
+        />
+      ) : null}
+    </AppointmentChargeModalContext.Provider>
+  );
+};
+
 export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
   const [openHover, setOpenHover] = useState(false);
   const [openContextMenu, setOpenContextMenu] = useState(false);
+  const value = useMemo(
+    () => ({ openHover, setOpenHover, openContextMenu, setOpenContextMenu }),
+    [openHover, openContextMenu],
+  );
 
   return (
-    <AppointmentContext.Provider
-      value={{
-        openHover,
-        setOpenHover,
-        openContextMenu,
-        setOpenContextMenu,
-      }}
-    >
+    <AppointmentContext.Provider value={value}>
       {children}
     </AppointmentContext.Provider>
   );
@@ -49,6 +95,16 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
 const useAppointment = () => {
   const context = useContext(AppointmentContext);
   if (!context) throw new Error("useAppointment must be used within provider");
+  return context;
+};
+
+const useAppointmentChargeModal = () => {
+  const context = useContext(AppointmentChargeModalContext);
+  if (!context) {
+    throw new Error(
+      "useAppointmentChargeModal must be used within AppointmentChargeModalProvider",
+    );
+  }
   return context;
 };
 
@@ -156,7 +212,7 @@ export function Appointment({
         {/* Main Appointment */}
         <ControlledHoverCard appointment={appointmentData}>
           <button
-            disabled
+            
             ref={setNodeRef}
             {...listeners}
             {...attributes}
@@ -230,6 +286,7 @@ const ControlledHoverCard = ({
   appointment: Appointment;
 }) => {
   const { openHover, setOpenHover, openContextMenu } = useAppointment();
+  const { openChargeModal } = useAppointmentChargeModal();
   const { active } = useDndContext();
   const isDisabled = openContextMenu || Boolean(active?.id); // disable hover card if sheet/context is open
 
@@ -297,6 +354,21 @@ const ControlledHoverCard = ({
               ${(appointment.price / 100).toFixed(2)}
             </span>
           </div>
+
+          <div className="pt-2 border-t">
+            <Button
+              type="button"
+              size="sm"
+              className="w-full"
+              disabled={appointment.status === "CANCELED"}
+              onClick={() => {
+                setOpenHover(false);
+                openChargeModal(appointment.id);
+              }}
+            >
+              Charge Remaining + Tip
+            </Button>
+          </div>
         </div>
       </HoverCardContent>
     </HoverCard>
@@ -311,6 +383,7 @@ const ControlledContextMenu = ({
   appointment: Appointment;
 }) => {
   const { setOpenContextMenu } = useAppointment();
+  const { openChargeModal } = useAppointmentChargeModal();
 
   return (
     <ContextMenu onOpenChange={(open) => setOpenContextMenu(open)}>
@@ -325,6 +398,14 @@ const ControlledContextMenu = ({
           }}
         >
           Edit
+        </ContextMenuItem>
+        <ContextMenuItem
+          disabled={appointment.status === "CANCELED"}
+          onClick={() => {
+            openChargeModal(appointment.id);
+          }}
+        >
+          Charge Remaining + Tip
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

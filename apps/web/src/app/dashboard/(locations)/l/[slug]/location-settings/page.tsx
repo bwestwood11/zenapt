@@ -9,6 +9,8 @@ import {
   DollarSign,
   Shield,
   Sparkles,
+  HandCoins,
+  TicketPercent,
 } from "lucide-react";
 
 import { OperatingSchedulingSettings } from "@/components/locations/location-settings.tsx/operating-scheduling-settings";
@@ -19,6 +21,8 @@ import { BrandingDisplaySettings } from "@/components/locations/location-setting
 import { PaymentBusinessSettings } from "@/components/locations/location-settings.tsx/payment-business.settings";
 import { ComplianceConsentSettings } from "@/components/locations/location-settings.tsx/compliance-consent-settings";
 import { BonusSettings } from "@/components/locations/location-settings.tsx/bonus-settings";
+import { TipSettings } from "@/components/locations/location-settings.tsx/tip-settings";
+import { PromoCodeSettings } from "@/components/locations/location-settings.tsx/promo-code-settings";
 import { getLocationAccess } from "@/lib/permissions/permission";
 import { forbidden } from "next/navigation";
 
@@ -63,7 +67,7 @@ export default async function LocationSettingsPage({
         </div>
 
         <Tabs defaultValue="operating" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 gap-1 h-auto bg-muted p-1">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-10 gap-1 h-auto bg-muted p-1">
             <TabsTrigger
               value="operating"
               className="flex items-center gap-2 data-[state=active]:bg-background"
@@ -107,6 +111,20 @@ export default async function LocationSettingsPage({
               <span className="hidden sm:inline">Payment</span>
             </TabsTrigger>
             <TabsTrigger
+              value="tip"
+              className="flex items-center gap-2 data-[state=active]:bg-background"
+            >
+              <HandCoins className="size-4" />
+              <span className="hidden sm:inline">Tip</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="promo"
+              className="flex items-center gap-2 data-[state=active]:bg-background"
+            >
+              <TicketPercent className="size-4" />
+              <span className="hidden sm:inline">Promo</span>
+            </TabsTrigger>
+            <TabsTrigger
               value="compliance"
               className="flex items-center gap-2 data-[state=active]:bg-background"
             >
@@ -144,6 +162,14 @@ export default async function LocationSettingsPage({
 
           <TabsContent value="payment" className="space-y-6">
             <PaymentBusinessSettings />
+          </TabsContent>
+
+          <TabsContent value="tip" className="space-y-6">
+            <TipSettings locationId={locId.locationId} />
+          </TabsContent>
+
+          <TabsContent value="promo" className="space-y-6">
+            <PromoCodeSettings locationId={locId.locationId} />
           </TabsContent>
 
           <TabsContent value="compliance" className="space-y-6">

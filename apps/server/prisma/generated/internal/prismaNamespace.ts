@@ -402,6 +402,7 @@ export const ModelName = {
   ScheduleException: 'ScheduleException',
   TimeOff: 'TimeOff',
   AppointmentSettings: 'AppointmentSettings',
+  AppointmentTipCharge: 'AppointmentTipCharge',
   User: 'User',
   Subscription: 'Subscription',
   Organization: 'Organization',
@@ -436,7 +437,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "admin" | "appointment" | "addOn" | "promoCode" | "scheduleRule" | "scheduleException" | "timeOff" | "appointmentSettings" | "user" | "subscription" | "organization" | "managementMembership" | "location" | "locationEmployee" | "serviceTerms" | "serviceGroup" | "employeeService" | "customer" | "customerAuth" | "customerAppointmentPayment" | "activityLog" | "session" | "account" | "verification" | "organizationInvitation" | "locationInvitation" | "demoRequest"
+    modelProps: "admin" | "appointment" | "addOn" | "promoCode" | "scheduleRule" | "scheduleException" | "timeOff" | "appointmentSettings" | "appointmentTipCharge" | "user" | "subscription" | "organization" | "managementMembership" | "location" | "locationEmployee" | "serviceTerms" | "serviceGroup" | "employeeService" | "customer" | "customerAuth" | "customerAppointmentPayment" | "activityLog" | "session" | "account" | "verification" | "organizationInvitation" | "locationInvitation" | "demoRequest"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1029,6 +1030,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.AppointmentSettingsCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.AppointmentSettingsCountAggregateOutputType> | number
+        }
+      }
+    }
+    AppointmentTipCharge: {
+      payload: Prisma.$AppointmentTipChargePayload<ExtArgs>
+      fields: Prisma.AppointmentTipChargeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AppointmentTipChargeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentTipChargePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AppointmentTipChargeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentTipChargePayload>
+        }
+        findFirst: {
+          args: Prisma.AppointmentTipChargeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentTipChargePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AppointmentTipChargeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentTipChargePayload>
+        }
+        findMany: {
+          args: Prisma.AppointmentTipChargeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentTipChargePayload>[]
+        }
+        create: {
+          args: Prisma.AppointmentTipChargeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentTipChargePayload>
+        }
+        createMany: {
+          args: Prisma.AppointmentTipChargeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AppointmentTipChargeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentTipChargePayload>[]
+        }
+        delete: {
+          args: Prisma.AppointmentTipChargeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentTipChargePayload>
+        }
+        update: {
+          args: Prisma.AppointmentTipChargeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentTipChargePayload>
+        }
+        deleteMany: {
+          args: Prisma.AppointmentTipChargeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AppointmentTipChargeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AppointmentTipChargeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentTipChargePayload>[]
+        }
+        upsert: {
+          args: Prisma.AppointmentTipChargeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppointmentTipChargePayload>
+        }
+        aggregate: {
+          args: Prisma.AppointmentTipChargeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAppointmentTipCharge>
+        }
+        groupBy: {
+          args: Prisma.AppointmentTipChargeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AppointmentTipChargeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AppointmentTipChargeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AppointmentTipChargeCountAggregateOutputType> | number
         }
       }
     }
@@ -2503,6 +2578,8 @@ export const AppointmentScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   promoCodeId: 'promoCodeId',
+  discountPercentageApplied: 'discountPercentageApplied',
+  discountAmountApplied: 'discountAmountApplied',
   paymentMethodId: 'paymentMethodId',
   paymentMethodLast4: 'paymentMethodLast4'
 } as const
@@ -2594,11 +2671,29 @@ export const AppointmentSettingsScalarFieldEnum = {
   downpaymentPercentage: 'downpaymentPercentage',
   cancellationPercent: 'cancellationPercent',
   cancellationDuration: 'cancellationDuration',
+  tipEnabled: 'tipEnabled',
+  tipPresetPercentages: 'tipPresetPercentages',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type AppointmentSettingsScalarFieldEnum = (typeof AppointmentSettingsScalarFieldEnum)[keyof typeof AppointmentSettingsScalarFieldEnum]
+
+
+export const AppointmentTipChargeScalarFieldEnum = {
+  id: 'id',
+  appointmentId: 'appointmentId',
+  customerId: 'customerId',
+  locationEmployeeId: 'locationEmployeeId',
+  amount: 'amount',
+  status: 'status',
+  paymentMethod: 'paymentMethod',
+  transactionId: 'transactionId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AppointmentTipChargeScalarFieldEnum = (typeof AppointmentTipChargeScalarFieldEnum)[keyof typeof AppointmentTipChargeScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
@@ -3020,6 +3115,20 @@ export type ListEnumScheduleTargetTypeFieldRefInput<$PrismaModel> = FieldRefInpu
 
 
 /**
+ * Reference to a field of type 'CustomerPaymentStatus'
+ */
+export type EnumCustomerPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CustomerPaymentStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'CustomerPaymentStatus[]'
+ */
+export type ListEnumCustomerPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CustomerPaymentStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'OrgRole'
  */
 export type EnumOrgRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrgRole'>
@@ -3058,20 +3167,6 @@ export type EnumCustomerPaymentTypeFieldRefInput<$PrismaModel> = FieldRefInputTy
  * Reference to a field of type 'CustomerPaymentType[]'
  */
 export type ListEnumCustomerPaymentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CustomerPaymentType[]'>
-    
-
-
-/**
- * Reference to a field of type 'CustomerPaymentStatus'
- */
-export type EnumCustomerPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CustomerPaymentStatus'>
-    
-
-
-/**
- * Reference to a field of type 'CustomerPaymentStatus[]'
- */
-export type ListEnumCustomerPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CustomerPaymentStatus[]'>
     
 
 
@@ -3193,6 +3288,7 @@ export type GlobalOmitConfig = {
   scheduleException?: Prisma.ScheduleExceptionOmit
   timeOff?: Prisma.TimeOffOmit
   appointmentSettings?: Prisma.AppointmentSettingsOmit
+  appointmentTipCharge?: Prisma.AppointmentTipChargeOmit
   user?: Prisma.UserOmit
   subscription?: Prisma.SubscriptionOmit
   organization?: Prisma.OrganizationOmit

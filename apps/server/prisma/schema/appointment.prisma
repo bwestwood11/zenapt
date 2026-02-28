@@ -25,8 +25,11 @@ model Appointment {
   createdAt                  DateTime                    @default(now())
   updatedAt                  DateTime                    @updatedAt
   customerPayments           CustomerAppointmentPayment[]
+  tipCharges                 AppointmentTipCharge[]
   promoCodeId                String?
   promoCode                  PromoCode?                  @relation(fields: [promoCodeId], references: [id], onDelete: SetNull)
+  discountPercentageApplied  Int?
+  discountAmountApplied      Int?
   paymentMethodId            String?
   paymentMethodLast4         String?
 }
@@ -145,8 +148,30 @@ model AppointmentSettings {
   downpaymentPercentage   Int      @default(0) // in percent (0-100)
   cancellationPercent     Int      @default(100) // in percent (0-100)
   cancellationDuration    Int      @default(60) // in minutes before appointment
+  tipEnabled              Boolean  @default(false)
+  tipPresetPercentages    Int[]    @default([15, 20, 25]) // tip percentage presets
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 
   @@index([locationId])
+}
+
+model AppointmentTipCharge {
+  id            String                @id @default(cuid()) @map("_id")
+  appointmentId String
+  appointment   Appointment           @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  customerId    String
+  customer      Customer              @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  locationEmployeeId String?
+  locationEmployee   LocationEmployee? @relation(fields: [locationEmployeeId], references: [id], onDelete: SetNull)
+  amount        Int
+  status        CustomerPaymentStatus @default(PENDING)
+  paymentMethod String
+  transactionId String?
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+
+  @@index([appointmentId])
+  @@index([customerId, appointmentId])
+  @@index([locationEmployeeId])
 }

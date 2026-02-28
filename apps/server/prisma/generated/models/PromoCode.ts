@@ -532,14 +532,6 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type EnumPromoLevelFieldUpdateOperationsInput = {
   set?: $Enums.PromoLevel
 }
