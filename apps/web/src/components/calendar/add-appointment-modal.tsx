@@ -36,6 +36,12 @@ import {
 } from "../ui/alert-dialog";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "../../../../server/src/routers";
+import { toast } from "sonner";
+import {
+  dateKeyToDateInTimeZone,
+  getDateKeyInTimeZone,
+  parseDateKey,
+} from "./timezone";
 
 type TimingMode = "available" | "custom";
 
@@ -61,10 +67,12 @@ type Customer =
 export const AddAppointmentDialog = ({
   employees,
   locationId,
+  locationTimeZone,
   date: initialDate,
 }: {
   employees: Employee[];
   locationId: string;
+  locationTimeZone: string;
   date: Date;
 }) => {
   const dialogState = useAddAppointmentDialog();
@@ -77,7 +85,9 @@ export const AddAppointmentDialog = ({
   );
   const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([]);
   const [selectedAddOnIds, setSelectedAddOnIds] = useState<string[]>([]);
-  const [selectedDate, setSelectedDate] = useState(initialDate);
+  const [selectedDateKey, setSelectedDateKey] = useState(
+    getDateKeyInTimeZone(initialDate, locationTimeZone),
+  );
   const [selectedTimeRange, setSelectedTimeRange] = useState<TimeRange | null>(
     null,
   );
@@ -91,11 +101,11 @@ export const AddAppointmentDialog = ({
       setSelectedTimeRange(null);
       setSelectedServiceIds([]);
       setSelectedAddOnIds([]);
-      setSelectedDate(initialDate);
+      setSelectedDateKey(getDateKeyInTimeZone(initialDate, locationTimeZone));
       setSelectedCustomer(null);
       setTimingMode("available");
     }
-  }, [dialogState, initialDate]);
+  }, [dialogState, initialDate, locationTimeZone]);
 
   // Reset time range when switching modes
   useEffect(() => {
@@ -105,7 +115,38 @@ export const AddAppointmentDialog = ({
   // Reset time range when date changes
   useEffect(() => {
     setSelectedTimeRange(null);
-  }, [selectedDate]);
+  }, [selectedDateKey]);
+
+  const selectedDate = useMemo(
+    () => dateKeyToDateInTimeZone(selectedDateKey, locationTimeZone),
+    [selectedDateKey, locationTimeZone],
+  );
+
+  const locationTodayCalendarDate = useMemo(() => {
+    const todayKey = getDateKeyInTimeZone(new Date(), locationTimeZone);
+    const parsed = parseDateKey(todayKey);
+
+    if (!parsed) {
+      return new Date();
+    }
+
+    return new Date(parsed.year, parsed.month - 1, parsed.day);
+  }, [locationTimeZone]);
+
+  const selectedCalendarDate = useMemo(() => {
+    const [year, month, day] = selectedDateKey
+      .split("-")
+      .map((value) => Number.parseInt(value, 10));
+
+    return new Date(year, month - 1, day);
+  }, [selectedDateKey]);
+
+  const formatTimeInLocationTimeZone = (date: Date) =>
+    new Intl.DateTimeFormat("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: locationTimeZone,
+    }).format(date);
 
   // Fetch employee services
   const { data: employeeServices } = useQuery(
@@ -224,24 +265,12 @@ export const AddAppointmentDialog = ({
         closeAddAppointmentDialog();
         // Invalidate appointments query to refresh calendar
         queryClient.invalidateQueries({
-          queryKey: trpc.appointment.fetchAppointments.queryKey({
-            startDate: selectedDate,
-            endDate: new Date(
-              selectedDate.getFullYear(),
-              selectedDate.getMonth(),
-              selectedDate.getDate(),
-              23,
-              59,
-              59,
-              999,
-            ),
-            locationId,
-          }),
+          queryKey: trpc.appointment.fetchAppointments.queryKey(),
         });
       },
       onError: (error) => {
         console.error("Failed to create appointment:", error);
-        // TODO: Show error toast
+        toast.error(error.message || "Failed to create appointment");
       },
     }),
   );
@@ -330,21 +359,16 @@ export const AddAppointmentDialog = ({
                               weekday: "short",
                               month: "short",
                               day: "numeric",
+                              timeZone: locationTimeZone,
                             })}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-muted-foreground">Time</span>
                           <span className="font-medium">
-                            {selectedTimeRange.start.toLocaleTimeString([], {
-                              hour: "numeric",
-                              minute: "2-digit",
-                            })}{" "}
+                            {formatTimeInLocationTimeZone(selectedTimeRange.start)}{" "}
                             -{" "}
-                            {selectedTimeRange.end.toLocaleTimeString([], {
-                              hour: "numeric",
-                              minute: "2-digit",
-                            })}
+                            {formatTimeInLocationTimeZone(selectedTimeRange.end)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between pt-2 border-t">
@@ -423,10 +447,14 @@ export const AddAppointmentDialog = ({
                     {/* Shared Calendar */}
                     <Calendar
                       mode="single"
-                      selected={selectedDate}
-                      onSelect={(date) => date && setSelectedDate(date)}
+                      selected={selectedCalendarDate}
+                      onSelect={(date) => {
+                        if (!date) return;
+                        const nextDateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+                        setSelectedDateKey(nextDateKey);
+                      }}
                       className="rounded-xl [--cell-size:--spacing(11)] md:[--cell-size:--spacing(10)] w-full"
-                      disabled={(date) => date < new Date()}
+                      disabled={(date) => date < locationTodayCalendarDate}
                       styles={{
                         week: { gap: 20 },
                         cell: { borderRadius: "99999999999px" },
@@ -453,6 +481,7 @@ export const AddAppointmentDialog = ({
                           >
                             <AvailableTimesSection
                               date={selectedDate}
+                              locationTimeZone={locationTimeZone}
                               timings={availableTimings}
                               selectedRange={selectedTimeRange}
                               onTimeSelect={(range) =>
@@ -478,7 +507,8 @@ export const AddAppointmentDialog = ({
                                 }
                                 locationId={locationId}
                                 duration={totalDuration}
-                                selectedDate={selectedDate}
+                                selectedDateKey={selectedDateKey}
+                                locationTimeZone={locationTimeZone}
                                 employeeId={selectedEmployeeId}
                                 selectedTimeRange={selectedTimeRange}
                                 onTimeSelect={handleTimeRangeSelect}
@@ -557,6 +587,7 @@ export const AddAppointmentDialog = ({
                         month: "short",
                         day: "numeric",
                         year: "numeric",
+                        timeZone: locationTimeZone,
                       })}
                     </span>
                   </div>
@@ -564,15 +595,9 @@ export const AddAppointmentDialog = ({
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Time</span>
                       <span className="font-medium">
-                        {selectedTimeRange.start.toLocaleTimeString([], {
-                          hour: "numeric",
-                          minute: "2-digit",
-                        })}{" "}
+                        {formatTimeInLocationTimeZone(selectedTimeRange.start)}{" "}
                         -{" "}
-                        {selectedTimeRange.end.toLocaleTimeString([], {
-                          hour: "numeric",
-                          minute: "2-digit",
-                        })}
+                        {formatTimeInLocationTimeZone(selectedTimeRange.end)}
                       </span>
                     </div>
                   )}

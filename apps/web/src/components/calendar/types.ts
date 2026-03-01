@@ -1,6 +1,9 @@
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "../../../../server/src/routers";
-import type { AppointmentStatus } from "../../../../server/prisma/generated/enums";
+import type {
+  AppointmentPaymentStatus,
+  AppointmentStatus,
+} from "../../../../server/prisma/generated/enums";
 
 export type Break = {
   start: number; // minutes since midnight
@@ -26,6 +29,7 @@ export type Appointment = {
   end: number;
   title: string;
   status: AppointmentStatus;
+  paymentStatus: AppointmentPaymentStatus;
   customerName: string;
   serviceNames: string[];
   price: number;

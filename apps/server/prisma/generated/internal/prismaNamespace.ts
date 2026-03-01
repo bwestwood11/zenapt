@@ -2573,6 +2573,7 @@ export const AppointmentScalarFieldEnum = {
   bufferTime: 'bufferTime',
   prepTime: 'prepTime',
   status: 'status',
+  paymentStatus: 'paymentStatus',
   notes: 'notes',
   price: 'price',
   createdAt: 'createdAt',
@@ -3076,6 +3077,20 @@ export type EnumAppointmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType
  * Reference to a field of type 'AppointmentStatus[]'
  */
 export type ListEnumAppointmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AppointmentStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'AppointmentPaymentStatus'
+ */
+export type EnumAppointmentPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AppointmentPaymentStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'AppointmentPaymentStatus[]'
+ */
+export type ListEnumAppointmentPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AppointmentPaymentStatus[]'>
     
 
 

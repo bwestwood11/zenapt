@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import { useDndContext, useDraggable } from "@dnd-kit/core";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { openEditSheet } from "./sheet.state";
 import type { Appointment } from "./types";
@@ -24,6 +25,8 @@ import {
 import { Button } from "../ui/button";
 import { useLocationHours } from "./calendar";
 import { ChargeBalanceModal } from "./charge-balance-modal";
+import { trpc } from "@/utils/trpc";
+import { toast } from "sonner";
 
 interface AppointmentContextValue {
   openHover: boolean;
@@ -121,9 +124,17 @@ export function Appointment({
   price,
   color,
   status,
+  paymentStatus,
   bufferTime,
   prepTime,
-}: Appointment & { color: string }) {
+  actorRoleAtLocation,
+  actorEmployeeIdAtLocation,
+}: Appointment & {
+  color: string;
+  actorRoleAtLocation: string | null;
+  actorEmployeeIdAtLocation: string | null;
+}) {
+  const queryClient = useQueryClient();
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
     disabled: status !== "SCHEDULED",
@@ -152,9 +163,49 @@ export function Appointment({
     serviceNames,
     price,
     status,
+    paymentStatus,
     bufferTime,
     prepTime,
   };
+
+  const isSpecialist = actorRoleAtLocation === "LOCATION_SPECIALIST";
+  const canSyncPayments = !isSpecialist || actorEmployeeIdAtLocation === employeeId;
+  const canMarkNoShow = status === "SCHEDULED" || status === "RESCHEDULED";
+
+  const { mutate: syncPayments, isPending: isSyncingPayments } = useMutation(
+    trpc.appointment.syncAppointmentPaymentsFromStripe.mutationOptions({
+      onSuccess: (result) => {
+        toast.success("Appointment payment sync completed", {
+          description: `Payment status: ${result.appointmentPaymentStatus}`,
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.appointment.fetchAppointments.queryKey(),
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.appointment.getAppointmentChargeSummary.queryKey({
+            appointmentId: id,
+          }),
+        });
+      },
+      onError: (error) => {
+        toast.error(error.message || "Failed to sync appointment payments");
+      },
+    }),
+  );
+
+  const { mutate: updateStatus, isPending: isUpdatingStatus } = useMutation(
+    trpc.appointment.updateAppointmentStatus.mutationOptions({
+      onSuccess: () => {
+        toast.success("Appointment marked as no-show");
+        queryClient.invalidateQueries({
+          queryKey: trpc.appointment.fetchAppointments.queryKey(),
+        });
+      },
+      onError: (error) => {
+        toast.error(error.message || "Failed to update appointment status");
+      },
+    }),
+  );
 
   const borderStart = prepTime > 0 ? start - prepTime : start;
   const borderEnd = bufferTime > 0 ? end + bufferTime : end;
@@ -210,7 +261,22 @@ export function Appointment({
         )}
 
         {/* Main Appointment */}
-        <ControlledHoverCard appointment={appointmentData}>
+        <ControlledHoverCard
+          appointment={appointmentData}
+          canMarkNoShow={canMarkNoShow}
+          canSyncPayments={canSyncPayments}
+          isSyncingPayments={isSyncingPayments}
+          isUpdatingStatus={isUpdatingStatus}
+          onMarkNoShow={() => {
+            updateStatus({
+              appointmentId: id,
+              status: "NO_SHOW",
+            });
+          }}
+          onSyncPayments={() => {
+            syncPayments({ appointmentId: id });
+          }}
+        >
           <button
             
             ref={setNodeRef}
@@ -227,7 +293,22 @@ export function Appointment({
             }}
             className="col-span-full overflow-hidden h-full hover:cursor-grab text-xs text-white p-1 z-10 w-full shadow-sm"
           >
-            <ControlledContextMenu appointment={appointmentData}>
+            <ControlledContextMenu
+              appointment={appointmentData}
+              canMarkNoShow={canMarkNoShow}
+              canSyncPayments={canSyncPayments}
+              isSyncingPayments={isSyncingPayments}
+              isUpdatingStatus={isUpdatingStatus}
+              onMarkNoShow={() => {
+                updateStatus({
+                  appointmentId: id,
+                  status: "NO_SHOW",
+                });
+              }}
+              onSyncPayments={() => {
+                syncPayments({ appointmentId: id });
+              }}
+            >
               <div className="flex relative w-full h-full flex-col text-left hover:cursor-grab gap-0.5">
                 <p className="font-semibold text-sm line-clamp-1">{title}</p>
                 <p className="text-xs font-medium">
@@ -239,6 +320,9 @@ export function Appointment({
                 <p className="absolute top-1.5 right-1.5 text-[10px] font-medium capitalize px-1.5 py-0.5 bg-white/20 rounded">
                   {appointmentData.status[0] +
                     appointmentData.status.slice(1).toLowerCase()}
+                </p>
+                <p className="absolute top-7 right-1.5 text-[10px] font-medium px-1.5 py-0.5 bg-black/20 rounded uppercase">
+                  {appointmentData.paymentStatus.replaceAll("_", " ")}
                 </p>
               </div>
             </ControlledContextMenu>
@@ -281,9 +365,21 @@ export function Appointment({
 const ControlledHoverCard = ({
   children,
   appointment,
+  canMarkNoShow,
+  canSyncPayments,
+  isSyncingPayments,
+  isUpdatingStatus,
+  onMarkNoShow,
+  onSyncPayments,
 }: {
   children: React.ReactNode;
   appointment: Appointment;
+  canMarkNoShow: boolean;
+  canSyncPayments: boolean;
+  isSyncingPayments: boolean;
+  isUpdatingStatus: boolean;
+  onMarkNoShow: () => void;
+  onSyncPayments: () => void;
 }) => {
   const { openHover, setOpenHover, openContextMenu } = useAppointment();
   const { openChargeModal } = useAppointmentChargeModal();
@@ -369,6 +465,29 @@ const ControlledHoverCard = ({
               Charge Remaining + Tip
             </Button>
           </div>
+
+          <div className="pt-2 border-t flex gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="flex-1"
+              disabled={!canSyncPayments || isSyncingPayments}
+              onClick={onSyncPayments}
+            >
+              {isSyncingPayments ? "Syncing..." : "Sync Payments"}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="destructive"
+              className="flex-1"
+              disabled={!canMarkNoShow || isUpdatingStatus}
+              onClick={onMarkNoShow}
+            >
+              {isUpdatingStatus ? "Updating..." : "Mark No Show"}
+            </Button>
+          </div>
         </div>
       </HoverCardContent>
     </HoverCard>
@@ -378,9 +497,21 @@ const ControlledHoverCard = ({
 const ControlledContextMenu = ({
   children,
   appointment,
+  canMarkNoShow,
+  canSyncPayments,
+  isSyncingPayments,
+  isUpdatingStatus,
+  onMarkNoShow,
+  onSyncPayments,
 }: {
   children: React.ReactNode;
   appointment: Appointment;
+  canMarkNoShow: boolean;
+  canSyncPayments: boolean;
+  isSyncingPayments: boolean;
+  isUpdatingStatus: boolean;
+  onMarkNoShow: () => void;
+  onSyncPayments: () => void;
 }) => {
   const { setOpenContextMenu } = useAppointment();
   const { openChargeModal } = useAppointmentChargeModal();
@@ -406,6 +537,18 @@ const ControlledContextMenu = ({
           }}
         >
           Charge Remaining + Tip
+        </ContextMenuItem>
+        <ContextMenuItem
+          disabled={!canSyncPayments || isSyncingPayments}
+          onClick={onSyncPayments}
+        >
+          {isSyncingPayments ? "Syncing Payments..." : "Sync Payments"}
+        </ContextMenuItem>
+        <ContextMenuItem
+          disabled={!canMarkNoShow || isUpdatingStatus}
+          onClick={onMarkNoShow}
+        >
+          {isUpdatingStatus ? "Updating Status..." : "Mark No Show"}
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

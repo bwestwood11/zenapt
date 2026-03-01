@@ -188,7 +188,15 @@ export function Break({ start, end, title, type }: Break) {
 }
 
 /* ------------------- EmployeeColumn ------------------- */
-export function EmployeeColumn({ emp }: { emp: WorkingEmployee }) {
+export function EmployeeColumn({
+  emp,
+  actorRoleAtLocation,
+  actorEmployeeIdAtLocation,
+}: {
+  emp: WorkingEmployee;
+  actorRoleAtLocation: string | null;
+  actorEmployeeIdAtLocation: string | null;
+}) {
   const { maxTime, minTime } = useLocationHours();
   const appointments = useEmployeeAppointments(emp.employee.id);
   // const data = active?.data.current as DragData | undefined
@@ -213,6 +221,8 @@ export function EmployeeColumn({ emp }: { emp: WorkingEmployee }) {
           key={a.id}
           {...a}
           color={getColorFromEmployeeName(emp.employee.name)}
+          actorRoleAtLocation={actorRoleAtLocation}
+          actorEmployeeIdAtLocation={actorEmployeeIdAtLocation}
         />
       ))}
 

@@ -72,13 +72,13 @@ type Days = keyof DaysSchema;
 export type DaysNum = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export const DaysMap: Record<DaysNum, Days> = {
-  0: "monday",
-  1: "tuesday",
-  2: "wednesday",
-  3: "thursday",
-  4: "friday",
-  5: "saturday",
-  6: "sunday",
+  0: "sunday",
+  1: "monday",
+  2: "tuesday",
+  3: "wednesday",
+  4: "thursday",
+  5: "friday",
+  6: "saturday",
 };
 
 export type FormData = z.infer<typeof formDataSchema>;
@@ -179,13 +179,13 @@ export function OperatingSchedulingForm({
   });
 
   const days = [
-    { label: "Monday", key: 0, name: "monday" },
-    { label: "Tuesday", key: 1, name: "tuesday" },
-    { label: "Wednesday", key: 2, name: "wednesday" },
-    { label: "Thursday", key: 3, name: "thursday" },
-    { label: "Friday", key: 4, name: "friday" },
-    { label: "Saturday", key: 5, name: "saturday" },
-    { label: "Sunday", key: 6, name: "sunday" },
+    { label: "Monday", key: 1, name: "monday" },
+    { label: "Tuesday", key: 2, name: "tuesday" },
+    { label: "Wednesday", key: 3, name: "wednesday" },
+    { label: "Thursday", key: 4, name: "thursday" },
+    { label: "Friday", key: 5, name: "friday" },
+    { label: "Saturday", key: 6, name: "saturday" },
+    { label: "Sunday", key: 0, name: "sunday" },
   ] satisfies Array<{ label: string; key: DaysNum; name: Days }>;
 
   const onSubmit = (values: FormData) => {
@@ -201,7 +201,7 @@ export function OperatingSchedulingForm({
       cancellationPercent: values.cancellationPercent,
       cancellationDuration: values.cancellationDurationHours * 60,
       rules: days.map(({ key, name }) => ({
-        day: key, // convert to 0=Sun ... 6=Sat
+        day: key,
         enabled: values[name].enabled,
         startMinute: values[name].enabled ? values[name].startTime : undefined,
         endMinute: values[name].enabled ? values[name].endTime : undefined,

@@ -1,11 +1,73 @@
 import prisma from "../../../prisma";
-import { AppointmentStatus } from "../../../prisma/generated/enums";
+import {
+  AppointmentPaymentStatus,
+  AppointmentStatus,
+} from "../../../prisma/generated/enums";
 import {
   getDateKeyInTimeZone,
   getDayBitInTimeZone,
   getMonthDayInTimeZone,
   getZonedDayRangeUtc,
+  zonedDateTimeToUtc,
 } from "../datetime/timezone";
+
+function parseDateKey(dateKey: string) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateKey);
+  if (!match) return null;
+
+  const year = Number.parseInt(match[1], 10);
+  const month = Number.parseInt(match[2], 10);
+  const day = Number.parseInt(match[3], 10);
+
+  if (
+    Number.isNaN(year) ||
+    Number.isNaN(month) ||
+    Number.isNaN(day) ||
+    month < 1 ||
+    month > 12 ||
+    day < 1 ||
+    day > 31
+  ) {
+    return null;
+  }
+
+  return { year, month, day };
+}
+
+function getZonedDayRangeUtcFromDateKey(dateKey: string, timeZone: string) {
+  const parsed = parseDateKey(dateKey);
+  if (!parsed) return null;
+
+  const dayStartUtc = zonedDateTimeToUtc(timeZone, {
+    year: parsed.year,
+    month: parsed.month,
+    day: parsed.day,
+    hour: 0,
+    minute: 0,
+    second: 0,
+  });
+
+  const nextDayUtcRef = new Date(
+    Date.UTC(parsed.year, parsed.month - 1, parsed.day + 1),
+  );
+
+  const dayEndUtc = zonedDateTimeToUtc(timeZone, {
+    year: nextDayUtcRef.getUTCFullYear(),
+    month: nextDayUtcRef.getUTCMonth() + 1,
+    day: nextDayUtcRef.getUTCDate(),
+    hour: 0,
+    minute: 0,
+    second: 0,
+  });
+
+  return {
+    dayStartUtc,
+    dayEndUtc,
+    year: parsed.year,
+    month: parsed.month,
+    day: parsed.day,
+  };
+}
 
 type MinuteRange = {
   startMinute: number;
@@ -17,6 +79,7 @@ type Appointment = {
   endTime: Date;
   id: string;
   status: AppointmentStatus;
+  paymentStatus: AppointmentPaymentStatus;
   price: number;
   employeeId: string;
   service: {
@@ -40,6 +103,7 @@ type AppointmentResponseType = Record<string, Appointment[]>;
 export async function getLocationSpecialistsSchedule(
   locationId: string,
   date: Date,
+  dateKey?: string,
 ) {
   const location = await prisma.location.findUnique({
     where: { id: locationId },
@@ -52,12 +116,27 @@ export async function getLocationSpecialistsSchedule(
 
   const locationTimeZone = location.timeZone || "UTC";
 
-  const dayBit = getDayBitInTimeZone(date, locationTimeZone);
-  const monthDay = getMonthDayInTimeZone(date, locationTimeZone);
-  const { dayStartUtc, dayEndUtc } = getZonedDayRangeUtc(
-    date,
-    locationTimeZone,
-  );
+  const zonedDayRange = dateKey
+    ? getZonedDayRangeUtcFromDateKey(dateKey, locationTimeZone)
+    : null;
+
+  const effectiveDate = zonedDayRange
+    ? zonedDateTimeToUtc(locationTimeZone, {
+        year: zonedDayRange.year,
+        month: zonedDayRange.month,
+        day: zonedDayRange.day,
+        hour: 12,
+        minute: 0,
+        second: 0,
+      })
+    : date;
+
+  const dayBit = getDayBitInTimeZone(effectiveDate, locationTimeZone);
+  const monthDay = zonedDayRange
+    ? `${String(zonedDayRange.month).padStart(2, "0")}-${String(zonedDayRange.day).padStart(2, "0")}`
+    : getMonthDayInTimeZone(effectiveDate, locationTimeZone);
+  const { dayStartUtc, dayEndUtc } =
+    zonedDayRange ?? getZonedDayRangeUtc(effectiveDate, locationTimeZone);
 
   const employees = await prisma.locationEmployee.findMany({
     where: { locationId, role: "LOCATION_SPECIALIST" },
@@ -234,10 +313,12 @@ export async function getAppointmentsInRange({
   startDate,
   endDate,
   locationId,
+  dateKey,
 }: {
-  startDate: Date;
-  endDate: Date;
+  startDate?: Date;
+  endDate?: Date;
   locationId: string;
+  dateKey?: string;
 }) {
   const location = await prisma.location.findUnique({
     where: { id: locationId },
@@ -245,14 +326,19 @@ export async function getAppointmentsInRange({
   });
 
   const locationTimeZone = location?.timeZone ?? "UTC";
-  const { dayStartUtc: rangeStartUtc } = getZonedDayRangeUtc(
-    startDate,
-    locationTimeZone,
-  );
-  const { dayEndUtc: rangeEndUtc } = getZonedDayRangeUtc(
-    endDate,
-    locationTimeZone,
-  );
+
+  const zonedDayRange = dateKey
+    ? getZonedDayRangeUtcFromDateKey(dateKey, locationTimeZone)
+    : null;
+
+  const rangeStartSource =
+    zonedDayRange ?? getZonedDayRangeUtc(startDate ?? new Date(), locationTimeZone);
+  const rangeEndSource =
+    zonedDayRange ??
+    getZonedDayRangeUtc(endDate ?? startDate ?? new Date(), locationTimeZone);
+
+  const { dayStartUtc: rangeStartUtc } = rangeStartSource;
+  const { dayEndUtc: rangeEndUtc } = rangeEndSource;
 
   const appointments = await prisma.appointment.findMany({
     where: {
@@ -265,6 +351,7 @@ export async function getAppointmentsInRange({
       startTime: true,
       id: true,
       status: true,
+      paymentStatus: true,
       price: true,
       bufferTime: true,
       prepTime: true,
@@ -333,6 +420,7 @@ export async function getAppointmentsInRange({
         employeeId: employeeId,
         price: appointment.price,
         status: appointment.status,
+        paymentStatus: appointment.paymentStatus,
         bufferTime: appointment.bufferTime,
         prepTime: appointment.prepTime,
         service: appointment.service

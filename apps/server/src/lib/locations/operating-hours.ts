@@ -4,7 +4,7 @@ import { ScheduleTargetType } from "../../../prisma/generated/enums";
 const WORK_RULE_TYPE = ScheduleTargetType.LOCATION; // adjust if enum requires uppercase
 
 type WeeklyScheduleView = {
-  day: number // 0 = Mon ... 6 = Sun
+  day: number // 0 = Sun ... 6 = Sat
   enabled: boolean
   startMinute?: number
   endMinute?: number

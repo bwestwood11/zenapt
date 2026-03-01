@@ -3,6 +3,7 @@ import  {motion}  from "motion/react";
 
 interface AvailableTimesSectionProps {
   date: Date;
+  locationTimeZone: string;
   timings: Array<{ start: Date; end: Date }> | undefined;
   selectedRange: { start: Date; end: Date } | null;
   onTimeSelect: (range: { start: Date; end: Date }) => void;
@@ -11,11 +12,11 @@ interface AvailableTimesSectionProps {
 
 export const AvailableTimesSection = ({
   date,
+  locationTimeZone,
   timings,
   selectedRange,
   onTimeSelect,
 }: AvailableTimesSectionProps) => {
-  console.log("AvailableTimesSection render", { date, timings, selectedRange });
   return (
     <div className="w-full">
       <div className="space-y-3">
@@ -26,6 +27,7 @@ export const AvailableTimesSection = ({
             month: "long",
             day: "numeric",
             year: "numeric",
+            timeZone: locationTimeZone,
           })}
         </p>
         <div className="grid grid-cols-2 gap-2 min-h-[200px] max-h-[280px] overflow-y-auto pr-2">
@@ -60,11 +62,13 @@ export const AvailableTimesSection = ({
                   {time.start.toLocaleTimeString([], {
                     hour: "numeric",
                     minute: "2-digit",
+                    timeZone: locationTimeZone,
                   })}{" "}
                   -{" "}
                   {time.end.toLocaleTimeString([], {
                     hour: "numeric",
                     minute: "2-digit",
+                    timeZone: locationTimeZone,
                   })}
                 </motion.button>
               );

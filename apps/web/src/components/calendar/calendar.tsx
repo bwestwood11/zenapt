@@ -36,7 +36,8 @@ import { AppointmentProvider, useAppointmentStore } from "./store/appointments";
 import { formatMinutes, minutesTo12Hour } from "./utils";
 import { ROW_HEIGHT, SLOT_MINUTES } from "./constants";
 import { Button } from "../ui/button";
-import { ButtonGroup, ButtonGroupText } from "../ui/button-group";
+import { Badge } from "../ui/badge";
+import { Skeleton } from "../ui/skeleton";
 import { trpc } from "@/utils/trpc";
 import LocationOff from "./location-off";
 import type { inferRouterOutputs } from "@trpc/server";
@@ -45,33 +46,30 @@ import {
   confirmAppointment,
   ConfirmAppointmentProvider,
 } from "./confirm-modal";
-import { Label } from "../ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
   CalendarIcon,
-  ChevronDownIcon,
   ChevronLeft,
   ChevronRight,
+  Clock3,
 } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { add, format, sub } from "date-fns";
 import { AddAppointmentDialog } from "./add-appointment-modal";
 import { toast } from "sonner";
 import { CalendarSettings } from "./settings-popover";
+import { authClient } from "@/lib/auth-client";
+import {
+  dateFromDayMinutesInTimeZone,
+  dateKeyToDateInTimeZone,
+  dateToMinutesInTimeZone,
+  getDateKeyInTimeZone,
+  shiftDateKey,
+} from "./timezone";
 
 /* ───────────────────────── helpers ───────────────────────── */
-export function dateFromDayMinutes(
-  date: Date,
-  minutesFromStartOfDay: number,
-): Date {
-  const d = new Date(date); // clone, don’t mutate input
-  d.setHours(0, 0, 0, 0);
-  d.setMinutes(minutesFromStartOfDay);
-  return d;
-}
-
 const dateToString = (date: Date) => {
-  if (isNaN(date.getTime())) return "";
+  if (Number.isNaN(date.getTime())) return "";
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
   const d = String(date.getDate()).padStart(2, "0");
@@ -114,10 +112,10 @@ export const useLocationHours = () => {
 export function DatePicker({
   onDateChange,
   date,
-}: {
+}: Readonly<{
   date: Date;
   onDateChange: (newDate: Date) => void;
-}) {
+}>) {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -155,49 +153,41 @@ export function DatePicker({
 
 export const MasterCalendar = ({ locationId }: { locationId: string }) => {
   const [dateString, setDateString] = useSelectedDate();
+  const dateKey = dateString;
 
   const date = useMemo(
     () => parseLocalDate(dateString) ?? new Date(),
     [dateString],
   );
 
-  const { data: appointments } = useQuery(
+  const { data: appointments, isLoading: isLoadingAppointments } = useQuery(
     trpc.appointment.fetchAppointments.queryOptions(
       {
-        startDate: date,
-        endDate: new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate(),
-          23,
-          59,
-          59,
-          999,
-        ),
+        dateKey,
         locationId,
       },
-      { enabled: !!date, staleTime: 1_000 },
+      { enabled: Boolean(dateKey), staleTime: 1_000 },
     ),
   );
 
-  const { data: employees } = useQuery(
+  const { data: employees, isLoading: isLoadingEmployees } = useQuery(
     trpc.appointment.fetchEmployeesSchedule.queryOptions(
-      { locationId, date },
-      { enabled: !!date, staleTime: 1_000 },
+      { locationId, dateKey },
+      { enabled: Boolean(dateKey), staleTime: 1_000 },
     ),
   );
+
+  const isCalendarLoading =
+    isLoadingEmployees ||
+    (employees?.code === "SUCCESS" && (isLoadingAppointments || !appointments));
 
   const queryClient = useQueryClient();
   const prefetchDay = (delta: number) => {
-    const base = parseLocalDate(dateString);
-    if (!base) return;
-
-    const d = new Date(base);
-    d.setDate(d.getDate() + delta);
+    const nextDateKey = shiftDateKey(dateString, delta);
 
     queryClient.prefetchQuery(
       trpc.appointment.fetchEmployeesSchedule.queryOptions(
-        { locationId, date: d },
+        { locationId, dateKey: nextDateKey },
         { staleTime: 60_000 },
       ),
     );
@@ -205,11 +195,7 @@ export const MasterCalendar = ({ locationId }: { locationId: string }) => {
 
   const shiftDays = useCallback(
     (delta: number) => {
-      const base = parseLocalDate(dateString);
-      if (!base) return;
-      const next = new Date(base);
-      next.setDate(next.getDate() + delta);
-      setDateString(dateToString(next));
+      setDateString(shiftDateKey(dateString, delta));
     },
     [dateString, setDateString],
   );
@@ -250,7 +236,17 @@ export const MasterCalendar = ({ locationId }: { locationId: string }) => {
           <ChevronRight className="w-4 h-4 text-stone-700" />
         </Button>
 
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
+          {employees?.code === "SUCCESS" ? (
+            <Badge
+              variant="secondary"
+              className="gap-1.5 font-normal"
+              title="All calendar times are shown in this timezone"
+            >
+              <Clock3 className="size-3.5" />
+              {employees.timeZone}
+            </Badge>
+          ) : null}
           <CalendarSettings />
         </div>
       </div>
@@ -259,9 +255,11 @@ export const MasterCalendar = ({ locationId }: { locationId: string }) => {
         <LocationOff />
       ) : null}
 
-      {!!employees && employees.code === "SUCCESS" ? (
+      {isCalendarLoading ? <MasterCalendarSkeleton /> : null}
+
+      {!isCalendarLoading && !!employees && employees.code === "SUCCESS" ? (
         <CalendarProvider
-          date={date}
+          dateKey={dateKey}
           locationTimeZone={employees.timeZone}
           employees={employees.schedule}
           appointmentsByEmployee={appointments || {}}
@@ -270,6 +268,7 @@ export const MasterCalendar = ({ locationId }: { locationId: string }) => {
             locationId={locationId}
             employees={employees.schedule}
             locationTimeZone={employees.timeZone}
+            dateKey={dateKey}
           />
         </CalendarProvider>
       ) : null}
@@ -277,57 +276,88 @@ export const MasterCalendar = ({ locationId }: { locationId: string }) => {
   );
 };
 
-function dateToLocalMinutes(date: Date): number {
-  return date.getHours() * 60 + date.getMinutes();
-}
-
-function getDatePartsInTimeZone(date: Date, timeZone: string) {
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  });
-
-  const parts = formatter.formatToParts(date);
-  const values = Object.fromEntries(
-    parts
-      .filter((part) => part.type !== "literal")
-      .map((part) => [part.type, Number.parseInt(part.value, 10)]),
+function MasterCalendarSkeleton() {
+  const skeletonRows = 24;
+  const skeletonEmployees = 4;
+  const employeeSlots = Array.from(
+    { length: skeletonEmployees },
+    (_, value) => `employee-${value}`,
+  );
+  const rowSlots = Array.from(
+    { length: skeletonRows },
+    (_, value) => `row-${value}`,
   );
 
-  return {
-    year: values.year,
-    month: values.month,
-    day: values.day,
-    hour: values.hour,
-    minute: values.minute,
-  };
-}
+  return (
+    <div className="overflow-auto isolate bg-background h-svh">
+      <div
+        className="grid sticky top-0 z-70 border-b bg-background"
+        style={{
+          gridTemplateColumns: `80px repeat(${skeletonEmployees}, 1fr)`,
+        }}
+      >
+        <div className="px-2 py-2 border-r">
+          <Skeleton className="h-4 w-14" />
+        </div>
+        {employeeSlots.map((employeeSlot) => (
+          <div key={`skeleton-header-${employeeSlot}`} className="px-2 py-4 border-r">
+            <div className="flex items-center justify-center flex-col gap-1">
+              <Skeleton className="h-8 w-8 rounded-full" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-3 w-20" />
+            </div>
+          </div>
+        ))}
+      </div>
 
-function getDateKeyInTimeZone(date: Date, timeZone: string): string {
-  const { year, month, day } = getDatePartsInTimeZone(date, timeZone);
-  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-}
+      <div
+        className="grid relative"
+        style={{
+          gridTemplateColumns: `80px repeat(${skeletonEmployees}, 1fr)`,
+        }}
+      >
+        <div className="border-r bg-muted">
+          {rowSlots.map((rowSlot) => (
+            <div
+              key={`skeleton-time-${rowSlot}`}
+              className="border-t px-2"
+              style={{ height: ROW_HEIGHT }}
+            >
+              {Number.parseInt(rowSlot.replace("row-", ""), 10) %
+              (60 / SLOT_MINUTES) ===
+              0 ? (
+                <Skeleton className="h-3 w-12 mt-1" />
+              ) : null}
+            </div>
+          ))}
+        </div>
 
-function dateToMinutesInTimeZone(date: Date, timeZone: string): number {
-  const { hour, minute } = getDatePartsInTimeZone(date, timeZone);
-  return hour * 60 + minute;
+        {employeeSlots.map((employeeSlot) => (
+          <div key={`skeleton-column-${employeeSlot}`} className="border-r bg-muted/60">
+            {rowSlots.map((rowSlot) => (
+              <div
+                key={`skeleton-cell-${employeeSlot}-${rowSlot}`}
+                className="border-t"
+                style={{ height: ROW_HEIGHT }}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 type AppointmentResponseType =
   inferRouterOutputs<AppRouter>["appointment"]["fetchAppointments"];
 const CalendarProvider = ({
-  date,
+  dateKey,
   locationTimeZone,
   employees,
   appointmentsByEmployee,
   children,
 }: {
-  date: Date;
+  dateKey: string;
   locationTimeZone: string;
   employees: Employee[];
   appointmentsByEmployee: AppointmentResponseType | undefined;
@@ -337,21 +367,28 @@ const CalendarProvider = ({
     if (!employees.length) return null;
     let minTime = Infinity;
     let maxTime = 0;
+    let hasWorkingHours = false;
 
     for (const e of employees) {
-      if (!e.workHours?.endMinute || !e.workHours?.startMinute) continue;
+      if (
+        e.workHours?.startMinute == null ||
+        e.workHours?.endMinute == null
+      ) {
+        continue;
+      }
+      hasWorkingHours = true;
       minTime = Math.min(minTime, e.workHours.startMinute);
       maxTime = Math.max(maxTime, e.workHours.endMinute);
     }
+
+    if (!hasWorkingHours) return null;
 
     return { minTime, maxTime };
   }, [employees]);
 
   const appointments = useMemo(() => {
     if (!appointmentsByEmployee) return {};
-    const appointmentForDate = appointmentsByEmployee[
-      getDateKeyInTimeZone(date, locationTimeZone)
-    ];
+    const appointmentForDate = appointmentsByEmployee[dateKey];
     if (!appointmentForDate) return {};
     return appointmentForDate.reduce(
       (acc, appointment) => {
@@ -376,12 +413,13 @@ const CalendarProvider = ({
           customerName: appointment.customer.name,
           serviceNames: appointment.service.map((s) => s.name),
           status: appointment.status,
+          paymentStatus: appointment.paymentStatus,
         });
         return acc;
       },
       {} as Record<string, Appointment[]>,
     );
-  }, [appointmentsByEmployee, date, locationTimeZone]);
+  }, [appointmentsByEmployee, dateKey, locationTimeZone]);
 
   return (
     <LocationHoursContext.Provider value={locationHours}>
@@ -395,18 +433,9 @@ const CalendarProvider = ({
 };
 /* ───────────────────────── day calendar ───────────────────────── */
 
-const getFetchAppointmentTRPCKey = (selectedDate: Date, locationId: string) => {
+const getFetchAppointmentTRPCKey = (dateKey: string, locationId: string) => {
   return trpc.appointment.fetchAppointments.queryKey({
-    startDate: selectedDate,
-    endDate: new Date(
-      selectedDate.getFullYear(),
-      selectedDate.getMonth(),
-      selectedDate.getDate(),
-      23,
-      59,
-      59,
-      999,
-    ),
+    dateKey,
     locationId,
   });
 };
@@ -414,20 +443,22 @@ export function EmployeeDayCalendar({
   locationId,
   employees,
   locationTimeZone,
-}: {
+  dateKey,
+}: Readonly<{
   locationId: string;
   employees: Employee[];
   locationTimeZone: string;
-}) {
+  dateKey: string;
+}>) {
+  const { data: session } = authClient.useSession();
   const update = useAppointmentStore((s) => s.update);
   const resolveCollisions = useAppointmentStore((s) => s.getResolvedTimings);
-  const [dateString] = useSelectedDate();
   const selectedDate = useMemo(
-    () => parseLocalDate(dateString) ?? new Date(),
-    [dateString],
+    () => dateKeyToDateInTimeZone(dateKey, locationTimeZone),
+    [dateKey, locationTimeZone],
   );
   const queryClient = useQueryClient();
-  const { data, mutate } = useMutation({
+  const { mutate } = useMutation({
     ...trpc.appointment.updateAppointmentTiming.mutationOptions(),
     onError: (error, variables) => {
       console.error("Failed to update appointment:", error);
@@ -437,12 +468,12 @@ export function EmployeeDayCalendar({
       });
       // Invalidate to refetch and restore correct state
       queryClient.invalidateQueries({
-        queryKey: getFetchAppointmentTRPCKey(selectedDate, locationId),
+        queryKey: getFetchAppointmentTRPCKey(dateKey, locationId),
       });
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: getFetchAppointmentTRPCKey(selectedDate, locationId),
+        queryKey: getFetchAppointmentTRPCKey(dateKey, locationId),
       });
     },
   });
@@ -458,15 +489,56 @@ export function EmployeeDayCalendar({
 
     let minTime = Infinity;
     let maxTime = 0;
+    let hasWorkingHours = false;
 
     for (const e of employees) {
-      if (!e.workHours?.endMinute || !e.workHours?.startMinute) continue;
+      if (
+        e.workHours?.startMinute == null ||
+        e.workHours?.endMinute == null
+      ) {
+        continue;
+      }
+      hasWorkingHours = true;
       minTime = Math.min(minTime, e.workHours.startMinute);
       maxTime = Math.max(maxTime, e.workHours.endMinute);
     }
 
+    if (!hasWorkingHours) return null;
+
     return { minTime, maxTime };
   }, [employees]);
+
+  const actorEmployeeContext = useMemo(() => {
+    const currentUserId = session?.user?.id;
+
+    if (!currentUserId) {
+      return {
+        actorRoleAtLocation: null,
+        actorEmployeeIdAtLocation: null,
+      };
+    }
+
+    const actorAtLocation = employees.find((employee) => {
+      if (!("employee" in employee)) return false;
+      const employeeData = employee.employee as { id: string; userId?: string };
+      return (
+        employeeData.id === currentUserId ||
+        employeeData.userId === currentUserId
+      );
+    });
+
+    if (!actorAtLocation || !("employee" in actorAtLocation)) {
+      return {
+        actorRoleAtLocation: null,
+        actorEmployeeIdAtLocation: null,
+      };
+    }
+
+    return {
+      actorRoleAtLocation: actorAtLocation.employee.role,
+      actorEmployeeIdAtLocation: actorAtLocation.employee.id,
+    };
+  }, [employees, session?.user?.id]);
 
   const handleDragEnd = useCallback(
     async (event: DragEndEvent) => {
@@ -478,37 +550,58 @@ export function EmployeeDayCalendar({
 
       if (drag.empId === drop.empId && drag.start === drop.start) return;
 
-      const fromEmployee = employees.find(
-        (e) => e.code === "WORKING" && e.employee.id === drag.empId,
-      ) as WorkingEmployee | undefined;
+      const sourceEmployee = employees.find(
+        (e): e is WorkingEmployee =>
+          e.code === "WORKING" && e.employee.id === drag.empId,
+      );
 
-      const toEmployee =
+      const targetEmployee =
         drag.empId === drop.empId
-          ? fromEmployee
-          : (employees.find(
-              (e) => e.code === "WORKING" && e.employee.id === drop.empId,
-            ) as WorkingEmployee | undefined);
+          ? sourceEmployee
+          : employees.find(
+              (e): e is WorkingEmployee =>
+                e.code === "WORKING" && e.employee.id === drop.empId,
+            );
 
-      if (!fromEmployee || !toEmployee) return;
+      if (!sourceEmployee || !targetEmployee) return;
 
       const duration = drag.end - drag.start;
 
-      const newTimings = resolveCollisions(fromEmployee, toEmployee, drag.id, {
+      const newTimings = resolveCollisions(
+        sourceEmployee,
+        targetEmployee,
+        drag.id,
+        {
         start: drop.start,
         end: drop.start + duration,
         employeeId: drop.empId,
-      });
+        },
+      );
 
       if (!newTimings) return;
 
-      const newStartDate = dateFromDayMinutes(selectedDate, newTimings.start);
-      const newEndDate = dateFromDayMinutes(selectedDate, newTimings.end);
-      const originalStartTime = dateFromDayMinutes(selectedDate, drag.start);
-      const originalEndTime = dateFromDayMinutes(selectedDate, drag.end);
+      const newStartDate = dateFromDayMinutesInTimeZone(
+        dateKey,
+        newTimings.start,
+        locationTimeZone,
+      );
+      const newEndDate = dateFromDayMinutesInTimeZone(
+        dateKey,
+        newTimings.end,
+        locationTimeZone,
+      );
+      const originalStartTime = dateFromDayMinutesInTimeZone(
+        dateKey,
+        drag.start,
+        locationTimeZone,
+      );
+      const originalEndTime = dateFromDayMinutesInTimeZone(
+        dateKey,
+        drag.end,
+        locationTimeZone,
+      );
 
-      console.log({ newTimings });
-
-      update(fromEmployee, toEmployee, drag.id, {
+      update(sourceEmployee, targetEmployee, drag.id, {
         start: newTimings.start,
         end: newTimings.end,
         employeeId: drop.empId,
@@ -517,6 +610,7 @@ export function EmployeeDayCalendar({
       const res = await confirmAppointment({
         appointmentId: drag.id,
         locationId,
+        locationTimeZone,
         locationEmployeeId: drop.empId,
         estimatedStartTime: newStartDate,
         estimatedEndTime: newEndDate,
@@ -528,9 +622,8 @@ export function EmployeeDayCalendar({
         prepTime: drag.prepTime,
         bufferTime: drag.bufferTime,
       });
-      console.log({ drag });
       if (!res.accepted) {
-        update(toEmployee, fromEmployee, drag.id, {
+        update(targetEmployee, sourceEmployee, drag.id, {
           start: drag.start,
           end: drag.end,
           employeeId: drag.empId,
@@ -547,25 +640,35 @@ export function EmployeeDayCalendar({
         newStartTime: res.newStartTime,
       });
 
-      update(fromEmployee, toEmployee, drag.id, {
+      update(sourceEmployee, targetEmployee, drag.id, {
         start: dateToMinutesInTimeZone(res.newStartTime, locationTimeZone),
         end: dateToMinutesInTimeZone(res.newEndTime, locationTimeZone),
         employeeId: drop.empId,
       });
     },
-    [employees, update, locationTimeZone],
+    [
+      dateKey,
+      employees,
+      locationTimeZone,
+      locationId,
+      mutate,
+      resolveCollisions,
+      selectedDate,
+      update,
+    ],
   );
 
   if (!locationHours) return <p>Location is off </p>;
 
   return (
     <div className="overflow-auto isolate bg-background h-svh">
-      <Header employees={employees} />
+      <Header employees={employees} locationTimeZone={locationTimeZone} />
       <EditSheet />
       <AddAppointmentDialog
         date={selectedDate}
         employees={employees}
         locationId={locationId}
+        locationTimeZone={locationTimeZone}
       />
       <div
         className="grid relative h-svh"
@@ -574,11 +677,11 @@ export function EmployeeDayCalendar({
         }}
       >
         <CurrentTimeLine
-          date={selectedDate}
+          dateKey={dateKey}
           locationHours={locationHours}
           locationTimeZone={locationTimeZone}
         />
-        <TimeColumn />
+        <TimeColumn locationTimeZone={locationTimeZone} />
 
         <DndContext
           sensors={sensors}
@@ -589,7 +692,16 @@ export function EmployeeDayCalendar({
             {employees.map((emp) => {
               if (emp.code === "EMPLOYEE_OFF")
                 return <AbsentEmployeeColumn key={emp.employee.id} />;
-              return <EmployeeColumn key={emp.employee.id} emp={emp} />;
+              return (
+                <EmployeeColumn
+                  key={emp.employee.id}
+                  emp={emp}
+                  actorRoleAtLocation={actorEmployeeContext.actorRoleAtLocation}
+                  actorEmployeeIdAtLocation={
+                    actorEmployeeContext.actorEmployeeIdAtLocation
+                  }
+                />
+              );
             })}
           </AppointmentChargeModalProvider>
 
@@ -635,20 +747,20 @@ export function OverlayPlaceholder() {
 /* ───────────────────────── current time line ───────────────────────── */
 
 export function CurrentTimeLine({
-  date,
+  dateKey,
   locationHours,
   locationTimeZone,
-}: {
-  date: Date;
+}: Readonly<{
+  dateKey: string;
   locationHours: LocationHours;
   locationTimeZone: string;
-}) {
+}>) {
   const [currentMinutes, setCurrentMinutes] = useState(
     getCurrentMinutes(locationTimeZone),
   );
 
   useEffect(() => {
-    if (!isToday(date, locationTimeZone)) return;
+    if (!isToday(dateKey, locationTimeZone)) return;
 
     const id = setInterval(
       () => setCurrentMinutes(getCurrentMinutes(locationTimeZone)),
@@ -656,9 +768,9 @@ export function CurrentTimeLine({
     );
 
     return () => clearInterval(id);
-  }, [date, locationTimeZone]);
+  }, [dateKey, locationTimeZone]);
 
-  if (!isToday(date, locationTimeZone)) return null;
+  if (!isToday(dateKey, locationTimeZone)) return null;
 
   const minutesSinceStart = currentMinutes - locationHours.minTime;
   if (minutesSinceStart < 0) return null;
@@ -688,9 +800,6 @@ function getCurrentMinutes(timeZone: string) {
   return dateToMinutesInTimeZone(new Date(), timeZone);
 }
 
-function isToday(date: Date, timeZone: string) {
-  return (
-    getDateKeyInTimeZone(new Date(), timeZone) ===
-    getDateKeyInTimeZone(date, timeZone)
-  );
+function isToday(dateKey: string, timeZone: string) {
+  return getDateKeyInTimeZone(new Date(), timeZone) === dateKey;
 }

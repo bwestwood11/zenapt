@@ -12,6 +12,54 @@ import type Stripe from "stripe";
 export const dynamic = "force-dynamic";
 
 const allowedEventTypePrefix = "payment_intent.";
+const CHARGEABLE_PAYMENT_TYPES = ["DOWNPAYMENT", "BALANCE", "CANCELLATION"] as const;
+
+const syncAppointmentPaymentStatus = async (appointmentId: string) => {
+  const appointment = await prisma.appointment.findUnique({
+    where: { id: appointmentId },
+    select: {
+      id: true,
+      price: true,
+      discountAmountApplied: true,
+    },
+  });
+
+  if (!appointment) {
+    return;
+  }
+
+  const succeededPayments = await prisma.customerAppointmentPayment.aggregate({
+    where: {
+      appointmentId,
+      paymentType: {
+        in: [...CHARGEABLE_PAYMENT_TYPES],
+      },
+      status: "SUCCEEDED",
+    },
+    _sum: {
+      amountPaid: true,
+    },
+  });
+
+  const collectedAmount = succeededPayments._sum.amountPaid ?? 0;
+  const amountDue = Math.max(0, appointment.price - (appointment.discountAmountApplied ?? 0));
+
+  let paymentStatus: "PAID" | "PARTIALLY_PAID" | "PAYMENT_PENDING" =
+    "PAYMENT_PENDING";
+
+  if (amountDue === 0 || collectedAmount >= amountDue) {
+    paymentStatus = "PAID";
+  } else if (collectedAmount > 0) {
+    paymentStatus = "PARTIALLY_PAID";
+  }
+
+  await prisma.appointment.update({
+    where: { id: appointment.id },
+    data: {
+      paymentStatus,
+    },
+  });
+};
 
 type WebhookLogContext = {
   eventId?: string;
@@ -46,6 +94,29 @@ const handlePaymentSuccess = async (
   const paymentIntent = event.data.object;
   const metadata: StripeConnectPaymentIntentMetadata = paymentIntent.metadata;
 
+  const [paymentRows, tipRows] = await Promise.all([
+    prisma.customerAppointmentPayment.findMany({
+      where: {
+        transactionId: paymentIntent.id,
+      },
+      select: {
+        appointmentId: true,
+      },
+    }),
+    prisma.appointmentTipCharge.findMany({
+      where: {
+        transactionId: paymentIntent.id,
+      },
+      select: {
+        appointmentId: true,
+      },
+    }),
+  ]);
+
+  const appointmentIds = Array.from(
+    new Set([...paymentRows, ...tipRows].map((row) => row.appointmentId)),
+  );
+
   const [result, tipResult] = await Promise.all([
     prisma.customerAppointmentPayment.updateMany({
       where: {
@@ -78,6 +149,12 @@ const handlePaymentSuccess = async (
     );
   }
 
+  if (appointmentIds.length > 0) {
+    await Promise.all(
+      appointmentIds.map((appointmentId) => syncAppointmentPaymentStatus(appointmentId)),
+    );
+  }
+
   return NextResponse.json(
     {
       received: true,
@@ -101,6 +178,29 @@ const handlePaymentFailed = async (
   event: StripeConnectPaymentIntentEvent
 ) => {
   const paymentIntent = event.data.object;
+
+  const [paymentRows, tipRows] = await Promise.all([
+    prisma.customerAppointmentPayment.findMany({
+      where: {
+        transactionId: paymentIntent.id,
+      },
+      select: {
+        appointmentId: true,
+      },
+    }),
+    prisma.appointmentTipCharge.findMany({
+      where: {
+        transactionId: paymentIntent.id,
+      },
+      select: {
+        appointmentId: true,
+      },
+    }),
+  ]);
+
+  const appointmentIds = Array.from(
+    new Set([...paymentRows, ...tipRows].map((row) => row.appointmentId)),
+  );
 
   const [result, tipResult] = await Promise.all([
     prisma.customerAppointmentPayment.updateMany({
@@ -127,6 +227,12 @@ const handlePaymentFailed = async (
     console.log(
       "Stripe Connect payment failed ignored - no pending payment record:",
       paymentIntent.id
+    );
+  }
+
+  if (appointmentIds.length > 0) {
+    await Promise.all(
+      appointmentIds.map((appointmentId) => syncAppointmentPaymentStatus(appointmentId)),
     );
   }
 
@@ -161,7 +267,6 @@ export async function POST(req: Request) {
 
   
   const webhookSecret = process.env.STRIPE_CONNECT_WEBHOOK_SECRET;
-  console.log(signature, body, webhookSecret)
   if (!webhookSecret) {
     console.error("Missing STRIPE_CONNECT_WEBHOOK_SECRET");
     return new NextResponse("Webhook is not configured", { status: 500 });

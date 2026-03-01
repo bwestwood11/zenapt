@@ -1,7 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
-import { Label } from "../ui/label";
 import {
   Select,
   SelectContent,
@@ -15,6 +14,10 @@ import { minutesTo12Hour } from "./utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEmployeeWorkHours } from "./hooks/use-employee-work-hours";
 import { Loader2, Clock } from "lucide-react";
+import {
+  dateFromDayMinutesInTimeZone,
+  dateToMinutesInTimeZone,
+} from "./timezone";
 
 // Helper function to format duration in hours and minutes
 const formatDuration = (minutes: number): string => {
@@ -33,30 +36,20 @@ interface CustomTimePickerProps {
   locationEmployeeId: string;
   locationId: string;
   duration: number;
-  selectedDate: Date;
+  selectedDateKey: string;
+  locationTimeZone: string;
   employeeId: string;
   selectedTimeRange: { start: Date; end: Date } | null;
   onTimeSelect?: (startTime: Date, endTime: Date) => void;
   onConflictChange?: (hasConflict: boolean) => void;
 }
 
-const mergeDateAndMinutes = (minutes: number | null, date: Date): Date => {
-  if (minutes === null) return new Date(date);
-  const localDate = new Date(date);
-  localDate.setHours(0, 0, 0, 0);
-  localDate.setMinutes(minutes);
-  return localDate;
-};
-
-const dateToMinutes = (date: Date): number => {
-  return date.getHours() * 60 + date.getMinutes();
-};
-
 export const CustomTimePicker = ({
   locationEmployeeId,
   locationId,
   duration,
-  selectedDate,
+  selectedDateKey,
+  locationTimeZone,
   employeeId,
   selectedTimeRange,
   onTimeSelect,
@@ -69,17 +62,20 @@ export const CustomTimePicker = ({
     workHours,
     isLoading: isLoadingWorkHours,
     isLocationClosed,
-  } = useEmployeeWorkHours(employeeId, locationId, selectedDate);
+  } = useEmployeeWorkHours(employeeId, locationId, selectedDateKey);
 
   // Sync internal state with external selectedTimeRange
   useEffect(() => {
     if (selectedTimeRange) {
-      const minutes = dateToMinutes(selectedTimeRange.start);
+      const minutes = dateToMinutesInTimeZone(
+        selectedTimeRange.start,
+        locationTimeZone,
+      );
       setSelectedTimeSlot(minutes);
     } else {
       setSelectedTimeSlot(null);
     }
-  }, [selectedTimeRange]);
+  }, [locationTimeZone, selectedTimeRange]);
 
   // Calculate available time slots based on work hours
   const availableTimeSlots = useMemo(() => {
@@ -106,11 +102,16 @@ export const CustomTimePicker = ({
         locationEmployeeId,
         locationId,
         proposedStartTime: selectedTimeSlot
-          ? mergeDateAndMinutes(selectedTimeSlot, selectedDate)
+          ? dateFromDayMinutesInTimeZone(
+              selectedDateKey,
+              selectedTimeSlot,
+              locationTimeZone,
+            )
           : new Date(),
-        proposedEndTime: mergeDateAndMinutes(
+        proposedEndTime: dateFromDayMinutesInTimeZone(
+          selectedDateKey,
           (selectedTimeSlot ?? 0) + duration,
-          selectedDate,
+          locationTimeZone,
         ),
       },
       { enabled: !!selectedTimeSlot && !!duration },
@@ -125,15 +126,30 @@ export const CustomTimePicker = ({
   }, [conflictCheck?.hasConflict, isCheckingConflict, onConflictChange]);
 
   const handleTimeSlotChange = (value: string) => {
-    const minutes = value ? parseInt(value) : null;
+    const minutes = value ? Number.parseInt(value, 10) : null;
     setSelectedTimeSlot(minutes);
 
     if (minutes !== null && onTimeSelect) {
-      const startTime = mergeDateAndMinutes(minutes, selectedDate);
-      const endTime = mergeDateAndMinutes(minutes + duration, selectedDate);
+      const startTime = dateFromDayMinutesInTimeZone(
+        selectedDateKey,
+        minutes,
+        locationTimeZone,
+      );
+      const endTime = dateFromDayMinutesInTimeZone(
+        selectedDateKey,
+        minutes + duration,
+        locationTimeZone,
+      );
       onTimeSelect(startTime, endTime);
     }
   };
+
+  const formatTimeInLocationTimeZone = (date: Date) =>
+    new Intl.DateTimeFormat("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: locationTimeZone,
+    }).format(date);
 
   if (isLoadingWorkHours) {
     return (
@@ -183,7 +199,7 @@ export const CustomTimePicker = ({
           Select Time Slot
         </h3>
         <Select
-          value={selectedTimeSlot !== null ? selectedTimeSlot.toString() : ""}
+          value={selectedTimeSlot === null ? "" : selectedTimeSlot.toString()}
           onValueChange={handleTimeSlotChange}
         >
           <SelectTrigger className="w-full">
@@ -222,26 +238,26 @@ export const CustomTimePicker = ({
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Start Time</span>
                   <span className="font-medium">
-                    {mergeDateAndMinutes(
-                      selectedTimeSlot,
-                      selectedDate,
-                    ).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {formatTimeInLocationTimeZone(
+                      dateFromDayMinutesInTimeZone(
+                        selectedDateKey,
+                        selectedTimeSlot,
+                        locationTimeZone,
+                      ),
+                    )}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">End Time</span>
                   <span className="font-medium">
-                    {mergeDateAndMinutes(
-                      selectedTimeSlot + duration,
-                      selectedDate,
-                    ).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {formatTimeInLocationTimeZone(
+                      dateFromDayMinutesInTimeZone(
+                        selectedDateKey,
+                        selectedTimeSlot + duration,
+                        locationTimeZone,
+                      ),
+                    )}
                   </span>
                 </div>
 

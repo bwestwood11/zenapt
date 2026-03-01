@@ -1,7 +1,13 @@
 import { Badge } from "../ui/badge";
 import type { Employee } from "./types";
 
-export function Header({ employees }: { employees: Employee[] }) {
+export function Header({
+  employees,
+  locationTimeZone,
+}: Readonly<{
+  employees: Employee[];
+  locationTimeZone: string;
+}>) {
   return (
     <div
       className="grid sticky top-0 z-70 border-b bg-background "
@@ -9,7 +15,9 @@ export function Header({ employees }: { employees: Employee[] }) {
         gridTemplateColumns: `80px repeat(${employees.length}, 1fr)`,
       }}
     >
-      <div />
+      <div className="text-[10px] px-2 py-2 text-muted-foreground border-r">
+        {locationTimeZone}
+      </div>
       {employees.map((emp) => {
         return (
           <div

@@ -23,9 +23,14 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
+import {
+  getDateKeyInTimeZone,
+  shiftDateKey,
+} from "@/components/calendar/timezone";
 
-const formatDateTime = (date: Date) =>
+const formatDateTime = (date: Date, timeZone: string) =>
   new Intl.DateTimeFormat("en-US", {
+    timeZone,
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -33,8 +38,9 @@ const formatDateTime = (date: Date) =>
     minute: "2-digit",
   }).format(date);
 
-const formatTime = (date: Date) =>
+const formatTime = (date: Date, timeZone: string) =>
   new Intl.DateTimeFormat("en-US", {
+    timeZone,
     hour: "numeric",
     minute: "2-digit",
   }).format(date);
@@ -55,6 +61,7 @@ type SpecialistAppointment = {
 
 const getNextAppointmentSummary = (
   isLoading: boolean,
+  timeZone: string,
   appointment?: SpecialistAppointment,
 ) => {
   if (isLoading) {
@@ -69,7 +76,7 @@ const getNextAppointmentSummary = (
   }
 
   return {
-    title: formatDateTime(new Date(appointment.startTime)),
+    title: formatDateTime(new Date(appointment.startTime), timeZone),
     subtitle: appointment.customerName,
   };
 };
@@ -95,6 +102,7 @@ const getFocusSummary = (isLoading: boolean, todayAppointmentsCount: number) => 
 
 const renderUpcomingAppointments = (
   isLoading: boolean,
+  timeZone: string,
   appointments: SpecialistAppointment[],
 ) => {
   if (isLoading) {
@@ -136,7 +144,8 @@ const renderUpcomingAppointments = (
             <div className="text-sm text-muted-foreground flex items-center gap-2">
               <Clock className="h-4 w-4" />
               <span>
-                {formatDateTime(start)} • {formatTime(start)} - {formatTime(end)}
+                {formatDateTime(start, timeZone)} • {formatTime(start, timeZone)} -{" "}
+                {formatTime(end, timeZone)}
               </span>
             </div>
           </div>
@@ -148,6 +157,7 @@ const renderUpcomingAppointments = (
 
 const renderTodayAppointments = (
   isLoading: boolean,
+  timeZone: string,
   todayAppointments: SpecialistAppointment[],
 ) => {
   if (isLoading) {
@@ -184,7 +194,7 @@ const renderTodayAppointments = (
               </p>
             </div>
             <p className="text-sm text-muted-foreground whitespace-nowrap">
-              {formatTime(start)} - {formatTime(end)}
+              {formatTime(start, timeZone)} - {formatTime(end, timeZone)}
             </p>
           </div>
         );
@@ -198,25 +208,11 @@ export default function SpecialistDashboardClient({
   slug,
   role,
 }: SpecialistDashboardClientProps) {
-  const now = new Date();
-
-  const startOfToday = useMemo(() => {
-    const date = new Date();
-    date.setHours(0, 0, 0, 0);
-    return date;
-  }, []);
-
-  const endOfToday = useMemo(() => {
-    const date = new Date();
-    date.setHours(23, 59, 59, 999);
-    return date;
-  }, []);
-
-  const rangeEnd = useMemo(() => {
-    const date = new Date();
-    date.setDate(date.getDate() + 7);
-    return date;
-  }, []);
+  const now = useMemo(() => new Date(), []);
+  const rangeEnd = useMemo(
+    () => new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
+    [now],
+  );
 
   const {
     data: upcomingData,
@@ -225,39 +221,43 @@ export default function SpecialistDashboardClient({
   } = useQuery(
     trpc.appointment.fetchSpecialistUpcomingAppointments.queryOptions({
       locationId,
-      startDate: startOfToday,
+      startDate: now,
       endDate: rangeEnd,
     }),
   );
 
+  const locationTimeZone = upcomingData?.timeZone ?? "UTC";
+  const todayDateKey = useMemo(
+    () => getDateKeyInTimeZone(now, locationTimeZone),
+    [locationTimeZone, now],
+  );
+  const tomorrowDateKey = useMemo(
+    () => shiftDateKey(todayDateKey, 1),
+    [todayDateKey],
+  );
+
   const upcomingAppointments = useMemo(() => {
-    return (upcomingData ?? [])
+    return (upcomingData?.appointments ?? [])
       .filter((appointment) => new Date(appointment.startTime) >= now)
       .sort(
         (a, b) =>
           new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
       );
-  }, [upcomingData, now]) as SpecialistAppointment[];
+  }, [upcomingData?.appointments, now]) as SpecialistAppointment[];
 
   const todayAppointmentsCount = useMemo(() => {
     return upcomingAppointments.filter((appointment) => {
       const startsAt = new Date(appointment.startTime);
-      return startsAt >= startOfToday && startsAt <= endOfToday;
+      return getDateKeyInTimeZone(startsAt, locationTimeZone) === todayDateKey;
     }).length;
-  }, [upcomingAppointments, startOfToday, endOfToday]);
+  }, [upcomingAppointments, locationTimeZone, todayDateKey]);
 
   const tomorrowAppointmentsCount = useMemo(() => {
-    const startOfTomorrow = new Date(startOfToday);
-    startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
-
-    const endOfTomorrow = new Date(endOfToday);
-    endOfTomorrow.setDate(endOfTomorrow.getDate() + 1);
-
     return upcomingAppointments.filter((appointment) => {
       const startsAt = new Date(appointment.startTime);
-      return startsAt >= startOfTomorrow && startsAt <= endOfTomorrow;
+      return getDateKeyInTimeZone(startsAt, locationTimeZone) === tomorrowDateKey;
     }).length;
-  }, [upcomingAppointments, startOfToday, endOfToday]);
+  }, [upcomingAppointments, locationTimeZone, tomorrowDateKey]);
 
   const uniqueCustomersCount = useMemo(() => {
     return new Set(
@@ -276,24 +276,30 @@ export default function SpecialistDashboardClient({
     return upcomingAppointments
       .filter((appointment) => {
         const startsAt = new Date(appointment.startTime);
-        return startsAt >= startOfToday && startsAt <= endOfToday;
+        return getDateKeyInTimeZone(startsAt, locationTimeZone) === todayDateKey;
       })
       .sort(
         (a, b) =>
           new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
       );
-  }, [upcomingAppointments, startOfToday, endOfToday]);
+  }, [upcomingAppointments, locationTimeZone, todayDateKey]);
 
   const nextAppointmentSummary = getNextAppointmentSummary(
     isLoading,
+    locationTimeZone,
     upcomingAppointments[0],
   );
   const focusSummary = getFocusSummary(isLoading, todayAppointmentsCount);
   const appointmentsContent = renderUpcomingAppointments(
     isLoading,
+    locationTimeZone,
     upcomingAppointments,
   );
-  const todayScheduleContent = renderTodayAppointments(isLoading, todayAppointments);
+  const todayScheduleContent = renderTodayAppointments(
+    isLoading,
+    locationTimeZone,
+    todayAppointments,
+  );
 
   return (
     <>

@@ -17,7 +17,7 @@ interface UseEmployeeWorkHoursReturn {
 export const useEmployeeWorkHours = (
   employeeId: string,
   locationId: string,
-  date: Date,
+  dateKey: string,
 ): UseEmployeeWorkHoursReturn => {
   const {
     data: employeesSchedule,
@@ -25,7 +25,7 @@ export const useEmployeeWorkHours = (
     isError,
   } = useQuery(
     trpc.appointment.fetchEmployeesSchedule.queryOptions(
-      { locationId, date },
+      { locationId, dateKey },
       {
         enabled: !!locationId && !!employeeId,
         staleTime: 60_000, // Cache for 1 minute

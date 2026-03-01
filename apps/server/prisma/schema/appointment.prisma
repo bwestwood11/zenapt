@@ -6,6 +6,12 @@ enum AppointmentStatus {
   RESCHEDULED
 }
 
+enum AppointmentPaymentStatus {
+  PAYMENT_PENDING
+  PARTIALLY_PAID
+  PAID
+}
+
 model Appointment {
   id         String            @id @default(cuid()) @map("_id")
   locationId String
@@ -17,6 +23,7 @@ model Appointment {
   bufferTime Int               @default(0) // in minutes - max from selected services
   prepTime   Int               @default(0) // in minutes - max from selected services
   status     AppointmentStatus @default(SCHEDULED)
+  paymentStatus AppointmentPaymentStatus @default(PAYMENT_PENDING)
   service    EmployeeService[]
   addOns     AddOn[]
 

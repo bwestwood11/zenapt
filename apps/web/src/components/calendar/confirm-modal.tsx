@@ -3,16 +3,13 @@
 import React, { type ReactNode, useEffect, useRef, useState } from "react";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "../ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { AlertCircle, ArrowRight, Calendar, Clock, Mail } from "lucide-react";
@@ -23,6 +20,7 @@ export type ConfirmOptions = {
   originalStartTime: Date;
   originalEndTime: Date;
   date: Date;
+  locationTimeZone: string;
   customerName: string;
   estimatedStartTime: Date;
   estimatedEndTime: Date;
@@ -70,11 +68,12 @@ export function confirmAppointment(
   return globalHandler(opts);
 }
 
-const formatTime = (date: Date | undefined) => {
+const formatTime = (date: Date | undefined, timeZone: string) => {
   if (!date) return undefined;
   return Intl.DateTimeFormat("en-US", {
     hour: "2-digit",
     minute: "2-digit",
+    timeZone,
   }).format(date);
 };
 
@@ -175,6 +174,8 @@ export const ConfirmAppointmentProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  const locationTimeZone = current?.options.locationTimeZone ?? "UTC";
+
   return (
     <>
       {children}
@@ -186,7 +187,8 @@ export const ConfirmAppointmentProvider: React.FC<{ children: ReactNode }> = ({
               Reschedule Appointment
             </DialogTitle>
             <DialogDescription>
-              Review the time change below and adjust the duration if needed.
+              <span>Review the time change below and adjust the duration if needed.</span>
+              <span className="block mt-1">Times shown in {locationTimeZone}.</span>
             </DialogDescription>
           </DialogHeader>
 
@@ -205,11 +207,11 @@ export const ConfirmAppointmentProvider: React.FC<{ children: ReactNode }> = ({
                 <div className="flex items-center gap-2 text-red-900 dark:text-red-100">
                   <Clock className="size-4 text-red-600 dark:text-red-400" />
                   <div className="font-semibold text-lg">
-                    {formatTime(current?.options.originalStartTime)}
+                    {formatTime(current?.options.originalStartTime, locationTimeZone)}
                   </div>
                 </div>
                 <div className="text-sm text-red-700 dark:text-red-300">
-                  to {formatTime(current?.options.originalEndTime)}
+                  to {formatTime(current?.options.originalEndTime, locationTimeZone)}
                 </div>
                 {((current?.options.prepTime ?? 0) > 0 ||
                   (current?.options.bufferTime ?? 0) > 0) && (
@@ -236,8 +238,10 @@ export const ConfirmAppointmentProvider: React.FC<{ children: ReactNode }> = ({
 
                         return `${formatTime(
                           new Date(startTime.getTime() - prep * 60000),
+                          locationTimeZone,
                         )} - ${formatTime(
                           new Date(endTime.getTime() + buffer * 60000),
+                          locationTimeZone,
                         )}`;
                       })()}
                     </div>
@@ -267,6 +271,7 @@ export const ConfirmAppointmentProvider: React.FC<{ children: ReactNode }> = ({
                     {formatTime(
                       data?.proposedStartTime ||
                         current?.options.estimatedStartTime,
+                      locationTimeZone,
                     )}
                   </div>
                 </div>
@@ -274,6 +279,7 @@ export const ConfirmAppointmentProvider: React.FC<{ children: ReactNode }> = ({
                   to{" "}
                   {formatTime(
                     data?.proposedEndTime || current?.options.estimatedEndTime,
+                    locationTimeZone,
                   )}
                 </div>
                 {((data?.prepTime ?? current?.options.prepTime ?? 0) > 0 ||
@@ -312,8 +318,10 @@ export const ConfirmAppointmentProvider: React.FC<{ children: ReactNode }> = ({
 
                         return `${formatTime(
                           new Date(startTime.getTime() - prep * 60000),
+                          locationTimeZone,
                         )} - ${formatTime(
                           new Date(endTime.getTime() + buffer * 60000),
+                          locationTimeZone,
                         )}`;
                       })()}
                     </div>

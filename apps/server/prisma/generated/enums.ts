@@ -18,6 +18,15 @@ export const AppointmentStatus = {
 export type AppointmentStatus = (typeof AppointmentStatus)[keyof typeof AppointmentStatus]
 
 
+export const AppointmentPaymentStatus = {
+  PAYMENT_PENDING: 'PAYMENT_PENDING',
+  PARTIALLY_PAID: 'PARTIALLY_PAID',
+  PAID: 'PAID'
+} as const
+
+export type AppointmentPaymentStatus = (typeof AppointmentPaymentStatus)[keyof typeof AppointmentPaymentStatus]
+
+
 export const PromoLevel = {
   ORGANIZATION: 'ORGANIZATION',
   LOCATION: 'LOCATION'

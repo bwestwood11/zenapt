@@ -185,6 +185,9 @@ export type DemoRequest = Prisma.DemoRequestModel
 export type AppointmentStatus = $Enums.AppointmentStatus
 export const AppointmentStatus = $Enums.AppointmentStatus
 
+export type AppointmentPaymentStatus = $Enums.AppointmentPaymentStatus
+export const AppointmentPaymentStatus = $Enums.AppointmentPaymentStatus
+
 export type PromoLevel = $Enums.PromoLevel
 export const PromoLevel = $Enums.PromoLevel
 

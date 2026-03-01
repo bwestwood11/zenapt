@@ -22,8 +22,78 @@ import {
   calculateDiscountedTotal,
   resolveActivePromoCode,
 } from "../lib/payments/promo";
+import { zonedDateTimeToUtc } from "../lib/datetime/timezone";
 
 const CHARGEABLE_PAYMENT_TYPES = ["DOWNPAYMENT", "BALANCE", "CANCELLATION"] as const;
+
+const resolveCustomerPaymentStatusFromIntent = (
+  paymentIntentStatus: Stripe.PaymentIntent.Status,
+) => {
+  if (paymentIntentStatus === "succeeded") {
+    return "SUCCEEDED" as const;
+  }
+
+  if (
+    paymentIntentStatus === "canceled" ||
+    paymentIntentStatus === "requires_payment_method"
+  ) {
+    return "FAILED" as const;
+  }
+
+  return "PENDING" as const;
+};
+
+async function syncAppointmentPaymentStatus(appointmentId: string) {
+  const appointment = await prisma.appointment.findUnique({
+    where: { id: appointmentId },
+    select: {
+      id: true,
+      price: true,
+      discountAmountApplied: true,
+    },
+  });
+
+  if (!appointment) {
+    return null;
+  }
+
+  const succeededPayments = await prisma.customerAppointmentPayment.aggregate({
+    where: {
+      appointmentId,
+      paymentType: {
+        in: [...CHARGEABLE_PAYMENT_TYPES],
+      },
+      status: "SUCCEEDED",
+    },
+    _sum: {
+      amountPaid: true,
+    },
+  });
+
+  const collectedAmount = succeededPayments._sum.amountPaid ?? 0;
+  const amountDue = Math.max(
+    0,
+    appointment.price - (appointment.discountAmountApplied ?? 0),
+  );
+
+  let paymentStatus: "PAID" | "PARTIALLY_PAID" | "PAYMENT_PENDING" =
+    "PAYMENT_PENDING";
+
+  if (amountDue === 0 || collectedAmount >= amountDue) {
+    paymentStatus = "PAID";
+  } else if (collectedAmount > 0) {
+    paymentStatus = "PARTIALLY_PAID";
+  }
+
+  await prisma.appointment.update({
+    where: { id: appointment.id },
+    data: {
+      paymentStatus,
+    },
+  });
+
+  return paymentStatus;
+}
 
 async function getAppointmentCollectedAmount(appointmentId: string) {
   const payments = await prisma.customerAppointmentPayment.aggregate({
@@ -45,11 +115,28 @@ async function getAppointmentCollectedAmount(appointmentId: string) {
 }
 
 export const appointmentRouter = router({
-  fetchSpecialistUpcomingAppointments: withPermissions(["READ::APPOINTMENTS"], z.object({
-    locationId: z.string(),
-    startDate: z.date(),
-    endDate: z.date(),
-  }))
+  fetchSpecialistUpcomingAppointments: withPermissions(
+    ["READ::APPOINTMENTS"],
+    z
+      .object({
+        locationId: z.string(),
+        startDate: z.date().optional(),
+        endDate: z.date().optional(),
+        dateKey: z
+          .string()
+          .regex(/^\d{4}-\d{2}-\d{2}$/)
+          .optional(),
+        rangeDays: z.number().int().min(1).max(31).default(7),
+      })
+      .refine(
+        (input) =>
+          Boolean(input.dateKey) ||
+          Boolean(input.startDate && input.endDate),
+        {
+          message: "Either dateKey or startDate/endDate is required",
+        },
+      ),
+  )
     .query(async ({ ctx, input }) => {
       const specialist = await prisma.locationEmployee.findFirst({
         where: {
@@ -70,11 +157,62 @@ export const appointmentRouter = router({
         });
       }
 
+      const location = await prisma.location.findUnique({
+        where: { id: input.locationId },
+        select: { timeZone: true },
+      });
+
+      const locationTimeZone = location?.timeZone ?? "UTC";
+
+      const rangeStartDate = (() => {
+        if (!input.dateKey) {
+          return input.startDate ?? new Date();
+        }
+
+        const [year, month, day] = input.dateKey
+          .split("-")
+          .map((value) => Number.parseInt(value, 10));
+
+        return zonedDateTimeToUtc(locationTimeZone, {
+          year,
+          month,
+          day,
+          hour: 0,
+          minute: 0,
+          second: 0,
+        });
+      })();
+
+      const rangeEndDate = (() => {
+        if (!input.dateKey) {
+          return input.endDate ?? new Date();
+        }
+
+        const [year, month, day] = input.dateKey
+          .split("-")
+          .map((value) => Number.parseInt(value, 10));
+
+        const rangeEndUtcRef = new Date(
+          Date.UTC(year, month - 1, day + input.rangeDays),
+        );
+
+        return zonedDateTimeToUtc(locationTimeZone, {
+          year: rangeEndUtcRef.getUTCFullYear(),
+          month: rangeEndUtcRef.getUTCMonth() + 1,
+          day: rangeEndUtcRef.getUTCDate(),
+          hour: 0,
+          minute: 0,
+          second: 0,
+        });
+      })();
+
       const appointments = await prisma.appointment.findMany({
         where: {
           locationId: input.locationId,
-          startTime: { gte: input.startDate },
-          endTime: { lte: input.endDate },
+          startTime: {
+            gte: rangeStartDate,
+            lt: rangeEndDate,
+          },
           service: {
             some: { locationEmployeeId: specialist.id },
           },
@@ -85,6 +223,7 @@ export const appointmentRouter = router({
           startTime: true,
           endTime: true,
           status: true,
+          paymentStatus: true,
           customer: {
             select: {
               user: {
@@ -109,14 +248,18 @@ export const appointmentRouter = router({
         },
       });
 
-      return appointments.map((appointment) => ({
-        id: appointment.id,
-        startTime: appointment.startTime,
-        endTime: appointment.endTime,
-        status: appointment.status,
-        customerName: appointment.customer.user.name,
-        serviceNames: appointment.service.map((item) => item.serviceTerms.name),
-      }));
+      return {
+        timeZone: locationTimeZone,
+        appointments: appointments.map((appointment) => ({
+          id: appointment.id,
+          startTime: appointment.startTime,
+          endTime: appointment.endTime,
+          status: appointment.status,
+          paymentStatus: appointment.paymentStatus,
+          customerName: appointment.customer.user.name,
+          serviceNames: appointment.service.map((item) => item.serviceTerms.name),
+        })),
+      };
     }),
 
   fetchSpecialistDailySchedule: withPermissions(["READ::LOCATION", "READ::MASTER_CALENDAR"], z.object({
@@ -183,25 +326,351 @@ export const appointmentRouter = router({
     "READ::MASTER_CALENDAR",
     "READ::EMPLOYEES",
   ])
-    .input(z.object({ locationId: z.string(), date: z.date() }))
+    .input(
+      z
+        .object({
+          locationId: z.string(),
+          date: z.date().optional(),
+          dateKey: z
+            .string()
+            .regex(/^\d{4}-\d{2}-\d{2}$/)
+            .optional(),
+        })
+        .refine((input) => Boolean(input.date || input.dateKey), {
+          message: "Either date or dateKey is required",
+        }),
+    )
     .query(({ input }) => {
-      return getLocationSpecialistsSchedule(input.locationId, input.date);
+      return getLocationSpecialistsSchedule(
+        input.locationId,
+        input.date ?? new Date(),
+        input.dateKey,
+      );
     }),
   fetchAppointments: withPermissions(["READ::APPOINTMENTS"])
     .input(
-      z.object({
-        startDate: z.date(),
-        endDate: z.date(),
-        locationId: z.string(),
-      }),
+      z
+        .object({
+          startDate: z.date().optional(),
+          endDate: z.date().optional(),
+          dateKey: z
+            .string()
+            .regex(/^\d{4}-\d{2}-\d{2}$/)
+            .optional(),
+          locationId: z.string(),
+        })
+        .refine(
+          (input) =>
+            Boolean(input.dateKey) ||
+            Boolean(input.startDate && input.endDate),
+          {
+            message: "Either dateKey or startDate/endDate is required",
+          },
+        ),
     )
     .query(({ input }) => {
       return getAppointmentsInRange({
         startDate: input.startDate,
         endDate: input.endDate,
+        dateKey: input.dateKey,
         locationId: input.locationId,
       });
     }),
+
+  updateAppointmentStatus: withPermissions(["UPDATE::APPOINTMENTS"])
+    .input(
+      z.object({
+        appointmentId: z.string(),
+        status: z.enum([
+          "SCHEDULED",
+          "COMPLETED",
+          "CANCELED",
+          "NO_SHOW",
+          "RESCHEDULED",
+        ]),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const appointment = await prisma.appointment.findUnique({
+        where: { id: input.appointmentId },
+        select: {
+          id: true,
+          locationId: true,
+          status: true,
+          service: {
+            select: {
+              locationEmployeeId: true,
+            },
+          },
+        },
+      });
+
+      if (!appointment) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Appointment not found",
+        });
+      }
+
+      if (
+        input.status === "NO_SHOW" &&
+        appointment.status !== "SCHEDULED" &&
+        appointment.status !== "RESCHEDULED" &&
+        appointment.status !== "NO_SHOW"
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Only pending appointments can be marked as no-show",
+        });
+      }
+
+      const actorAtLocation = await prisma.locationEmployee.findFirst({
+        where: {
+          locationId: appointment.locationId,
+          userId: ctx.session.user.id,
+        },
+        select: { id: true, role: true },
+      });
+
+      if (actorAtLocation?.role === "LOCATION_SPECIALIST") {
+        const canSpecialistUpdate = appointment.service.some(
+          (service) => service.locationEmployeeId === actorAtLocation.id,
+        );
+
+        if (!canSpecialistUpdate) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You can only update status for your own appointments",
+          });
+        }
+      }
+
+      const updatedAppointment = await prisma.appointment.update({
+        where: { id: appointment.id },
+        data: {
+          status: input.status,
+        },
+        select: {
+          id: true,
+          status: true,
+          paymentStatus: true,
+          updatedAt: true,
+        },
+      });
+
+      return {
+        success: true,
+        appointment: updatedAppointment,
+      };
+    }),
+
+  syncAppointmentPaymentsFromStripe: withPermissions(["UPDATE::APPOINTMENTS"])
+    .input(
+      z.object({
+        appointmentId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const appointment = await prisma.appointment.findUnique({
+        where: { id: input.appointmentId },
+        select: {
+          id: true,
+          locationId: true,
+          location: {
+            select: {
+              organizationId: true,
+            },
+          },
+          service: {
+            select: {
+              locationEmployeeId: true,
+            },
+          },
+        },
+      });
+
+      if (!appointment) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Appointment not found",
+        });
+      }
+
+      const specialist = await prisma.locationEmployee.findFirst({
+        where: {
+          locationId: appointment.locationId,
+          userId: ctx.session.user.id,
+          role: "LOCATION_SPECIALIST",
+        },
+        select: { id: true },
+      });
+
+      if (specialist) {
+        const canSpecialistUpdate = appointment.service.some(
+          (service) => service.locationEmployeeId === specialist.id,
+        );
+
+        if (!canSpecialistUpdate) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message:
+              "You can only sync payments for your own appointments",
+          });
+        }
+      }
+
+      const organization = await prisma.organization.findUnique({
+        where: {
+          id: appointment.location.organizationId,
+        },
+        select: {
+          stripeAccountId: true,
+        },
+      });
+
+      if (!organization?.stripeAccountId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Organization payments are not configured",
+        });
+      }
+
+      const stripeAccountId = organization.stripeAccountId;
+
+      const [payments, tipCharges] = await Promise.all([
+        prisma.customerAppointmentPayment.findMany({
+          where: {
+            appointmentId: appointment.id,
+            transactionId: { not: null },
+          },
+          select: {
+            transactionId: true,
+          },
+        }),
+        prisma.appointmentTipCharge.findMany({
+          where: {
+            appointmentId: appointment.id,
+            transactionId: { not: null },
+          },
+          select: {
+            transactionId: true,
+          },
+        }),
+      ]);
+
+      const transactionIds = Array.from(
+        new Set(
+          [...payments, ...tipCharges]
+            .map((record) => record.transactionId)
+            .filter((value): value is string => Boolean(value)),
+        ),
+      );
+
+      const syncResults = await Promise.all(
+        transactionIds.map(async (transactionId) => {
+          try {
+            const paymentIntent = await stripe.paymentIntents.retrieve(
+              transactionId,
+              {
+                stripeAccount: stripeAccountId,
+              },
+            );
+
+            return {
+              transactionId,
+              success: true as const,
+              paymentIntentStatus: paymentIntent.status,
+              mappedStatus: resolveCustomerPaymentStatusFromIntent(
+                paymentIntent.status,
+              ),
+            };
+          } catch (error) {
+            const message =
+              error instanceof Error
+                ? error.message
+                : "Failed to fetch payment intent from Stripe";
+
+            return {
+              transactionId,
+              success: false as const,
+              error: message,
+            };
+          }
+        }),
+      );
+
+      const successfulSyncResults = syncResults.filter((result) => result.success);
+
+      const updateResults = await Promise.all(
+        successfulSyncResults.map(async (result) => {
+          const [paymentUpdate, tipUpdate] = await Promise.all([
+            prisma.customerAppointmentPayment.updateMany({
+              where: {
+                appointmentId: appointment.id,
+                transactionId: result.transactionId,
+                status: {
+                  not: result.mappedStatus,
+                },
+              },
+              data: {
+                status: result.mappedStatus,
+              },
+            }),
+            prisma.appointmentTipCharge.updateMany({
+              where: {
+                appointmentId: appointment.id,
+                transactionId: result.transactionId,
+                status: {
+                  not: result.mappedStatus,
+                },
+              },
+              data: {
+                status: result.mappedStatus,
+              },
+            }),
+          ]);
+
+          return {
+            updatedPayments: paymentUpdate.count,
+            updatedTipCharges: tipUpdate.count,
+          };
+        }),
+      );
+
+      const updatedPayments = updateResults.reduce(
+        (sum, item) => sum + item.updatedPayments,
+        0,
+      );
+      const updatedTipCharges = updateResults.reduce(
+        (sum, item) => sum + item.updatedTipCharges,
+        0,
+      );
+
+      const appointmentPaymentStatus = await syncAppointmentPaymentStatus(
+        appointment.id,
+      );
+
+      return {
+        success: true,
+        appointmentId: appointment.id,
+        appointmentPaymentStatus,
+        updatedPayments,
+        updatedTipCharges,
+        syncedTransactions: successfulSyncResults.map((result) => ({
+          transactionId: result.transactionId,
+          stripeStatus: result.paymentIntentStatus,
+          mappedStatus: result.mappedStatus,
+        })),
+        failedTransactions: syncResults
+          .filter((result) => !result.success)
+          .map((result) => ({
+            transactionId: result.transactionId,
+            error: result.error,
+          })),
+      };
+    }),
+
   updateAppointmentTiming: withPermissions(["UPDATE::APPOINTMENTS"])
     .input(
       z.object({
