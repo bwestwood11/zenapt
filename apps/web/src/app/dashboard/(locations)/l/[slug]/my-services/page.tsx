@@ -4,9 +4,9 @@ import MyServicesClient from "./_components/my-services-client";
 
 export default async function MyServicesPage({
   params,
-}: {
+}: Readonly<{
   params: Promise<{ slug: string }>;
-}) {
+}>) {
   const { slug } = await params;
 
   if (!slug) {
@@ -15,6 +15,10 @@ export default async function MyServicesPage({
 
   const session = await getLocationAccess(slug);
   if (!session) {
+    return forbidden();
+  }
+
+  if (session.role !== "LOCATION_SPECIALIST") {
     return forbidden();
   }
 

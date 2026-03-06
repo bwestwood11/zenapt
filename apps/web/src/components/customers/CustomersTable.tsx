@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 import {
   Table,
   TableBody,
@@ -15,11 +16,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryStates, parseAsInteger, parseAsString } from "nuqs";
 import { Users } from "lucide-react";
-import { useState } from "react";
-import { CustomerDetailsSheet } from "./CustomerDetailsSheet";
 
 interface CustomersTableProps {
   locationId: string;
+  slug: string;
 }
 
 interface SearchBarProps {
@@ -36,8 +36,8 @@ interface TableContentProps {
         user: { name: string | null; email: string | null } | null;
       }>
     | undefined;
+  slug: string;
   limit: number;
-  onCustomerClick: (customerId: string) => void;
 }
 
 interface PaginationControlsProps {
@@ -52,7 +52,20 @@ interface StatsHeaderProps {
   isLoading: boolean;
 }
 
-function StatsHeader({ total, isLoading }: StatsHeaderProps) {
+const LOADING_ROW_KEYS = [
+  "loading-1",
+  "loading-2",
+  "loading-3",
+  "loading-4",
+  "loading-5",
+  "loading-6",
+  "loading-7",
+  "loading-8",
+  "loading-9",
+  "loading-10",
+] as const;
+
+function StatsHeader({ total, isLoading }: Readonly<StatsHeaderProps>) {
   return (
     <div className="flex items-center gap-6 p-6 bg-muted/50 rounded-lg border">
       <div className="flex items-center gap-3">
@@ -74,7 +87,7 @@ function StatsHeader({ total, isLoading }: StatsHeaderProps) {
   );
 }
 
-function SearchBar({ value, onChange }: SearchBarProps) {
+function SearchBar({ value, onChange }: Readonly<SearchBarProps>) {
   return (
     <div className="flex items-center gap-4">
       <Input
@@ -90,14 +103,14 @@ function SearchBar({ value, onChange }: SearchBarProps) {
 function TableContent({
   isLoading,
   customers,
+  slug,
   limit,
-  onCustomerClick,
-}: TableContentProps) {
+}: Readonly<TableContentProps>) {
   if (isLoading) {
     return (
       <>
-        {Array.from({ length: limit }).map((_, index) => (
-          <TableRow key={index}>
+        {LOADING_ROW_KEYS.slice(0, limit).map((rowKey) => (
+          <TableRow key={rowKey}>
             <TableCell className="font-medium">
               <Skeleton className="h-4 w-[180px]" />
             </TableCell>
@@ -131,12 +144,12 @@ function TableContent({
       {customers.map((customer) => (
         <TableRow key={customer.id} className="hover:bg-muted/50">
           <TableCell className="font-medium">
-            <button
-              onClick={() => onCustomerClick(customer.id)}
-              className="text-left hover:underline hover:text-primary transition-colors cursor-pointer"
+            <Link
+              href={`/dashboard/l/${slug}/customers/${customer.id}`}
+              className="text-left hover:underline hover:text-primary transition-colors"
             >
               {customer.user?.name ?? "N/A"}
-            </button>
+            </Link>
           </TableCell>
           <TableCell className="text-muted-foreground">
             {customer.user?.email ?? "N/A"}
@@ -155,7 +168,7 @@ function PaginationControls({
   totalPages,
   total,
   onPageChange,
-}: PaginationControlsProps) {
+}: Readonly<PaginationControlsProps>) {
   if (totalPages <= 1) {
     return null;
   }
@@ -187,11 +200,8 @@ function PaginationControls({
   );
 }
 
-export function CustomersTable({ locationId }: CustomersTableProps) {
+export function CustomersTable({ locationId, slug }: Readonly<CustomersTableProps>) {
   const limit = 10;
-  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(
-    null,
-  );
 
   const [params, setParams] = useQueryStates({
     page: parseAsInteger.withDefault(1),
@@ -215,18 +225,6 @@ export function CustomersTable({ locationId }: CustomersTableProps) {
     setParams({ page });
   };
 
-  const handleCustomerClick = (customerId: string) => {
-    setSelectedCustomerId(customerId);
-  };
-
-  const handleCloseSheet = () => {
-    setSelectedCustomerId(null);
-  };
-
-  const selectedCustomer = data?.customers.find(
-    (c) => c.id === selectedCustomerId,
-  );
-
   return (
     <div className="space-y-6">
       <StatsHeader total={data?.pagination.total} isLoading={isLoading} />
@@ -246,8 +244,8 @@ export function CustomersTable({ locationId }: CustomersTableProps) {
             <TableContent
               isLoading={isLoading}
               customers={data?.customers}
+              slug={slug}
               limit={limit}
-              onCustomerClick={handleCustomerClick}
             />
           </TableBody>
         </Table>
@@ -261,16 +259,6 @@ export function CustomersTable({ locationId }: CustomersTableProps) {
           onPageChange={handlePageChange}
         />
       )}
-
-      <CustomerDetailsSheet
-        customerId={selectedCustomerId}
-        locationId={locationId}
-        customerName={selectedCustomer?.user?.name}
-        customerEmail={selectedCustomer?.user?.email ?? undefined}
-        customerPhone={selectedCustomer?.phoneNumber ?? undefined}
-        isOpen={selectedCustomerId !== null}
-        onClose={handleCloseSheet}
-      />
     </div>
   );
 }

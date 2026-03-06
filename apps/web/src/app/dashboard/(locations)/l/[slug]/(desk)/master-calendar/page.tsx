@@ -19,6 +19,14 @@ const MasterCalendarPage = async ({
     return forbidden();
   }
 
+  const isManagement =
+    session.role === "ORGANIZATION_MANAGEMENT" ||
+    session.role === "LOCATION_ADMIN";
+
+  if (!isManagement) {
+    return forbidden();
+  }
+
   return <MasterCalendar locationId={session.locationId} />;
 };
 

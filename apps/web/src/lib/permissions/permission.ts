@@ -11,7 +11,7 @@ import { forbidden, redirect } from "next/navigation";
 export const checkPermission = async (
   required: Permission[],
   params: Params
-) => {
+): Promise<boolean> => {
   try {
     const permissions = await serverTRPC.permissions.getPermission.fetch();
     if (!permissions) return false;
@@ -29,7 +29,7 @@ export const checkPermission = async (
       : true;
 
     return (
-      required.every((perm) => granted.includes(perm)) && hasAccessToLocation
+      required.every((perm) => granted.includes(perm)) && Boolean(hasAccessToLocation)
     );
   } catch (error) {
     console.error(error);
@@ -40,7 +40,7 @@ export const checkPermission = async (
 export const requirePermission = async (
   required: Permission[],
   params?: Params
-) => {
+): Promise<void> => {
   const hasPerm = await checkPermission(required, params ?? {});
   if (!hasPerm) {
     return forbidden();

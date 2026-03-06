@@ -164,6 +164,70 @@ const getLocation = withPermissions(
   return location;
 });
 
+const getLocationEmployees = withPermissions(
+  "READ::LOCATION",
+  z.object({ slug: z.string() })
+).query(async ({ ctx, input }) => {
+  const employeeAccess = ctx.session.user.employees?.find(
+    (emp) => emp.locationSlug === input.slug
+  );
+
+  if (!employeeAccess) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "You are not allowed to view employees for this location.",
+    });
+  }
+
+  const isManagement =
+    employeeAccess.role === "ORGANIZATION_MANAGEMENT" ||
+    employeeAccess.role === "LOCATION_ADMIN";
+
+  if (!isManagement) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Only management can view location employees.",
+    });
+  }
+
+  const location = await prisma.location.findFirst({
+    where: {
+      slug: input.slug,
+      organizationId: ctx.session.user.organizationId,
+    },
+    select: {
+      id: true,
+      employees: {
+        select: {
+          id: true,
+          role: true,
+          createdAt: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+    },
+  });
+
+  if (!location) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Location not found",
+    });
+  }
+
+  return location.employees;
+});
+
 const updateLocationOperatingHours = withPermissions(
   "UPDATE::LOCATION",
   z.object({
@@ -624,6 +688,7 @@ export const locationRouter = router({
   createLocation: createLocation,
   getAllLocations,
   getLocation,
+  getLocationEmployees,
   updateLocationOperatingHours,
   updateLocationTipSettings,
   fetchLocationAppointmentSettings,

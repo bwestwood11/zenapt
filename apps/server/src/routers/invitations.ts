@@ -1,6 +1,7 @@
 import { InvitationEmail } from "transactional/emails";
 import { publicProcedure, router, withPermissions } from "../lib/trpc";
 import { resend } from "../lib/resend";
+import { resolveRecipient } from "../lib/email/resolve-recipient";
 import { after } from "next/server";
 import prisma from "../../prisma";
 import { maskEmail, toSeconds } from "../lib/helpers/utils";
@@ -430,10 +431,7 @@ export const invitationRouter = router({
 
     await resend.emails.send({
       from: process.env.FROM_EMAIL || "support@zenapt.com",
-      to:
-        process.env.NODE_ENV === "development"
-          ? `delivered+${encodeURIComponent(email)}@resend.dev`
-          : email,
+      to: resolveRecipient(email),
       subject: "hello world",
       react: EmailHtml,
     });
@@ -621,10 +619,7 @@ export const invitationRouter = router({
 
     await resend.emails.send({
       from: process.env.FROM_EMAIL || "support@zenapt.com",
-      to:
-        process.env.NODE_ENV === "development"
-          ? `delivered+${encodeURIComponent(email)}@resend.dev`
-          : email,
+      to: resolveRecipient(email),
       subject: "hello world",
       react: EmailHtml,
     });

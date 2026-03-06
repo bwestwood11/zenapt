@@ -1,14 +1,12 @@
 import prisma from "../../../prisma";
-import { AppointmentBookedEmail } from "transactional/emails";
+import {
+  AppointmentBookedEmail,
+  AppointmentRescheduledEmail,
+} from "transactional/emails";
 import { resend } from "../resend";
+import { resolveRecipient } from "./resolve-recipient";
 
-const resolveRecipient = (email: string) => {
-  return process.env.NODE_ENV === "development"
-    ? `delivered+${encodeURIComponent(email)}@resend.dev`
-    : email;
-};
-
-export const sendAppointmentBookedEmail = async (appointmentId: string) => {
+const getAppointmentEmailContext = async (appointmentId: string) => {
   const appointment = await prisma.appointment.findUnique({
     where: { id: appointmentId },
     include: {
@@ -53,7 +51,7 @@ export const sendAppointmentBookedEmail = async (appointmentId: string) => {
 
   const customerEmail = appointment?.customer?.user?.email;
   if (!appointment || !customerEmail) {
-    return;
+    return null;
   }
 
   const timeZone = appointment.location.timeZone ?? "UTC";
@@ -68,6 +66,27 @@ export const sendAppointmentBookedEmail = async (appointmentId: string) => {
     timeZone,
   }).format(appointment.endTime);
 
+  return {
+    appointment,
+    customerEmail,
+    startTime,
+    endTime,
+    supportEmail:
+      appointment.location.email ||
+      process.env.FROM_EMAIL ||
+      "support@zenapt.com",
+  };
+};
+
+export const sendAppointmentBookedEmail = async (appointmentId: string) => {
+  const context = await getAppointmentEmailContext(appointmentId);
+  if (!context) {
+    return;
+  }
+
+  const { appointment, customerEmail, startTime, endTime, supportEmail } =
+    context;
+
   const EmailHtml = AppointmentBookedEmail({
     customerName: appointment.customer.user.name,
     organizationName: appointment.location.organization.name,
@@ -77,16 +96,44 @@ export const sendAppointmentBookedEmail = async (appointmentId: string) => {
     startTime,
     endTime,
     timeZone: appointment.location.timeZone ?? undefined,
-    supportEmail:
-      appointment.location.email ||
-      process.env.FROM_EMAIL ||
-      "support@zenapt.com",
+    supportEmail,
   });
 
   await resend.emails.send({
     from: process.env.FROM_EMAIL || "support@zenapt.com",
     to: resolveRecipient(customerEmail),
     subject: `Appointment booked at ${appointment.location.name}`,
+    react: EmailHtml,
+  });
+};
+
+export const sendAppointmentRescheduledEmail = async (
+  appointmentId: string,
+) => {
+  const context = await getAppointmentEmailContext(appointmentId);
+  if (!context) {
+    return;
+  }
+
+  const { appointment, customerEmail, startTime, endTime, supportEmail } =
+    context;
+
+  const EmailHtml = AppointmentRescheduledEmail({
+    customerName: appointment.customer.user.name,
+    organizationName: appointment.location.organization.name,
+    locationName: appointment.location.name,
+    serviceNames: appointment.service.map((item) => item.serviceTerms.name),
+    addOnNames: appointment.addOns.map((item) => item.name),
+    startTime,
+    endTime,
+    timeZone: appointment.location.timeZone ?? undefined,
+    supportEmail,
+  });
+
+  await resend.emails.send({
+    from: process.env.FROM_EMAIL || "support@zenapt.com",
+    to: resolveRecipient(customerEmail),
+    subject: `Appointment rescheduled at ${appointment.location.name}`,
     react: EmailHtml,
   });
 };

@@ -638,6 +638,7 @@ export function EmployeeDayCalendar({
         locationId,
         newEndTime: res.newEndTime,
         newStartTime: res.newStartTime,
+        sendConfirmationEmail: res.sendConfirmationEmail,
       });
 
       update(sourceEmployee, targetEmployee, drag.id, {

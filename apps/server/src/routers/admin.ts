@@ -8,6 +8,7 @@ import { cookies } from "next/headers";
 import bcrypt from "bcrypt";
 import { createInvitationToken, INVITATION_TYPE } from "../lib/invitationToken";
 import { resend } from "../lib/resend";
+import { resolveRecipient } from "../lib/email/resolve-recipient";
 import { toSeconds } from "../lib/helpers/utils";
 import { OrgRole } from "../../prisma/generated/enums";
 
@@ -97,10 +98,7 @@ const inviteUser = adminProcedure
     try {
       const { data, error } = await resend.emails.send({
         from: "Acme <onboarding@resend.dev>",
-        to:
-          process.env.NODE_ENV === "development"
-            ? ["delivered@resend.dev"]
-            : [input.email],
+        to: resolveRecipient(input.email),
         subject: "Hello world",
         html: `<strong>It works!</strong> <a href="${url}">Sign Up Here</a>`,
       });

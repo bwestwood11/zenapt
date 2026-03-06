@@ -28,9 +28,9 @@ import { forbidden } from "next/navigation";
 
 export default async function LocationSettingsPage({
   params,
-}: {
+}: Readonly<{
   params: Promise<{ slug: string }>;
-}) {
+}>) {
   const { slug } = await params;
 
   if (!slug) {
@@ -39,6 +39,14 @@ export default async function LocationSettingsPage({
 
   const locId = await getLocationAccess(slug);
   if (!locId) {
+    return forbidden();
+  }
+
+  const isManagement =
+    locId.role === "ORGANIZATION_MANAGEMENT" ||
+    locId.role === "LOCATION_ADMIN";
+
+  if (!isManagement) {
     return forbidden();
   }
   return (

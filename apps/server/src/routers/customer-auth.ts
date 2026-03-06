@@ -6,6 +6,7 @@ import { z } from "zod";
 import prisma from "../../prisma";
 import { stripe } from "../lib/stripe/server-stripe";
 import { resend } from "../lib/resend";
+import { resolveRecipient } from "../lib/email/resolve-recipient";
 import {
   CUSTOMER_ACCESS_COOKIE,
   CUSTOMER_REFRESH_COOKIE,
@@ -94,10 +95,7 @@ const sendCustomerOtpEmail = async (input: {
 
   await resend.emails.send({
     from: process.env.FROM_EMAIL || "support@zenapt.com",
-    to:
-      process.env.NODE_ENV === "development"
-        ? `delivered+${encodeURIComponent(email)}@resend.dev`
-        : email,
+    to: resolveRecipient(email),
     subject: `${organizationName} verification code`,
     text: `Your ${organizationName} verification code is ${otpCode}. It expires in ${expiresInMinutes} minutes.`,
   });

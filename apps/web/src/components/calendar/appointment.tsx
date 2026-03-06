@@ -137,7 +137,7 @@ export function Appointment({
   const queryClient = useQueryClient();
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
-    disabled: status !== "SCHEDULED",
+    disabled: status !== "SCHEDULED" && status !== "RESCHEDULED",
     data: {
       id,
       empId: employeeId,

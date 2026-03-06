@@ -14,7 +14,10 @@ import {
   getAvailableTimings,
   isEditConflictFastFail,
 } from "../lib/appointment/appointment";
-import { sendAppointmentBookedEmail } from "../lib/email/appointment";
+import {
+  sendAppointmentBookedEmail,
+  sendAppointmentRescheduledEmail,
+} from "../lib/email/appointment";
 import { after } from "next/server";
 import { stripe } from "../lib/stripe/server-stripe";
 import Stripe from "stripe";
@@ -679,6 +682,7 @@ export const appointmentRouter = router({
         appointmentId: z.string(),
         newStartTime: z.date(),
         newEndTime: z.date(),
+        sendConfirmationEmail: z.boolean().optional(),
       }),
     )
     .mutation(async ({ input }) => {
@@ -688,6 +692,7 @@ export const appointmentRouter = router({
         locationId,
         newStartTime,
         newEndTime,
+        sendConfirmationEmail,
       } = input;
 
       // Validate that times are in 5-minute intervals
@@ -697,21 +702,23 @@ export const appointmentRouter = router({
       ) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Appointment times must be in 15-minute intervals",
+          message: "Appointment times must be in 5-minute intervals",
         });
       }
 
-      if (newStartTime.getTime() > newEndTime.getTime()) {
+      if (newStartTime.getTime() >= newEndTime.getTime()) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Start time cannot be greater than End time",
+          message: "Start time must be before end time",
         });
       }
 
       // Fetch the appointment
       const appointment = await prisma.appointment.findUnique({
         where: { id: input.appointmentId },
-        include: {
+        select: {
+          locationId: true,
+          status: true,
           service: {
             select: { id: true, serviceTerms: { select: { id: true } } },
           },
@@ -728,11 +735,30 @@ export const appointmentRouter = router({
         });
       }
 
+      if (appointment.locationId !== locationId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Appointment does not belong to the provided location",
+        });
+      }
+
+      if (
+        appointment.status !== "SCHEDULED" &&
+        appointment.status !== "RESCHEDULED"
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only scheduled appointments can be rescheduled",
+        });
+      }
+
       const newServices = await prisma.employeeService.findMany({
         where: {
           serviceTerms: {
             id: { in: appointment.service.map((a) => a.serviceTerms.id) },
           },
+          locationId,
+          isActive: true,
           locationEmployeeId: locationEmployeeId,
         },
         select: {
@@ -808,12 +834,27 @@ export const appointmentRouter = router({
           endTime: newEndTime,
           bufferTime: maxBufferTime,
           prepTime: maxPrepTime,
+          status: "RESCHEDULED",
           service: {
             disconnect: appointment.service.map((s) => ({ id: s.id })),
             connect: newServices.map((s) => ({ id: s.id })),
           },
         },
       });
+
+      if (sendConfirmationEmail) {
+        after(async () => {
+          try {
+            await sendAppointmentRescheduledEmail(appointmentId);
+          } catch (error) {
+            console.error(
+              "[appointment.updateAppointmentTiming] Failed to send appointment reschedule email",
+              error,
+            );
+          }
+        });
+      }
+
       return {
         success: true,
         employeeId: locationEmployeeId,
@@ -897,6 +938,23 @@ export const appointmentRouter = router({
         });
       }
 
+      if (appointment.locationId !== locationId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Appointment does not belong to the provided location",
+        });
+      }
+
+      if (
+        appointment.status !== "SCHEDULED" &&
+        appointment.status !== "RESCHEDULED"
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only scheduled appointments can be rescheduled",
+        });
+      }
+
       let estimatedEndTime = proposedEndTime;
 
       let maxBufferTime = appointment.bufferTime;
@@ -908,6 +966,8 @@ export const appointmentRouter = router({
             serviceTerms: {
               id: { in: appointment.service.map((a) => a.serviceTerms.id) },
             },
+            locationId,
+            isActive: true,
             locationEmployeeId: locationEmployeeId,
           },
           select: {
