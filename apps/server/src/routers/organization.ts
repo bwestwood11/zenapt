@@ -14,6 +14,7 @@ import {
 import { deleteFile } from "../lib/s3/commands";
 import { revalidateTag } from "next/cache";
 import { stripe } from "../lib/stripe/server-stripe";
+import { ACTIVITY_LOG_ACTIONS, addActivityLog } from "../lib/activitylogs";
 
 const promoCodeInputSchema = z.object({
   code: z
@@ -106,6 +107,13 @@ export const organizationRouter = router({
           },
         });
 
+        addActivityLog({
+          type: ACTIVITY_LOG_ACTIONS.CREATED_ORGANIZATION,
+          description: `Organization ${organization.name} was created.`,
+          userId: ctx.session.user.id,
+          organizationId: organization.id,
+        });
+
         return organization;
       } catch (error) {
         // Cleanup
@@ -150,6 +158,13 @@ export const organizationRouter = router({
             companySize,
             logo,
           },
+        });
+
+        addActivityLog({
+          type: ACTIVITY_LOG_ACTIONS.UPDATED_ORGANIZATION,
+          description: `Organization profile was updated to ${businessName}.`,
+          userId: ctx.session.user.id,
+          organizationId: ctx.orgWithSub.id,
         });
 
         revalidateTag(ctx.orgWithSub.id);
@@ -383,6 +398,13 @@ export const organizationRouter = router({
         where: {
           id: userId,
         },
+      });
+
+      addActivityLog({
+        type: ACTIVITY_LOG_ACTIONS.REMOVED_ORGANIZATION_MEMBER,
+        description: `Organization member ${userToRemove.email} was removed.`,
+        userId: ctx.session.user.id,
+        organizationId: ctx.orgWithSub.id,
       });
 
       revalidateTag(ctx.orgWithSub.id);

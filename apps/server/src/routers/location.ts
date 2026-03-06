@@ -10,6 +10,7 @@ import {
   updateWeeklySchedule,
 } from "../lib/locations/operating-hours";
 import { ExceptionService } from "../lib/appointment/holidays";
+import { ACTIVITY_LOG_ACTIONS, addActivityLog } from "../lib/activitylogs";
 
 const locationPromoCodeSchema = z.object({
   locationId: z.string(),
@@ -112,7 +113,15 @@ const createLocation = withPermissions(
     });
   }
 
-  await revalidateTag(ctx.orgWithSub.id);
+  revalidateTag(ctx.orgWithSub.id);
+
+  addActivityLog({
+    type: ACTIVITY_LOG_ACTIONS.CREATED_LOCATION,
+    description: `Location ${createdLocation.name} was created.`,
+    userId: ctx.session.user.id,
+    organizationId: ctx.orgWithSub.id,
+    locationId: createdLocation.id,
+  });
 
   return {
     id: createdLocation.id,
@@ -248,7 +257,7 @@ const updateLocationOperatingHours = withPermissions(
       })
     ),
   })
-).mutation(async ({ input }) => {
+).mutation(async ({ ctx, input }) => {
   const {
     locationId,
     rules,
@@ -292,6 +301,19 @@ const updateLocationOperatingHours = withPermissions(
         cancellationDuration,
       }),
     },
+  });
+
+  const location = await prisma.location.findUnique({
+    where: { id: locationId },
+    select: { name: true, organizationId: true },
+  });
+
+  addActivityLog({
+    type: ACTIVITY_LOG_ACTIONS.UPDATED_LOCATION_OPERATING_HOURS,
+    description: `Operating hours were updated for location ${location?.name ?? locationId}.`,
+    userId: ctx.session.user.id,
+    organizationId: location?.organizationId ?? ctx.session.user.organizationId,
+    locationId,
   });
 });
 

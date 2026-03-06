@@ -42,6 +42,13 @@ const createServiceTerms = withPermissions(
       serviceGroupId: groupId,
     },
   });
+
+  addActivityLog({
+    type: ACTIVITY_LOG_ACTIONS.CREATED_SERVICE_TERM,
+    description: `Service term ${name} was created.`,
+    userId: ctx.session.user.id,
+    organizationId: ctx.orgWithSub.id,
+  });
 });
 
 const createServiceGroup = withPermissions(
@@ -81,6 +88,12 @@ const createService = withPermissions(
   }),
 ).mutation(async ({ ctx, input }) => {
   const { duration, price, termId, locationEmployeeId } = input;
+
+  const serviceTerm = await prisma.serviceTerms.findUnique({
+    where: { id: termId },
+    select: { name: true },
+  });
+
   await prisma.employeeService.create({
     data: {
       duration,
@@ -89,6 +102,14 @@ const createService = withPermissions(
       locationId: input.locationId,
       locationEmployeeId,
     },
+  });
+
+  addActivityLog({
+    type: ACTIVITY_LOG_ACTIONS.CREATED_SERVICE,
+    description: `Service ${serviceTerm?.name ?? termId} was created for an employee.`,
+    userId: ctx.session.user.id,
+    organizationId: ctx.orgWithSub.id,
+    locationId: input.locationId,
   });
 });
 
@@ -342,7 +363,7 @@ const createMyService = withPermissions(
     );
   }
 
-  return await prisma.employeeService.create({
+  const createdService = await prisma.employeeService.create({
     data: {
       serviceId: serviceTermId,
       locationEmployeeId: locationEmployee.id,
@@ -366,6 +387,16 @@ const createMyService = withPermissions(
       },
     },
   });
+
+  addActivityLog({
+    type: ACTIVITY_LOG_ACTIONS.CREATED_MY_SERVICE,
+    description: `Service ${createdService.serviceTerms.name} was added to specialist offerings.`,
+    userId: ctx.session.user.id,
+    organizationId: ctx.orgWithSub.id,
+    locationId,
+  });
+
+  return createdService;
 });
 
 const updateMyService = withPermissions(
@@ -421,7 +452,7 @@ const updateMyService = withPermissions(
     );
   }
 
-  return await prisma.employeeService.update({
+  const updatedService = await prisma.employeeService.update({
     where: {
       id: serviceId,
     },
@@ -447,6 +478,16 @@ const updateMyService = withPermissions(
       },
     },
   });
+
+  addActivityLog({
+    type: ACTIVITY_LOG_ACTIONS.UPDATED_MY_SERVICE,
+    description: `Service ${updatedService.serviceTerms.name} was updated by specialist.`,
+    userId: ctx.session.user.id,
+    organizationId: ctx.orgWithSub.id,
+    locationId,
+  });
+
+  return updatedService;
 });
 
 export const servicesRouter = {

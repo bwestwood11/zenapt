@@ -66,7 +66,7 @@ export function ActivityLog() {
   const [selectedUser, setSelectedUser] = useState<string>("all");
   const [selectedAction, setSelectedAction] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 15;
 
   const {
     data: paginatedPage,

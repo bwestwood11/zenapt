@@ -26,6 +26,7 @@ import {
   resolveActivePromoCode,
 } from "../lib/payments/promo";
 import { zonedDateTimeToUtc } from "../lib/datetime/timezone";
+import { ACTIVITY_LOG_ACTIONS, addActivityLog } from "../lib/activitylogs";
 
 const CHARGEABLE_PAYMENT_TYPES = ["DOWNPAYMENT", "BALANCE", "CANCELLATION"] as const;
 
@@ -400,6 +401,11 @@ export const appointmentRouter = router({
           id: true,
           locationId: true,
           status: true,
+          location: {
+            select: {
+              organizationId: true,
+            },
+          },
           service: {
             select: {
               locationEmployeeId: true,
@@ -460,6 +466,14 @@ export const appointmentRouter = router({
           paymentStatus: true,
           updatedAt: true,
         },
+      });
+
+      addActivityLog({
+        type: ACTIVITY_LOG_ACTIONS.UPDATED_APPOINTMENT_STATUS,
+        description: `Appointment ${appointment.id} status changed from ${appointment.status} to ${input.status}.`,
+        userId: ctx.session.user.id,
+        organizationId: appointment.location.organizationId,
+        locationId: appointment.locationId,
       });
 
       return {
@@ -685,7 +699,7 @@ export const appointmentRouter = router({
         sendConfirmationEmail: z.boolean().optional(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const {
         appointmentId,
         locationEmployeeId,
@@ -717,8 +731,14 @@ export const appointmentRouter = router({
       const appointment = await prisma.appointment.findUnique({
         where: { id: input.appointmentId },
         select: {
+          id: true,
           locationId: true,
           status: true,
+          location: {
+            select: {
+              organizationId: true,
+            },
+          },
           service: {
             select: { id: true, serviceTerms: { select: { id: true } } },
           },
@@ -840,6 +860,14 @@ export const appointmentRouter = router({
             connect: newServices.map((s) => ({ id: s.id })),
           },
         },
+      });
+
+      addActivityLog({
+        type: ACTIVITY_LOG_ACTIONS.RESCHEDULED_APPOINTMENT,
+        description: `Appointment ${appointment.id} was rescheduled to ${newStartTime.toISOString()}.`,
+        userId: ctx.session.user.id,
+        organizationId: appointment.location.organizationId,
+        locationId,
       });
 
       if (sendConfirmationEmail) {
@@ -1334,7 +1362,7 @@ export const appointmentRouter = router({
         appointmentId: z.string(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const appointment = await prisma.appointment.findUnique({
         where: { id: input.appointmentId },
         select: {
@@ -1462,7 +1490,7 @@ export const appointmentRouter = router({
         setupIntentId: z.string().min(1),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const appointment = await prisma.appointment.findUnique({
         where: { id: input.appointmentId },
         select: {
@@ -1919,7 +1947,7 @@ export const appointmentRouter = router({
         endTime: z.date(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const {
         locationId,
         locationEmployeeId,
@@ -2091,6 +2119,14 @@ export const appointmentRouter = router({
           },
           addOns: true,
         },
+      });
+
+      addActivityLog({
+        type: ACTIVITY_LOG_ACTIONS.CREATED_APPOINTMENT,
+        description: `Appointment ${appointment.id} was created for customer ${customerId}.`,
+        userId: ctx.session.user.id,
+        organizationId: ctx.orgWithSub.id,
+        locationId,
       });
 
       after(async () => {
