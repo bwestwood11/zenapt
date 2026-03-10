@@ -1,9 +1,7 @@
 import prisma from "../../prisma";
 import { Prisma } from "../../prisma/generated/client";
-import { protectedProcedure, router, withPermissions } from "../lib/trpc";
+import { router, withPermissions } from "../lib/trpc";
 import { z } from "zod";
-import { TRPCError } from "@trpc/server";
-import { canAccess, getUserAccessContext } from "../lib/subscription/permissions";
 
 const getAllCustomers = withPermissions("READ::CUSTOMERS")
   .input(
@@ -280,7 +278,7 @@ const getCustomerAnalytics = withPermissions("READ::CUSTOMERS")
     };
   });
 
-const getSpecialistCustomers = protectedProcedure
+const getSpecialistCustomers = withPermissions(["READ::APPOINTMENTS"])
   .input(
     z.object({
       page: z.number().int().positive().default(1),
@@ -292,31 +290,6 @@ const getSpecialistCustomers = protectedProcedure
   .query(async ({ ctx, input }) => {
     const { page, limit, search, locationId } = input;
     const skip = (page - 1) * limit;
-
-    const organizationId = ctx.session.user.organizationId;
-    if (!organizationId) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "User is not associated with an organization",
-      });
-    }
-
-    const accessContext = await getUserAccessContext(ctx.session.user.id);
-    const hasPermission = canAccess(
-      accessContext,
-      ["READ::APPOINTMENTS"],
-      {
-        organizationId,
-        locationId,
-      },
-    );
-
-    if (!hasPermission) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Insufficient permissions to view customers",
-      });
-    }
 
     const employeeAssignments = await prisma.locationEmployee.findMany({
       where: {
@@ -451,7 +424,7 @@ const getSpecialistCustomers = protectedProcedure
     };
   });
 
-const getSpecialistCustomerDetails = protectedProcedure
+const getSpecialistCustomerDetails = withPermissions(["READ::APPOINTMENTS"])
   .input(
     z.object({
       customerId: z.string(),
@@ -460,27 +433,6 @@ const getSpecialistCustomerDetails = protectedProcedure
   )
   .query(async ({ ctx, input }) => {
     const { customerId, locationId } = input;
-
-    const organizationId = ctx.session.user.organizationId;
-    if (!organizationId) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "User is not associated with an organization",
-      });
-    }
-
-    const accessContext = await getUserAccessContext(ctx.session.user.id);
-    const hasPermission = canAccess(accessContext, ["READ::APPOINTMENTS"], {
-      organizationId,
-      locationId,
-    });
-
-    if (!hasPermission) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Insufficient permissions to view customer details",
-      });
-    }
 
     const employeeAssignments = await prisma.locationEmployee.findMany({
       where: {
@@ -532,7 +484,7 @@ const getSpecialistCustomerDetails = protectedProcedure
     return customer;
   });
 
-const getSpecialistCustomerAnalytics = protectedProcedure
+const getSpecialistCustomerAnalytics = withPermissions(["READ::APPOINTMENTS"])
   .input(
     z.object({
       customerId: z.string(),
@@ -541,27 +493,6 @@ const getSpecialistCustomerAnalytics = protectedProcedure
   )
   .query(async ({ ctx, input }) => {
     const { customerId, locationId } = input;
-
-    const organizationId = ctx.session.user.organizationId;
-    if (!organizationId) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "User is not associated with an organization",
-      });
-    }
-
-    const accessContext = await getUserAccessContext(ctx.session.user.id);
-    const hasPermission = canAccess(accessContext, ["READ::APPOINTMENTS"], {
-      organizationId,
-      locationId,
-    });
-
-    if (!hasPermission) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Insufficient permissions to view customer analytics",
-      });
-    }
 
     const employeeAssignments = await prisma.locationEmployee.findMany({
       where: {

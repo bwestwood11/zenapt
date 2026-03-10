@@ -57,17 +57,18 @@ export type RolePermission = {
   LOCATION: Record<LocationRole, Permission[]>;
 };
 
+const buildPermission = (action: Action, feature: Feature): Permission =>
+  `${action}::${feature}`;
+
 const addFeature = (feature: Feature, actions?: Action[]): Permission[] => {
-  if (!actions) return ACTIONS.map((a) => `${a}::${feature}` as Permission);
-  return actions.map((a) => `${a}::${feature}` as Permission);
+  if (!actions) return ACTIONS.map((a) => buildPermission(a, feature));
+  return actions.map((a) => buildPermission(a, feature));
 };
 
 /* ---------- Role → Permissions Map ---------- */
 export const ROLE_PERMISSIONS: RolePermission = {
   ORG: {
-    OWNER: ACTIONS.flatMap((a) =>
-      FEATURES.map((f) => `${a}::${f}` as Permission),
-    ),
+    OWNER: ACTIONS.flatMap((a) => FEATURES.map((f) => buildPermission(a, f))),
     ADMIN: [
       ...addFeature("SERVICES_GROUP"),
       ...addFeature("SERVICES_TERMS"),
@@ -102,10 +103,11 @@ export const ROLE_PERMISSIONS: RolePermission = {
       "READ::EMPLOYEES",
       "READ::SERVICE",
       "READ::MASTER_CALENDAR",
-      "READ::APPOINTMENTS",
       "CREATE::SERVICE",
       "UPDATE::SERVICE",
       "READ::SERVICES_TERMS",
+      "READ::APPOINTMENTS",
+      "UPDATE::APPOINTMENTS"
     ],
     ORGANIZATION_MANAGEMENT: [
       "READ::LOCATION",
@@ -168,25 +170,21 @@ export function canAccess(
   target: { organizationId?: string; locationId?: string },
 ): boolean {
   const { organizationId, locationId } = target;
-  // Helper
-  const hasPerms = (perms?: Permission[]) =>
-    required.every((perm) => perms?.includes(perm));
 
-  let granted: Permission[] = [];
-
-  if (!organizationId) {
+  if (!organizationId && !locationId) {
     return false;
   }
-  // 1️⃣ Org-level (optional for location-only users)
-  if (organizationId) {
-    const orgRoles = ctx.orgRoles[organizationId];
 
-    if (orgRoles && orgRoles.length > 0) {
-      for (const role of orgRoles) {
-        granted = granted.concat(ROLE_PERMISSIONS.ORG[role] || []);
-      }
-    }
-  }
+  const granted = new Set<Permission>();
+
+  const addPermissions = (permissions: Permission[]) => {
+    permissions.forEach((permission) => granted.add(permission));
+  };
+
+  const orgRoles = organizationId ? ctx.orgRoles[organizationId] : undefined;
+  orgRoles?.forEach((role) => {
+    addPermissions(ROLE_PERMISSIONS.ORG[role] || []);
+  });
 
   // 2️⃣ Location-level
   if (locationId) {
@@ -197,11 +195,11 @@ export function canAccess(
       return false;
     }
 
-    for (const role of locRoles) {
-      granted = granted.concat(ROLE_PERMISSIONS.LOCATION[role] || []);
-    }
+    locRoles.forEach((role) => {
+      addPermissions(ROLE_PERMISSIONS.LOCATION[role] || []);
+    });
   }
 
   // 3️⃣ Check combined perms
-  return hasPerms(granted);
+  return required.every((permission) => granted.has(permission));
 }

@@ -2,8 +2,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import type { Context } from "./context";
 import superjson from "superjson";
 import jwt from "jsonwebtoken";
-import type { AdminJWTPayload } from "./types";
-import type { CustomerJWTPayload } from "./types";
+import type { AdminJWTPayload, CustomerJWTPayload } from "./types";
 import { CUSTOMER_ACCESS_COOKIE, verifyCustomerToken } from "./customer-auth";
 import {
   canAccess,
@@ -202,10 +201,7 @@ export const premiumProcedure = protectedProcedure.use(
       ctx.session.user.organizationId,
     );
 
-    if (
-      !orgWithSub ||
-      !orgWithSub.orgWithSub?.subscription?.stripeSubscriptionId
-    ) {
+    if (!orgWithSub?.orgWithSub?.subscription?.stripeSubscriptionId) {
       throw new TRPCError({
         code: "FORBIDDEN",
         message: "No organization associated with user",
@@ -233,10 +229,115 @@ export const premiumProcedure = protectedProcedure.use(
   },
 );
 
+const resolveAuthorizedLocationScope = ({
+  user,
+  input,
+  request,
+}: {
+  user: NonNullable<Context["session"]>["user"];
+  input: unknown;
+  request: Context["req"];
+}) => {
+  const denyLocation = () => {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Location access denied",
+    });
+  };
+
+  const denyMismatch = () => {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Location scope mismatch",
+    });
+  };
+
+  const assertAllowedLocation = (
+    locationId: string | undefined,
+    assignedLocationIds: Set<string>,
+  ) => {
+    if (locationId && !assignedLocationIds.has(locationId)) {
+      denyLocation();
+    }
+  };
+
+  const assertNoMismatch = (a?: string, b?: string) => {
+    if (a && b && a !== b) {
+      denyMismatch();
+    }
+  };
+
+  const betterInput = input ?? {};
+  const requestedLocationId =
+    typeof betterInput === "object" &&
+    "locationId" in betterInput &&
+    typeof betterInput?.locationId === "string"
+      ? betterInput.locationId
+      : undefined;
+
+  const inputSlug =
+    typeof betterInput === "object" &&
+    "slug" in betterInput &&
+    typeof betterInput?.slug === "string"
+      ? betterInput.slug
+      : undefined;
+
+  const headerLocationSlug = request?.headers.get("x-location-slug") ?? undefined;
+  const headerLocationId = request?.headers.get("x-location-id") ?? undefined;
+
+  const refererHeader = request?.headers.get("referer") ?? undefined;
+  const slugFromReferer = (() => {
+    if (!refererHeader) {
+      return undefined;
+    }
+
+    try {
+      const refererUrl = new URL(refererHeader);
+      const locationSlugPattern = /^\/dashboard\/l\/([^/]+)/;
+      const match = locationSlugPattern.exec(refererUrl.pathname);
+      return match?.[1] ? decodeURIComponent(match[1]) : undefined;
+    } catch {
+      return undefined;
+    }
+  })();
+
+  const resolvedSlug = inputSlug ?? headerLocationSlug ?? slugFromReferer;
+
+  const locationIdFromSlug = resolvedSlug
+    ? user.employees?.find((emp) => emp.locationSlug === resolvedSlug)
+        ?.locationId
+    : undefined;
+
+  const assignedLocationIds = new Set(
+    (user.employees ?? []).map((employee) => employee.locationId),
+  );
+
+  assertAllowedLocation(requestedLocationId, assignedLocationIds);
+  assertAllowedLocation(headerLocationId, assignedLocationIds);
+
+  if (resolvedSlug && !locationIdFromSlug) {
+    denyLocation();
+  }
+
+  assertNoMismatch(requestedLocationId, locationIdFromSlug);
+  assertNoMismatch(requestedLocationId, headerLocationId);
+  assertNoMismatch(locationIdFromSlug, headerLocationId);
+
+  return {
+    requestedLocationId,
+    headerLocationSlug,
+    headerLocationId,
+    inputSlug,
+    resolvedSlug,
+    locationIdFromSlug,
+    resolvedLocationId: requestedLocationId ?? locationIdFromSlug ?? headerLocationId,
+  };
+};
+
 export const permissionMiddleware = t.middleware(
   async ({ ctx, meta, input, next }) => {
     const user = ctx.session?.user;
-    if (!user || !user.organizationId) {
+    if (!user) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     
@@ -262,36 +363,33 @@ export const permissionMiddleware = t.middleware(
     console.log("Required permissions for this route:", requiredPermissions);
 
     const accessCtx = await getUserAccessContext(user.id);
-
-    const betterInput = input ?? {};
-    const locationId =
-      typeof betterInput === "object" &&
-      "locationId" in betterInput &&
-      typeof betterInput?.locationId === "string"
-        ? betterInput.locationId
-        : undefined;
-
-    const slug =
-      typeof betterInput === "object" &&
-      "slug" in betterInput &&
-      typeof betterInput?.slug === "string"
-        ? betterInput.slug
-        : undefined;
-
-    const locationIdFromSlug = slug
-      ? user.employees?.find((emp) => emp.locationSlug === slug)?.locationId
-      : undefined;
+    const {
+      requestedLocationId,
+      headerLocationSlug,
+      headerLocationId,
+      inputSlug,
+      resolvedSlug,
+      locationIdFromSlug,
+      resolvedLocationId,
+    } = resolveAuthorizedLocationScope({ user, input, request: ctx.req });
 
     console.log("Checking permissions for user:", user.id, {
       requiredPermissions,
-      locationId,
-      slug,
+      requestedLocationId,
+      headerLocationSlug,
+      headerLocationId,
+      inputSlug,
+      resolvedSlug,
       locationIdFromSlug,
+      resolvedLocationId,
     });
     
     const ok = canAccess(accessCtx, requiredPermissions, {
-      organizationId: user.organizationId,
-      locationId: locationId ?? locationIdFromSlug,
+      organizationId:
+        typeof user.organizationId === "string"
+          ? user.organizationId
+          : undefined,
+      locationId: resolvedLocationId,
     });
 
     if (!ok) {
