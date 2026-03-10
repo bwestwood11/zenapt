@@ -13,6 +13,7 @@ import { useOrganization } from "./hooks/useOrganization";
 import { useCustomerSession } from "./hooks/useCustomerSession";
 import { useMutation } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
+import { ThemeToggleOptions } from "../theme-toggle-options";
 
 type UserType = "customer" | "guest" | "unauthorized";
 
@@ -166,7 +167,16 @@ const Header = () => {
                     </div>
                   </div>
                 </div>
-                <div className="border-t border-border/60 p-3">
+                <div className="border-t border-border/60 p-3 space-y-3">
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      Theme
+                    </p>
+                    <ThemeToggleOptions
+                      className="grid grid-cols-3 gap-2"
+                      buttonClassName="w-full justify-center"
+                    />
+                  </div>
                   <div className="grid grid-cols-1 gap-2">
                     <Button
                       asChild

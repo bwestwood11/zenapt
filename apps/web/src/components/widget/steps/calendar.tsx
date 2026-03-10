@@ -126,12 +126,12 @@ const CalendarPage = () => {
               Available Times
             </h3>
             <p className="text-sidebar-foreground/60 text-sm">
-              Local date: {formatDateInTimeZone(selectedDate, localTimeZone)}
+              Location date: {formatDateInTimeZone(selectedDate, effectiveLocationTimeZone)}
             </p>
             {formatDateInTimeZone(selectedDate, localTimeZone) !==
               formatDateInTimeZone(selectedDate, effectiveLocationTimeZone) && (
               <p className="text-sidebar-foreground/60 text-xs">
-                Location date: {formatDateInTimeZone(selectedDate, effectiveLocationTimeZone)}
+                Your local date: {formatDateInTimeZone(selectedDate, localTimeZone)}
               </p>
             )}
 
@@ -176,7 +176,11 @@ const CalendarPage = () => {
                         )}
                       >
                         <span className="block leading-tight">
-                          {formatTimeRangeInTimeZone(time.start, time.end, localTimeZone)}
+                          {formatTimeRangeInTimeZone(
+                            time.start,
+                            time.end,
+                            effectiveLocationTimeZone,
+                          )}
                         </span>
                         {shouldShowLocationTime(
                           time.start,
@@ -185,11 +189,7 @@ const CalendarPage = () => {
                           effectiveLocationTimeZone,
                         ) && (
                           <span className="block text-[11px] opacity-80 leading-tight mt-0.5">
-                            {formatTimeRangeInTimeZone(
-                              time.start,
-                              time.end,
-                              effectiveLocationTimeZone,
-                            )}
+                            Your local time: {formatTimeRangeInTimeZone(time.start, time.end, localTimeZone)}
                           </span>
                         )}
                       </motion.button>
@@ -219,20 +219,20 @@ const CalendarPage = () => {
                   Selected Appointment
                 </p>
                 <p className="text-accent-foreground text-base font-semibold">
-                  Local: {formatDateInTimeZone(selectedDate, localTimeZone)} at{" "}
+                  Location time: {formatDateInTimeZone(selectedDate, effectiveLocationTimeZone)} at{" "}
                   {formatTimeRangeInTimeZone(
                     selectedTimeRange.start,
                     selectedTimeRange.end,
-                    localTimeZone,
+                    effectiveLocationTimeZone,
                   )}
                 </p>
                 {showLocationDateTime && (
                   <p className="text-accent-foreground/70 text-sm mt-1">
-                    Location: {formatDateInTimeZone(selectedDate, effectiveLocationTimeZone)} at{" "}
+                    Your local time: {formatDateInTimeZone(selectedDate, localTimeZone)} at{" "}
                     {formatTimeRangeInTimeZone(
                       selectedTimeRange.start,
                       selectedTimeRange.end,
-                      effectiveLocationTimeZone,
+                      localTimeZone,
                     )}
                   </p>
                 )}

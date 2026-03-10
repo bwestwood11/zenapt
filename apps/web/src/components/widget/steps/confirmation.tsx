@@ -76,29 +76,29 @@ const ConfirmationPage = () => {
                     Date & Time
                   </p>
                   <p className="text-base font-semibold text-foreground">
-                    Local: {formatDateInTimeZone(new Date(appointmentTime.start), localTimeZone)}
+                    Location time: {formatDateInTimeZone(new Date(appointmentTime.start), effectiveLocationTimeZone)}
                     {showLocationDateTime && (
                       <>
                         <br />
-                        Location: {formatDateInTimeZone(new Date(appointmentTime.start), effectiveLocationTimeZone)}
+                        Your local time: {formatDateInTimeZone(new Date(appointmentTime.start), localTimeZone)}
                       </>
                     )}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
                     <Clock className="h-4 w-4 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">
-                      Local: {formatTimeRangeInTimeZone(
+                      Location time: {formatTimeRangeInTimeZone(
                         new Date(appointmentTime.start),
                         new Date(appointmentTime.end),
-                        localTimeZone,
+                        effectiveLocationTimeZone,
                       )}
                       {showLocationDateTime && (
                         <>
                           <br />
-                          Location: {formatTimeRangeInTimeZone(
+                          Your local time: {formatTimeRangeInTimeZone(
                             new Date(appointmentTime.start),
                             new Date(appointmentTime.end),
-                            effectiveLocationTimeZone,
+                            localTimeZone,
                           )}
                         </>
                       )}

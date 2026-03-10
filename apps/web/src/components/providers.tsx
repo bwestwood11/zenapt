@@ -9,7 +9,9 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ConfirmProvider } from "./ui/confirm";
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <ThemeProvider
       attribute="class"

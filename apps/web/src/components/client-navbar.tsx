@@ -108,7 +108,7 @@ export default function ClientNavbar() {
   const ActiveLabelIcon = isAdminDashboardActive ? Shield : MapPin;
   const dashboardSwitcherLabel = isAdminDashboardActive
     ? "Admin Dashboard"
-    : (activeLocation?.label ?? "Go to dashboard");
+    : (activeLocation?.label ?? "Dashboard");
 
   return (
     <header className="border-b px-4 ">

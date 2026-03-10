@@ -6,6 +6,8 @@ import { authClient } from "@/lib/auth-client";
 import { ProfileImageSection } from "./profile-image-section";
 import { PersonalInfoForm } from "./personal-information";
 import { AccountActions } from "./account-actions";
+import { Card } from "../ui/card";
+import { ThemeToggleOptions } from "../theme-toggle-options";
 
 // ---------------- AccountSettings -----------------
 export function AccountSettings() {
@@ -38,6 +40,20 @@ export function AccountSettings() {
         email={data.user.email}
         role={data.user.management.role}
       />
+      <Card className="p-6">
+        <div className="space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold">Appearance</h2>
+            <p className="text-sm text-muted-foreground">
+              Choose your preferred theme
+            </p>
+          </div>
+          <ThemeToggleOptions
+            className="grid grid-cols-1 gap-2 sm:grid-cols-3"
+            buttonClassName="w-full justify-center"
+          />
+        </div>
+      </Card>
       <AccountActions />
     </div>
   );

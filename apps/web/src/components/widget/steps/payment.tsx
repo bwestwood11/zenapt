@@ -576,11 +576,11 @@ const PaymentPage = () => {
                   <span className="text-muted-foreground">Time:</span>
                   <span className="font-medium text-foreground text-right">
                     <span className="block">
-                      Local: {formatShortDateTimeInTimeZone(appointmentTime.start, localTimeZone)}
+                      Location time: {formatShortDateTimeInTimeZone(appointmentTime.start, effectiveLocationTimeZone)}
                     </span>
                     {showLocationDateTime && (
                       <span className="block text-xs text-muted-foreground mt-0.5">
-                        Location: {formatShortDateTimeInTimeZone(appointmentTime.start, effectiveLocationTimeZone)}
+                        Your local time: {formatShortDateTimeInTimeZone(appointmentTime.start, localTimeZone)}
                       </span>
                     )}
                   </span>

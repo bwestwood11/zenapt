@@ -2,11 +2,15 @@
 
 import React, { useMemo } from "react";
 import { useCheckoutStore } from "../hooks/useStore";
-import { CalendarIcon, Clock, MapPin, User, DollarSign } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { CalendarIcon, Clock, User, DollarSign } from "lucide-react";
 import { useQueries } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { formatDuration } from "../utils/format-duration";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   formatDateInTimeZone,
   formatTimeRangeInTimeZone,
@@ -15,7 +19,6 @@ import {
 } from "../utils/timezone-display";
 
 const ReviewPage = () => {
-  const location = useCheckoutStore((s) => s.location);
   const locationTimeZone = useCheckoutStore((s) => s.locationTimeZone);
   const cart = useCheckoutStore((s) => s.cart);
   const appointmentTime = useCheckoutStore((s) => s.appointmentTime);
@@ -189,28 +192,26 @@ const ReviewPage = () => {
 
                 {/* Add-ons */}
                 {item.addons && item.addons.length > 0 && (
-                  <>
-                    <div className="pt-2 border-t border-sidebar-border/50">
-                      <p className="text-xs text-sidebar-foreground/60 mb-2">
-                        Enhancements ({item.addons.length})
-                      </p>
-                      {item.addons.map((addon) => (
-                        <div
-                          key={addon.id}
-                          className="flex items-center justify-between text-sm py-1"
-                        >
-                          <span className="text-sidebar-foreground/70 flex items-center gap-2">
-                            <span className="w-1 h-1 rounded-full bg-accent" />
-                            {addon.title || "Add-on"}
-                          </span>
-                          <span className="text-sidebar-foreground/70 text-xs">
-                            +${(addon.price / 100).toFixed(2)} •{" "}
-                            {formatDuration(addon.duration)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </>
+                  <div className="pt-2 border-t border-sidebar-border/50">
+                    <p className="text-xs text-sidebar-foreground/60 mb-2">
+                      Enhancements ({item.addons.length})
+                    </p>
+                    {item.addons.map((addon) => (
+                      <div
+                        key={addon.id}
+                        className="flex items-center justify-between text-sm py-1"
+                      >
+                        <span className="text-sidebar-foreground/70 flex items-center gap-2">
+                          <span className="w-1 h-1 rounded-full bg-accent" />
+                          {addon.title || "Add-on"}
+                        </span>
+                        <span className="text-sidebar-foreground/70 text-xs">
+                          +${(addon.price / 100).toFixed(2)} •{" "}
+                          {formatDuration(addon.duration)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
@@ -231,22 +232,28 @@ const ReviewPage = () => {
               <p className="text-accent-foreground font-medium">
                 {appointmentTime ? (
                   <>
-                    Local: {formatDateInTimeZone(appointmentTime.start, localTimeZone)} at{" "}
+                    Location time: {formatDateInTimeZone(appointmentTime.start, effectiveLocationTimeZone)} at{" "}
                     {formatTimeRangeInTimeZone(
                       appointmentTime.start,
                       appointmentTime.end,
-                      localTimeZone,
+                      effectiveLocationTimeZone,
                     )}
                     {showLocationDateTime && (
-                      <>
-                        <br />
-                        Location: {formatDateInTimeZone(appointmentTime.start, effectiveLocationTimeZone)} at{" "}
-                        {formatTimeRangeInTimeZone(
-                          appointmentTime.start,
-                          appointmentTime.end,
-                          effectiveLocationTimeZone,
-                        )}
-                      </>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="ml-2 cursor-help underline decoration-dotted underline-offset-2 text-accent-foreground/80">
+                            View your local time
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" sideOffset={6}>
+                          Your local time: {formatDateInTimeZone(appointmentTime.start, localTimeZone)} at{" "}
+                          {formatTimeRangeInTimeZone(
+                            appointmentTime.start,
+                            appointmentTime.end,
+                            localTimeZone,
+                          )}
+                        </TooltipContent>
+                      </Tooltip>
                     )}
                   </>
                 ) : (

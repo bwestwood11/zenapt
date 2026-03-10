@@ -3,7 +3,6 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -12,8 +11,9 @@ import { Button, buttonVariants } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { LogOut, Plus, Settings } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { ThemeToggleOptions } from "./theme-toggle-options";
 
 export default function UserMenu() {
   const router = useRouter();
@@ -103,6 +103,18 @@ export default function UserMenu() {
               Sign out
             </Button>
           </div>
+        </div>
+
+        <DropdownMenuSeparator className="" />
+
+        <div className="px-2 pb-2">
+          <p className="px-1 pb-2 text-xs font-medium text-muted-foreground">
+            Theme
+          </p>
+          <ThemeToggleOptions
+            className="grid grid-cols-3 gap-2"
+            buttonClassName="w-full justify-center"
+          />
         </div>
 
         <DropdownMenuSeparator className="" />
