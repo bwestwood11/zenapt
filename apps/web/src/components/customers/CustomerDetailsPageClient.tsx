@@ -27,6 +27,7 @@ type CustomerDetailsPageClientProps = {
   slug: string;
   customerId: string;
   locationId: string;
+  isSpecialist?: boolean;
 };
 
 const formatCurrency = (amount: number) => {
@@ -40,19 +41,34 @@ export default function CustomerDetailsPageClient({
   slug,
   customerId,
   locationId,
+  isSpecialist = false,
 }: Readonly<CustomerDetailsPageClientProps>) {
+  const detailsQueryOptions = isSpecialist
+    ? trpc.customers.getSpecialistCustomerDetails.queryOptions({
+        customerId,
+        locationId,
+      })
+    : trpc.customers.getCustomerDetails.queryOptions({
+        customerId,
+        locationId,
+      });
+
+  const analyticsQueryOptions = isSpecialist
+    ? trpc.customers.getSpecialistCustomerAnalytics.queryOptions({
+        customerId,
+        locationId,
+      })
+    : trpc.customers.getCustomerAnalytics.queryOptions({
+        customerId,
+        locationId,
+      });
+
   const { data: customerDetails } = useQuery(
-    trpc.customers.getCustomerDetails.queryOptions({
-      customerId,
-      locationId,
-    }),
+    detailsQueryOptions,
   );
 
   const { data: analytics } = useQuery(
-    trpc.customers.getCustomerAnalytics.queryOptions({
-      customerId,
-      locationId,
-    }),
+    analyticsQueryOptions,
   );
 
   if (!customerDetails) {

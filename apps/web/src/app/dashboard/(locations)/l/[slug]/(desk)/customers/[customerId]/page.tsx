@@ -6,6 +6,7 @@ const ALLOWED_ROLES = [
   "ORGANIZATION_MANAGEMENT",
   "LOCATION_ADMIN",
   "LOCATION_FRONT_DESK",
+  "LOCATION_SPECIALIST",
 ] as const;
 
 const isAllowedRole = (role: string) => {
@@ -39,6 +40,7 @@ export default async function CustomerDetailsPage({
       slug={slug}
       customerId={customerId}
       locationId={locationAccess.locationId}
+      isSpecialist={locationAccess.role === "LOCATION_SPECIALIST"}
     />
   );
 }
