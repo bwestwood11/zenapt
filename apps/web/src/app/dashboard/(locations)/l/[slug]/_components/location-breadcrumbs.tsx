@@ -11,12 +11,12 @@ type BreadcrumbRoute = {
 
 const normalizePath = (value: string) =>
   value
-    .replace(/\/+/g, "/")
-    .replace(/^\/+|\/+$/g, "")
+    .replaceAll(/\/+/g, "/")
+    .replaceAll(/^\/+|\/+$/g, "")
     .trim();
 
 const escapeRegexSegment = (value: string) =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  value.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 
 const isDynamicSegment = (segment: string) =>
   segment.startsWith("[") && segment.endsWith("]") && segment.length > 2;
@@ -67,6 +67,7 @@ const formatSlugLabel = (slug: string) =>
     .join(" ");
 
 const LOCATION_BREADCRUMB_ROUTES: BreadcrumbRoute[] = [
+  { path: "appointments", label: "Appointments" },
   { path: "master-calendar", label: "Master Calendar" },
   { path: "customers", label: "Customers" },
   { path: "customers/[customerId]", label: "Customer Details" },

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Briefcase,
+  CalendarCheck2,
   CalendarDays,
   LayoutDashboard,
   LogOut,
@@ -109,6 +110,12 @@ export function LocationSidebar({ slug, ...props }: LocationSidebarProps) {
       href: basePath,
       icon: LayoutDashboard,
       exact: true,
+      allowedRoles: ALL_EMPLOYEE_ROLES,
+    },
+    {
+      title: "Appointments",
+      href: `${basePath}/appointments`,
+      icon: CalendarCheck2,
       allowedRoles: ALL_EMPLOYEE_ROLES,
     },
     {
