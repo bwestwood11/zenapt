@@ -381,6 +381,121 @@ export const appointmentRouter = router({
       });
     }),
 
+  getAppointmentDetails: withPermissions(["READ::APPOINTMENTS"])
+    .input(
+      z.object({
+        locationId: z.string(),
+        appointmentId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const appointment = await prisma.appointment.findUnique({
+        where: { id: input.appointmentId },
+        select: {
+          id: true,
+          locationId: true,
+          startTime: true,
+          endTime: true,
+          status: true,
+          paymentStatus: true,
+          price: true,
+          bufferTime: true,
+          prepTime: true,
+          discountAmountApplied: true,
+          discountPercentageApplied: true,
+          paymentMethodLast4: true,
+          createdAt: true,
+          updatedAt: true,
+          location: {
+            select: {
+              id: true,
+              name: true,
+              timeZone: true,
+            },
+          },
+          customer: {
+            select: {
+              id: true,
+              phoneNumber: true,
+              user: {
+                select: {
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+          },
+          service: {
+            select: {
+              id: true,
+              duration: true,
+              price: true,
+              locationEmployeeId: true,
+              serviceTerms: {
+                select: {
+                  name: true,
+                },
+              },
+              locationEmployee: {
+                select: {
+                  id: true,
+                  user: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          addOns: {
+            select: {
+              id: true,
+              name: true,
+              basePrice: true,
+            },
+          },
+        },
+      });
+
+      if (!appointment) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Appointment not found",
+        });
+      }
+
+      if (appointment.locationId !== input.locationId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Appointment does not belong to this location",
+        });
+      }
+
+      const actorAtLocation = await prisma.locationEmployee.findFirst({
+        where: {
+          locationId: input.locationId,
+          userId: ctx.session.user.id,
+        },
+        select: { id: true, role: true },
+      });
+
+      if (actorAtLocation?.role === "LOCATION_SPECIALIST") {
+        const canView = appointment.service.some(
+          (service) => service.locationEmployeeId === actorAtLocation.id,
+        );
+
+        if (!canView) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You can only view your own appointments",
+          });
+        }
+      }
+
+      return appointment;
+    }),
+
   updateAppointmentStatus: withPermissions(["UPDATE::APPOINTMENTS"])
     .input(
       z.object({

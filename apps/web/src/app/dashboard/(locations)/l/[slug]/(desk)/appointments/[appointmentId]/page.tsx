@@ -1,4 +1,4 @@
-import { LocationAppointmentsKanban } from "@/components/appointments/location-appointments-kanban";
+import AppointmentDetailsPageClient from "@/components/appointments/appointment-details-page-client";
 import { getLocationAccess } from "@/lib/permissions/permission";
 import { forbidden } from "next/navigation";
 
@@ -15,14 +15,14 @@ const isAllowedRole = (role: string) => {
   return ALLOWED_ROLES.includes(role as AllowedRole);
 };
 
-export default async function AppointmentsPage({
+export default async function AppointmentDetailsPage({
   params,
 }: Readonly<{
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; appointmentId: string }>;
 }>) {
-  const { slug } = await params;
+  const { slug, appointmentId } = await params;
 
-  if (!slug) {
+  if (!slug || !appointmentId) {
     return forbidden();
   }
 
@@ -36,9 +36,10 @@ export default async function AppointmentsPage({
   }
 
   return (
-    <LocationAppointmentsKanban
-      locationId={locationAccess.locationId}
+    <AppointmentDetailsPageClient
       slug={slug}
+      locationId={locationAccess.locationId}
+      appointmentId={appointmentId}
     />
   );
 }

@@ -68,6 +68,7 @@ const formatSlugLabel = (slug: string) =>
 
 const LOCATION_BREADCRUMB_ROUTES: BreadcrumbRoute[] = [
   { path: "appointments", label: "Appointments" },
+  { path: "appointments/[appointmentId]", label: "Appointment Details" },
   { path: "master-calendar", label: "Master Calendar" },
   { path: "customers", label: "Customers" },
   { path: "customers/[customerId]", label: "Customer Details" },
