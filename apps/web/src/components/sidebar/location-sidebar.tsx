@@ -119,6 +119,12 @@ export function LocationSidebar({ slug, ...props }: LocationSidebarProps) {
       allowedRoles: ALL_EMPLOYEE_ROLES,
     },
     {
+      title: "Calendar",
+      href: `${basePath}/calendar`,
+      icon: CalendarDays,
+      allowedRoles: SPECIALIST_ROLES,
+    },
+    {
       title: "Master Calendar",
       href: `${basePath}/master-calendar`,
       icon: CalendarDays,
@@ -135,6 +141,12 @@ export function LocationSidebar({ slug, ...props }: LocationSidebarProps) {
       href: `${basePath}/my-services`,
       icon: Briefcase,
       allowedRoles: SPECIALIST_ROLES,
+    },
+    {
+      title: "Settings",
+      href: `${basePath}/settings`,
+      icon: Settings,
+      allowedRoles: ALL_EMPLOYEE_ROLES,
     },
     {
       title: "Employees",
@@ -251,7 +263,11 @@ export function LocationSidebar({ slug, ...props }: LocationSidebarProps) {
                 });
               }}
             >
-              <LogOut className="text-muted-foreground/60" size={22} aria-hidden />
+              <LogOut
+                className="text-muted-foreground/60"
+                size={22}
+                aria-hidden
+              />
               <span>Sign Out</span>
             </SidebarMenuButton>
           </SidebarMenuItem>

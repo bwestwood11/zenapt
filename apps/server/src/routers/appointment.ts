@@ -3,11 +3,7 @@ import {
   getAppointmentsInRange,
   getLocationSpecialistsSchedule,
 } from "../lib/appointment/employees";
-import {
-  publicProcedure,
-  router,
-  withPermissions,
-} from "../lib/trpc";
+import { publicProcedure, router, withPermissions } from "../lib/trpc";
 import prisma from "../../prisma";
 import { TRPCError } from "@trpc/server";
 import {
@@ -28,7 +24,11 @@ import {
 import { zonedDateTimeToUtc } from "../lib/datetime/timezone";
 import { ACTIVITY_LOG_ACTIONS, addActivityLog } from "../lib/activitylogs";
 
-const CHARGEABLE_PAYMENT_TYPES = ["DOWNPAYMENT", "BALANCE", "CANCELLATION"] as const;
+const CHARGEABLE_PAYMENT_TYPES = [
+  "DOWNPAYMENT",
+  "BALANCE",
+  "CANCELLATION",
+] as const;
 
 const resolveCustomerPaymentStatusFromIntent = (
   paymentIntentStatus: Stripe.PaymentIntent.Status,
@@ -134,197 +134,196 @@ export const appointmentRouter = router({
       })
       .refine(
         (input) =>
-          Boolean(input.dateKey) ||
-          Boolean(input.startDate && input.endDate),
+          Boolean(input.dateKey) || Boolean(input.startDate && input.endDate),
         {
           message: "Either dateKey or startDate/endDate is required",
         },
       ),
-  )
-    .query(async ({ ctx, input }) => {
-      const specialist = await prisma.locationEmployee.findFirst({
-        where: {
-          locationId: input.locationId,
-          userId: ctx.session.user.id,
-          role: "LOCATION_SPECIALIST",
-        },
-        select: { id: true },
+  ).query(async ({ ctx, input }) => {
+    const specialist = await prisma.locationEmployee.findFirst({
+      where: {
+        locationId: input.locationId,
+        userId: ctx.session.user.id,
+        role: "LOCATION_SPECIALIST",
+      },
+      select: { id: true },
+    });
+
+    console.log("Specialist ID:", specialist?.id);
+
+    if (!specialist) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Only specialists can access specialist appointment data",
       });
+    }
 
+    const location = await prisma.location.findUnique({
+      where: { id: input.locationId },
+      select: { timeZone: true },
+    });
 
-      console.log("Specialist ID:", specialist?.id);
+    const locationTimeZone = location?.timeZone ?? "UTC";
 
-      if (!specialist) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Only specialists can access specialist appointment data",
-        });
+    const rangeStartDate = (() => {
+      if (!input.dateKey) {
+        return input.startDate ?? new Date();
       }
 
-      const location = await prisma.location.findUnique({
-        where: { id: input.locationId },
-        select: { timeZone: true },
+      const [year, month, day] = input.dateKey
+        .split("-")
+        .map((value) => Number.parseInt(value, 10));
+
+      return zonedDateTimeToUtc(locationTimeZone, {
+        year,
+        month,
+        day,
+        hour: 0,
+        minute: 0,
+        second: 0,
       });
+    })();
 
-      const locationTimeZone = location?.timeZone ?? "UTC";
+    const rangeEndDate = (() => {
+      if (!input.dateKey) {
+        return input.endDate ?? new Date();
+      }
 
-      const rangeStartDate = (() => {
-        if (!input.dateKey) {
-          return input.startDate ?? new Date();
-        }
+      const [year, month, day] = input.dateKey
+        .split("-")
+        .map((value) => Number.parseInt(value, 10));
 
-        const [year, month, day] = input.dateKey
-          .split("-")
-          .map((value) => Number.parseInt(value, 10));
+      const rangeEndUtcRef = new Date(
+        Date.UTC(year, month - 1, day + input.rangeDays),
+      );
 
-        return zonedDateTimeToUtc(locationTimeZone, {
-          year,
-          month,
-          day,
-          hour: 0,
-          minute: 0,
-          second: 0,
-        });
-      })();
+      return zonedDateTimeToUtc(locationTimeZone, {
+        year: rangeEndUtcRef.getUTCFullYear(),
+        month: rangeEndUtcRef.getUTCMonth() + 1,
+        day: rangeEndUtcRef.getUTCDate(),
+        hour: 0,
+        minute: 0,
+        second: 0,
+      });
+    })();
 
-      const rangeEndDate = (() => {
-        if (!input.dateKey) {
-          return input.endDate ?? new Date();
-        }
-
-        const [year, month, day] = input.dateKey
-          .split("-")
-          .map((value) => Number.parseInt(value, 10));
-
-        const rangeEndUtcRef = new Date(
-          Date.UTC(year, month - 1, day + input.rangeDays),
-        );
-
-        return zonedDateTimeToUtc(locationTimeZone, {
-          year: rangeEndUtcRef.getUTCFullYear(),
-          month: rangeEndUtcRef.getUTCMonth() + 1,
-          day: rangeEndUtcRef.getUTCDate(),
-          hour: 0,
-          minute: 0,
-          second: 0,
-        });
-      })();
-
-      const appointments = await prisma.appointment.findMany({
-        where: {
-          locationId: input.locationId,
-          startTime: {
-            gte: rangeStartDate,
-            lt: rangeEndDate,
-          },
-          service: {
-            some: { locationEmployeeId: specialist.id },
-          },
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        locationId: input.locationId,
+        startTime: {
+          gte: rangeStartDate,
+          lt: rangeEndDate,
         },
-        orderBy: { startTime: "asc" },
-        select: {
-          id: true,
-          startTime: true,
-          endTime: true,
-          status: true,
-          paymentStatus: true,
-          customer: {
-            select: {
-              user: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-          service: {
-            where: {
-              locationEmployeeId: specialist.id,
-            },
-            select: {
-              serviceTerms: {
-                select: {
-                  name: true,
-                },
+        service: {
+          some: { locationEmployeeId: specialist.id },
+        },
+      },
+      orderBy: { startTime: "asc" },
+      select: {
+        id: true,
+        startTime: true,
+        endTime: true,
+        status: true,
+        paymentStatus: true,
+        customer: {
+          select: {
+            user: {
+              select: {
+                name: true,
               },
             },
           },
         },
-      });
+        service: {
+          where: {
+            locationEmployeeId: specialist.id,
+          },
+          select: {
+            serviceTerms: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
-      return {
-        timeZone: locationTimeZone,
-        appointments: appointments.map((appointment) => ({
-          id: appointment.id,
-          startTime: appointment.startTime,
-          endTime: appointment.endTime,
-          status: appointment.status,
-          paymentStatus: appointment.paymentStatus,
-          customerName: appointment.customer.user.name,
-          serviceNames: appointment.service.map((item) => item.serviceTerms.name),
-        })),
-      };
+    return {
+      timeZone: locationTimeZone,
+      appointments: appointments.map((appointment) => ({
+        id: appointment.id,
+        startTime: appointment.startTime,
+        endTime: appointment.endTime,
+        status: appointment.status,
+        paymentStatus: appointment.paymentStatus,
+        customerName: appointment.customer.user.name,
+        serviceNames: appointment.service.map((item) => item.serviceTerms.name),
+      })),
+    };
+  }),
+
+  fetchSpecialistDailySchedule: withPermissions(
+    ["READ::LOCATION", "READ::MASTER_CALENDAR"],
+    z.object({
+      locationId: z.string(),
+      date: z.date(),
     }),
+  ).query(async ({ ctx, input }) => {
+    const specialist = await prisma.locationEmployee.findFirst({
+      where: {
+        locationId: input.locationId,
+        userId: ctx.session.user.id,
+        role: "LOCATION_SPECIALIST",
+      },
+      select: { id: true },
+    });
 
-  fetchSpecialistDailySchedule: withPermissions(["READ::LOCATION", "READ::MASTER_CALENDAR"], z.object({
-    locationId: z.string(),
-    date: z.date(),
-  }))
-    .query(async ({ ctx, input }) => {
-      const specialist = await prisma.locationEmployee.findFirst({
-        where: {
-          locationId: input.locationId,
-          userId: ctx.session.user.id,
-          role: "LOCATION_SPECIALIST",
-        },
-        select: { id: true },
+    if (!specialist) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Only specialists can access specialist schedule data",
       });
+    }
 
-      if (!specialist) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Only specialists can access specialist schedule data",
-        });
-      }
+    const schedule = await getLocationSpecialistsSchedule(
+      input.locationId,
+      input.date,
+    );
 
-      const schedule = await getLocationSpecialistsSchedule(
-        input.locationId,
-        input.date,
-      );
-
-      if (schedule.code !== "SUCCESS") {
-        return {
-          code: schedule.code,
-          timeZone: schedule.timeZone,
-          workHours: null,
-          breaks: [],
-        };
-      }
-
-      const specialistSchedule = schedule.schedule.find(
-        (item) =>
-          "employee" in item &&
-          (("userId" in item.employee &&
-            item.employee.userId === ctx.session.user.id) ||
-            item.employee.id === specialist.id),
-      );
-
-      if (specialistSchedule?.code !== "WORKING") {
-        return {
-          code: "EMPLOYEE_OFF" as const,
-          timeZone: schedule.timeZone,
-          workHours: null,
-          breaks: [],
-        };
-      }
-
+    if (schedule.code !== "SUCCESS") {
       return {
-        code: "WORKING" as const,
+        code: schedule.code,
         timeZone: schedule.timeZone,
-        workHours: specialistSchedule.workHours,
-        breaks: specialistSchedule.breaks,
+        workHours: null,
+        breaks: [],
       };
-    }),
+    }
+
+    const specialistSchedule = schedule.schedule.find(
+      (item) =>
+        "employee" in item &&
+        (("userId" in item.employee &&
+          item.employee.userId === ctx.session.user.id) ||
+          item.employee.id === specialist.id),
+    );
+
+    if (specialistSchedule?.code !== "WORKING") {
+      return {
+        code: "EMPLOYEE_OFF" as const,
+        timeZone: schedule.timeZone,
+        workHours: null,
+        breaks: [],
+      };
+    }
+
+    return {
+      code: "WORKING" as const,
+      timeZone: schedule.timeZone,
+      workHours: specialistSchedule.workHours,
+      breaks: specialistSchedule.breaks,
+    };
+  }),
 
   fetchEmployeesSchedule: withPermissions([
     "READ::MASTER_CALENDAR",
@@ -365,19 +364,45 @@ export const appointmentRouter = router({
         })
         .refine(
           (input) =>
-            Boolean(input.dateKey) ||
-            Boolean(input.startDate && input.endDate),
+            Boolean(input.dateKey) || Boolean(input.startDate && input.endDate),
           {
             message: "Either dateKey or startDate/endDate is required",
           },
         ),
     )
-    .query(({ input }) => {
+    .query(async ({ ctx, input }) => {
+      const actorAtLocation = ctx.session.user.employees?.find(
+        (employee) => employee.locationId === input.locationId,
+      );
+
+      let specialistLocationEmployeeId: string | undefined;
+
+      if (actorAtLocation?.role === "LOCATION_SPECIALIST") {
+        const specialistAtLocation = await prisma.locationEmployee.findFirst({
+          where: {
+            locationId: input.locationId,
+            userId: ctx.session.user.id,
+            role: "LOCATION_SPECIALIST",
+          },
+          select: { id: true },
+        });
+
+        if (!specialistAtLocation) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Specialist location access could not be resolved",
+          });
+        }
+
+        specialistLocationEmployeeId = specialistAtLocation.id;
+      }
+
       return getAppointmentsInRange({
         startDate: input.startDate,
         endDate: input.endDate,
         dateKey: input.dateKey,
         locationId: input.locationId,
+        locationEmployeeId: specialistLocationEmployeeId,
       });
     }),
 
@@ -544,8 +569,7 @@ export const appointmentRouter = router({
       ) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message:
-            "Only pending appointments can be marked as no-show",
+          message: "Only pending appointments can be marked as no-show",
         });
       }
 
@@ -646,8 +670,7 @@ export const appointmentRouter = router({
         if (!canSpecialistUpdate) {
           throw new TRPCError({
             code: "FORBIDDEN",
-            message:
-              "You can only sync payments for your own appointments",
+            message: "You can only sync payments for your own appointments",
           });
         }
       }
@@ -732,7 +755,9 @@ export const appointmentRouter = router({
         }),
       );
 
-      const successfulSyncResults = syncResults.filter((result) => result.success);
+      const successfulSyncResults = syncResults.filter(
+        (result) => result.success,
+      );
 
       const updateResults = await Promise.all(
         successfulSyncResults.map(async (result) => {
@@ -1350,7 +1375,7 @@ export const appointmentRouter = router({
           },
           location: {
             select: {
-              id:true,
+              id: true,
               organizationId: true,
               appointmentSettings: {
                 select: {
@@ -1424,8 +1449,9 @@ export const appointmentRouter = router({
             .filter(
               (
                 employee,
-              ): employee is NonNullable<(typeof appointment.service)[number]["locationEmployee"]> =>
-                Boolean(employee),
+              ): employee is NonNullable<
+                (typeof appointment.service)[number]["locationEmployee"]
+              > => Boolean(employee),
             )
             .map((employee) => [employee.id, employee]),
         ).values(),
@@ -1460,7 +1486,8 @@ export const appointmentRouter = router({
         savedPaymentMethods,
         hasPaymentMethod: Boolean(appointment.paymentMethodId),
         paymentMethodLast4: appointment.paymentMethodLast4,
-        tipEnabled: appointment.location.appointmentSettings?.tipEnabled ?? false,
+        tipEnabled:
+          appointment.location.appointmentSettings?.tipEnabled ?? false,
         tipPresetPercentages:
           appointment.location.appointmentSettings?.tipPresetPercentages ?? [],
         tipEmployeeName:
@@ -1878,13 +1905,11 @@ export const appointmentRouter = router({
         });
       }
 
-      let resolvedPromoCode:
-        | {
-            id: string;
-            code: string;
-            discountPercentage: number;
-          }
-        | null = null;
+      let resolvedPromoCode: {
+        id: string;
+        code: string;
+        discountPercentage: number;
+      } | null = null;
 
       if (input.promoCode) {
         resolvedPromoCode = await resolveActivePromoCode({
@@ -1912,7 +1937,9 @@ export const appointmentRouter = router({
       );
       const hasAppliedDiscount = discountAmount > 0;
 
-      const alreadyChargedAmount = await getAppointmentCollectedAmount(appointment.id);
+      const alreadyChargedAmount = await getAppointmentCollectedAmount(
+        appointment.id,
+      );
       const tipEmployeeIds = Array.from(
         new Set(
           appointment.service
@@ -1921,7 +1948,10 @@ export const appointmentRouter = router({
         ),
       );
       const tipEmployeeId = tipEmployeeIds[0] ?? null;
-      const remainingAmount = Math.max(0, discountedTotal - alreadyChargedAmount);
+      const remainingAmount = Math.max(
+        0,
+        discountedTotal - alreadyChargedAmount,
+      );
       const tipAmount = input.tipAmount;
       const chargeAmount = remainingAmount + tipAmount;
 
@@ -1956,7 +1986,7 @@ export const appointmentRouter = router({
             payment_method: resolvedPaymentMethodId,
             confirm: true,
             off_session: true,
-            
+
             description: `Appointment remaining balance charge for ${appointment.id}`,
             metadata: {
               paymentScope: "APPOINTMENT_BALANCE_AND_TIP",

@@ -9,7 +9,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { Button, buttonVariants } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { LogOut, Settings } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -17,7 +17,13 @@ import { ThemeToggleOptions } from "./theme-toggle-options";
 
 export default function UserMenu() {
   const router = useRouter();
+  const pathname = usePathname();
   const { data: session, isPending } = authClient.useSession();
+
+  const locationPathMatch = pathname.match(/^\/dashboard\/l\/([^/]+)/);
+  const manageAccountHref = locationPathMatch
+    ? `/dashboard/l/${locationPathMatch[1]}/settings`
+    : "/dashboard/manage-account";
 
   if (isPending) {
     return <Skeleton className="h-9 w-24" />;
@@ -69,19 +75,32 @@ export default function UserMenu() {
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col min-w-0">
-            <p className="text-sm font-semibold truncate">{session.user.name}</p>
+            <p className="text-sm font-semibold truncate">
+              {session.user.name}
+            </p>
             <div className="flex items-center gap-2 mt-1">
               <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
-                {session.user.management?.role ? session.user.management.role.toLowerCase() : "user"}
+                {session.user.management?.role
+                  ? session.user.management.role.toLowerCase()
+                  : "user"}
               </span>
-              <span className="text-xs text-gray-500 truncate">{session.user.email}</span>
+              <span className="text-xs text-gray-500 truncate">
+                {session.user.email}
+              </span>
             </div>
           </div>
         </div>
 
         <div className="px-2 pb-2">
           <div className="flex gap-2">
-            <Link className={buttonVariants({variant: "outline", className: "flex-1 bg-transparent", size: "sm"})} href="/dashboard/manage-account">
+            <Link
+              className={buttonVariants({
+                variant: "outline",
+                className: "flex-1 bg-transparent",
+                size: "sm",
+              })}
+              href={manageAccountHref}
+            >
               <Settings className="mr-2 h-4 w-4" />
               Manage account
             </Link>

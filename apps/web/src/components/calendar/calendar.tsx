@@ -47,12 +47,7 @@ import {
   ConfirmAppointmentProvider,
 } from "./confirm-modal";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import {
-  CalendarIcon,
-  ChevronLeft,
-  ChevronRight,
-  Clock3,
-} from "lucide-react";
+import { CalendarIcon, ChevronLeft, ChevronRight, Clock3 } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { add, format, sub } from "date-fns";
 import { AddAppointmentDialog } from "./add-appointment-modal";
@@ -105,6 +100,21 @@ export const useLocationHours = () => {
   const ctx = useContext(LocationHoursContext);
   if (!ctx) throw new Error("LocationHoursProvider missing");
   return ctx;
+};
+
+const findActorEmployee = (employees: Employee[], currentUserId?: string) => {
+  if (!currentUserId) return null;
+
+  const actorAtLocation = employees.find((employee) => {
+    if (!("employee" in employee)) return false;
+    const employeeData = employee.employee as { id: string; userId?: string };
+    return (
+      employeeData.id === currentUserId || employeeData.userId === currentUserId
+    );
+  });
+
+  if (!actorAtLocation || !("employee" in actorAtLocation)) return null;
+  return actorAtLocation;
 };
 
 /* ───────────────────────── master calendar ───────────────────────── */
@@ -276,6 +286,159 @@ export const MasterCalendar = ({ locationId }: { locationId: string }) => {
   );
 };
 
+export const EmployeeCalendar = ({ locationId }: { locationId: string }) => {
+  const { data: session } = authClient.useSession();
+  const [dateString, setDateString] = useSelectedDate();
+  const dateKey = dateString;
+
+  const date = useMemo(
+    () => parseLocalDate(dateString) ?? new Date(),
+    [dateString],
+  );
+
+  const { data: appointments, isLoading: isLoadingAppointments } = useQuery(
+    trpc.appointment.fetchAppointments.queryOptions(
+      {
+        dateKey,
+        locationId,
+      },
+      { enabled: Boolean(dateKey), staleTime: 1_000 },
+    ),
+  );
+
+  const { data: employees, isLoading: isLoadingEmployees } = useQuery(
+    trpc.appointment.fetchEmployeesSchedule.queryOptions(
+      { locationId, dateKey },
+      { enabled: Boolean(dateKey), staleTime: 1_000 },
+    ),
+  );
+
+  const actorEmployee = useMemo(() => {
+    if (!employees || employees.code !== "SUCCESS") return null;
+    return findActorEmployee(employees.schedule, session?.user?.id);
+  }, [employees, session?.user?.id]);
+
+  const employeeSchedule = useMemo(() => {
+    if (!actorEmployee) return [];
+    return [actorEmployee];
+  }, [actorEmployee]);
+
+  const appointmentsForActor = useMemo<AppointmentResponseType>(() => {
+    if (!appointments || !actorEmployee) return {};
+
+    return Object.fromEntries(
+      Object.entries(appointments).map(([key, appointmentList]) => [
+        key,
+        appointmentList.filter(
+          (appointment) => appointment.employeeId === actorEmployee.employee.id,
+        ),
+      ]),
+    );
+  }, [appointments, actorEmployee]);
+
+  const isCalendarLoading =
+    isLoadingEmployees ||
+    (employees?.code === "SUCCESS" && (isLoadingAppointments || !appointments));
+
+  const queryClient = useQueryClient();
+  const prefetchDay = (delta: number) => {
+    const nextDateKey = shiftDateKey(dateString, delta);
+
+    queryClient.prefetchQuery(
+      trpc.appointment.fetchEmployeesSchedule.queryOptions(
+        { locationId, dateKey: nextDateKey },
+        { staleTime: 60_000 },
+      ),
+    );
+  };
+
+  const shiftDays = useCallback(
+    (delta: number) => {
+      setDateString(shiftDateKey(dateString, delta));
+    },
+    [dateString, setDateString],
+  );
+
+  const setDate = useCallback(
+    (nextDate: Date) => {
+      setDateString(dateToString(nextDate));
+    },
+    [setDateString],
+  );
+
+  return (
+    <div className="h-[calc(100svh-65px)] w-full">
+      <div className="flex items-center gap-3 py-4 px-6 border-b">
+        <Button
+          variant="outline"
+          size="icon"
+          onMouseEnter={() => {
+            prefetchDay(-1);
+          }}
+          onClick={() => shiftDays(-1)}
+          className="h-10 w-10 rounded-lg border-stone-300 hover:bg-stone-100 hover:border-stone-400 transition-all"
+        >
+          <ChevronLeft className="w-4 h-4 text-stone-700" />
+        </Button>
+
+        <DatePicker date={date} onDateChange={setDate} />
+        <Button
+          variant="outline"
+          size="icon"
+          onMouseEnter={() => {
+            prefetchDay(1);
+          }}
+          onClick={() => shiftDays(1)}
+          className="h-10 w-10 rounded-lg border-stone-300 hover:bg-stone-100 hover:border-stone-400 transition-all"
+        >
+          <ChevronRight className="w-4 h-4 text-stone-700" />
+        </Button>
+
+        <div className="ml-auto flex items-center gap-2">
+          {employees?.code === "SUCCESS" ? (
+            <Badge
+              variant="secondary"
+              className="gap-1.5 font-normal"
+              title="All calendar times are shown in this timezone"
+            >
+              <Clock3 className="size-3.5" />
+              {employees.timeZone}
+            </Badge>
+          ) : null}
+        </div>
+      </div>
+
+      {!!employees && employees.code === "LOCATION_OFF" ? (
+        <LocationOff />
+      ) : null}
+
+      {isCalendarLoading ? <MasterCalendarSkeleton /> : null}
+
+      {!isCalendarLoading && !!employees && employees.code === "SUCCESS" ? (
+        actorEmployee ? (
+          <CalendarProvider
+            dateKey={dateKey}
+            locationTimeZone={employees.timeZone}
+            employees={employeeSchedule}
+            appointmentsByEmployee={appointmentsForActor}
+          >
+            <EmployeeDayCalendar
+              locationId={locationId}
+              employees={employeeSchedule}
+              locationTimeZone={employees.timeZone}
+              dateKey={dateKey}
+            />
+          </CalendarProvider>
+        ) : (
+          <div className="p-6 text-sm text-muted-foreground">
+            Unable to load your employee schedule for this location.
+          </div>
+        )
+      ) : null}
+    </div>
+  );
+};
+
 function MasterCalendarSkeleton() {
   const skeletonRows = 24;
   const skeletonEmployees = 4;
@@ -300,7 +463,10 @@ function MasterCalendarSkeleton() {
           <Skeleton className="h-4 w-14" />
         </div>
         {employeeSlots.map((employeeSlot) => (
-          <div key={`skeleton-header-${employeeSlot}`} className="px-2 py-4 border-r">
+          <div
+            key={`skeleton-header-${employeeSlot}`}
+            className="px-2 py-4 border-r"
+          >
             <div className="flex items-center justify-center flex-col gap-1">
               <Skeleton className="h-8 w-8 rounded-full" />
               <Skeleton className="h-4 w-24" />
@@ -324,7 +490,7 @@ function MasterCalendarSkeleton() {
               style={{ height: ROW_HEIGHT }}
             >
               {Number.parseInt(rowSlot.replace("row-", ""), 10) %
-              (60 / SLOT_MINUTES) ===
+                (60 / SLOT_MINUTES) ===
               0 ? (
                 <Skeleton className="h-3 w-12 mt-1" />
               ) : null}
@@ -333,7 +499,10 @@ function MasterCalendarSkeleton() {
         </div>
 
         {employeeSlots.map((employeeSlot) => (
-          <div key={`skeleton-column-${employeeSlot}`} className="border-r bg-muted/60">
+          <div
+            key={`skeleton-column-${employeeSlot}`}
+            className="border-r bg-muted/60"
+          >
             {rowSlots.map((rowSlot) => (
               <div
                 key={`skeleton-cell-${employeeSlot}-${rowSlot}`}
@@ -370,10 +539,7 @@ const CalendarProvider = ({
     let hasWorkingHours = false;
 
     for (const e of employees) {
-      if (
-        e.workHours?.startMinute == null ||
-        e.workHours?.endMinute == null
-      ) {
+      if (e.workHours?.startMinute == null || e.workHours?.endMinute == null) {
         continue;
       }
       hasWorkingHours = true;
@@ -492,10 +658,7 @@ export function EmployeeDayCalendar({
     let hasWorkingHours = false;
 
     for (const e of employees) {
-      if (
-        e.workHours?.startMinute == null ||
-        e.workHours?.endMinute == null
-      ) {
+      if (e.workHours?.startMinute == null || e.workHours?.endMinute == null) {
         continue;
       }
       hasWorkingHours = true;
@@ -572,9 +735,9 @@ export function EmployeeDayCalendar({
         targetEmployee,
         drag.id,
         {
-        start: drop.start,
-        end: drop.start + duration,
-        employeeId: drop.empId,
+          start: drop.start,
+          end: drop.start + duration,
+          employeeId: drop.empId,
         },
       );
 

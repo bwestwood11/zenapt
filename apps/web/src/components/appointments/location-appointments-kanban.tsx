@@ -35,6 +35,7 @@ type AppointmentStatus =
 
 type KanbanAppointment = {
   id: string;
+  employeeId: string;
   startTime: Date;
   endTime: Date;
   customer: {
@@ -134,9 +135,7 @@ export function LocationAppointmentsKanban({
     if (selectedRange === "week") {
       const weekEnd = getEndOfWeek(todayStart);
       const maxEnd = addDays(todayStart, 6);
-      const cappedEnd = new Date(
-        Math.min(weekEnd.getTime(), maxEnd.getTime()),
-      );
+      const cappedEnd = new Date(Math.min(weekEnd.getTime(), maxEnd.getTime()));
 
       return {
         input: {
@@ -173,16 +172,15 @@ export function LocationAppointmentsKanban({
   }, [locationId, selectedRange]);
 
   const { data, isLoading, isError } = useQuery(
-    trpc.appointment.fetchAppointments.queryOptions(
-      rangeConfig.input,
-      {
-        enabled: Boolean(locationId),
-      },
-    ),
+    trpc.appointment.fetchAppointments.queryOptions(rangeConfig.input, {
+      enabled: Boolean(locationId),
+    }),
   );
 
   const appointments = useMemo(() => {
-    const allAppointments = Object.values(data ?? {}).flat() as KanbanAppointment[];
+    const allAppointments = Object.values(
+      data ?? {},
+    ).flat() as KanbanAppointment[];
 
     return [...allAppointments].sort(
       (a, b) =>
@@ -191,7 +189,9 @@ export function LocationAppointmentsKanban({
   }, [data]);
 
   const grouped = useMemo(() => {
-    return STATUS_COLUMNS.reduce<Record<AppointmentStatus, KanbanAppointment[]>>(
+    return STATUS_COLUMNS.reduce<
+      Record<AppointmentStatus, KanbanAppointment[]>
+    >(
       (acc, column) => {
         acc[column.key] = appointments.filter(
           (appointment) => appointment.status === column.key,
@@ -253,7 +253,10 @@ export function LocationAppointmentsKanban({
 
       <div className="flex items-center justify-between rounded-md border bg-muted/30 px-3 py-2">
         <p className="text-sm text-muted-foreground">
-          Showing: <span className="font-medium text-foreground">{rangeConfig.label}</span>
+          Showing:{" "}
+          <span className="font-medium text-foreground">
+            {rangeConfig.label}
+          </span>
         </p>
         <Badge variant="secondary">{appointments.length} Appointments</Badge>
       </div>
@@ -275,7 +278,9 @@ export function LocationAppointmentsKanban({
         <TabsContent value="table">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Appointments (Read-only)</CardTitle>
+              <CardTitle className="text-base">
+                Appointments (Read-only)
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -293,19 +298,34 @@ export function LocationAppointmentsKanban({
                   {isLoading
                     ? Array.from({ length: 8 }, (_, idx) => (
                         <TableRow key={`table-skeleton-${idx}`}>
-                          <TableCell><Skeleton className="h-4 w-[90px]" /></TableCell>
-                          <TableCell><Skeleton className="h-4 w-[160px]" /></TableCell>
-                          <TableCell><Skeleton className="h-4 w-[220px]" /></TableCell>
-                          <TableCell><Skeleton className="h-4 w-[140px]" /></TableCell>
-                          <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                          <TableCell><Skeleton className="ml-auto h-4 w-[70px]" /></TableCell>
+                          <TableCell>
+                            <Skeleton className="h-4 w-[90px]" />
+                          </TableCell>
+                          <TableCell>
+                            <Skeleton className="h-4 w-[160px]" />
+                          </TableCell>
+                          <TableCell>
+                            <Skeleton className="h-4 w-[220px]" />
+                          </TableCell>
+                          <TableCell>
+                            <Skeleton className="h-4 w-[140px]" />
+                          </TableCell>
+                          <TableCell>
+                            <Skeleton className="h-4 w-[100px]" />
+                          </TableCell>
+                          <TableCell>
+                            <Skeleton className="ml-auto h-4 w-[70px]" />
+                          </TableCell>
                         </TableRow>
                       ))
                     : null}
 
                   {!isLoading && appointments.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                      <TableCell
+                        colSpan={6}
+                        className="h-24 text-center text-muted-foreground"
+                      >
                         No appointments
                       </TableCell>
                     </TableRow>
@@ -322,13 +342,18 @@ export function LocationAppointmentsKanban({
                             {appointment.customer.name ?? "Unknown customer"}
                           </TableCell>
                           <TableCell className="text-muted-foreground">
-                            {appointment.service.map((service) => service.name).join(", ")}
+                            {appointment.service
+                              .map((service) => service.name)
+                              .join(", ")}
                           </TableCell>
                           <TableCell className="text-muted-foreground">
-                            {formatTime(appointment.startTime)} - {formatTime(appointment.endTime)}
+                            {formatTime(appointment.startTime)} -{" "}
+                            {formatTime(appointment.endTime)}
                           </TableCell>
                           <TableCell>
-                            <Badge variant="secondary">{formatStatus(appointment.status)}</Badge>
+                            <Badge variant="secondary">
+                              {formatStatus(appointment.status)}
+                            </Badge>
                           </TableCell>
                           <TableCell className="text-right">
                             <Link
@@ -362,7 +387,10 @@ export function LocationAppointmentsKanban({
                   <CardContent className="space-y-3">
                     {isLoading
                       ? Array.from({ length: 4 }, (_, idx) => (
-                          <div key={`${column.key}-skeleton-${idx}`} className="space-y-2 rounded-md border p-3">
+                          <div
+                            key={`${column.key}-skeleton-${idx}`}
+                            className="space-y-2 rounded-md border p-3"
+                          >
                             <Skeleton className="h-4 w-3/4" />
                             <Skeleton className="h-3 w-1/2" />
                             <Skeleton className="h-3 w-2/3" />
@@ -379,15 +407,21 @@ export function LocationAppointmentsKanban({
                     {isLoading
                       ? null
                       : items.map((appointment) => (
-                          <div key={appointment.id} className="space-y-2 rounded-md border p-3">
+                          <div
+                            key={appointment.id}
+                            className="space-y-2 rounded-md border p-3"
+                          >
                             <div className="font-medium">
                               {appointment.customer.name ?? "Unknown customer"}
                             </div>
                             <p className="text-xs text-muted-foreground">
-                              {appointment.service.map((service) => service.name).join(", ")}
+                              {appointment.service
+                                .map((service) => service.name)
+                                .join(", ")}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              {formatTime(appointment.startTime)} - {formatTime(appointment.endTime)}
+                              {formatTime(appointment.startTime)} -{" "}
+                              {formatTime(appointment.endTime)}
                             </p>
                             <Link
                               href={`/dashboard/l/${slug}/appointments/${appointment.id}`}

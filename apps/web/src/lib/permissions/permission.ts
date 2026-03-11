@@ -10,7 +10,7 @@ import { forbidden, redirect } from "next/navigation";
 
 export const checkPermission = async (
   required: Permission[],
-  params: Params
+  params: Params,
 ): Promise<boolean> => {
   try {
     const permissions = await serverTRPC.permissions.getPermission.fetch();
@@ -29,7 +29,8 @@ export const checkPermission = async (
       : true;
 
     return (
-      required.every((perm) => granted.includes(perm)) && Boolean(hasAccessToLocation)
+      required.every((perm) => granted.includes(perm)) &&
+      Boolean(hasAccessToLocation)
     );
   } catch (error) {
     console.error(error);
@@ -39,8 +40,8 @@ export const checkPermission = async (
 
 export const requirePermission = async (
   required: Permission[],
-  params?: Params
-): Promise<void> => {
+  params?: Params,
+): Promise<true> => {
   const hasPerm = await checkPermission(required, params ?? {});
   if (!hasPerm) {
     return forbidden();
@@ -78,7 +79,7 @@ export const hasAccessToLocation = async (slug: string) => {
     if (!session) return false;
 
     const location = session.data?.user.employees?.find(
-      (emp) => emp.locationSlug === slug
+      (emp) => emp.locationSlug === slug,
     );
     if (!location) return false;
     return true;
@@ -87,14 +88,13 @@ export const hasAccessToLocation = async (slug: string) => {
   }
 };
 
-
 export async function getLocationAccess(slug: string) {
   try {
     const session = await getSession();
     if (!session?.data?.user?.employees) return false;
 
     const match = session.data.user.employees.find(
-      (emp) => emp.locationSlug === slug
+      (emp) => emp.locationSlug === slug,
     );
 
     return match ? match : false;

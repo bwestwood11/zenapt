@@ -106,8 +106,8 @@ export const ROLE_PERMISSIONS: RolePermission = {
       "CREATE::SERVICE",
       "UPDATE::SERVICE",
       "READ::SERVICES_TERMS",
-      "READ::APPOINTMENTS",
-      "UPDATE::APPOINTMENTS"
+      ...addFeature("APPOINTMENTS", ["READ", "CREATE", "UPDATE"]),
+      ...addFeature("CUSTOMERS", ["READ", "CREATE", "UPDATE"]),
     ],
     ORGANIZATION_MANAGEMENT: [
       "READ::LOCATION",

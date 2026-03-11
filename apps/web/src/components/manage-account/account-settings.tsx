@@ -13,6 +13,8 @@ import { ThemeToggleOptions } from "../theme-toggle-options";
 export function AccountSettings() {
   const { isPending, data } = authClient.useSession();
   const [avatarUrl, setAvatarUrl] = useState(data?.user.image || "");
+  const resolvedRole =
+    data?.user.management?.role ?? data?.user.employees?.[0]?.role;
 
   useEffect(() => {
     setAvatarUrl(data?.user.image || "");
@@ -20,11 +22,11 @@ export function AccountSettings() {
 
   const isProfileImageChanged = useMemo(
     () => data?.user.image !== avatarUrl,
-    [avatarUrl, data?.user.image]
+    [avatarUrl, data?.user.image],
   );
 
   if (isPending) return <p>Loading...</p>;
-  if (!data?.user.email || !data?.user.management?.role || !data?.user.name)
+  if (!data?.user.email || !resolvedRole || !data?.user.name)
     return <p>Account not configured</p>;
 
   return (
@@ -38,7 +40,7 @@ export function AccountSettings() {
       <PersonalInfoForm
         name={data.user.name}
         email={data.user.email}
-        role={data.user.management.role}
+        role={resolvedRole}
       />
       <Card className="p-6">
         <div className="space-y-4">

@@ -314,11 +314,13 @@ export async function getAppointmentsInRange({
   endDate,
   locationId,
   dateKey,
+  locationEmployeeId,
 }: {
   startDate?: Date;
   endDate?: Date;
   locationId: string;
   dateKey?: string;
+  locationEmployeeId?: string;
 }) {
   const location = await prisma.location.findUnique({
     where: { id: locationId },
@@ -332,7 +334,8 @@ export async function getAppointmentsInRange({
     : null;
 
   const rangeStartSource =
-    zonedDayRange ?? getZonedDayRangeUtc(startDate ?? new Date(), locationTimeZone);
+    zonedDayRange ??
+    getZonedDayRangeUtc(startDate ?? new Date(), locationTimeZone);
   const rangeEndSource =
     zonedDayRange ??
     getZonedDayRangeUtc(endDate ?? startDate ?? new Date(), locationTimeZone);
@@ -345,6 +348,13 @@ export async function getAppointmentsInRange({
       locationId,
       startTime: { gte: rangeStartUtc },
       endTime: { lt: rangeEndUtc },
+      ...(locationEmployeeId
+        ? {
+            service: {
+              some: { locationEmployeeId },
+            },
+          }
+        : {}),
     },
     select: {
       endTime: true,
