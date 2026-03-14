@@ -15,6 +15,8 @@ model User {
   AuditLog          ActivityLog[]
   isTempPassword    Boolean                @default(false)
   customerAuths     CustomerAuth[]
+  requestedLeaveRequests LeaveRequest[]     @relation("LeaveRequestRequestedBy")
+  reviewedLeaveRequests  LeaveRequest[]     @relation("LeaveRequestReviewedBy")
 
   @@unique([email])
   @@map("user")
@@ -114,6 +116,7 @@ model Location {
   appointmentSettings AppointmentSettings?
   PromoCodes          PromoCode[]
   customers           Customer[]
+  leaveRequests       LeaveRequest[]
 
   @@unique([name, organizationId])
   @@index([slug, organizationId])
@@ -138,6 +141,7 @@ model LocationEmployee {
   user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   Service  EmployeeService[]
   tipCharges AppointmentTipCharge[]
+  leaveRequests LeaveRequest[]
 
   @@unique([userId, locationId])
 }

@@ -8,6 +8,8 @@ import {
   Briefcase,
   CalendarCheck2,
   CalendarDays,
+  Clock,
+  Coffee,
   LayoutDashboard,
   LogOut,
   Settings,
@@ -78,6 +80,12 @@ const CUSTOMER_ROLES: EmployeeRole[] = [
   "LOCATION_SPECIALIST",
 ];
 
+const BREAK_MANAGEMENT_ROLES: EmployeeRole[] = [
+  "ORGANIZATION_MANAGEMENT",
+  "LOCATION_ADMIN",
+  "LOCATION_FRONT_DESK",
+];
+
 const SPECIALIST_ROLES: EmployeeRole[] = ["LOCATION_SPECIALIST"];
 
 const isItemActive = (pathName: string, href: string, exact?: boolean) => {
@@ -141,6 +149,24 @@ export function LocationSidebar({ slug, ...props }: LocationSidebarProps) {
       href: `${basePath}/my-services`,
       icon: Briefcase,
       allowedRoles: SPECIALIST_ROLES,
+    },
+    {
+      title: "My Working Hours",
+      href: `${basePath}/my-working-hours`,
+      icon: Clock,
+      allowedRoles: SPECIALIST_ROLES,
+    },
+    {
+      title: "Leave Requests",
+      href: `${basePath}/leave-requests`,
+      icon: CalendarCheck2,
+      allowedRoles: ALL_EMPLOYEE_ROLES,
+    },
+    {
+      title: "Recurring Breaks",
+      href: `${basePath}/breaks`,
+      icon: Coffee,
+      allowedRoles: BREAK_MANAGEMENT_ROLES,
     },
     {
       title: "Settings",

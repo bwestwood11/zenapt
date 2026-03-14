@@ -12,6 +12,12 @@ enum AppointmentPaymentStatus {
   PAID
 }
 
+enum LeaveRequestStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}
+
 model Appointment {
   id         String            @id @default(cuid()) @map("_id")
   locationId String
@@ -144,6 +150,31 @@ model TimeOff {
   @@index([targetType, targetId, startDate, endDate])
 }
 
+model LeaveRequest {
+  id                 String            @id @default(cuid()) @map("_id")
+  locationId         String
+  locationEmployeeId String
+  requestedById      String
+  reviewedById       String?
+  startDate          DateTime
+  endDate            DateTime
+  reason             String?
+  reviewNote         String?
+  status             LeaveRequestStatus @default(PENDING)
+  reviewedAt         DateTime?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  location         Location         @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  locationEmployee LocationEmployee @relation(fields: [locationEmployeeId], references: [id], onDelete: Cascade)
+  requestedBy      User             @relation("LeaveRequestRequestedBy", fields: [requestedById], references: [id], onDelete: Cascade)
+  reviewedBy       User?            @relation("LeaveRequestReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([locationId, status])
+  @@index([locationEmployeeId, status])
+  @@index([startDate, endDate])
+}
+
 model AppointmentSettings {
   id                      String   @id @default(cuid()) @map("_id")
   locationId              String   @unique
@@ -155,6 +186,7 @@ model AppointmentSettings {
   downpaymentPercentage   Int      @default(0) // in percent (0-100)
   cancellationPercent     Int      @default(100) // in percent (0-100)
   cancellationDuration    Int      @default(60) // in minutes before appointment
+  leaveRequestNoticeDays  Int      @default(1) // minimum notice in days before leave start
   tipEnabled              Boolean  @default(false)
   tipPresetPercentages    Int[]    @default([15, 20, 25]) // tip percentage presets
   createdAt               DateTime @default(now())

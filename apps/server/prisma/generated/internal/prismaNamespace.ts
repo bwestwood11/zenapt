@@ -401,6 +401,7 @@ export const ModelName = {
   ScheduleRule: 'ScheduleRule',
   ScheduleException: 'ScheduleException',
   TimeOff: 'TimeOff',
+  LeaveRequest: 'LeaveRequest',
   AppointmentSettings: 'AppointmentSettings',
   AppointmentTipCharge: 'AppointmentTipCharge',
   User: 'User',
@@ -437,7 +438,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "admin" | "appointment" | "addOn" | "promoCode" | "scheduleRule" | "scheduleException" | "timeOff" | "appointmentSettings" | "appointmentTipCharge" | "user" | "subscription" | "organization" | "managementMembership" | "location" | "locationEmployee" | "serviceTerms" | "serviceGroup" | "employeeService" | "customer" | "customerAuth" | "customerAppointmentPayment" | "activityLog" | "session" | "account" | "verification" | "organizationInvitation" | "locationInvitation" | "demoRequest"
+    modelProps: "admin" | "appointment" | "addOn" | "promoCode" | "scheduleRule" | "scheduleException" | "timeOff" | "leaveRequest" | "appointmentSettings" | "appointmentTipCharge" | "user" | "subscription" | "organization" | "managementMembership" | "location" | "locationEmployee" | "serviceTerms" | "serviceGroup" | "employeeService" | "customer" | "customerAuth" | "customerAppointmentPayment" | "activityLog" | "session" | "account" | "verification" | "organizationInvitation" | "locationInvitation" | "demoRequest"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -956,6 +957,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.TimeOffCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.TimeOffCountAggregateOutputType> | number
+        }
+      }
+    }
+    LeaveRequest: {
+      payload: Prisma.$LeaveRequestPayload<ExtArgs>
+      fields: Prisma.LeaveRequestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LeaveRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LeaveRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestPayload>
+        }
+        findFirst: {
+          args: Prisma.LeaveRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LeaveRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestPayload>
+        }
+        findMany: {
+          args: Prisma.LeaveRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestPayload>[]
+        }
+        create: {
+          args: Prisma.LeaveRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestPayload>
+        }
+        createMany: {
+          args: Prisma.LeaveRequestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LeaveRequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestPayload>[]
+        }
+        delete: {
+          args: Prisma.LeaveRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestPayload>
+        }
+        update: {
+          args: Prisma.LeaveRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestPayload>
+        }
+        deleteMany: {
+          args: Prisma.LeaveRequestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LeaveRequestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LeaveRequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestPayload>[]
+        }
+        upsert: {
+          args: Prisma.LeaveRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeaveRequestPayload>
+        }
+        aggregate: {
+          args: Prisma.LeaveRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLeaveRequest>
+        }
+        groupBy: {
+          args: Prisma.LeaveRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LeaveRequestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LeaveRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LeaveRequestCountAggregateOutputType> | number
         }
       }
     }
@@ -2662,6 +2737,25 @@ export const TimeOffScalarFieldEnum = {
 export type TimeOffScalarFieldEnum = (typeof TimeOffScalarFieldEnum)[keyof typeof TimeOffScalarFieldEnum]
 
 
+export const LeaveRequestScalarFieldEnum = {
+  id: 'id',
+  locationId: 'locationId',
+  locationEmployeeId: 'locationEmployeeId',
+  requestedById: 'requestedById',
+  reviewedById: 'reviewedById',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  reason: 'reason',
+  reviewNote: 'reviewNote',
+  status: 'status',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeaveRequestScalarFieldEnum = (typeof LeaveRequestScalarFieldEnum)[keyof typeof LeaveRequestScalarFieldEnum]
+
+
 export const AppointmentSettingsScalarFieldEnum = {
   id: 'id',
   locationId: 'locationId',
@@ -2672,6 +2766,7 @@ export const AppointmentSettingsScalarFieldEnum = {
   downpaymentPercentage: 'downpaymentPercentage',
   cancellationPercent: 'cancellationPercent',
   cancellationDuration: 'cancellationDuration',
+  leaveRequestNoticeDays: 'leaveRequestNoticeDays',
   tipEnabled: 'tipEnabled',
   tipPresetPercentages: 'tipPresetPercentages',
   createdAt: 'createdAt',
@@ -3130,6 +3225,20 @@ export type ListEnumScheduleTargetTypeFieldRefInput<$PrismaModel> = FieldRefInpu
 
 
 /**
+ * Reference to a field of type 'LeaveRequestStatus'
+ */
+export type EnumLeaveRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeaveRequestStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'LeaveRequestStatus[]'
+ */
+export type ListEnumLeaveRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeaveRequestStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'CustomerPaymentStatus'
  */
 export type EnumCustomerPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CustomerPaymentStatus'>
@@ -3302,6 +3411,7 @@ export type GlobalOmitConfig = {
   scheduleRule?: Prisma.ScheduleRuleOmit
   scheduleException?: Prisma.ScheduleExceptionOmit
   timeOff?: Prisma.TimeOffOmit
+  leaveRequest?: Prisma.LeaveRequestOmit
   appointmentSettings?: Prisma.AppointmentSettingsOmit
   appointmentTipCharge?: Prisma.AppointmentTipChargeOmit
   user?: Prisma.UserOmit

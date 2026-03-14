@@ -715,10 +715,6 @@ export type SubscriptionNullableScalarRelationFilter = {
   isNot?: Prisma.SubscriptionWhereInput | null
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type SubscriptionCreateNestedOneWithoutOrganizationInput = {
   create?: Prisma.XOR<Prisma.SubscriptionCreateWithoutOrganizationInput, Prisma.SubscriptionUncheckedCreateWithoutOrganizationInput>
   connectOrCreate?: Prisma.SubscriptionCreateOrConnectWithoutOrganizationInput

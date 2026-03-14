@@ -207,7 +207,7 @@ export default function SpecialistDashboardClient({
   locationId,
   slug,
   role,
-}: SpecialistDashboardClientProps) {
+}: Readonly<SpecialistDashboardClientProps>) {
   const now = useMemo(() => new Date(), []);
   const rangeEnd = useMemo(
     () => new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
@@ -439,9 +439,9 @@ export default function SpecialistDashboardClient({
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 sm:grid-cols-2">
-            <Link href={`/dashboard/l/${slug}/master-calendar`}>
+            <Link href={`/dashboard/l/${slug}/calendar`}>
               <Button variant="outline" className="w-full justify-start">
-                Open Master Calendar
+                Open Calendar
               </Button>
             </Link>
             <Link href={`/dashboard/l/${slug}/my-services`}>
@@ -449,14 +449,14 @@ export default function SpecialistDashboardClient({
                 Manage My Services
               </Button>
             </Link>
+            <Link href={`/dashboard/l/${slug}/my-working-hours`}>
+              <Button variant="outline" className="w-full justify-start">
+                Manage My Working Hours
+              </Button>
+            </Link>
             <Link href={`/dashboard/l/${slug}/customers`}>
               <Button variant="outline" className="w-full justify-start">
                 View Customers
-              </Button>
-            </Link>
-            <Link href={`/dashboard/l/${slug}/location-settings`}>
-              <Button variant="outline" className="w-full justify-start">
-                Location Settings
               </Button>
             </Link>
           </CardContent>

@@ -220,6 +220,8 @@ export type UserWhereInput = {
   customer?: Prisma.CustomerListRelationFilter
   AuditLog?: Prisma.ActivityLogListRelationFilter
   customerAuths?: Prisma.CustomerAuthListRelationFilter
+  requestedLeaveRequests?: Prisma.LeaveRequestListRelationFilter
+  reviewedLeaveRequests?: Prisma.LeaveRequestListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -239,6 +241,8 @@ export type UserOrderByWithRelationInput = {
   customer?: Prisma.CustomerOrderByRelationAggregateInput
   AuditLog?: Prisma.ActivityLogOrderByRelationAggregateInput
   customerAuths?: Prisma.CustomerAuthOrderByRelationAggregateInput
+  requestedLeaveRequests?: Prisma.LeaveRequestOrderByRelationAggregateInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -261,6 +265,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   customer?: Prisma.CustomerListRelationFilter
   AuditLog?: Prisma.ActivityLogListRelationFilter
   customerAuths?: Prisma.CustomerAuthListRelationFilter
+  requestedLeaveRequests?: Prisma.LeaveRequestListRelationFilter
+  reviewedLeaveRequests?: Prisma.LeaveRequestListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -310,6 +316,8 @@ export type UserCreateInput = {
   customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -329,6 +337,8 @@ export type UserUncheckedCreateInput = {
   customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUpdateInput = {
@@ -348,6 +358,8 @@ export type UserUpdateInput = {
   customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -367,6 +379,8 @@ export type UserUncheckedUpdateInput = {
   customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -405,6 +419,16 @@ export type UserUncheckedUpdateManyInput = {
   isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
+export type UserScalarRelationFilter = {
+  is?: Prisma.UserWhereInput
+  isNot?: Prisma.UserWhereInput
+}
+
+export type UserNullableScalarRelationFilter = {
+  is?: Prisma.UserWhereInput | null
+  isNot?: Prisma.UserWhereInput | null
+}
+
 export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -441,9 +465,34 @@ export type UserMinOrderByAggregateInput = {
   isTempPassword?: Prisma.SortOrder
 }
 
-export type UserScalarRelationFilter = {
-  is?: Prisma.UserWhereInput
-  isNot?: Prisma.UserWhereInput
+export type UserCreateNestedOneWithoutRequestedLeaveRequestsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRequestedLeaveRequestsInput, Prisma.UserUncheckedCreateWithoutRequestedLeaveRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRequestedLeaveRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutReviewedLeaveRequestsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewedLeaveRequestsInput, Prisma.UserUncheckedCreateWithoutReviewedLeaveRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewedLeaveRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutRequestedLeaveRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRequestedLeaveRequestsInput, Prisma.UserUncheckedCreateWithoutRequestedLeaveRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRequestedLeaveRequestsInput
+  upsert?: Prisma.UserUpsertWithoutRequestedLeaveRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRequestedLeaveRequestsInput, Prisma.UserUpdateWithoutRequestedLeaveRequestsInput>, Prisma.UserUncheckedUpdateWithoutRequestedLeaveRequestsInput>
+}
+
+export type UserUpdateOneWithoutReviewedLeaveRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewedLeaveRequestsInput, Prisma.UserUncheckedCreateWithoutReviewedLeaveRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewedLeaveRequestsInput
+  upsert?: Prisma.UserUpsertWithoutReviewedLeaveRequestsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewedLeaveRequestsInput, Prisma.UserUpdateWithoutReviewedLeaveRequestsInput>, Prisma.UserUncheckedUpdateWithoutReviewedLeaveRequestsInput>
 }
 
 export type UserCreateNestedOneWithoutManagementInput = {
@@ -544,6 +593,198 @@ export type UserUpdateOneRequiredWithoutAccountsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAccountsInput, Prisma.UserUpdateWithoutAccountsInput>, Prisma.UserUncheckedUpdateWithoutAccountsInput>
 }
 
+export type UserCreateWithoutRequestedLeaveRequestsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified: boolean
+  image?: string | null
+  token?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  isTempPassword?: boolean
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  management?: Prisma.ManagementMembershipCreateNestedManyWithoutUserInput
+  locationEmployees?: Prisma.LocationEmployeeCreateNestedManyWithoutUserInput
+  customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
+  AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
+}
+
+export type UserUncheckedCreateWithoutRequestedLeaveRequestsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified: boolean
+  image?: string | null
+  token?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  isTempPassword?: boolean
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutUserInput
+  locationEmployees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutUserInput
+  customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
+  AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
+}
+
+export type UserCreateOrConnectWithoutRequestedLeaveRequestsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutRequestedLeaveRequestsInput, Prisma.UserUncheckedCreateWithoutRequestedLeaveRequestsInput>
+}
+
+export type UserCreateWithoutReviewedLeaveRequestsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified: boolean
+  image?: string | null
+  token?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  isTempPassword?: boolean
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  management?: Prisma.ManagementMembershipCreateNestedManyWithoutUserInput
+  locationEmployees?: Prisma.LocationEmployeeCreateNestedManyWithoutUserInput
+  customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
+  AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutRequestedByInput
+}
+
+export type UserUncheckedCreateWithoutReviewedLeaveRequestsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified: boolean
+  image?: string | null
+  token?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  isTempPassword?: boolean
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutUserInput
+  locationEmployees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutUserInput
+  customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
+  AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutRequestedByInput
+}
+
+export type UserCreateOrConnectWithoutReviewedLeaveRequestsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewedLeaveRequestsInput, Prisma.UserUncheckedCreateWithoutReviewedLeaveRequestsInput>
+}
+
+export type UserUpsertWithoutRequestedLeaveRequestsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutRequestedLeaveRequestsInput, Prisma.UserUncheckedUpdateWithoutRequestedLeaveRequestsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutRequestedLeaveRequestsInput, Prisma.UserUncheckedCreateWithoutRequestedLeaveRequestsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutRequestedLeaveRequestsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutRequestedLeaveRequestsInput, Prisma.UserUncheckedUpdateWithoutRequestedLeaveRequestsInput>
+}
+
+export type UserUpdateWithoutRequestedLeaveRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  management?: Prisma.ManagementMembershipUpdateManyWithoutUserNestedInput
+  locationEmployees?: Prisma.LocationEmployeeUpdateManyWithoutUserNestedInput
+  customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
+  AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutRequestedLeaveRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutUserNestedInput
+  locationEmployees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutUserNestedInput
+  customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
+  AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+}
+
+export type UserUpsertWithoutReviewedLeaveRequestsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutReviewedLeaveRequestsInput, Prisma.UserUncheckedUpdateWithoutReviewedLeaveRequestsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewedLeaveRequestsInput, Prisma.UserUncheckedCreateWithoutReviewedLeaveRequestsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutReviewedLeaveRequestsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutReviewedLeaveRequestsInput, Prisma.UserUncheckedUpdateWithoutReviewedLeaveRequestsInput>
+}
+
+export type UserUpdateWithoutReviewedLeaveRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  management?: Prisma.ManagementMembershipUpdateManyWithoutUserNestedInput
+  locationEmployees?: Prisma.LocationEmployeeUpdateManyWithoutUserNestedInput
+  customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
+  AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutRequestedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutReviewedLeaveRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isTempPassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutUserNestedInput
+  locationEmployees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutUserNestedInput
+  customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
+  AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+}
+
 export type UserCreateWithoutManagementInput = {
   id: string
   name: string
@@ -560,6 +801,8 @@ export type UserCreateWithoutManagementInput = {
   customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutManagementInput = {
@@ -578,6 +821,8 @@ export type UserUncheckedCreateWithoutManagementInput = {
   customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutManagementInput = {
@@ -612,6 +857,8 @@ export type UserUpdateWithoutManagementInput = {
   customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutManagementInput = {
@@ -630,6 +877,8 @@ export type UserUncheckedUpdateWithoutManagementInput = {
   customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutLocationEmployeesInput = {
@@ -648,6 +897,8 @@ export type UserCreateWithoutLocationEmployeesInput = {
   customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutLocationEmployeesInput = {
@@ -666,6 +917,8 @@ export type UserUncheckedCreateWithoutLocationEmployeesInput = {
   customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutLocationEmployeesInput = {
@@ -700,6 +953,8 @@ export type UserUpdateWithoutLocationEmployeesInput = {
   customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLocationEmployeesInput = {
@@ -718,6 +973,8 @@ export type UserUncheckedUpdateWithoutLocationEmployeesInput = {
   customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutCustomerInput = {
@@ -736,6 +993,8 @@ export type UserCreateWithoutCustomerInput = {
   locationEmployees?: Prisma.LocationEmployeeCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutCustomerInput = {
@@ -754,6 +1013,8 @@ export type UserUncheckedCreateWithoutCustomerInput = {
   locationEmployees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutCustomerInput = {
@@ -788,6 +1049,8 @@ export type UserUpdateWithoutCustomerInput = {
   locationEmployees?: Prisma.LocationEmployeeUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCustomerInput = {
@@ -806,6 +1069,8 @@ export type UserUncheckedUpdateWithoutCustomerInput = {
   locationEmployees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutCustomerAuthsInput = {
@@ -824,6 +1089,8 @@ export type UserCreateWithoutCustomerAuthsInput = {
   locationEmployees?: Prisma.LocationEmployeeCreateNestedManyWithoutUserInput
   customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutCustomerAuthsInput = {
@@ -842,6 +1109,8 @@ export type UserUncheckedCreateWithoutCustomerAuthsInput = {
   locationEmployees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutUserInput
   customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutCustomerAuthsInput = {
@@ -876,6 +1145,8 @@ export type UserUpdateWithoutCustomerAuthsInput = {
   locationEmployees?: Prisma.LocationEmployeeUpdateManyWithoutUserNestedInput
   customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCustomerAuthsInput = {
@@ -894,6 +1165,8 @@ export type UserUncheckedUpdateWithoutCustomerAuthsInput = {
   locationEmployees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutUserNestedInput
   customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutAuditLogInput = {
@@ -912,6 +1185,8 @@ export type UserCreateWithoutAuditLogInput = {
   locationEmployees?: Prisma.LocationEmployeeCreateNestedManyWithoutUserInput
   customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogInput = {
@@ -930,6 +1205,8 @@ export type UserUncheckedCreateWithoutAuditLogInput = {
   locationEmployees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutUserInput
   customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogInput = {
@@ -964,6 +1241,8 @@ export type UserUpdateWithoutAuditLogInput = {
   locationEmployees?: Prisma.LocationEmployeeUpdateManyWithoutUserNestedInput
   customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogInput = {
@@ -982,6 +1261,8 @@ export type UserUncheckedUpdateWithoutAuditLogInput = {
   locationEmployees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutUserNestedInput
   customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1000,6 +1281,8 @@ export type UserCreateWithoutSessionsInput = {
   customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1018,6 +1301,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1052,6 +1337,8 @@ export type UserUpdateWithoutSessionsInput = {
   customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1070,6 +1357,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -1088,6 +1377,8 @@ export type UserCreateWithoutAccountsInput = {
   customer?: Prisma.CustomerCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogCreateNestedManyWithoutUserInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -1106,6 +1397,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   customer?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
   AuditLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutUserInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutUserInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -1140,6 +1433,8 @@ export type UserUpdateWithoutAccountsInput = {
   customer?: Prisma.CustomerUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUpdateManyWithoutUserNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -1158,6 +1453,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   customer?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
   AuditLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutUserNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutUserNestedInput
+  requestedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  reviewedLeaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 
@@ -1173,6 +1470,8 @@ export type UserCountOutputType = {
   customer: number
   AuditLog: number
   customerAuths: number
+  requestedLeaveRequests: number
+  reviewedLeaveRequests: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1183,6 +1482,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   customer?: boolean | UserCountOutputTypeCountCustomerArgs
   AuditLog?: boolean | UserCountOutputTypeCountAuditLogArgs
   customerAuths?: boolean | UserCountOutputTypeCountCustomerAuthsArgs
+  requestedLeaveRequests?: boolean | UserCountOutputTypeCountRequestedLeaveRequestsArgs
+  reviewedLeaveRequests?: boolean | UserCountOutputTypeCountReviewedLeaveRequestsArgs
 }
 
 /**
@@ -1244,6 +1545,20 @@ export type UserCountOutputTypeCountCustomerAuthsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.CustomerAuthWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountRequestedLeaveRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeaveRequestWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountReviewedLeaveRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeaveRequestWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1262,6 +1577,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   customer?: boolean | Prisma.User$customerArgs<ExtArgs>
   AuditLog?: boolean | Prisma.User$AuditLogArgs<ExtArgs>
   customerAuths?: boolean | Prisma.User$customerAuthsArgs<ExtArgs>
+  requestedLeaveRequests?: boolean | Prisma.User$requestedLeaveRequestsArgs<ExtArgs>
+  reviewedLeaveRequests?: boolean | Prisma.User$reviewedLeaveRequestsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1310,6 +1627,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   customer?: boolean | Prisma.User$customerArgs<ExtArgs>
   AuditLog?: boolean | Prisma.User$AuditLogArgs<ExtArgs>
   customerAuths?: boolean | Prisma.User$customerAuthsArgs<ExtArgs>
+  requestedLeaveRequests?: boolean | Prisma.User$requestedLeaveRequestsArgs<ExtArgs>
+  reviewedLeaveRequests?: boolean | Prisma.User$reviewedLeaveRequestsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1325,6 +1644,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     customer: Prisma.$CustomerPayload<ExtArgs>[]
     AuditLog: Prisma.$ActivityLogPayload<ExtArgs>[]
     customerAuths: Prisma.$CustomerAuthPayload<ExtArgs>[]
+    requestedLeaveRequests: Prisma.$LeaveRequestPayload<ExtArgs>[]
+    reviewedLeaveRequests: Prisma.$LeaveRequestPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1737,6 +2058,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   customer<T extends Prisma.User$customerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$customerArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   AuditLog<T extends Prisma.User$AuditLogArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$AuditLogArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customerAuths<T extends Prisma.User$customerAuthsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$customerAuthsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerAuthPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  requestedLeaveRequests<T extends Prisma.User$requestedLeaveRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$requestedLeaveRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviewedLeaveRequests<T extends Prisma.User$reviewedLeaveRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewedLeaveRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2328,6 +2651,54 @@ export type User$customerAuthsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.CustomerAuthScalarFieldEnum | Prisma.CustomerAuthScalarFieldEnum[]
+}
+
+/**
+ * User.requestedLeaveRequests
+ */
+export type User$requestedLeaveRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LeaveRequest
+   */
+  select?: Prisma.LeaveRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LeaveRequest
+   */
+  omit?: Prisma.LeaveRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeaveRequestInclude<ExtArgs> | null
+  where?: Prisma.LeaveRequestWhereInput
+  orderBy?: Prisma.LeaveRequestOrderByWithRelationInput | Prisma.LeaveRequestOrderByWithRelationInput[]
+  cursor?: Prisma.LeaveRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeaveRequestScalarFieldEnum | Prisma.LeaveRequestScalarFieldEnum[]
+}
+
+/**
+ * User.reviewedLeaveRequests
+ */
+export type User$reviewedLeaveRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LeaveRequest
+   */
+  select?: Prisma.LeaveRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LeaveRequest
+   */
+  omit?: Prisma.LeaveRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeaveRequestInclude<ExtArgs> | null
+  where?: Prisma.LeaveRequestWhereInput
+  orderBy?: Prisma.LeaveRequestOrderByWithRelationInput | Prisma.LeaveRequestOrderByWithRelationInput[]
+  cursor?: Prisma.LeaveRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeaveRequestScalarFieldEnum | Prisma.LeaveRequestScalarFieldEnum[]
 }
 
 /**

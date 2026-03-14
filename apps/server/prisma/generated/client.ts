@@ -77,6 +77,11 @@ export type ScheduleException = Prisma.ScheduleExceptionModel
  */
 export type TimeOff = Prisma.TimeOffModel
 /**
+ * Model LeaveRequest
+ * 
+ */
+export type LeaveRequest = Prisma.LeaveRequestModel
+/**
  * Model AppointmentSettings
  * 
  */
@@ -187,6 +192,9 @@ export const AppointmentStatus = $Enums.AppointmentStatus
 
 export type AppointmentPaymentStatus = $Enums.AppointmentPaymentStatus
 export const AppointmentPaymentStatus = $Enums.AppointmentPaymentStatus
+
+export type LeaveRequestStatus = $Enums.LeaveRequestStatus
+export const LeaveRequestStatus = $Enums.LeaveRequestStatus
 
 export type PromoLevel = $Enums.PromoLevel
 export const PromoLevel = $Enums.PromoLevel

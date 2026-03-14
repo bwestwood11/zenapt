@@ -33,6 +33,7 @@ export type AppointmentSettingsAvgAggregateOutputType = {
   downpaymentPercentage: number | null
   cancellationPercent: number | null
   cancellationDuration: number | null
+  leaveRequestNoticeDays: number | null
   tipPresetPercentages: number | null
 }
 
@@ -44,6 +45,7 @@ export type AppointmentSettingsSumAggregateOutputType = {
   downpaymentPercentage: number | null
   cancellationPercent: number | null
   cancellationDuration: number | null
+  leaveRequestNoticeDays: number | null
   tipPresetPercentages: number[]
 }
 
@@ -57,6 +59,7 @@ export type AppointmentSettingsMinAggregateOutputType = {
   downpaymentPercentage: number | null
   cancellationPercent: number | null
   cancellationDuration: number | null
+  leaveRequestNoticeDays: number | null
   tipEnabled: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -72,6 +75,7 @@ export type AppointmentSettingsMaxAggregateOutputType = {
   downpaymentPercentage: number | null
   cancellationPercent: number | null
   cancellationDuration: number | null
+  leaveRequestNoticeDays: number | null
   tipEnabled: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -87,6 +91,7 @@ export type AppointmentSettingsCountAggregateOutputType = {
   downpaymentPercentage: number
   cancellationPercent: number
   cancellationDuration: number
+  leaveRequestNoticeDays: number
   tipEnabled: number
   tipPresetPercentages: number
   createdAt: number
@@ -103,6 +108,7 @@ export type AppointmentSettingsAvgAggregateInputType = {
   downpaymentPercentage?: true
   cancellationPercent?: true
   cancellationDuration?: true
+  leaveRequestNoticeDays?: true
   tipPresetPercentages?: true
 }
 
@@ -114,6 +120,7 @@ export type AppointmentSettingsSumAggregateInputType = {
   downpaymentPercentage?: true
   cancellationPercent?: true
   cancellationDuration?: true
+  leaveRequestNoticeDays?: true
   tipPresetPercentages?: true
 }
 
@@ -127,6 +134,7 @@ export type AppointmentSettingsMinAggregateInputType = {
   downpaymentPercentage?: true
   cancellationPercent?: true
   cancellationDuration?: true
+  leaveRequestNoticeDays?: true
   tipEnabled?: true
   createdAt?: true
   updatedAt?: true
@@ -142,6 +150,7 @@ export type AppointmentSettingsMaxAggregateInputType = {
   downpaymentPercentage?: true
   cancellationPercent?: true
   cancellationDuration?: true
+  leaveRequestNoticeDays?: true
   tipEnabled?: true
   createdAt?: true
   updatedAt?: true
@@ -157,6 +166,7 @@ export type AppointmentSettingsCountAggregateInputType = {
   downpaymentPercentage?: true
   cancellationPercent?: true
   cancellationDuration?: true
+  leaveRequestNoticeDays?: true
   tipEnabled?: true
   tipPresetPercentages?: true
   createdAt?: true
@@ -260,6 +270,7 @@ export type AppointmentSettingsGroupByOutputType = {
   downpaymentPercentage: number
   cancellationPercent: number
   cancellationDuration: number
+  leaveRequestNoticeDays: number
   tipEnabled: boolean
   tipPresetPercentages: number[]
   createdAt: Date
@@ -299,6 +310,7 @@ export type AppointmentSettingsWhereInput = {
   downpaymentPercentage?: Prisma.IntFilter<"AppointmentSettings"> | number
   cancellationPercent?: Prisma.IntFilter<"AppointmentSettings"> | number
   cancellationDuration?: Prisma.IntFilter<"AppointmentSettings"> | number
+  leaveRequestNoticeDays?: Prisma.IntFilter<"AppointmentSettings"> | number
   tipEnabled?: Prisma.BoolFilter<"AppointmentSettings"> | boolean
   tipPresetPercentages?: Prisma.IntNullableListFilter<"AppointmentSettings">
   createdAt?: Prisma.DateTimeFilter<"AppointmentSettings"> | Date | string
@@ -316,6 +328,7 @@ export type AppointmentSettingsOrderByWithRelationInput = {
   downpaymentPercentage?: Prisma.SortOrder
   cancellationPercent?: Prisma.SortOrder
   cancellationDuration?: Prisma.SortOrder
+  leaveRequestNoticeDays?: Prisma.SortOrder
   tipEnabled?: Prisma.SortOrder
   tipPresetPercentages?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -336,6 +349,7 @@ export type AppointmentSettingsWhereUniqueInput = Prisma.AtLeast<{
   downpaymentPercentage?: Prisma.IntFilter<"AppointmentSettings"> | number
   cancellationPercent?: Prisma.IntFilter<"AppointmentSettings"> | number
   cancellationDuration?: Prisma.IntFilter<"AppointmentSettings"> | number
+  leaveRequestNoticeDays?: Prisma.IntFilter<"AppointmentSettings"> | number
   tipEnabled?: Prisma.BoolFilter<"AppointmentSettings"> | boolean
   tipPresetPercentages?: Prisma.IntNullableListFilter<"AppointmentSettings">
   createdAt?: Prisma.DateTimeFilter<"AppointmentSettings"> | Date | string
@@ -353,6 +367,7 @@ export type AppointmentSettingsOrderByWithAggregationInput = {
   downpaymentPercentage?: Prisma.SortOrder
   cancellationPercent?: Prisma.SortOrder
   cancellationDuration?: Prisma.SortOrder
+  leaveRequestNoticeDays?: Prisma.SortOrder
   tipEnabled?: Prisma.SortOrder
   tipPresetPercentages?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -377,6 +392,7 @@ export type AppointmentSettingsScalarWhereWithAggregatesInput = {
   downpaymentPercentage?: Prisma.IntWithAggregatesFilter<"AppointmentSettings"> | number
   cancellationPercent?: Prisma.IntWithAggregatesFilter<"AppointmentSettings"> | number
   cancellationDuration?: Prisma.IntWithAggregatesFilter<"AppointmentSettings"> | number
+  leaveRequestNoticeDays?: Prisma.IntWithAggregatesFilter<"AppointmentSettings"> | number
   tipEnabled?: Prisma.BoolWithAggregatesFilter<"AppointmentSettings"> | boolean
   tipPresetPercentages?: Prisma.IntNullableListFilter<"AppointmentSettings">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AppointmentSettings"> | Date | string
@@ -392,6 +408,7 @@ export type AppointmentSettingsCreateInput = {
   downpaymentPercentage?: number
   cancellationPercent?: number
   cancellationDuration?: number
+  leaveRequestNoticeDays?: number
   tipEnabled?: boolean
   tipPresetPercentages?: Prisma.AppointmentSettingsCreatetipPresetPercentagesInput | number[]
   createdAt?: Date | string
@@ -409,6 +426,7 @@ export type AppointmentSettingsUncheckedCreateInput = {
   downpaymentPercentage?: number
   cancellationPercent?: number
   cancellationDuration?: number
+  leaveRequestNoticeDays?: number
   tipEnabled?: boolean
   tipPresetPercentages?: Prisma.AppointmentSettingsCreatetipPresetPercentagesInput | number[]
   createdAt?: Date | string
@@ -424,6 +442,7 @@ export type AppointmentSettingsUpdateInput = {
   downpaymentPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   cancellationPercent?: Prisma.IntFieldUpdateOperationsInput | number
   cancellationDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  leaveRequestNoticeDays?: Prisma.IntFieldUpdateOperationsInput | number
   tipEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tipPresetPercentages?: Prisma.AppointmentSettingsUpdatetipPresetPercentagesInput | number[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -441,6 +460,7 @@ export type AppointmentSettingsUncheckedUpdateInput = {
   downpaymentPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   cancellationPercent?: Prisma.IntFieldUpdateOperationsInput | number
   cancellationDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  leaveRequestNoticeDays?: Prisma.IntFieldUpdateOperationsInput | number
   tipEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tipPresetPercentages?: Prisma.AppointmentSettingsUpdatetipPresetPercentagesInput | number[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -457,6 +477,7 @@ export type AppointmentSettingsCreateManyInput = {
   downpaymentPercentage?: number
   cancellationPercent?: number
   cancellationDuration?: number
+  leaveRequestNoticeDays?: number
   tipEnabled?: boolean
   tipPresetPercentages?: Prisma.AppointmentSettingsCreatetipPresetPercentagesInput | number[]
   createdAt?: Date | string
@@ -472,6 +493,7 @@ export type AppointmentSettingsUpdateManyMutationInput = {
   downpaymentPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   cancellationPercent?: Prisma.IntFieldUpdateOperationsInput | number
   cancellationDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  leaveRequestNoticeDays?: Prisma.IntFieldUpdateOperationsInput | number
   tipEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tipPresetPercentages?: Prisma.AppointmentSettingsUpdatetipPresetPercentagesInput | number[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -488,6 +510,7 @@ export type AppointmentSettingsUncheckedUpdateManyInput = {
   downpaymentPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   cancellationPercent?: Prisma.IntFieldUpdateOperationsInput | number
   cancellationDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  leaveRequestNoticeDays?: Prisma.IntFieldUpdateOperationsInput | number
   tipEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tipPresetPercentages?: Prisma.AppointmentSettingsUpdatetipPresetPercentagesInput | number[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -512,6 +535,7 @@ export type AppointmentSettingsCountOrderByAggregateInput = {
   downpaymentPercentage?: Prisma.SortOrder
   cancellationPercent?: Prisma.SortOrder
   cancellationDuration?: Prisma.SortOrder
+  leaveRequestNoticeDays?: Prisma.SortOrder
   tipEnabled?: Prisma.SortOrder
   tipPresetPercentages?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -526,6 +550,7 @@ export type AppointmentSettingsAvgOrderByAggregateInput = {
   downpaymentPercentage?: Prisma.SortOrder
   cancellationPercent?: Prisma.SortOrder
   cancellationDuration?: Prisma.SortOrder
+  leaveRequestNoticeDays?: Prisma.SortOrder
   tipPresetPercentages?: Prisma.SortOrder
 }
 
@@ -539,6 +564,7 @@ export type AppointmentSettingsMaxOrderByAggregateInput = {
   downpaymentPercentage?: Prisma.SortOrder
   cancellationPercent?: Prisma.SortOrder
   cancellationDuration?: Prisma.SortOrder
+  leaveRequestNoticeDays?: Prisma.SortOrder
   tipEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -554,6 +580,7 @@ export type AppointmentSettingsMinOrderByAggregateInput = {
   downpaymentPercentage?: Prisma.SortOrder
   cancellationPercent?: Prisma.SortOrder
   cancellationDuration?: Prisma.SortOrder
+  leaveRequestNoticeDays?: Prisma.SortOrder
   tipEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -567,6 +594,7 @@ export type AppointmentSettingsSumOrderByAggregateInput = {
   downpaymentPercentage?: Prisma.SortOrder
   cancellationPercent?: Prisma.SortOrder
   cancellationDuration?: Prisma.SortOrder
+  leaveRequestNoticeDays?: Prisma.SortOrder
   tipPresetPercentages?: Prisma.SortOrder
 }
 
@@ -625,6 +653,7 @@ export type AppointmentSettingsCreateWithoutLocationInput = {
   downpaymentPercentage?: number
   cancellationPercent?: number
   cancellationDuration?: number
+  leaveRequestNoticeDays?: number
   tipEnabled?: boolean
   tipPresetPercentages?: Prisma.AppointmentSettingsCreatetipPresetPercentagesInput | number[]
   createdAt?: Date | string
@@ -640,6 +669,7 @@ export type AppointmentSettingsUncheckedCreateWithoutLocationInput = {
   downpaymentPercentage?: number
   cancellationPercent?: number
   cancellationDuration?: number
+  leaveRequestNoticeDays?: number
   tipEnabled?: boolean
   tipPresetPercentages?: Prisma.AppointmentSettingsCreatetipPresetPercentagesInput | number[]
   createdAt?: Date | string
@@ -671,6 +701,7 @@ export type AppointmentSettingsUpdateWithoutLocationInput = {
   downpaymentPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   cancellationPercent?: Prisma.IntFieldUpdateOperationsInput | number
   cancellationDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  leaveRequestNoticeDays?: Prisma.IntFieldUpdateOperationsInput | number
   tipEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tipPresetPercentages?: Prisma.AppointmentSettingsUpdatetipPresetPercentagesInput | number[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -686,6 +717,7 @@ export type AppointmentSettingsUncheckedUpdateWithoutLocationInput = {
   downpaymentPercentage?: Prisma.IntFieldUpdateOperationsInput | number
   cancellationPercent?: Prisma.IntFieldUpdateOperationsInput | number
   cancellationDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  leaveRequestNoticeDays?: Prisma.IntFieldUpdateOperationsInput | number
   tipEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tipPresetPercentages?: Prisma.AppointmentSettingsUpdatetipPresetPercentagesInput | number[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -704,6 +736,7 @@ export type AppointmentSettingsSelect<ExtArgs extends runtime.Types.Extensions.I
   downpaymentPercentage?: boolean
   cancellationPercent?: boolean
   cancellationDuration?: boolean
+  leaveRequestNoticeDays?: boolean
   tipEnabled?: boolean
   tipPresetPercentages?: boolean
   createdAt?: boolean
@@ -721,6 +754,7 @@ export type AppointmentSettingsSelectCreateManyAndReturn<ExtArgs extends runtime
   downpaymentPercentage?: boolean
   cancellationPercent?: boolean
   cancellationDuration?: boolean
+  leaveRequestNoticeDays?: boolean
   tipEnabled?: boolean
   tipPresetPercentages?: boolean
   createdAt?: boolean
@@ -738,6 +772,7 @@ export type AppointmentSettingsSelectUpdateManyAndReturn<ExtArgs extends runtime
   downpaymentPercentage?: boolean
   cancellationPercent?: boolean
   cancellationDuration?: boolean
+  leaveRequestNoticeDays?: boolean
   tipEnabled?: boolean
   tipPresetPercentages?: boolean
   createdAt?: boolean
@@ -755,13 +790,14 @@ export type AppointmentSettingsSelectScalar = {
   downpaymentPercentage?: boolean
   cancellationPercent?: boolean
   cancellationDuration?: boolean
+  leaveRequestNoticeDays?: boolean
   tipEnabled?: boolean
   tipPresetPercentages?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type AppointmentSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "locationId" | "bufferTime" | "prepTime" | "advanceBookingLimitDays" | "bookingCutOff" | "downpaymentPercentage" | "cancellationPercent" | "cancellationDuration" | "tipEnabled" | "tipPresetPercentages" | "createdAt" | "updatedAt", ExtArgs["result"]["appointmentSettings"]>
+export type AppointmentSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "locationId" | "bufferTime" | "prepTime" | "advanceBookingLimitDays" | "bookingCutOff" | "downpaymentPercentage" | "cancellationPercent" | "cancellationDuration" | "leaveRequestNoticeDays" | "tipEnabled" | "tipPresetPercentages" | "createdAt" | "updatedAt", ExtArgs["result"]["appointmentSettings"]>
 export type AppointmentSettingsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   location?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
 }
@@ -787,6 +823,7 @@ export type $AppointmentSettingsPayload<ExtArgs extends runtime.Types.Extensions
     downpaymentPercentage: number
     cancellationPercent: number
     cancellationDuration: number
+    leaveRequestNoticeDays: number
     tipEnabled: boolean
     tipPresetPercentages: number[]
     createdAt: Date
@@ -1224,6 +1261,7 @@ export interface AppointmentSettingsFieldRefs {
   readonly downpaymentPercentage: Prisma.FieldRef<"AppointmentSettings", 'Int'>
   readonly cancellationPercent: Prisma.FieldRef<"AppointmentSettings", 'Int'>
   readonly cancellationDuration: Prisma.FieldRef<"AppointmentSettings", 'Int'>
+  readonly leaveRequestNoticeDays: Prisma.FieldRef<"AppointmentSettings", 'Int'>
   readonly tipEnabled: Prisma.FieldRef<"AppointmentSettings", 'Boolean'>
   readonly tipPresetPercentages: Prisma.FieldRef<"AppointmentSettings", 'Int[]'>
   readonly createdAt: Prisma.FieldRef<"AppointmentSettings", 'DateTime'>
