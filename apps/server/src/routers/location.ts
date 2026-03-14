@@ -17,8 +17,13 @@ import {
 } from "../lib/locations/operating-hours";
 import { ExceptionService } from "../lib/appointment/holidays";
 import { ACTIVITY_LOG_ACTIONS, addActivityLog } from "../lib/activitylogs";
-import { getMinutesInTimeZone, getZonedDateParts } from "../lib/datetime/timezone";
-import { ScheduleTargetType } from "../../prisma/generated/enums";
+import {
+  getMinutesInTimeZone,
+  getZonedDateParts,
+  getZonedDayRangeUtc,
+  zonedDateTimeToUtc,
+} from "../lib/datetime/timezone";
+import { LeaveRequestStatus, ScheduleTargetType } from "../../prisma/generated/enums";
 
 const locationPromoCodeSchema = z.object({
   locationId: z.string(),
@@ -67,6 +72,135 @@ const weeklyScheduleRulesSchema = z.array(
     endMinute: z.number().optional(),
   }),
 );
+
+const leaveRequestInputSchema = z.object({
+  locationId: z.string(),
+  startDate: z.date(),
+  endDate: z.date(),
+  reason: z.string().trim().max(500).optional(),
+});
+
+const leaveRequestConfigSchema = z.object({
+  locationId: z.string(),
+  leaveRequestNoticeDays: z.number().int().min(0).max(60),
+});
+
+const APPROVER_ROLES = new Set([
+  "LOCATION_FRONT_DESK",
+  "LOCATION_ADMIN",
+  "ORGANIZATION_MANAGEMENT",
+] as const);
+
+function getLocationRole(
+  ctx: {
+    session: {
+      user: {
+        employees?:
+          | {
+              locationId: string;
+              role: string;
+            }[]
+          | null;
+      };
+    };
+  },
+  locationId: string,
+) {
+  return ctx.session.user.employees?.find(
+    (employee) => employee.locationId === locationId,
+  )?.role;
+}
+
+function assertApproverRole(role: string | undefined) {
+  if (
+    !role ||
+    !APPROVER_ROLES.has(
+      role as "LOCATION_FRONT_DESK" | "LOCATION_ADMIN" | "ORGANIZATION_MANAGEMENT",
+    )
+  ) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Only front desk or location admin can perform this action",
+    });
+  }
+}
+
+function normalizeLeaveRequestRange(
+  startDate: Date,
+  endDate: Date,
+  timeZone: string,
+) {
+  const rawStartMs = startDate.getTime();
+  const rawEndMs = endDate.getTime();
+
+  const intendedDayCount = Math.max(
+    1,
+    Math.ceil((rawEndMs - rawStartMs + 1) / (24 * 60 * 60 * 1000)),
+  );
+
+  const startParts = getZonedDateParts(startDate, timeZone);
+
+  const buildCandidateRange = (startDayOffset: number) => {
+    const candidateStartRef = new Date(
+      Date.UTC(
+        startParts.year,
+        startParts.month - 1,
+        startParts.day + startDayOffset,
+      ),
+    );
+
+    const candidateStart = zonedDateTimeToUtc(timeZone, {
+      year: candidateStartRef.getUTCFullYear(),
+      month: candidateStartRef.getUTCMonth() + 1,
+      day: candidateStartRef.getUTCDate(),
+      hour: 0,
+      minute: 0,
+      second: 0,
+    });
+
+    const candidateEndExclusiveRef = new Date(
+      Date.UTC(
+        candidateStartRef.getUTCFullYear(),
+        candidateStartRef.getUTCMonth(),
+        candidateStartRef.getUTCDate() + intendedDayCount,
+      ),
+    );
+
+    const candidateEndExclusive = zonedDateTimeToUtc(timeZone, {
+      year: candidateEndExclusiveRef.getUTCFullYear(),
+      month: candidateEndExclusiveRef.getUTCMonth() + 1,
+      day: candidateEndExclusiveRef.getUTCDate(),
+      hour: 0,
+      minute: 0,
+      second: 0,
+    });
+
+    const candidateEnd = new Date(candidateEndExclusive.getTime() - 1);
+
+    const overlap = Math.max(
+      0,
+      Math.min(candidateEnd.getTime(), rawEndMs) -
+        Math.max(candidateStart.getTime(), rawStartMs) +
+        1,
+    );
+
+    return {
+      startDate: candidateStart,
+      endDate: candidateEnd,
+      overlap,
+    };
+  };
+
+  const candidates = [buildCandidateRange(0), buildCandidateRange(1)];
+  const bestCandidate = candidates.sort(
+    (left, right) => right.overlap - left.overlap,
+  )[0];
+
+  return {
+    normalizedStartDate: bestCandidate.startDate,
+    normalizedEndDate: bestCandidate.endDate,
+  };
+}
 
 const recurringBreakRuleSchema = z
   .object({
@@ -650,6 +784,362 @@ const checkMyWorkingHoursImpact = withPermissions(
       status: appointment.status,
     })),
   };
+});
+
+const getLeaveRequestConfig = withPermissions(
+  "READ::EMPLOYEES",
+  z.object({ locationId: z.string() }),
+).query(async ({ input }) => {
+  const settings = await prisma.appointmentSettings.findUnique({
+    where: { locationId: input.locationId },
+    select: { leaveRequestNoticeDays: true },
+  });
+
+  return {
+    leaveRequestNoticeDays: settings?.leaveRequestNoticeDays ?? 1,
+  };
+});
+
+const updateLeaveRequestConfig = withPermissions(
+  "READ::EMPLOYEES",
+  leaveRequestConfigSchema,
+).mutation(async ({ ctx, input }) => {
+  const role = getLocationRole(ctx, input.locationId);
+  assertApproverRole(role);
+
+  await prisma.appointmentSettings.upsert({
+    where: { locationId: input.locationId },
+    create: {
+      locationId: input.locationId,
+      leaveRequestNoticeDays: input.leaveRequestNoticeDays,
+    },
+    update: {
+      leaveRequestNoticeDays: input.leaveRequestNoticeDays,
+    },
+  });
+
+  return { success: true };
+});
+
+const createMyLeaveRequest = withPermissions(
+  "READ::EMPLOYEES",
+  leaveRequestInputSchema,
+).mutation(async ({ ctx, input }) => {
+  const role = getLocationRole(ctx, input.locationId);
+
+  if (role !== "LOCATION_SPECIALIST") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Only specialists can request leave",
+    });
+  }
+
+  if (input.startDate > input.endDate) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Start date must be before or equal to end date",
+    });
+  }
+
+  const specialist = await prisma.locationEmployee.findFirst({
+    where: {
+      locationId: input.locationId,
+      userId: ctx.session.user.id,
+      role: "LOCATION_SPECIALIST",
+    },
+    select: {
+      id: true,
+      location: {
+        select: {
+          timeZone: true,
+        },
+      },
+    },
+  });
+
+  if (!specialist) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Specialist record not found for this location",
+    });
+  }
+
+  const settings = await prisma.appointmentSettings.findUnique({
+    where: { locationId: input.locationId },
+    select: { leaveRequestNoticeDays: true },
+  });
+
+  const noticeDays = settings?.leaveRequestNoticeDays ?? 1;
+  const locationTimeZone = specialist.location.timeZone || "UTC";
+  const now = new Date();
+
+  const { normalizedStartDate, normalizedEndDate } = normalizeLeaveRequestRange(
+    input.startDate,
+    input.endDate,
+    locationTimeZone,
+  );
+
+  if (normalizedStartDate > normalizedEndDate) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Start date must be before or equal to end date",
+    });
+  }
+
+  const { year, month, day } = getZonedDayRangeUtc(now, locationTimeZone);
+  const thresholdRef = new Date(Date.UTC(year, month - 1, day + noticeDays));
+  const thresholdDate = zonedDateTimeToUtc(locationTimeZone, {
+    year: thresholdRef.getUTCFullYear(),
+    month: thresholdRef.getUTCMonth() + 1,
+    day: thresholdRef.getUTCDate(),
+    hour: 0,
+    minute: 0,
+    second: 0,
+  });
+
+
+  console.log("Leave request threshold date:", thresholdDate.toISOString());
+  console.log("Normalized leave request start date:", normalizedStartDate.toISOString());
+  console.log("Normalized leave request end date:", normalizedEndDate.toISOString());
+
+  if (normalizedStartDate < thresholdDate) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: `Leave must be requested at least ${noticeDays} day(s) in advance`,
+    });
+  }
+
+  const overlapTimeOff = await prisma.timeOff.findFirst({
+    where: {
+      targetType: ScheduleTargetType.EMPLOYEE,
+      targetId: specialist.id,
+      startDate: { lte: normalizedEndDate },
+      endDate: { gte: normalizedStartDate },
+    },
+    select: { id: true },
+  });
+
+  if (overlapTimeOff) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "This leave overlaps with an existing approved time off",
+    });
+  }
+
+  const overlapRequest = await prisma.leaveRequest.findFirst({
+    where: {
+      locationEmployeeId: specialist.id,
+      status: {
+        in: [LeaveRequestStatus.PENDING, LeaveRequestStatus.APPROVED],
+      },
+      startDate: { lte: normalizedEndDate },
+      endDate: { gte: normalizedStartDate },
+    },
+    select: { id: true },
+  });
+
+  if (overlapRequest) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "This leave overlaps with an existing request",
+    });
+  }
+
+  const leaveRequest = await prisma.leaveRequest.create({
+    data: {
+      locationId: input.locationId,
+      locationEmployeeId: specialist.id,
+      requestedById: ctx.session.user.id,
+      startDate: normalizedStartDate,
+      endDate: normalizedEndDate,
+      reason: input.reason,
+      status: LeaveRequestStatus.PENDING,
+    },
+  });
+
+  return { id: leaveRequest.id, success: true };
+});
+
+const getMyLeaveRequests = withPermissions(
+  "READ::EMPLOYEES",
+  z.object({ locationId: z.string() }),
+).query(async ({ ctx, input }) => {
+  const specialist = await prisma.locationEmployee.findFirst({
+    where: {
+      locationId: input.locationId,
+      userId: ctx.session.user.id,
+      role: "LOCATION_SPECIALIST",
+    },
+    select: { id: true },
+  });
+
+  if (!specialist) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Only specialists can view their leave requests",
+    });
+  }
+
+  return prisma.leaveRequest.findMany({
+    where: {
+      locationId: input.locationId,
+      locationEmployeeId: specialist.id,
+    },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      startDate: true,
+      endDate: true,
+      reason: true,
+      reviewNote: true,
+      status: true,
+      reviewedAt: true,
+      createdAt: true,
+      reviewedBy: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+});
+
+const getLocationLeaveRequests = withPermissions(
+  "READ::EMPLOYEES",
+  z.object({
+    locationId: z.string(),
+    status: z.enum(LeaveRequestStatus).optional(),
+  }),
+).query(async ({ ctx, input }) => {
+  const role = getLocationRole(ctx, input.locationId);
+  assertApproverRole(role);
+
+  return prisma.leaveRequest.findMany({
+    where: {
+      locationId: input.locationId,
+      ...(input.status ? { status: input.status } : {}),
+    },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      startDate: true,
+      endDate: true,
+      reason: true,
+      reviewNote: true,
+      status: true,
+      reviewedAt: true,
+      createdAt: true,
+      locationEmployee: {
+        select: {
+          id: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      },
+      reviewedBy: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+});
+
+const reviewLeaveRequest = withPermissions(
+  "READ::EMPLOYEES",
+  z.object({
+    locationId: z.string(),
+    requestId: z.string(),
+    action: z.enum(["APPROVE", "DECLINE"]),
+    reviewNote: z.string().trim().max(500).optional(),
+  }),
+).mutation(async ({ ctx, input }) => {
+  const role = getLocationRole(ctx, input.locationId);
+  assertApproverRole(role);
+
+  const request = await prisma.leaveRequest.findFirst({
+    where: {
+      id: input.requestId,
+      locationId: input.locationId,
+    },
+    select: {
+      id: true,
+      status: true,
+      startDate: true,
+      endDate: true,
+      reason: true,
+      locationEmployeeId: true,
+    },
+  });
+
+  if (!request) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Leave request not found",
+    });
+  }
+
+  if (request.status !== LeaveRequestStatus.PENDING) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Only pending requests can be reviewed",
+    });
+  }
+
+  if (input.action === "APPROVE") {
+    const overlapTimeOff = await prisma.timeOff.findFirst({
+      where: {
+        targetType: ScheduleTargetType.EMPLOYEE,
+        targetId: request.locationEmployeeId,
+        startDate: { lte: request.endDate },
+        endDate: { gte: request.startDate },
+      },
+      select: { id: true },
+    });
+
+    if (overlapTimeOff) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Cannot approve because approved time off already overlaps this request",
+      });
+    }
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.leaveRequest.update({
+      where: { id: request.id },
+      data: {
+        status:
+          input.action === "APPROVE"
+            ? LeaveRequestStatus.APPROVED
+            : LeaveRequestStatus.DECLINED,
+        reviewedById: ctx.session.user.id,
+        reviewedAt: new Date(),
+        reviewNote: input.reviewNote,
+      },
+    });
+
+    if (input.action === "APPROVE") {
+      await tx.timeOff.create({
+        data: {
+          targetType: ScheduleTargetType.EMPLOYEE,
+          targetId: request.locationEmployeeId,
+          startDate: request.startDate,
+          endDate: request.endDate,
+          reason: request.reason || "Approved leave request",
+        },
+      });
+    }
+  });
+
+  return { success: true };
 });
 
 const createLocationHoliday = withPermissions(
@@ -1236,6 +1726,12 @@ export const locationRouter = router({
   fetchMyWorkingHours,
   updateMyWorkingHours,
   checkMyWorkingHoursImpact,
+  getLeaveRequestConfig,
+  updateLeaveRequestConfig,
+  createMyLeaveRequest,
+  getMyLeaveRequests,
+  getLocationLeaveRequests,
+  reviewLeaveRequest,
   updateLocationTipSettings,
   fetchLocationAppointmentSettings,
   fetchRecurringBreakSettings,

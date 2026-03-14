@@ -144,7 +144,6 @@ export function getZonedDayRangeUtc(date: Date, timeZone: string): {
   day: number;
 } {
   const { year, month, day } = getZonedDateParts(date, timeZone);
-
   const dayStartUtc = zonedDateTimeToUtc(timeZone, {
     year,
     month,
