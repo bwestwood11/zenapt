@@ -1,10 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -47,15 +49,11 @@ const formSchema = z.object({
   businessName: z
     .string()
     .min(2, "Business name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
+  email: z.email("Please enter a valid email address"),
   cellPhone: z.string().min(10, "Please enter a valid phone number"),
   numberOfLocations: z.string().min(1, "Please select number of locations"),
   zipCode: z.string().min(5, "Please enter a valid zip code"),
-  websiteUrl: z
-    .string()
-    .url("Please enter a valid website URL")
-    .optional()
-    .or(z.literal("")),
+  websiteUrl: z.union([z.url("Please enter a valid website URL"), z.literal("")]),
   demoDate: z.date({
     message: "Please select a demo date",
   }),
@@ -66,6 +64,7 @@ type FormData = z.infer<typeof formSchema>;
 
 const locationOptions = ["1", "2-3", "4-5", "6-10", "11-20", "20+"];
 export function MedSpaBookingForm() {
+  const searchParams = useSearchParams();
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -80,6 +79,17 @@ export function MedSpaBookingForm() {
       demoDate: new Date(),
     },
   });
+
+  useEffect(() => {
+    const prefilledEmail = searchParams.get("email");
+
+    if (prefilledEmail && !form.getValues("email")) {
+      form.setValue("email", prefilledEmail, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    }
+  }, [form, searchParams]);
 
   const date = useWatch({ name: "demoDate", control: form.control });
   const { data: availableSlotsForDate } = useQuery(
@@ -315,7 +325,6 @@ export function MedSpaBookingForm() {
                             disabled={(date) =>
                               date < new Date() || date < new Date("1900-01-01")
                             }
-                            initialFocus
                           />
                         </PopoverContent>
                       </Popover>
