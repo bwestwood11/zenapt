@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { MedSpaBookingForm } from "@/features/demo-form/form";
-import React from "react";
+import React, { Suspense } from "react";
 
 const page = () => {
   return (
@@ -28,7 +28,9 @@ const page = () => {
           </div>
         </div>
 
-        <MedSpaBookingForm />
+        <Suspense fallback={<div className="text-center text-slate-500">Loading form...</div>}>
+          <MedSpaBookingForm />
+        </Suspense>
       </div>
     </main>
   );
