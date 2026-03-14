@@ -75,7 +75,7 @@ const LOCATION_BREADCRUMB_ROUTES: BreadcrumbRoute[] = [
   { path: "my-services", label: "My Services" },
   { path: "my-working-hours", label: "My Working Hours" },
   { path: "breaks", label: "Recurring Breaks" },
-  { path: "leave-requests", label: "Leave Requests" },
+  { path: "timeoff-requests", label: "Timeoff Requests" },
   { path: "employees", label: "Employees" },
   { path: "employees/invite", label: "Invite Employee" },
   { path: "location-settings", label: "Location Settings" },

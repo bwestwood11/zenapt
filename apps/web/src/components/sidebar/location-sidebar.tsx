@@ -157,8 +157,8 @@ export function LocationSidebar({ slug, ...props }: LocationSidebarProps) {
       allowedRoles: SPECIALIST_ROLES,
     },
     {
-      title: "Leave Requests",
-      href: `${basePath}/leave-requests`,
+      title: "Timeoff Requests",
+      href: `${basePath}/timeoff-requests`,
       icon: CalendarCheck2,
       allowedRoles: ALL_EMPLOYEE_ROLES,
     },

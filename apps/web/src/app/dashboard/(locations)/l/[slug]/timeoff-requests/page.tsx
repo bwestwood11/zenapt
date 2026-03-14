@@ -1,6 +1,6 @@
 import { forbidden } from "next/navigation";
 import { getLocationAccess } from "@/lib/permissions/permission";
-import LeaveRequestsClient from "./_components/leave-requests-client";
+import TimeoffRequestsClient from "./_components/timeoff-requests-client";
 
 const ALLOWED_ROLES = new Set([
   "LOCATION_SPECIALIST",
@@ -9,7 +9,7 @@ const ALLOWED_ROLES = new Set([
   "ORGANIZATION_MANAGEMENT",
 ]);
 
-export default async function LeaveRequestsPage({
+export default async function TimeoffRequestsPage({
   params,
 }: Readonly<{
   params: Promise<{ slug: string }>;
@@ -26,7 +26,7 @@ export default async function LeaveRequestsPage({
   }
 
   return (
-    <LeaveRequestsClient
+    <TimeoffRequestsClient
       locationId={access.locationId}
       slug={slug}
       role={access.role}

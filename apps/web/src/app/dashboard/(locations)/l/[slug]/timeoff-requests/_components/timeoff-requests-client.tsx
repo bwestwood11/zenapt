@@ -22,7 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import LeaveRequestsSkeleton from "./leave-requests-skeleton";
+import TimeoffRequestsSkeleton from "./timeoff-requests-skeleton";
 
 type Role =
   | "LOCATION_SPECIALIST"
@@ -30,23 +30,23 @@ type Role =
   | "LOCATION_ADMIN"
   | "ORGANIZATION_MANAGEMENT";
 
-type LeaveRequestStatusValue = "PENDING" | "APPROVED" | "DECLINED";
+type TimeoffRequestStatusValue = "PENDING" | "APPROVED" | "DECLINED";
 
-type MyLeaveRequestItem = {
+type MyTimeoffRequestItem = {
   id: string;
   startDate: Date;
   endDate: Date;
   reason: string | null;
   reviewNote: string | null;
-  status: LeaveRequestStatusValue;
+  status: TimeoffRequestStatusValue;
 };
 
-type LocationLeaveRequestItem = {
+type LocationTimeoffRequestItem = {
   id: string;
   startDate: Date;
   endDate: Date;
   reason: string | null;
-  status: LeaveRequestStatusValue;
+  status: TimeoffRequestStatusValue;
   locationEmployee: {
     user: {
       name: string;
@@ -68,7 +68,7 @@ function statusBadgeVariant(status: string): "default" | "destructive" | "second
 
 function getRangeLabel(range: DateRange | undefined) {
   if (!range?.from) {
-    return "Choose leave dates";
+    return "Choose timeoff dates";
   }
 
   if (!range.to) {
@@ -108,20 +108,20 @@ function toSafeCalendarDate(date: Date) {
   );
 }
 
-function LeavePolicyCard({
-  configLeaveRequestNoticeDays,
+function TimeoffPolicyCard({
+  configTimeoffRequestNoticeDays,
   isApprover,
   noticeDaysInput,
   setNoticeDaysInput,
-  updateConfigPending,
+  updateTimeoffConfigPending,
   pendingCount,
   onSave,
 }: Readonly<{
-  configLeaveRequestNoticeDays: number;
+  configTimeoffRequestNoticeDays: number;
   isApprover: boolean;
   noticeDaysInput: string;
   setNoticeDaysInput: (value: string) => void;
-  updateConfigPending: boolean;
+  updateTimeoffConfigPending: boolean;
   pendingCount: number;
   onSave: () => void;
 }>) {
@@ -130,7 +130,7 @@ function LeavePolicyCard({
       <CardHeader>
         <CardTitle>Request Policy</CardTitle>
         <CardDescription>
-          Leave must be requested at least {configLeaveRequestNoticeDays} day(s) before start date.
+          Timeoff must be requested at least {configTimeoffRequestNoticeDays} day(s) before start date.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -148,8 +148,8 @@ function LeavePolicyCard({
                 className="w-40"
               />
             </div>
-            <Button onClick={onSave} disabled={updateConfigPending}>
-              {updateConfigPending ? "Saving..." : "Save Policy"}
+            <Button onClick={onSave} disabled={updateTimeoffConfigPending}>
+              {updateTimeoffConfigPending ? "Saving..." : "Save Policy"}
             </Button>
           </div>
         ) : null}
@@ -162,7 +162,7 @@ function LeavePolicyCard({
   );
 }
 
-function SpecialistLeaveRequestCard({
+function SpecialistTimeoffRequestCard({
   selectedRange,
   setSelectedRange,
   isCalendarOpen,
@@ -172,7 +172,7 @@ function SpecialistLeaveRequestCard({
   earliestSelectableDate,
   reason,
   setReason,
-  createLeaveRequestPending,
+  createTimeoffRequestPending,
   onSubmit,
 }: Readonly<{
   selectedRange: DateRange | undefined;
@@ -184,13 +184,13 @@ function SpecialistLeaveRequestCard({
   earliestSelectableDate: Date;
   reason: string;
   setReason: (value: string) => void;
-  createLeaveRequestPending: boolean;
+  createTimeoffRequestPending: boolean;
   onSubmit: () => void;
 }>) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Request Leave</CardTitle>
+        <CardTitle>Request Timeoff</CardTitle>
         <CardDescription>
           Pick a date range, use quick presets, and submit it for review by front desk or location admin.
         </CardDescription>
@@ -198,7 +198,7 @@ function SpecialistLeaveRequestCard({
       <CardContent className="space-y-4">
         <div className="space-y-3">
           <div className="space-y-1">
-            <Label>Leave dates</Label>
+            <Label>Timeoff dates</Label>
             <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -272,37 +272,37 @@ function SpecialistLeaveRequestCard({
         </div>
 
         <div className="space-y-1">
-          <Label htmlFor="leave-reason">Reason (optional)</Label>
+          <Label htmlFor="timeoff-reason">Reason (optional)</Label>
           <Textarea
-            id="leave-reason"
+            id="timeoff-reason"
             value={reason}
             onChange={(event) => setReason(event.target.value)}
-            placeholder="Add context for your leave request"
+            placeholder="Add context for your timeoff request"
           />
         </div>
 
-        <Button onClick={onSubmit} disabled={createLeaveRequestPending}>
-          {createLeaveRequestPending ? "Submitting..." : "Submit Leave Request"}
+        <Button onClick={onSubmit} disabled={createTimeoffRequestPending}>
+          {createTimeoffRequestPending ? "Submitting..." : "Submit Timeoff Request"}
         </Button>
       </CardContent>
     </Card>
   );
 }
 
-function MyLeaveRequestsCard({
+function MyTimeoffRequestsCard({
   myRequests,
 }: Readonly<{
-  myRequests: MyLeaveRequestItem[];
+  myRequests: MyTimeoffRequestItem[];
 }>) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>My Leave Requests</CardTitle>
+        <CardTitle>My Timeoff Requests</CardTitle>
         <CardDescription>Track status of your submitted requests.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {myRequests.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No leave requests yet.</p>
+          <p className="text-sm text-muted-foreground">No timeoff requests yet.</p>
         ) : (
           myRequests.map((request) => (
             <div key={request.id} className="rounded-md border border-border p-3 text-sm">
@@ -324,24 +324,24 @@ function MyLeaveRequestsCard({
   );
 }
 
-function LocationLeaveRequestsCard({
+function LocationTimeoffRequestsCard({
   locationRequests,
-  reviewLeaveRequestPending,
+  reviewTimeoffRequestPending,
   onReview,
 }: Readonly<{
-  locationRequests: LocationLeaveRequestItem[];
-  reviewLeaveRequestPending: boolean;
+  locationRequests: LocationTimeoffRequestItem[];
+  reviewTimeoffRequestPending: boolean;
   onReview: (requestId: string, action: "APPROVE" | "DECLINE") => void;
 }>) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Location Leave Requests</CardTitle>
-        <CardDescription>Approve or decline specialist leave requests.</CardDescription>
+        <CardTitle>Location Timeoff Requests</CardTitle>
+        <CardDescription>Approve or decline specialist timeoff requests.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {locationRequests.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No leave requests found.</p>
+          <p className="text-sm text-muted-foreground">No timeoff requests found.</p>
         ) : (
           locationRequests.map((request) => (
             <div key={request.id} className="rounded-md border border-border p-3 text-sm space-y-2">
@@ -359,7 +359,7 @@ function LocationLeaveRequestsCard({
                   <Button
                     size="sm"
                     onClick={() => onReview(request.id, "APPROVE")}
-                    disabled={reviewLeaveRequestPending}
+                    disabled={reviewTimeoffRequestPending}
                   >
                     Approve
                   </Button>
@@ -367,7 +367,7 @@ function LocationLeaveRequestsCard({
                     size="sm"
                     variant="destructive"
                     onClick={() => onReview(request.id, "DECLINE")}
-                    disabled={reviewLeaveRequestPending}
+                    disabled={reviewTimeoffRequestPending}
                   >
                     Decline
                   </Button>
@@ -381,7 +381,7 @@ function LocationLeaveRequestsCard({
   );
 }
 
-export default function LeaveRequestsClient({
+export default function TimeoffRequestsClient({
   locationId,
   slug,
   role,
@@ -395,15 +395,15 @@ export default function LeaveRequestsClient({
   const [reason, setReason] = useState("");
   const [noticeDaysInput, setNoticeDaysInput] = useState("1");
 
-  const { data: config, isLoading: isConfigLoading } = useQuery(
+  const { data: timeoffConfig, isLoading: isTimeoffConfigLoading } = useQuery(
     trpc.location.getLeaveRequestConfig.queryOptions({ locationId }),
   );
 
   useEffect(() => {
-    if (config?.leaveRequestNoticeDays != null) {
-      setNoticeDaysInput(String(config.leaveRequestNoticeDays));
+    if (timeoffConfig?.leaveRequestNoticeDays != null) {
+      setNoticeDaysInput(String(timeoffConfig.leaveRequestNoticeDays));
     }
-  }, [config?.leaveRequestNoticeDays]);
+  }, [timeoffConfig?.leaveRequestNoticeDays]);
 
   const { data: myRequests, isLoading: isMyRequestsLoading } = useQuery({
     ...trpc.location.getMyLeaveRequests.queryOptions({ locationId }),
@@ -417,10 +417,10 @@ export default function LeaveRequestsClient({
     enabled: isApprover,
   });
 
-  const createLeaveRequest = useMutation(
+  const createTimeoffRequest = useMutation(
     trpc.location.createMyLeaveRequest.mutationOptions({
       onSuccess: () => {
-        toast.success("Leave request submitted");
+        toast.success("Timeoff request submitted");
         setSelectedRange(undefined);
         setReason("");
         queryClient.invalidateQueries({
@@ -433,35 +433,35 @@ export default function LeaveRequestsClient({
         }
       },
       onError: (error) => {
-        toast.error(error.message || "Could not submit leave request");
+        toast.error(error.message || "Could not submit timeoff request");
       },
     }),
   );
 
-  const updateConfig = useMutation(
+  const updateTimeoffConfig = useMutation(
     trpc.location.updateLeaveRequestConfig.mutationOptions({
       onSuccess: () => {
-        toast.success("Leave request notice policy updated");
+        toast.success("Timeoff request notice policy updated");
         queryClient.invalidateQueries({
           queryKey: trpc.location.getLeaveRequestConfig.queryKey({ locationId }),
         });
       },
       onError: (error) => {
-        toast.error(error.message || "Could not update leave request policy");
+        toast.error(error.message || "Could not update timeoff request policy");
       },
     }),
   );
 
-  const reviewLeaveRequest = useMutation(
+  const reviewTimeoffRequest = useMutation(
     trpc.location.reviewLeaveRequest.mutationOptions({
       onSuccess: () => {
-        toast.success("Leave request reviewed");
+        toast.success("Timeoff request reviewed");
         queryClient.invalidateQueries({
           queryKey: trpc.location.getLocationLeaveRequests.queryKey({ locationId }),
         });
       },
       onError: (error) => {
-        toast.error(error.message || "Could not review leave request");
+        toast.error(error.message || "Could not review timeoff request");
       },
     }),
   );
@@ -474,9 +474,9 @@ export default function LeaveRequestsClient({
   );
 
   const isInitialLoading =
-    isConfigLoading || isMyRequestsLoading || isLocationRequestsLoading;
+    isTimeoffConfigLoading || isMyRequestsLoading || isLocationRequestsLoading;
 
-  const minNoticeDays = config?.leaveRequestNoticeDays ?? 1;
+  const minNoticeDays = timeoffConfig?.leaveRequestNoticeDays ?? 1;
   const earliestSelectableDate = useMemo(
     () => startOfDay(addDays(new Date(), minNoticeDays)),
     [minNoticeDays],
@@ -533,7 +533,7 @@ export default function LeaveRequestsClient({
 
   if (isInitialLoading) {
     return (
-      <LeaveRequestsSkeleton
+      <TimeoffRequestsSkeleton
         showSpecialistSections={isSpecialist}
         showApproverSections={isApprover}
       />
@@ -543,18 +543,18 @@ export default function LeaveRequestsClient({
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
       <div>
-        <h1 className="text-3xl font-semibold text-foreground">Leave Requests</h1>
+        <h1 className="text-3xl font-semibold text-foreground">Timeoff Requests</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Manage specialist leave requests for this location.
+          Manage specialist timeoff requests for this location.
         </p>
       </div>
 
-      <LeavePolicyCard
-        configLeaveRequestNoticeDays={config?.leaveRequestNoticeDays ?? 1}
+      <TimeoffPolicyCard
+        configTimeoffRequestNoticeDays={timeoffConfig?.leaveRequestNoticeDays ?? 1}
         isApprover={isApprover}
         noticeDaysInput={noticeDaysInput}
         setNoticeDaysInput={setNoticeDaysInput}
-        updateConfigPending={updateConfig.isPending}
+        updateTimeoffConfigPending={updateTimeoffConfig.isPending}
         pendingCount={pendingCount}
         onSave={() => {
           const parsed = Number.parseInt(noticeDaysInput, 10);
@@ -563,7 +563,7 @@ export default function LeaveRequestsClient({
             return;
           }
 
-          updateConfig.mutate({
+          updateTimeoffConfig.mutate({
             locationId,
             leaveRequestNoticeDays: parsed,
           });
@@ -571,7 +571,7 @@ export default function LeaveRequestsClient({
       />
 
       {isSpecialist ? (
-        <SpecialistLeaveRequestCard
+        <SpecialistTimeoffRequestCard
           selectedRange={selectedRange}
           setSelectedRange={setSelectedRange}
           isCalendarOpen={isCalendarOpen}
@@ -581,14 +581,14 @@ export default function LeaveRequestsClient({
           earliestSelectableDate={earliestSelectableDate}
           reason={reason}
           setReason={setReason}
-          createLeaveRequestPending={createLeaveRequest.isPending}
+          createTimeoffRequestPending={createTimeoffRequest.isPending}
           onSubmit={() => {
             if (!selectedRange?.from || !selectedRange?.to) {
-              toast.error("Please choose a complete leave date range");
+              toast.error("Please choose a complete timeoff date range");
               return;
             }
 
-            createLeaveRequest.mutate({
+            createTimeoffRequest.mutate({
               locationId,
               startDate: toSafeCalendarDate(selectedRange.from),
               endDate: toSafeCalendarDate(selectedRange.to),
@@ -599,15 +599,15 @@ export default function LeaveRequestsClient({
       ) : null}
 
       {isSpecialist ? (
-        <MyLeaveRequestsCard myRequests={(myRequests ?? []) as MyLeaveRequestItem[]} />
+        <MyTimeoffRequestsCard myRequests={(myRequests ?? []) as MyTimeoffRequestItem[]} />
       ) : null}
 
       {isApprover ? (
-        <LocationLeaveRequestsCard
-          locationRequests={(locationRequests ?? []) as LocationLeaveRequestItem[]}
-          reviewLeaveRequestPending={reviewLeaveRequest.isPending}
+        <LocationTimeoffRequestsCard
+          locationRequests={(locationRequests ?? []) as LocationTimeoffRequestItem[]}
+          reviewTimeoffRequestPending={reviewTimeoffRequest.isPending}
           onReview={(requestId, action) => {
-            reviewLeaveRequest.mutate({
+            reviewTimeoffRequest.mutate({
               locationId,
               requestId,
               action,
@@ -617,7 +617,7 @@ export default function LeaveRequestsClient({
       ) : null}
 
       <p className="text-xs text-muted-foreground">
-        Path: /dashboard/l/{slug}/leave-requests
+        Path: /dashboard/l/{slug}/timeoff-requests
       </p>
     </div>
   );
