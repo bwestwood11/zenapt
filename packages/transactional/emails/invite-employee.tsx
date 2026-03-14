@@ -205,5 +205,5 @@ InvitationEmail.PreviewProps = {
   organization: "The Brett Industries",
   role: "ANALYST",
   logoUrl: "https://react.email/static/icons/gmail.svg",
-  supportEmail: "support@zenapt.com",
+  supportEmail: "support@zenapt.studio",
 };

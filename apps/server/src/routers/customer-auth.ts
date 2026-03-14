@@ -94,7 +94,7 @@ const sendCustomerOtpEmail = async (input: {
   }
 
   await resend.emails.send({
-    from: process.env.FROM_EMAIL || "support@zenapt.com",
+    from: process.env.FROM_EMAIL || "support@zenapt.studio",
     to: resolveRecipient(email),
     subject: `${organizationName} verification code`,
     text: `Your ${organizationName} verification code is ${otpCode}. It expires in ${expiresInMinutes} minutes.`,

@@ -31,8 +31,8 @@ export default function AppointmentBookedEmail({
   startTime,
   endTime,
   timeZone,
-  supportEmail = "support@zenapt.com",
-  logoUrl = "https://www.zenapt.com/logo.svg",
+  supportEmail = "support@zenapt.studio",
+  logoUrl = "https://www.zenapt.studio/logo.svg",
 }: Readonly<AppointmentBookedEmailProps>) {
   return (
     <Html>
@@ -323,6 +323,6 @@ AppointmentBookedEmail.PreviewProps = {
   startTime: "Sunday, February 23, 2026 at 10:00 AM",
   endTime: "Sunday, February 23, 2026 at 11:00 AM",
   timeZone: "America/New_York",
-  supportEmail: "support@zenapt.com",
-  logoUrl: "https://www.zenapt.com/logo.svg",
+  supportEmail: "support@zenapt.studio",
+  logoUrl: "https://www.zenapt.studio/logo.svg",
 };

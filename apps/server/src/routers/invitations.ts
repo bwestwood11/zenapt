@@ -424,13 +424,13 @@ export const invitationRouter = router({
       password: randomPassword,
       role: role,
       userEmail: email,
-      supportEmail: "support@zenapt.com",
+      supportEmail: "support@zenapt.studio",
     });
 
     // Create and activity log the the user was invited
 
     await resend.emails.send({
-      from: process.env.FROM_EMAIL || "support@zenapt.com",
+      from: process.env.FROM_EMAIL || "support@zenapt.studio",
       to: resolveRecipient(email),
       subject: "hello world",
       react: EmailHtml,
@@ -612,13 +612,13 @@ export const invitationRouter = router({
       password: randomPassword,
       role: role,
       userEmail: email,
-      supportEmail: "support@zenapt.com",
+      supportEmail: "support@zenapt.studio",
     });
 
     // Create and activity log the the user was invited
 
     await resend.emails.send({
-      from: process.env.FROM_EMAIL || "support@zenapt.com",
+      from: process.env.FROM_EMAIL || "support@zenapt.studio",
       to: resolveRecipient(email),
       subject: "hello world",
       react: EmailHtml,

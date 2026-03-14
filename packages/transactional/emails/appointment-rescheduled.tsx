@@ -31,8 +31,8 @@ export default function AppointmentRescheduledEmail({
   startTime,
   endTime,
   timeZone,
-  supportEmail = "support@zenapt.com",
-  logoUrl = "https://www.zenapt.com/logo.svg",
+  supportEmail = "support@zenapt.studio",
+  logoUrl = "https://www.zenapt.studio/logo.svg",
 }: Readonly<AppointmentRescheduledEmailProps>) {
   return (
     <Html>

@@ -74,7 +74,7 @@ const getAppointmentEmailContext = async (appointmentId: string) => {
     supportEmail:
       appointment.location.email ||
       process.env.FROM_EMAIL ||
-      "support@zenapt.com",
+      "support@zenapt.studio",
   };
 };
 
@@ -100,7 +100,7 @@ export const sendAppointmentBookedEmail = async (appointmentId: string) => {
   });
 
   await resend.emails.send({
-    from: process.env.FROM_EMAIL || "support@zenapt.com",
+    from: process.env.FROM_EMAIL || "support@zenapt.studio",
     to: resolveRecipient(customerEmail),
     subject: `Appointment booked at ${appointment.location.name}`,
     react: EmailHtml,
@@ -131,7 +131,7 @@ export const sendAppointmentRescheduledEmail = async (
   });
 
   await resend.emails.send({
-    from: process.env.FROM_EMAIL || "support@zenapt.com",
+    from: process.env.FROM_EMAIL || "support@zenapt.studio",
     to: resolveRecipient(customerEmail),
     subject: `Appointment rescheduled at ${appointment.location.name}`,
     react: EmailHtml,
