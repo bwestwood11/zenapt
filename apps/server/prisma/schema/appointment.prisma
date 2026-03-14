@@ -1,0 +1,216 @@
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELED
+  NO_SHOW
+  RESCHEDULED
+}
+
+enum AppointmentPaymentStatus {
+  PAYMENT_PENDING
+  PARTIALLY_PAID
+  PAID
+}
+
+enum LeaveRequestStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}
+
+model Appointment {
+  id         String            @id @default(cuid()) @map("_id")
+  locationId String
+  location   Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  customerId String
+  customer   Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  startTime  DateTime
+  endTime    DateTime
+  bufferTime Int               @default(0) // in minutes - max from selected services
+  prepTime   Int               @default(0) // in minutes - max from selected services
+  status     AppointmentStatus @default(SCHEDULED)
+  paymentStatus AppointmentPaymentStatus @default(PAYMENT_PENDING)
+  service    EmployeeService[]
+  addOns     AddOn[]
+
+  notes                      String?
+  price                      Int
+  createdAt                  DateTime                    @default(now())
+  updatedAt                  DateTime                    @updatedAt
+  customerPayments           CustomerAppointmentPayment[]
+  tipCharges                 AppointmentTipCharge[]
+  promoCodeId                String?
+  promoCode                  PromoCode?                  @relation(fields: [promoCodeId], references: [id], onDelete: SetNull)
+  discountPercentageApplied  Int?
+  discountAmountApplied      Int?
+  paymentMethodId            String?
+  paymentMethodLast4         String?
+}
+
+model AddOn {
+  id                  String            @id @default(cuid()) @map("_id")
+  name                String
+  description         String?
+  basePrice           Int
+  incrementalDuration Int
+  serviceTerms        ServiceTerms      @relation(fields: [serviceTermId], references: [id], onDelete: Cascade)
+  serviceTermId       String
+  appointments        Appointment[]
+  employeeServices    EmployeeService[]
+}
+
+model PromoCode {
+  id             String     @id @default(cuid()) @map("_id")
+  code           String     @unique
+  description    String?
+  discount       Int
+  isActive       Boolean    @default(true)
+  maxUsage       Int?
+  appliesToLevel PromoLevel @default(ORGANIZATION)
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  // optional location (only set if appliesToLevel == LOCATION)
+  locationId String?
+  location   Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  appointments Appointment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum PromoLevel {
+  ORGANIZATION
+  LOCATION
+}
+
+enum ScheduleTargetType {
+  LOCATION
+  EMPLOYEE
+}
+
+model ScheduleRule {
+  id String @id @default(cuid()) @map("_id")
+
+  targetType ScheduleTargetType
+  targetId   String // locationId or employeeId
+
+  // e.g. 0b0111110 (Mon-Fri)
+  daysMask Int // bitmask: 0-127
+
+  startMinute Int // instead of "09:30" → 570
+  endMinute   Int // instead of "17:00" → 1020
+
+  isBreak Boolean @default(false) // false = working hours, true = recurring break
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([targetType, targetId])
+  @@index([targetType, targetId, daysMask])
+}
+
+// ScheduleException override the normal schedule rule for specific date it will always be recurring can be break or break override. can be used for whole location or just an employee
+model ScheduleException {
+  id String @id @default(cuid()) @map("_id")
+
+  targetType ScheduleTargetType
+  targetId   String
+
+  monthDay String // "12-25" for Christmas, "01-01" for New Year
+
+  startMinute Int? // null = all day
+  endMinute   Int? // null = all day
+
+  isBreak Boolean @default(true) // true = unavailable, false = override working hours
+  reason  String? // "Holiday: Christmas", "Maintenance", etc.
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([targetType, targetId, monthDay])
+}
+
+// Timeoff are one time holiday either for single employee or complete location
+model TimeOff {
+  id String @id @default(cuid()) @map("_id")
+
+  targetType ScheduleTargetType
+  targetId   String
+
+  startDate DateTime
+  endDate   DateTime
+  reason    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([targetType, targetId, startDate, endDate])
+}
+
+model LeaveRequest {
+  id                 String            @id @default(cuid()) @map("_id")
+  locationId         String
+  locationEmployeeId String
+  requestedById      String
+  reviewedById       String?
+  startDate          DateTime
+  endDate            DateTime
+  reason             String?
+  reviewNote         String?
+  status             LeaveRequestStatus @default(PENDING)
+  reviewedAt         DateTime?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  location         Location         @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  locationEmployee LocationEmployee @relation(fields: [locationEmployeeId], references: [id], onDelete: Cascade)
+  requestedBy      User             @relation("LeaveRequestRequestedBy", fields: [requestedById], references: [id], onDelete: Cascade)
+  reviewedBy       User?            @relation("LeaveRequestReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([locationId, status])
+  @@index([locationEmployeeId, status])
+  @@index([startDate, endDate])
+}
+
+model AppointmentSettings {
+  id                      String   @id @default(cuid()) @map("_id")
+  locationId              String   @unique
+  location                Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  bufferTime              Int      @default(0) // in minutes
+  prepTime                Int      @default(0) // in minutes
+  advanceBookingLimitDays Int      @default(60) // in days
+  bookingCutOff           Int      @default(60) // in minutes
+  downpaymentPercentage   Int      @default(0) // in percent (0-100)
+  cancellationPercent     Int      @default(100) // in percent (0-100)
+  cancellationDuration    Int      @default(60) // in minutes before appointment
+  leaveRequestNoticeDays  Int      @default(1) // minimum notice in days before leave start
+  tipEnabled              Boolean  @default(false)
+  tipPresetPercentages    Int[]    @default([15, 20, 25]) // tip percentage presets
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@index([locationId])
+}
+
+model AppointmentTipCharge {
+  id            String                @id @default(cuid()) @map("_id")
+  appointmentId String
+  appointment   Appointment           @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  customerId    String
+  customer      Customer              @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  locationEmployeeId String?
+  locationEmployee   LocationEmployee? @relation(fields: [locationEmployeeId], references: [id], onDelete: SetNull)
+  amount        Int
+  status        CustomerPaymentStatus @default(PENDING)
+  paymentMethod String
+  transactionId String?
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+
+  @@index([appointmentId])
+  @@index([customerId, appointmentId])
+  @@index([locationEmployeeId])
+}

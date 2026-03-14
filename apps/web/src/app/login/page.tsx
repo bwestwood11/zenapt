@@ -1,16 +1,9 @@
-"use client"
+import LoginForm from "@/components/login/login-form";
 
-import SignInForm from "@/components/sign-in-form";
-import SignUpForm from "@/components/sign-up-form";
-import { useState } from "react";
+import { redirectIfAuthenticated } from "@/lib/permissions/permission";
 
+export default async function LoginPage() {
+  await redirectIfAuthenticated("/dashboard")
 
-export default function LoginPage() {
-  const [showSignIn, setShowSignIn] = useState(false);
-
-  return showSignIn ? (
-    <SignInForm onSwitchToSignUp={() => setShowSignIn(false)} />
-  ) : (
-    <SignUpForm onSwitchToSignIn={() => setShowSignIn(true)} />
-  );
+  return <LoginForm  />;
 }

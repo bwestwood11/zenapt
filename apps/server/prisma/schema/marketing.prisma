@@ -1,0 +1,13 @@
+model DemoRequest {
+    id                String   @id @default(cuid()) @map("_id")
+    createdAt         DateTime @default(now())
+    firstName         String
+    lastName          String
+    businessName      String
+    email             String
+    cellPhone         String
+    numberOfLocations String
+    zipCode           String
+    websiteUrl        String
+    demoTime          DateTime
+}

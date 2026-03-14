@@ -1,6 +1,13 @@
 import { createAuthClient } from "better-auth/react";
+import {
+  customSessionClient,
+  inferAdditionalFields,
+} from "better-auth/client/plugins";
+import type { auth } from "../../../server/src/lib/auth";
 
 export const authClient = createAuthClient({
-  baseURL:
-      process.env.NEXT_PUBLIC_SERVER_URL,
+  plugins: [
+    customSessionClient<typeof auth>(),
+  ],
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
 });

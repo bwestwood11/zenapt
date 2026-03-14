@@ -1,0 +1,51 @@
+
+import OnboardingForm from "@/components/onboarding/onboarding-form";
+import { authClient } from "@/lib/auth-client";
+import { getSession } from "@/lib/auth/session";
+import { Sparkles } from "lucide-react";
+import { redirect } from "next/navigation";
+import type React from "react";
+
+export default async function OnboardingPage() {
+  const {data} = await getSession()
+
+  if(!data){
+    return redirect("/login")
+  }
+
+  if(data.user.management?.organizationId){
+    return redirect("/dashboard")
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center mb-4">
+            <div className="bg-primary/10 p-3 rounded-full">
+              <Sparkles className="h-8 w-8 text-primary" />
+            </div>
+          </div>
+          <h1 className="text-4xl font-bold text-foreground mb-2">
+            Welcome to Zenapt {data?.user.name}
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-md mx-auto">
+            The all-in-one booking management system designed specifically for
+            medical spas.
+          </p>
+        </div>
+
+        {/* Main Form Card */}
+        <OnboardingForm />
+
+        {/* Footer */}
+        <div className="text-center mt-8">
+          <p className="text-sm text-muted-foreground">
+            Need help? Contact our support team for personalized assistance.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

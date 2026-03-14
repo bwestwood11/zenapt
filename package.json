@@ -9,6 +9,7 @@
     "check": "biome check --write .",
     "prepare": "husky",
     "dev": "turbo dev",
+    "start": "turbo start",
     "build": "turbo build",
     "check-types": "turbo check-types",
     "dev:native": "turbo -F native dev",
@@ -17,14 +18,23 @@
     "db:push": "turbo -F server db:push",
     "db:studio": "turbo -F server db:studio",
     "db:generate": "turbo -F server db:generate",
-    "db:migrate": "turbo -F server db:migrate"
+    "db:migrate": "turbo -F server db:migrate",
+    "db:reset": "turbo -F server db:reset"
   },
-  "dependencies": {},
+  "dependencies": {
+    "input-otp": "^1.4.2",
+    "superjson": "^2.2.2"
+  },
   "devDependencies": {
-    "turbo": "^2.5.4",
     "@biomejs/biome": "^2.1.2",
     "husky": "^9.1.7",
-    "lint-staged": "^16.1.2"
+    "lint-staged": "^16.1.2",
+    "turbo": "^2.5.4"
+  },
+  "overrides": {
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "effect": "3.17.7"
   },
   "lint-staged": {
     "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [

@@ -26,7 +26,7 @@ body {
   --popover-foreground: oklch(0.4015 0.0436 37.9587);
   --primary: oklch(0.5212 0.0823 62.3839);
   --primary-foreground: oklch(0.9735 0.0261 90.0953);
-  --secondary: oklch(0.7665 0.1387 91.0594);
+  --secondary: #d4af37;
   --secondary-foreground: oklch(0.2788 0.0138 81.6811);
   --muted: oklch(0.9402 0.0302 83.6329);
   --muted-foreground: oklch(0.5534 0.0116 58.0708);
@@ -54,6 +54,12 @@ body {
   --font-serif: Playfair Display;
   --font-mono: monospace;
   --radius: 0.5rem;
+  --shadow-x: 0px;
+  --shadow-y: 4px;
+  --shadow-blur: 8px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.05;
+  --shadow-color: #000000;
   --shadow-2xs: 0px 4px 8px 0px hsl(0 0% 0% / 0.03);
   --shadow-xs: 0px 4px 8px 0px hsl(0 0% 0% / 0.03);
   --shadow-sm: 0px 4px 8px 0px hsl(0 0% 0% / 0.05), 0px 1px 2px -1px hsl(0 0% 0% / 0.05);
@@ -103,6 +109,12 @@ body {
   --font-serif: Playfair Display;
   --font-mono: monospace;
   --radius: 0.5rem;
+  --shadow-x: 0px;
+  --shadow-y: 2px;
+  --shadow-blur: 4px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.1;
+  --shadow-color: #000000;
   --shadow-2xs: 0px 2px 4px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0px 2px 4px 0px hsl(0 0% 0% / 0.05);
   --shadow-sm: 0px 2px 4px 0px hsl(0 0% 0% / 0.10), 0px 1px 2px -1px hsl(0 0% 0% / 0.10);
@@ -185,3 +197,181 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.loader-container {
+  transform-origin: center;
+  animation: rotate4 2s linear infinite;
+}
+.loader-circle {
+  fill: none;
+  stroke: url(#trailGradient);
+  stroke-width: 6;
+  stroke-dasharray: 2, 200;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  animation: dash4 1.5s ease-in-out infinite;
+}
+@keyframes rotate4 {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes dash4 {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 200;
+    stroke-dashoffset: -35px;
+  }
+  100% {
+    stroke-dashoffset: -125px;
+  }
+}
+
+.clock-loader {
+  color: var(--color-primary);
+}
+
+.clock-loader line {
+  transform-origin: 12px 12px;
+  stroke: var(--color-primary);
+}
+
+.minute-hand {
+  animation: rotate-minute 2s linear infinite;
+}
+
+.hour-hand {
+  animation: rotate-hour 12s linear infinite;
+}
+
+@keyframes rotate-minute {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotate-hour {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+:root {
+  scrollbar-color: var(--color-primary) var(--color-background) !important;
+  scrollbar-width: thin !important;
+}
+
+
+
+/* Basic editor styles */
+.tiptap {
+  :first-child {
+    margin-top: 0;
+  }
+
+  width: 100%;
+  height: 100%;
+
+  /* List styles */
+  ul,
+  ol {
+    padding: 0 1rem;
+    margin: 1.25rem 1rem 1.25rem 0.4rem;
+
+    li p {
+      margin-top: 0.25em;
+      margin-bottom: 0.25em;
+    }
+  }
+
+  /* Heading styles */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+    margin-top: 2.5rem;
+    text-wrap: pretty;
+  }
+
+  h1,
+  h2 {
+    margin-top: 3.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: 1rem;
+  }
+
+  /* Code and preformatted text styles */
+  code {
+    @apply font-mono bg-primary/10 text-primary rounded-sm text-sm py-0.5 px-1;
+  }
+
+  pre {
+    font-family: "JetBrainsMono", monospace;
+    @apply bg-card text-white rounded-lg p-4 my-6;
+
+    code {
+      @apply text-inherit bg-none p-0 text-sm;
+    }
+  }
+
+  blockquote {
+    @apply border-l-4 pl-4  my-6 border-foreground;
+  }
+
+  hr {
+    @apply border-border border-t my-6;
+  }
+
+  .mention {
+    @apply bg-primary/30 text-primary rounded-sm py-0.5 px-1 after:content-['\200B'];
+  }
+
+  a {
+    @apply cursor-pointer underline text-primary hover:text-primary/70;
+  }
+}
+
+ .scrollbar-container {
+       scrollbar-gutter: stable both-edges;
+    }

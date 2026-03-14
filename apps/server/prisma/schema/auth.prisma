@@ -1,16 +1,276 @@
 model User {
-  id            String    @id @map("_id")
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
+  id                String                 @id @map("_id")
+  name              String
+  email             String
+  emailVerified     Boolean
+  image             String?
+  token             String?
+  createdAt         DateTime
+  updatedAt         DateTime
+  sessions          Session[]
+  accounts          Account[]
+  management        ManagementMembership[]
+  locationEmployees LocationEmployee[]
+  customer          Customer[]
+  AuditLog          ActivityLog[]
+  isTempPassword    Boolean                @default(false)
+  customerAuths     CustomerAuth[]
+  requestedLeaveRequests LeaveRequest[]     @relation("LeaveRequestRequestedBy")
+  reviewedLeaveRequests  LeaveRequest[]     @relation("LeaveRequestReviewedBy")
 
   @@unique([email])
   @@map("user")
+}
+
+enum OrgRole {
+  OWNER
+  ADMIN
+  ANALYST
+}
+
+model Subscription {
+  id                   String    @id @default(cuid()) @map("_id")
+  organizationId       String    @unique
+  maximumLocations     Int?
+  usedTexts            Int?      @default(0)
+  usedEmails           Int?      @default(0)
+  maximumTexts         Int?
+  maximumEmails        Int?
+  cardBrand            String?
+  cardLast4            String?
+  amountPaid           Int?      @default(0)
+  stripeCustomerId     String    @unique
+  stripeSubscriptionId String?
+  status               String?
+  lastPaid             DateTime?
+  priceId              String?
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([stripeSubscriptionId])
+}
+
+model Organization {
+  id                     String                   @id @default(cuid()) @map("_id")
+  name                   String
+  description            String?
+  companySize            String?                  @default("1-10")
+  businessWebsite        String?
+  logo                   String?
+  stripeAccountId        String?                  @unique
+  slug                   String                   @unique
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  management             ManagementMembership[]
+  subscription           Subscription?
+  locations              Location[]
+  activityLogs           ActivityLog[]
+  PromoCodes             PromoCode[]
+  OrganizationInvitation OrganizationInvitation[]
+  ServiceTerms           ServiceTerms[]
+  ServiceGroup           ServiceGroup[]
+  customers              Customer[]
+  customerAuths          CustomerAuth[]
+}
+
+model ManagementMembership {
+  id             String   @id @default(cuid()) @map("_id")
+  userId         String
+  role           OrgRole  @default(ADMIN)
+  organizationId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Location {
+  id             String             @id @default(cuid()) @map("_id")
+  name           String
+  organizationId String
+  slug           String             @unique
+  address        String?
+  city           String?
+  state          String?
+  country        String?
+  zipCode        String?
+  timeZone       String?
+  email          String?
+  image          String?
+  phoneNumber    String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  employees      LocationEmployee[]
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  LocationInvitation  LocationInvitation[]
+  ActivityLog         ActivityLog[]
+  Service             EmployeeService[]
+  appointments        Appointment[]
+  appointmentSettings AppointmentSettings?
+  PromoCodes          PromoCode[]
+  customers           Customer[]
+  leaveRequests       LeaveRequest[]
+
+  @@unique([name, organizationId])
+  @@index([slug, organizationId])
+}
+
+enum EmployeeRole {
+  LOCATION_ADMIN
+  LOCATION_FRONT_DESK
+  LOCATION_SPECIALIST
+  ORGANIZATION_MANAGEMENT
+}
+
+model LocationEmployee {
+  id         String       @id @default(cuid()) @map("_id")
+  userId     String
+  locationId String
+  role       EmployeeRole @default(LOCATION_FRONT_DESK)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  location Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Service  EmployeeService[]
+  tipCharges AppointmentTipCharge[]
+  leaveRequests LeaveRequest[]
+
+  @@unique([userId, locationId])
+}
+
+model ServiceTerms {
+  id             String            @id @default(cuid()) @map("_id")
+  name           String
+  serviceGroupId String?
+  serviceGroup   ServiceGroup?     @relation(fields: [serviceGroupId], references: [id], onDelete: Cascade)
+  description    String?
+  excerpt        String?
+  minimumPrice   Int
+  Service        EmployeeService[]
+  organizationId String
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  addOns         AddOn[]
+}
+
+model ServiceGroup {
+  id             String       @id @default(cuid()) @map("_id")
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  description    String?
+
+  serviceTerms ServiceTerms[]
+}
+
+model EmployeeService {
+  id                 String            @id @default(cuid()) @map("_id")
+  serviceTerms       ServiceTerms      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceId          String
+  location           Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  locationId         String
+  isActive           Boolean           @default(true)
+  price              Int
+  duration           Int
+  bufferTime         Int               @default(0) // in minutes - time after appointment
+  prepTime           Int               @default(0) // in minutes - time before appointment
+  locationEmployee   LocationEmployee? @relation(fields: [locationEmployeeId], references: [id], onDelete: Cascade)
+  appointments       Appointment[]
+  addOns             AddOn[]
+  locationEmployeeId String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+}
+
+model Customer {
+  id               String                       @id @default(cuid()) @map("_id")
+  location         Location[]
+  stripeCustomerId String?                      @unique
+  status           String?
+  phoneNumber      String?
+  dateOfBirth      DateTime?
+  notes            String?
+  createdAt        DateTime                     @default(now())
+  updatedAt        DateTime                     @updatedAt
+  appointments     Appointment[]
+  customerPayments CustomerAppointmentPayment[]
+  tipCharges       AppointmentTipCharge[]
+  userId           String
+  user             User                         @relation(fields: [userId], references: [id])
+  orgId            String
+  organization     Organization                 @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  auth             CustomerAuth?
+
+  @@unique([userId, orgId])
+}
+
+model CustomerAuth {
+  id                    String       @id @default(cuid()) @map("_id")
+  email                 String       @unique
+  passwordHash          String
+  refreshTokenHash      String?
+  refreshTokenExpiresAt DateTime?
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  customerId            String       @unique
+  customer              Customer     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  userId                String
+  user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orgId                 String
+  organization          Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+}
+
+enum CustomerPaymentType {
+  DOWNPAYMENT
+  BALANCE
+  CANCELLATION
+  REFUND
+}
+
+enum CustomerPaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+model CustomerAppointmentPayment {
+  id            String   @id @default(cuid()) @map("_id")
+  customerId    String
+  customer      Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  appointmentId String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  amountPaid    Int
+  paymentType   CustomerPaymentType   @default(DOWNPAYMENT)
+  status        CustomerPaymentStatus @default(PENDING)
+  paymentMethod String
+  transactionId String? // provider reference id (e.g., stripe payment intent id)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([appointmentId])
+  @@index([customerId, appointmentId])
+}
+
+model ActivityLog {
+  id             String   @id @default(cuid()) @map("_id")
+  userId         String
+  organizationId String
+  locationId     String?
+  action         String
+  description    String?
+  createdAt      DateTime @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  location     Location?    @relation(fields: [locationId], references: [id], onDelete: Cascade)
 }
 
 model Session {
@@ -56,4 +316,50 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model OrganizationInvitation {
+  id                String           @id @default(cuid()) @map("_id")
+  name              String
+  email             String
+  encryptedPassword String
+  role              OrgRole
+  status            InvitationStatus @default(PENDING)
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  expAt     DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([email, status])
+  @@index([organizationId])
+  @@index([email])
+}
+
+model LocationInvitation {
+  id                String           @id @default(cuid()) @map("_id")
+  name              String
+  email             String
+  encryptedPassword String
+  role              EmployeeRole
+  status            InvitationStatus @default(PENDING)
+
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  expAt     DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([email, status, locationId])
+  @@index([locationId])
+  @@index([email])
 }

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Playfair_Display } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "@repo/tailwind";
 import Providers from "@/components/providers";
 
-const playfairDisplay = Playfair_Display({
+const poppins = Poppins({
   subsets: ["latin"],
-  variable: "--font-playfair-display",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
@@ -21,10 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${playfairDisplay.variable} ${playfairDisplay.className} antialiased`}
+        suppressHydrationWarning
+        className={`${poppins.variable} ${poppins.className} antialiased`}
       >
         <Providers>
-          <div className="h-svh">{children}</div>
+          <div className="w-full min-h-svh">{children}</div>
         </Providers>
       </body>
     </html>
