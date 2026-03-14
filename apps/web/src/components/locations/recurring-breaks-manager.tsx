@@ -73,6 +73,8 @@ type BreakTarget = {
   breaks: RecurringBreakRule[];
 };
 
+const BREAK_INTERVAL_MINUTES = 5;
+
 const DAY_DEFINITIONS: ReadonlyArray<{
   day: DayNumber;
   label: string;
@@ -138,6 +140,10 @@ function parseTimeInputValue(value: string) {
   return Math.max(0, Math.min(1439, hours * 60 + minutes));
 }
 
+function isBreakIntervalMinute(minutes: number) {
+  return minutes % BREAK_INTERVAL_MINUTES === 0;
+}
+
 function getDayMeta(day: number) {
   return (
     DAY_DEFINITIONS.find((entry) => entry.day === day) ?? {
@@ -198,6 +204,13 @@ function getDayScheduleError(
     if (breakRule.endMinute <= breakRule.startMinute) {
       errors.push(`${dayLabel} has a break with an invalid time range.`);
       continue;
+    }
+
+    if (
+      !isBreakIntervalMinute(breakRule.startMinute) ||
+      !isBreakIntervalMinute(breakRule.endMinute)
+    ) {
+      errors.push(`${dayLabel} breaks must start and end in 5-minute increments.`);
     }
 
     if (
@@ -559,6 +572,7 @@ function BreakEditorDialog({
                               >
                                 <Input
                                   type="time"
+                                  step={BREAK_INTERVAL_MINUTES * 60}
                                   value={formatTimeInputValue(breakRule.startMinute)}
                                   onChange={(event) =>
                                     updateBreak(
@@ -572,6 +586,7 @@ function BreakEditorDialog({
                                 <span className="text-sm text-muted-foreground">to</span>
                                 <Input
                                   type="time"
+                                  step={BREAK_INTERVAL_MINUTES * 60}
                                   value={formatTimeInputValue(breakRule.endMinute)}
                                   onChange={(event) =>
                                     updateBreak(

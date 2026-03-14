@@ -208,6 +208,23 @@ const recurringBreakRuleSchema = z
     startMinute: z.number().int().min(0).max(1439),
     endMinute: z.number().int().min(1).max(1440),
   })
+  .superRefine((value, ctx) => {
+    if (value.startMinute % 5 !== 0) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["startMinute"],
+        message: "Break start time must be in 5-minute increments",
+      });
+    }
+
+    if (value.endMinute % 5 !== 0) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["endMinute"],
+        message: "Break end time must be in 5-minute increments",
+      });
+    }
+  })
   .refine((value) => value.endMinute > value.startMinute, {
     message: "Break end time must be after the start time",
   });
