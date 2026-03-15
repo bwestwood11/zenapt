@@ -35,6 +35,7 @@ import z from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { useMemo } from "react";
+import { OperatingSchedulingSettingsSkeleton } from "./skeletons";
 
 export const daySchema = z
   .object({
@@ -139,7 +140,7 @@ export function OperatingSchedulingSettings({
     return { ...days, ...base };
   }, [locationHours]);
 
-  if (isLoading) return "LOADING";
+  if (isLoading) return <OperatingSchedulingSettingsSkeleton />;
 
   return (
     <OperatingSchedulingForm

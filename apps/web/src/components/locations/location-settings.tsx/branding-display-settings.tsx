@@ -30,6 +30,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/utils/trpc";
 import { getFileChecksum } from "../../../../../server/src/lib/s3/utils";
+import { BrandingDisplaySettingsSkeleton } from "./skeletons";
 
 const logoSchema = z
   .string()
@@ -177,7 +178,7 @@ export function BrandingDisplaySettings({
   };
 
   if (isLoading) {
-    return <p>Loading branding settings...</p>;
+    return <BrandingDisplaySettingsSkeleton />;
   }
 
   return (

@@ -35,6 +35,7 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { MAJOR_HOLIDAYS } from "./constants";
 import { useHolidays } from "./hook";
+import { HolidayExceptionSettingsSkeleton } from "./skeletons";
 
 const isPast = (d: Date) => {
   const x = new Date(d);
@@ -106,7 +107,7 @@ export function HolidayExceptionSettings({
     );
   }, [holidays]);
 
-  if (isLoadingHolidays) return "LOADING";
+  if (isLoadingHolidays) return <HolidayExceptionSettingsSkeleton />;
 
   return (
     <Card>
