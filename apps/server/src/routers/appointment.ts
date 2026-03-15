@@ -30,6 +30,26 @@ const CHARGEABLE_PAYMENT_TYPES = [
   "CANCELLATION",
 ] as const;
 
+const calculatePercentageAmount = (amount: number, percentage: number) =>
+  Math.round((amount * percentage) / 100);
+
+const resolveDiscountAmount = ({
+  price,
+  discountAmountApplied,
+  promoDiscountPercentage,
+}: {
+  price: number;
+  discountAmountApplied: number | null;
+  promoDiscountPercentage?: number | null;
+}) => {
+  const fallbackDiscountAmount = calculateDiscountedTotal(
+    price,
+    promoDiscountPercentage ?? 0,
+  ).discountAmount;
+
+  return Math.max(0, discountAmountApplied ?? fallbackDiscountAmount);
+};
+
 const resolveCustomerPaymentStatusFromIntent = (
   paymentIntentStatus: Stripe.PaymentIntent.Status,
 ) => {
@@ -52,8 +72,18 @@ async function syncAppointmentPaymentStatus(appointmentId: string) {
     where: { id: appointmentId },
     select: {
       id: true,
+      status: true,
       price: true,
       discountAmountApplied: true,
+      location: {
+        select: {
+          appointmentSettings: {
+            select: {
+              noShowPercent: true,
+            },
+          },
+        },
+      },
     },
   });
 
@@ -75,10 +105,17 @@ async function syncAppointmentPaymentStatus(appointmentId: string) {
   });
 
   const collectedAmount = succeededPayments._sum.amountPaid ?? 0;
-  const amountDue = Math.max(
+  const discountedTotal = Math.max(
     0,
     appointment.price - (appointment.discountAmountApplied ?? 0),
   );
+  const amountDue =
+    appointment.status === "NO_SHOW"
+      ? calculatePercentageAmount(
+          discountedTotal,
+          appointment.location.appointmentSettings?.noShowPercent ?? 100,
+        )
+      : discountedTotal;
 
   let paymentStatus: "PAID" | "PARTIALLY_PAID" | "PAYMENT_PENDING" =
     "PAYMENT_PENDING";
@@ -116,6 +153,394 @@ async function getAppointmentCollectedAmount(appointmentId: string) {
   });
 
   return payments._sum.amountPaid ?? 0;
+}
+
+type AppointmentStripeSyncResult = {
+  appointmentPaymentStatus: "PAID" | "PARTIALLY_PAID" | "PAYMENT_PENDING" | null;
+  updatedPayments: number;
+  updatedTipCharges: number;
+  syncedTransactions: Array<{
+    transactionId: string;
+    stripeStatus: Stripe.PaymentIntent.Status;
+    mappedStatus: "SUCCEEDED" | "FAILED" | "PENDING";
+  }>;
+  failedTransactions: Array<{
+    transactionId: string;
+    error: string;
+  }>;
+};
+
+async function syncAppointmentPaymentsAgainstStripe({
+  appointmentId,
+  stripeAccountId,
+}: {
+  appointmentId: string;
+  stripeAccountId: string;
+}): Promise<AppointmentStripeSyncResult> {
+  const [payments, tipCharges] = await Promise.all([
+    prisma.customerAppointmentPayment.findMany({
+      where: {
+        appointmentId,
+        transactionId: { not: null },
+      },
+      select: {
+        transactionId: true,
+      },
+    }),
+    prisma.appointmentTipCharge.findMany({
+      where: {
+        appointmentId,
+        transactionId: { not: null },
+      },
+      select: {
+        transactionId: true,
+      },
+    }),
+  ]);
+
+  const transactionIds = Array.from(
+    new Set(
+      [...payments, ...tipCharges]
+        .map((record) => record.transactionId)
+        .filter((value): value is string => Boolean(value)),
+    ),
+  );
+
+  const syncResults = await Promise.all(
+    transactionIds.map(async (transactionId) => {
+      try {
+        const paymentIntent = await stripe.paymentIntents.retrieve(transactionId, {
+          stripeAccount: stripeAccountId,
+        });
+
+        return {
+          transactionId,
+          success: true as const,
+          paymentIntentStatus: paymentIntent.status,
+          mappedStatus: resolveCustomerPaymentStatusFromIntent(
+            paymentIntent.status,
+          ),
+        };
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch payment intent from Stripe";
+
+        return {
+          transactionId,
+          success: false as const,
+          error: message,
+        };
+      }
+    }),
+  );
+
+  const successfulSyncResults = syncResults.filter((result) => result.success);
+
+  const updateResults = await Promise.all(
+    successfulSyncResults.map(async (result) => {
+      const [paymentUpdate, tipUpdate] = await Promise.all([
+        prisma.customerAppointmentPayment.updateMany({
+          where: {
+            appointmentId,
+            transactionId: result.transactionId,
+            status: {
+              not: result.mappedStatus,
+            },
+          },
+          data: {
+            status: result.mappedStatus,
+          },
+        }),
+        prisma.appointmentTipCharge.updateMany({
+          where: {
+            appointmentId,
+            transactionId: result.transactionId,
+            status: {
+              not: result.mappedStatus,
+            },
+          },
+          data: {
+            status: result.mappedStatus,
+          },
+        }),
+      ]);
+
+      return {
+        updatedPayments: paymentUpdate.count,
+        updatedTipCharges: tipUpdate.count,
+      };
+    }),
+  );
+
+  const updatedPayments = updateResults.reduce(
+    (sum, item) => sum + item.updatedPayments,
+    0,
+  );
+  const updatedTipCharges = updateResults.reduce(
+    (sum, item) => sum + item.updatedTipCharges,
+    0,
+  );
+
+  const appointmentPaymentStatus = await syncAppointmentPaymentStatus(
+    appointmentId,
+  );
+
+  return {
+    appointmentPaymentStatus,
+    updatedPayments,
+    updatedTipCharges,
+    syncedTransactions: successfulSyncResults.map((result) => ({
+      transactionId: result.transactionId,
+      stripeStatus: result.paymentIntentStatus,
+      mappedStatus: result.mappedStatus,
+    })),
+    failedTransactions: syncResults
+      .filter((result) => !result.success)
+      .map((result) => ({
+        transactionId: result.transactionId,
+        error: result.error,
+      })),
+  };
+}
+
+async function syncAppointmentPaymentsIfPossible({
+  appointmentId,
+  stripeAccountId,
+}: {
+  appointmentId: string;
+  stripeAccountId: string | null | undefined;
+}) {
+  if (stripeAccountId == null) {
+    return null;
+  }
+
+  return syncAppointmentPaymentsAgainstStripe({
+    appointmentId,
+    stripeAccountId,
+  });
+}
+
+type NoShowChargeAppointment = {
+  id: string;
+  price: number;
+  customerId: string;
+  paymentMethodId: string | null;
+  paymentMethodLast4: string | null;
+  discountAmountApplied: number | null;
+  promoCode: {
+    discount: number;
+  } | null;
+  customer: {
+    stripeCustomerId: string | null;
+    user: {
+      name: string;
+    };
+  };
+  location: {
+    id: string;
+    organizationId: string;
+    appointmentSettings: {
+      noShowPercent: number;
+    } | null;
+  };
+};
+
+type NoShowChargeResult = {
+  chargeStatus: "CHARGED" | "NOT_CHARGED" | "NOT_NEEDED";
+  chargeFailureReason: string | null;
+  chargedAmount: number;
+  paymentMethodLast4: string | null;
+  updatedAppointment: {
+    id: string;
+    status: string;
+    paymentStatus: string;
+    updatedAt: Date;
+  } | null;
+};
+
+async function attemptNoShowCharge({
+  appointment,
+  chargeAmount,
+  noShowPercent,
+  noShowFeeAmount,
+  alreadyChargedAmount,
+}: {
+  appointment: NoShowChargeAppointment;
+  chargeAmount: number;
+  noShowPercent: number;
+  noShowFeeAmount: number;
+  alreadyChargedAmount: number;
+}): Promise<NoShowChargeResult> {
+  const stripeCustomerId = appointment.customer.stripeCustomerId;
+
+  if (stripeCustomerId == null) {
+    return {
+      chargeStatus: "NOT_CHARGED",
+      chargeFailureReason:
+        "Customer payment profile is not configured for automatic charging.",
+      chargedAmount: 0,
+      paymentMethodLast4: appointment.paymentMethodLast4,
+      updatedAppointment: null,
+    };
+  }
+
+  const organization = await prisma.organization.findUnique({
+    where: { id: appointment.location.organizationId },
+    select: {
+      stripeAccountId: true,
+    },
+  });
+
+  if (organization?.stripeAccountId == null) {
+    return {
+      chargeStatus: "NOT_CHARGED",
+      chargeFailureReason:
+        "Organization payments are not configured for automatic charging.",
+      chargedAmount: 0,
+      paymentMethodLast4: appointment.paymentMethodLast4,
+      updatedAppointment: null,
+    };
+  }
+
+  let resolvedPaymentMethodId = appointment.paymentMethodId;
+  let resolvedPaymentMethod: Stripe.PaymentMethod | null = null;
+
+  if (resolvedPaymentMethodId == null) {
+    const savedCards = await stripe.paymentMethods.list(
+      {
+        customer: stripeCustomerId,
+        type: "card",
+        limit: 1,
+      },
+      {
+        stripeAccount: organization.stripeAccountId,
+      },
+    );
+
+    resolvedPaymentMethod = savedCards.data[0] ?? null;
+    resolvedPaymentMethodId = resolvedPaymentMethod?.id ?? null;
+  }
+
+  if (resolvedPaymentMethodId == null) {
+    return {
+      chargeStatus: "NOT_CHARGED",
+      chargeFailureReason: "No saved card is available to collect the no-show fee.",
+      chargedAmount: 0,
+      paymentMethodLast4: appointment.paymentMethodLast4,
+      updatedAppointment: null,
+    };
+  }
+
+  resolvedPaymentMethod ??= await stripe.paymentMethods.retrieve(
+    resolvedPaymentMethodId,
+    {
+      stripeAccount: organization.stripeAccountId,
+    },
+  );
+
+  const paymentMethodCustomerId =
+    typeof resolvedPaymentMethod.customer === "string"
+      ? resolvedPaymentMethod.customer
+      : null;
+
+  if (paymentMethodCustomerId !== stripeCustomerId) {
+    return {
+      chargeStatus: "NOT_CHARGED",
+      chargeFailureReason: "Saved card could not be verified for this customer.",
+      chargedAmount: 0,
+      paymentMethodLast4: appointment.paymentMethodLast4,
+      updatedAppointment: null,
+    };
+  }
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create(
+      {
+        amount: chargeAmount,
+        currency: "usd",
+        customer: stripeCustomerId,
+        payment_method: resolvedPaymentMethodId,
+        confirm: true,
+        off_session: true,
+        description: `Appointment no-show fee for ${appointment.id}`,
+        metadata: {
+          paymentScope: "APPOINTMENT_NO_SHOW_FEE",
+          appointmentId: appointment.id,
+          customerId: appointment.customerId,
+          locationId: appointment.location.id,
+          organizationId: appointment.location.organizationId,
+          noShowPercent: String(noShowPercent),
+          noShowFeeAmount: String(noShowFeeAmount),
+          alreadyChargedAmount: String(alreadyChargedAmount),
+          chargeAmount: String(chargeAmount),
+        },
+      },
+      {
+        stripeAccount: organization.stripeAccountId,
+      },
+    );
+
+    const updatedAppointment = await prisma.$transaction(async (tx) => {
+      const nextAppointment = await tx.appointment.update({
+        where: { id: appointment.id },
+        data: {
+          status: "NO_SHOW",
+          paymentMethodId: resolvedPaymentMethodId,
+          paymentMethodLast4:
+            resolvedPaymentMethod.card?.last4 ??
+            appointment.paymentMethodLast4 ??
+            null,
+        },
+        select: {
+          id: true,
+          status: true,
+          paymentStatus: true,
+          updatedAt: true,
+        },
+      });
+
+      await tx.customerAppointmentPayment.create({
+        data: {
+          customerId: appointment.customerId,
+          appointmentId: appointment.id,
+          amountPaid: chargeAmount,
+          paymentType: "CANCELLATION",
+          status: "PENDING",
+          paymentMethod: resolvedPaymentMethodId,
+          transactionId: paymentIntent.id,
+        },
+      });
+
+      return nextAppointment;
+    });
+
+    return {
+      chargeStatus: "CHARGED",
+      chargeFailureReason: null,
+      chargedAmount: chargeAmount,
+      paymentMethodLast4:
+        resolvedPaymentMethod.card?.last4 ?? appointment.paymentMethodLast4,
+      updatedAppointment,
+    };
+  } catch (error) {
+    if (error instanceof Stripe.errors.StripeError) {
+      return {
+        chargeStatus: "NOT_CHARGED",
+        chargeFailureReason:
+          error.message || "Failed to charge the saved card for this no-show.",
+        chargedAmount: 0,
+        paymentMethodLast4: appointment.paymentMethodLast4,
+        updatedAppointment: null,
+      };
+    }
+
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to process no-show charge",
+    });
+  }
 }
 
 export const appointmentRouter = router({
@@ -705,6 +1130,185 @@ export const appointmentRouter = router({
       };
     }),
 
+  markAppointmentNoShow: withPermissions(["UPDATE::APPOINTMENTS"])
+    .input(
+      z.object({
+        appointmentId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const appointment = await prisma.appointment.findUnique({
+        where: { id: input.appointmentId },
+        select: {
+          id: true,
+          status: true,
+          price: true,
+          customerId: true,
+          paymentMethodId: true,
+          paymentMethodLast4: true,
+          discountAmountApplied: true,
+          promoCode: {
+            select: {
+              discount: true,
+            },
+          },
+          customer: {
+            select: {
+              stripeCustomerId: true,
+              user: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          location: {
+            select: {
+              id: true,
+              organizationId: true,
+              appointmentSettings: {
+                select: {
+                  noShowPercent: true,
+                },
+              },
+            },
+          },
+          service: {
+            select: {
+              locationEmployeeId: true,
+            },
+          },
+        },
+      });
+
+      if (!appointment) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Appointment not found",
+        });
+      }
+
+      if (
+        appointment.status !== "SCHEDULED" &&
+        appointment.status !== "RESCHEDULED"
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only pending appointments can be marked as no-show",
+        });
+      }
+
+      const actorAtLocation = await prisma.locationEmployee.findFirst({
+        where: {
+          locationId: appointment.location.id,
+          userId: ctx.session.user.id,
+        },
+        select: { id: true, role: true },
+      });
+
+      if (actorAtLocation?.role === "LOCATION_SPECIALIST") {
+        const canSpecialistUpdate = appointment.service.some(
+          (service) => service.locationEmployeeId === actorAtLocation.id,
+        );
+
+        if (!canSpecialistUpdate) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You can only update status for your own appointments",
+          });
+        }
+      }
+
+      const organization = await prisma.organization.findUnique({
+        where: { id: appointment.location.organizationId },
+        select: {
+          stripeAccountId: true,
+        },
+      });
+
+      await syncAppointmentPaymentsIfPossible({
+        appointmentId: appointment.id,
+        stripeAccountId: organization?.stripeAccountId,
+      });
+
+      const discountAmount = resolveDiscountAmount({
+        price: appointment.price,
+        discountAmountApplied: appointment.discountAmountApplied,
+        promoDiscountPercentage: appointment.promoCode?.discount,
+      });
+      const discountedTotal = Math.max(0, appointment.price - discountAmount);
+      const noShowPercent =
+        appointment.location.appointmentSettings?.noShowPercent ?? 100;
+      const noShowFeeAmount = calculatePercentageAmount(
+        discountedTotal,
+        noShowPercent,
+      );
+      const alreadyChargedAmount = await getAppointmentCollectedAmount(
+        appointment.id,
+      );
+      const chargeAmount = Math.max(0, noShowFeeAmount - alreadyChargedAmount);
+      const chargeResult =
+        chargeAmount > 0
+          ? await attemptNoShowCharge({
+              appointment,
+              chargeAmount,
+              noShowPercent,
+              noShowFeeAmount,
+              alreadyChargedAmount,
+            })
+          : {
+              chargeStatus: "NOT_NEEDED" as const,
+              chargeFailureReason: null,
+              chargedAmount: 0,
+              paymentMethodLast4: appointment.paymentMethodLast4,
+              updatedAppointment: null,
+            };
+
+      let updatedAppointment = chargeResult.updatedAppointment;
+
+      updatedAppointment ??= await prisma.appointment.update({
+          where: { id: appointment.id },
+          data: {
+            status: "NO_SHOW",
+          },
+          select: {
+            id: true,
+            status: true,
+            paymentStatus: true,
+            updatedAt: true,
+          },
+        });
+
+      let activityDescription = `Appointment ${appointment.id} marked as NO_SHOW with no additional fee due.`;
+
+      if (chargeResult.chargeStatus === "CHARGED") {
+        activityDescription = `Appointment ${appointment.id} marked as NO_SHOW and charged ${chargeResult.chargedAmount} cents.`;
+      } else if (chargeResult.chargeStatus === "NOT_CHARGED") {
+        activityDescription = `Appointment ${appointment.id} marked as NO_SHOW without automatic charge. Reason: ${chargeResult.chargeFailureReason}`;
+      }
+
+      addActivityLog({
+        type: ACTIVITY_LOG_ACTIONS.UPDATED_APPOINTMENT_STATUS,
+        description: activityDescription,
+        userId: ctx.session.user.id,
+        organizationId: appointment.location.organizationId,
+        locationId: appointment.location.id,
+      });
+
+      return {
+        success: true,
+        appointment: updatedAppointment,
+        noShowPercent,
+        noShowFeeAmount,
+        alreadyChargedAmount,
+        chargedAmount: chargeResult.chargedAmount,
+        chargeStatus: chargeResult.chargeStatus,
+        chargeFailureReason: chargeResult.chargeFailureReason,
+        paymentMethodLast4: chargeResult.paymentMethodLast4,
+        customerName: appointment.customer.user.name,
+      };
+    }),
+
   syncAppointmentPaymentsFromStripe: withPermissions(["UPDATE::APPOINTMENTS"])
     .input(
       z.object({
@@ -774,141 +1378,19 @@ export const appointmentRouter = router({
           message: "Organization payments are not configured",
         });
       }
-
-      const stripeAccountId = organization.stripeAccountId;
-
-      const [payments, tipCharges] = await Promise.all([
-        prisma.customerAppointmentPayment.findMany({
-          where: {
-            appointmentId: appointment.id,
-            transactionId: { not: null },
-          },
-          select: {
-            transactionId: true,
-          },
-        }),
-        prisma.appointmentTipCharge.findMany({
-          where: {
-            appointmentId: appointment.id,
-            transactionId: { not: null },
-          },
-          select: {
-            transactionId: true,
-          },
-        }),
-      ]);
-
-      const transactionIds = Array.from(
-        new Set(
-          [...payments, ...tipCharges]
-            .map((record) => record.transactionId)
-            .filter((value): value is string => Boolean(value)),
-        ),
-      );
-
-      const syncResults = await Promise.all(
-        transactionIds.map(async (transactionId) => {
-          try {
-            const paymentIntent = await stripe.paymentIntents.retrieve(
-              transactionId,
-              {
-                stripeAccount: stripeAccountId,
-              },
-            );
-
-            return {
-              transactionId,
-              success: true as const,
-              paymentIntentStatus: paymentIntent.status,
-              mappedStatus: resolveCustomerPaymentStatusFromIntent(
-                paymentIntent.status,
-              ),
-            };
-          } catch (error) {
-            const message =
-              error instanceof Error
-                ? error.message
-                : "Failed to fetch payment intent from Stripe";
-
-            return {
-              transactionId,
-              success: false as const,
-              error: message,
-            };
-          }
-        }),
-      );
-
-      const successfulSyncResults = syncResults.filter(
-        (result) => result.success,
-      );
-
-      const updateResults = await Promise.all(
-        successfulSyncResults.map(async (result) => {
-          const [paymentUpdate, tipUpdate] = await Promise.all([
-            prisma.customerAppointmentPayment.updateMany({
-              where: {
-                appointmentId: appointment.id,
-                transactionId: result.transactionId,
-                status: {
-                  not: result.mappedStatus,
-                },
-              },
-              data: {
-                status: result.mappedStatus,
-              },
-            }),
-            prisma.appointmentTipCharge.updateMany({
-              where: {
-                appointmentId: appointment.id,
-                transactionId: result.transactionId,
-                status: {
-                  not: result.mappedStatus,
-                },
-              },
-              data: {
-                status: result.mappedStatus,
-              },
-            }),
-          ]);
-
-          return {
-            updatedPayments: paymentUpdate.count,
-            updatedTipCharges: tipUpdate.count,
-          };
-        }),
-      );
-
-      const updatedPayments = updateResults.reduce(
-        (sum, item) => sum + item.updatedPayments,
-        0,
-      );
-      const updatedTipCharges = updateResults.reduce(
-        (sum, item) => sum + item.updatedTipCharges,
-        0,
-      );
-
-      const appointmentPaymentStatus = await syncAppointmentPaymentStatus(
-        appointment.id,
-      );
+      const syncResult = await syncAppointmentPaymentsAgainstStripe({
+        appointmentId: appointment.id,
+        stripeAccountId: organization.stripeAccountId,
+      });
 
       return {
         success: true,
         appointmentId: appointment.id,
-        appointmentPaymentStatus,
-        updatedPayments,
-        updatedTipCharges,
-        syncedTransactions: successfulSyncResults.map((result) => ({
-          transactionId: result.transactionId,
-          stripeStatus: result.paymentIntentStatus,
-          mappedStatus: result.mappedStatus,
-        })),
-        failedTransactions: syncResults
-          .filter((result) => !result.success)
-          .map((result) => ({
-            transactionId: result.transactionId,
-            error: result.error,
-          })),
+        appointmentPaymentStatus: syncResult.appointmentPaymentStatus,
+        updatedPayments: syncResult.updatedPayments,
+        updatedTipCharges: syncResult.updatedTipCharges,
+        syncedTransactions: syncResult.syncedTransactions,
+        failedTransactions: syncResult.failedTransactions,
       };
     }),
 
@@ -1463,6 +1945,8 @@ export const appointmentRouter = router({
               organizationId: true,
               appointmentSettings: {
                 select: {
+                  cancellationPercent: true,
+                  noShowPercent: true,
                   tipEnabled: true,
                   tipPresetPercentages: true,
                 },
@@ -1484,6 +1968,11 @@ export const appointmentRouter = router({
         select: {
           stripeAccountId: true,
         },
+      });
+
+      await syncAppointmentPaymentsIfPossible({
+        appointmentId: appointment.id,
+        stripeAccountId: organization?.stripeAccountId,
       });
 
       const savedPaymentMethods =
@@ -1566,6 +2055,10 @@ export const appointmentRouter = router({
           (appointment.discountPercentageApplied ?? 0) > 0
             ? appointment.discountPercentageApplied
             : null,
+        cancellationPercent:
+          appointment.location.appointmentSettings?.cancellationPercent ?? 100,
+        noShowPercent:
+          appointment.location.appointmentSettings?.noShowPercent ?? 100,
         selectedPaymentMethodId: appointment.paymentMethodId,
         savedPaymentMethods,
         hasPaymentMethod: Boolean(appointment.paymentMethodId),
@@ -1969,6 +2462,11 @@ export const appointmentRouter = router({
           message: "Organization payments are not configured",
         });
       }
+
+      await syncAppointmentPaymentsIfPossible({
+        appointmentId: appointment.id,
+        stripeAccountId: organization.stripeAccountId,
+      });
 
       const selectedPaymentMethod = await stripe.paymentMethods.retrieve(
         resolvedPaymentMethodId,

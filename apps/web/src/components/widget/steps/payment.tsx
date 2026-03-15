@@ -222,6 +222,7 @@ const PaymentPage = () => {
   });
 
   const cancellationPercent = bookingPolicy?.cancellationPercent ?? 100;
+  const noShowPercent = bookingPolicy?.noShowPercent ?? 100;
   const cancellationDuration = bookingPolicy?.cancellationDuration ?? 60;
   const downpaymentPercentage = bookingPolicy?.downpaymentPercentage ?? 0;
   const discountedTotalAmount = Math.max(0, totalAmount - promoDiscountAmount);
@@ -231,6 +232,12 @@ const PaymentPage = () => {
           ((discountedTotalAmount * downpaymentPercentage) / 100).toFixed(2),
         )
       : 0;
+  const noShowFeeAmount = Number(
+    ((discountedTotalAmount * noShowPercent) / 100).toFixed(2),
+  );
+  const remainingNoShowExposure = Number(
+    Math.max(0, noShowFeeAmount - amountDueNow).toFixed(2),
+  );
 
   const formatDurationLabel = React.useCallback((minutes: number) => {
     if (minutes % 60 === 0) {
@@ -644,9 +651,9 @@ const PaymentPage = () => {
                   setSavedCard(nextCard);
                   setAllSavedCards((prev) => [
                     {
-                      id: result.card.id!,
-                      brand: result.card.brand!,
-                      last4: result.card.last4!,
+                      id: result.card.id,
+                      brand: result.card.brand ?? "card",
+                      last4: result.card.last4 ?? "****",
                       expMonth: 12,
                       expYear: new Date().getFullYear() + 5,
                     },
@@ -750,10 +757,18 @@ const PaymentPage = () => {
                     : "No downpayment is charged now. Your card will still be saved for future charges."}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Cancellation & no-show policy: If you cancel within{" "}
+                  Cancellation policy: If you cancel within{" "}
                   {formatDurationLabel(cancellationDuration)} before your
-                  appointment start time, or do not show up, up to{" "}
+                  appointment start time, up to{" "}
                   {cancellationPercent}% of the booked amount may be charged.
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  No-show policy: If you do not show up, up to {noShowPercent}% of
+                  the booked amount may be charged. With your current booking,
+                  the no-show fee is up to{" "}
+                  {formatUSD(noShowFeeAmount)}. Since {formatUSD(amountDueNow)} is
+                  due now, up to {formatUSD(remainingNoShowExposure)} could be
+                  charged later if the policy applies.
                 </p>
               </div>
             </div>

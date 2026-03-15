@@ -25,6 +25,7 @@ import {
 import { Button } from "../ui/button";
 import { useLocationHours } from "./calendar";
 import { ChargeBalanceModal } from "./charge-balance-modal";
+import { NoShowModal } from "./no-show-modal";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
 
@@ -135,6 +136,7 @@ export function Appointment({
   actorEmployeeIdAtLocation: string | null;
 }) {
   const queryClient = useQueryClient();
+  const [noShowModalOpen, setNoShowModalOpen] = useState(false);
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
     disabled: status !== "SCHEDULED" && status !== "RESCHEDULED",
@@ -189,20 +191,6 @@ export function Appointment({
       },
       onError: (error) => {
         toast.error(error.message || "Failed to sync appointment payments");
-      },
-    }),
-  );
-
-  const { mutate: updateStatus, isPending: isUpdatingStatus } = useMutation(
-    trpc.appointment.updateAppointmentStatus.mutationOptions({
-      onSuccess: () => {
-        toast.success("Appointment marked as no-show");
-        queryClient.invalidateQueries({
-          queryKey: trpc.appointment.fetchAppointments.queryKey(),
-        });
-      },
-      onError: (error) => {
-        toast.error(error.message || "Failed to update appointment status");
       },
     }),
   );
@@ -266,12 +254,9 @@ export function Appointment({
           canMarkNoShow={canMarkNoShow}
           canSyncPayments={canSyncPayments}
           isSyncingPayments={isSyncingPayments}
-          isUpdatingStatus={isUpdatingStatus}
+          isUpdatingStatus={false}
           onMarkNoShow={() => {
-            updateStatus({
-              appointmentId: id,
-              status: "NO_SHOW",
-            });
+            setNoShowModalOpen(true);
           }}
           onSyncPayments={() => {
             syncPayments({ appointmentId: id });
@@ -298,12 +283,9 @@ export function Appointment({
               canMarkNoShow={canMarkNoShow}
               canSyncPayments={canSyncPayments}
               isSyncingPayments={isSyncingPayments}
-              isUpdatingStatus={isUpdatingStatus}
+              isUpdatingStatus={false}
               onMarkNoShow={() => {
-                updateStatus({
-                  appointmentId: id,
-                  status: "NO_SHOW",
-                });
+                setNoShowModalOpen(true);
               }}
               onSyncPayments={() => {
                 syncPayments({ appointmentId: id });
@@ -357,6 +339,12 @@ export function Appointment({
             )}
           </div>
         )}
+
+        <NoShowModal
+          open={noShowModalOpen}
+          onOpenChange={setNoShowModalOpen}
+          appointmentId={id}
+        />
       </>
     </AppointmentProvider>
   );
@@ -483,7 +471,10 @@ const ControlledHoverCard = ({
               variant="destructive"
               className="flex-1"
               disabled={!canMarkNoShow || isUpdatingStatus}
-              onClick={onMarkNoShow}
+              onClick={() => {
+                setOpenHover(false);
+                onMarkNoShow();
+              }}
             >
               {isUpdatingStatus ? "Updating..." : "Mark No Show"}
             </Button>
@@ -546,7 +537,10 @@ const ControlledContextMenu = ({
         </ContextMenuItem>
         <ContextMenuItem
           disabled={!canMarkNoShow || isUpdatingStatus}
-          onClick={onMarkNoShow}
+          onClick={() => {
+            setOpenContextMenu(false);
+            onMarkNoShow();
+          }}
         >
           {isUpdatingStatus ? "Updating Status..." : "Mark No Show"}
         </ContextMenuItem>

@@ -737,6 +737,7 @@ const updateLocationOperatingHours = withPermissions(
     bookingCutOff: z.number().min(1).max(10080),
     downpaymentPercentage: z.number().min(0).max(100).optional(),
     cancellationPercent: z.number().min(0).max(100).optional(),
+    noShowPercent: z.number().min(0).max(100).optional(),
     cancellationDuration: z.number().min(1).max(10080).optional(),
     rules: weeklyScheduleRulesSchema,
   })
@@ -748,6 +749,7 @@ const updateLocationOperatingHours = withPermissions(
     advanceBookingLimitDays,
     downpaymentPercentage,
     cancellationPercent,
+    noShowPercent,
     cancellationDuration,
   } = input;
   await updateWeeklySchedule({ locationId, rules });
@@ -763,6 +765,7 @@ const updateLocationOperatingHours = withPermissions(
         downpaymentPercentage,
       }),
       ...(typeof cancellationPercent === "number" && { cancellationPercent }),
+      ...(typeof noShowPercent === "number" && { noShowPercent }),
       ...(typeof cancellationDuration === "number" && {
         cancellationDuration,
       }),
@@ -774,6 +777,7 @@ const updateLocationOperatingHours = withPermissions(
         downpaymentPercentage,
       }),
       ...(typeof cancellationPercent === "number" && { cancellationPercent }),
+      ...(typeof noShowPercent === "number" && { noShowPercent }),
       ...(typeof cancellationDuration === "number" && {
         cancellationDuration,
       }),

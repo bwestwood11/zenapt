@@ -63,6 +63,7 @@ export const formDataSchema = daysSchema.extend({
   lastMinuteCutoff: z.number().int().min(1).max(10080),
   downpaymentPercentage: z.number().int().min(0).max(100),
   cancellationPercent: z.number().int().min(0).max(100),
+  noShowPercent: z.number().int().min(0).max(100),
   cancellationDurationHours: z.number().int().min(1).max(168),
 });
 
@@ -108,6 +109,7 @@ export function OperatingSchedulingSettings({
         : 1,
       downpaymentPercentage: appointmentSettings?.downpaymentPercentage ?? 0,
       cancellationPercent: appointmentSettings?.cancellationPercent ?? 100,
+      noShowPercent: appointmentSettings?.noShowPercent ?? 100,
       cancellationDurationHours: appointmentSettings?.cancellationDuration
         ? Math.max(1, Math.floor(appointmentSettings.cancellationDuration / 60))
         : 24,
@@ -194,6 +196,7 @@ export function OperatingSchedulingForm({
       bookingCutOff: values.lastMinuteCutoff * 60, // convert hours to minutes
       downpaymentPercentage: values.downpaymentPercentage,
       cancellationPercent: values.cancellationPercent,
+      noShowPercent: values.noShowPercent,
       cancellationDuration: values.cancellationDurationHours * 60,
       rules: days.map(({ key, name }) => ({
         day: key,
@@ -423,6 +426,33 @@ export function OperatingSchedulingForm({
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="0">0%</SelectItem>
+                          <SelectItem value="25">25%</SelectItem>
+                          <SelectItem value="50">50%</SelectItem>
+                          <SelectItem value="75">75%</SelectItem>
+                          <SelectItem value="100">100%</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="noShowPercent"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>No-Show Charge Percent</FormLabel>
+                    <FormControl>
+                      <Select
+                        defaultValue={String(field.value)}
+                        onValueChange={(v) => field.onChange(Number(v))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0">No charge (0%)</SelectItem>
                           <SelectItem value="25">25%</SelectItem>
                           <SelectItem value="50">50%</SelectItem>
                           <SelectItem value="75">75%</SelectItem>

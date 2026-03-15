@@ -2765,6 +2765,7 @@ export const AppointmentSettingsScalarFieldEnum = {
   bookingCutOff: 'bookingCutOff',
   downpaymentPercentage: 'downpaymentPercentage',
   cancellationPercent: 'cancellationPercent',
+  noShowPercent: 'noShowPercent',
   cancellationDuration: 'cancellationDuration',
   leaveRequestNoticeDays: 'leaveRequestNoticeDays',
   tipEnabled: 'tipEnabled',

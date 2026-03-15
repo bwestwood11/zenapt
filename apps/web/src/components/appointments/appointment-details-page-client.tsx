@@ -3,7 +3,6 @@
 import Link from "next/link";
 import type { inferRouterOutputs } from "@trpc/server";
 import {
-  ArrowLeft,
   ArrowUpRight,
   CalendarDays,
   Clock,
@@ -21,7 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -111,7 +110,7 @@ const getPaymentEntryLabel = (
   }
 
   if (paymentType === "CANCELLATION") {
-    return "Cancellation Charge";
+    return "Cancellation / No-Show Charge";
   }
 
   return formatPaymentType(paymentType);
