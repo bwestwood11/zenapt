@@ -58,8 +58,6 @@ const daysSchema = z.object({
 });
 
 export const formDataSchema = daysSchema.extend({
-  bufferTime: z.number().int().min(0).max(60),
-  prepCleanup: z.number().int().min(0).max(30),
   advanceBooking: z.number().int().min(1).max(365),
   lastMinuteCutoff: z.number().int().min(1).max(10080),
   downpaymentPercentage: z.number().int().min(0).max(100),
@@ -103,8 +101,6 @@ export function OperatingSchedulingSettings({
   const defaultValues = useMemo<FormData>(() => {
     // base config (non-day fields)
     const base = {
-      bufferTime: appointmentSettings?.bufferTime ?? 0,
-      prepCleanup: appointmentSettings?.prepTime ?? 0,
       advanceBooking: appointmentSettings?.advanceBookingLimitDays ?? 30,
       lastMinuteCutoff: appointmentSettings?.bookingCutOff
         ? Math.floor(appointmentSettings.bookingCutOff / 60)
@@ -193,8 +189,6 @@ export function OperatingSchedulingForm({
 
     mutate({
       locationId,
-      bufferTime: values.bufferTime,
-      prepTime: values.prepCleanup,
       advanceBookingLimitDays: values.advanceBooking,
       bookingCutOff: values.lastMinuteCutoff * 60, // convert hours to minutes
       downpaymentPercentage: values.downpaymentPercentage,
@@ -302,60 +296,6 @@ export function OperatingSchedulingForm({
 
             {/* Other Config */}
             <div className="grid gap-6 sm:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="bufferTime"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Default Service Buffer Time</FormLabel>
-                    <FormControl>
-                      <Select
-                        defaultValue={String(field.value)}
-                        onValueChange={(v) => field.onChange(Number(v))}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {[5, 10, 15, 20, 30].map((v) => (
-                            <SelectItem key={v} value={String(v)}>
-                              {v} minutes
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="prepCleanup"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Prep/Cleanup Time</FormLabel>
-                    <FormControl>
-                      <Select
-                        defaultValue={String(field.value)}
-                        onValueChange={(v) => field.onChange(Number(v))}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {[0, 5, 10, 15].map((v) => (
-                            <SelectItem key={v} value={String(v)}>
-                              {v} minutes
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={form.control}
                 name="advanceBooking"

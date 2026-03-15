@@ -2,6 +2,8 @@ import z from "zod";
 import { router, withPermissions } from "../lib/trpc";
 import prisma from "../../prisma";
 import { TRPCError } from "@trpc/server";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 import { isValidPhoneNumber } from "libphonenumber-js";
 import { revalidateTag } from "next/cache";
@@ -24,6 +26,8 @@ import {
   zonedDateTimeToUtc,
 } from "../lib/datetime/timezone";
 import { LeaveRequestStatus, ScheduleTargetType } from "../../prisma/generated/enums";
+import { S3client } from "../lib/s3/index";
+import { checkFile, keyToFileUrl, mimeTypeToExtension } from "../lib/s3/utils";
 
 const locationPromoCodeSchema = z.object({
   locationId: z.string(),
@@ -58,7 +62,7 @@ const CreateLocationSchema = z.object({
   country: z.string().min(2, "Please select a country"),
   zipCode: z.string().min(5, "Please enter a valid zip code"),
   timeZone: z.string().min(1, "Time zone is required"),
-  email: z.string().email("Please enter a valid email address"),
+  email: z.email("Please enter a valid email address"),
   phoneNumber: z
     .string()
     .refine((p) => isValidPhoneNumber(p), { message: "Invalid Phone Number" }),
@@ -83,6 +87,40 @@ const leaveRequestInputSchema = z.object({
 const leaveRequestConfigSchema = z.object({
   locationId: z.string(),
   leaveRequestNoticeDays: z.number().int().min(0).max(60),
+});
+
+const hexColorSchema = z
+  .string()
+  .trim()
+  .regex(/^#([0-9A-Fa-f]{6})$/, "Enter a valid hex color")
+  .optional()
+  .nullable();
+
+const locationBrandingSchema = z.object({
+  locationId: z.string(),
+  logo: z
+    .string()
+    .trim()
+    .refine((value) => value.length === 0 || /^https?:\/\//.test(value), {
+      message: "Enter a valid URL",
+    })
+    .optional()
+    .nullable(),
+  brandPrimaryColor: hexColorSchema,
+  brandAccentColor: hexColorSchema,
+  wifiNetworkName: z.string().trim().max(100).optional().nullable(),
+  wifiPassword: z.string().trim().max(100).optional().nullable(),
+  parkingInstructions: z.string().trim().max(500).optional().nullable(),
+  arrivalNotes: z.string().trim().max(500).optional().nullable(),
+  mapLink: z
+    .string()
+    .trim()
+    .max(500)
+    .refine((value) => value.length === 0 || /^https?:\/\//.test(value), {
+      message: "Enter a valid URL",
+    })
+    .optional()
+    .nullable(),
 });
 
 const APPROVER_ROLES = new Set([
@@ -192,7 +230,7 @@ function normalizeLeaveRequestRange(
   };
 
   const candidates = [buildCandidateRange(0), buildCandidateRange(1)];
-  const bestCandidate = candidates.sort(
+  const bestCandidate = candidates.toSorted(
     (left, right) => right.overlap - left.overlap,
   )[0];
 
@@ -373,14 +411,14 @@ const createLocation = withPermissions(
 
   const createdLocation = await prisma.location.create({
     data: {
-      name: input.name.replace(/\s+/g, "-"),
+      name: input.name.replaceAll(/\s+/g, "-"),
       address: input.address,
       city: input.city,
       slug: input.name
         .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^a-z0-9-]+/g, "-")
-        .replace(/(^-|-$)+/g, "")
+        .replaceAll(/\s+/g, "-")
+        .replaceAll(/[^a-z0-9-]+/g, "-")
+        .replaceAll(/(^-|-$)+/g, "")
         .substring(0, 50),
       country: input.country,
       email: input.email,
@@ -529,12 +567,172 @@ const getLocationEmployees = withPermissions(
   return location.employees;
 });
 
+const getLocationBrandingSettings = withPermissions(
+  "READ::LOCATION",
+  z.object({
+    locationId: z.string(),
+  }),
+).query(async ({ ctx, input }) => {
+  const employeeAccess = ctx.session.user.employees?.find(
+    (employee) => employee.locationId === input.locationId,
+  );
+
+  if (!employeeAccess) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "You are not allowed to view branding settings for this location.",
+    });
+  }
+
+  const location = await prisma.location.findUnique({
+    where: {
+      id: input.locationId,
+    },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      logo: true,
+      brandPrimaryColor: true,
+      brandAccentColor: true,
+      wifiNetworkName: true,
+      wifiPassword: true,
+      parkingInstructions: true,
+      arrivalNotes: true,
+      mapLink: true,
+      updatedAt: true,
+    },
+  });
+
+  if (!location) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Location not found",
+    });
+  }
+
+  return location;
+});
+
+const initLocationLogoUpload = withPermissions(
+  "UPDATE::LOCATION",
+  z.object({
+    locationId: z.string(),
+    mimeType: z.string().min(1),
+    filesize: z.number().min(1),
+    checksum: z.string(),
+  }),
+).mutation(async ({ ctx, input }) => {
+  const employeeAccess = ctx.session.user.employees?.find(
+    (employee) => employee.locationId === input.locationId,
+  );
+
+  if (!employeeAccess) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "You are not allowed to update branding for this location.",
+    });
+  }
+
+  const validation = checkFile("logos", {
+    clientFileSize: input.filesize,
+    clientFileType: input.mimeType,
+  });
+
+  if (!validation.valid) {
+    throw new TRPCError({
+      message: validation.reason,
+      code: "INTERNAL_SERVER_ERROR",
+      cause: validation.code,
+    });
+  }
+
+  const extension = mimeTypeToExtension(input.mimeType);
+
+  if (!extension) {
+    throw new TRPCError({
+      message: "Something went wrong",
+      code: "INTERNAL_SERVER_ERROR",
+    });
+  }
+
+  const key = `user/${ctx.session.user.id}/locations/${input.locationId}/logo.${extension}`;
+  const command = new PutObjectCommand({
+    Bucket: process.env.S3_BUCKET_NAME,
+    Key: key,
+    ContentType: input.mimeType,
+    ContentLength: input.filesize,
+    ChecksumSHA256: input.checksum,
+  });
+
+  const signedUrl = await getSignedUrl(S3client, command, {
+    expiresIn: 600,
+  });
+
+  return {
+    signedUrl,
+    url: keyToFileUrl(key),
+  };
+});
+
+const updateLocationBrandingSettings = withPermissions(
+  "UPDATE::LOCATION",
+  locationBrandingSchema,
+).mutation(async ({ ctx, input }) => {
+  const employeeAccess = ctx.session.user.employees?.find(
+    (employee) => employee.locationId === input.locationId,
+  );
+
+  if (!employeeAccess) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "You are not allowed to update branding for this location.",
+    });
+  }
+
+  const location = await prisma.location.update({
+    where: {
+      id: input.locationId,
+    },
+    data: {
+      logo: input.logo ?? null,
+      ...(input.brandPrimaryColor !== undefined && {
+        brandPrimaryColor: input.brandPrimaryColor ?? null,
+      }),
+      ...(input.brandAccentColor !== undefined && {
+        brandAccentColor: input.brandAccentColor ?? null,
+      }),
+      wifiNetworkName: input.wifiNetworkName ?? null,
+      wifiPassword: input.wifiPassword ?? null,
+      parkingInstructions: input.parkingInstructions ?? null,
+      arrivalNotes: input.arrivalNotes ?? null,
+      mapLink: input.mapLink ?? null,
+    },
+    select: {
+      id: true,
+      name: true,
+      organizationId: true,
+      updatedAt: true,
+    },
+  });
+
+  addActivityLog({
+    type: ACTIVITY_LOG_ACTIONS.UPDATED_LOCATION_BRANDING,
+    description: `Branding settings were updated for location ${location.name}.`,
+    userId: ctx.session.user.id,
+    organizationId: location.organizationId,
+    locationId: location.id,
+  });
+
+  revalidateTag(location.organizationId);
+
+  return location;
+});
+
 const updateLocationOperatingHours = withPermissions(
   "UPDATE::LOCATION",
   z.object({
     locationId: z.string(),
-    bufferTime: z.number().min(0).max(60),
-    prepTime: z.number().min(0).max(30),
     advanceBookingLimitDays: z.number().min(1).max(365),
     bookingCutOff: z.number().min(1).max(10080),
     downpaymentPercentage: z.number().min(0).max(100).optional(),
@@ -547,9 +745,7 @@ const updateLocationOperatingHours = withPermissions(
     locationId,
     rules,
     bookingCutOff,
-    bufferTime,
     advanceBookingLimitDays,
-    prepTime,
     downpaymentPercentage,
     cancellationPercent,
     cancellationDuration,
@@ -561,8 +757,6 @@ const updateLocationOperatingHours = withPermissions(
     },
     create: {
       locationId,
-      bufferTime,
-      prepTime,
       advanceBookingLimitDays,
       bookingCutOff,
       ...(typeof downpaymentPercentage === "number" && {
@@ -574,8 +768,6 @@ const updateLocationOperatingHours = withPermissions(
       }),
     },
     update: {
-      bufferTime,
-      prepTime,
       advanceBookingLimitDays,
       bookingCutOff,
       ...(typeof downpaymentPercentage === "number" && {
@@ -1739,6 +1931,9 @@ export const locationRouter = router({
   getAllLocations,
   getLocation,
   getLocationEmployees,
+  getLocationBrandingSettings,
+  initLocationLogoUpload,
+  updateLocationBrandingSettings,
   updateLocationOperatingHours,
   fetchMyWorkingHours,
   updateMyWorkingHours,
