@@ -480,6 +480,44 @@ export const appointmentRouter = router({
               basePrice: true,
             },
           },
+          customerPayments: {
+            select: {
+              id: true,
+              amountPaid: true,
+              paymentType: true,
+              status: true,
+              paymentMethod: true,
+              transactionId: true,
+              createdAt: true,
+              updatedAt: true,
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+          },
+          tipCharges: {
+            select: {
+              id: true,
+              amount: true,
+              status: true,
+              paymentMethod: true,
+              transactionId: true,
+              createdAt: true,
+              locationEmployee: {
+                select: {
+                  id: true,
+                  user: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+          },
         },
       });
 
@@ -518,7 +556,53 @@ export const appointmentRouter = router({
         }
       }
 
-      return appointment;
+      const paymentHistory = [
+        ...appointment.customerPayments.map((payment) => ({
+          id: payment.id,
+          kind: "APPOINTMENT_PAYMENT" as const,
+          amount: payment.amountPaid,
+          paymentType: payment.paymentType,
+          status: payment.status,
+          paymentMethod: payment.paymentMethod,
+          transactionId: payment.transactionId,
+          createdAt: payment.createdAt,
+          updatedAt: payment.updatedAt,
+        })),
+        ...appointment.tipCharges.map((tipCharge) => ({
+          id: tipCharge.id,
+          kind: "TIP_CHARGE" as const,
+          amount: tipCharge.amount,
+          paymentType: "TIP" as const,
+          status: tipCharge.status,
+          paymentMethod: tipCharge.paymentMethod,
+          transactionId: tipCharge.transactionId,
+          createdAt: tipCharge.createdAt,
+          updatedAt: tipCharge.createdAt,
+        })),
+      ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+      const tipDetails = appointment.tipCharges
+        .map((tipCharge) => ({
+          id: tipCharge.id,
+          amount: tipCharge.amount,
+          status: tipCharge.status,
+          paymentMethod: tipCharge.paymentMethod,
+          transactionId: tipCharge.transactionId,
+          createdAt: tipCharge.createdAt,
+          recipient: tipCharge.locationEmployee
+            ? {
+                id: tipCharge.locationEmployee.id,
+                name: tipCharge.locationEmployee.user?.name ?? null,
+              }
+            : null,
+        }))
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+      return {
+        ...appointment,
+        paymentHistory,
+        tipDetails,
+      };
     }),
 
   updateAppointmentStatus: withPermissions(["UPDATE::APPOINTMENTS"])
