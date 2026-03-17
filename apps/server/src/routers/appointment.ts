@@ -448,6 +448,21 @@ const getSkippedCancellationChargeResult = (
   updatedAppointment: null,
 });
 
+type PaymentHistoryItem = {
+  id: string;
+  kind: "APPOINTMENT_PAYMENT" | "TIP_CHARGE";
+  amount: number;
+  paymentType: string;
+  status: string;
+  paymentMethod: string | null;
+  transactionId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+const sortByCreatedAtDesc = <T extends { createdAt: Date }>(a: T, b: T) =>
+  b.createdAt.getTime() - a.createdAt.getTime();
+
 async function resolveCancellationChargeResult({
   appointment,
   chargeAmount,
@@ -1271,6 +1286,7 @@ export const appointmentRouter = router({
               paymentMethod: true,
               transactionId: true,
               createdAt: true,
+              updatedAt: true,
               locationEmployee: {
                 select: {
                   id: true,
@@ -1324,8 +1340,8 @@ export const appointmentRouter = router({
         }
       }
 
-      const paymentHistory = [
-        ...appointment.customerPayments.map((payment) => ({
+      const appointmentPaymentHistory: PaymentHistoryItem[] =
+        appointment.customerPayments.map((payment) => ({
           id: payment.id,
           kind: "APPOINTMENT_PAYMENT" as const,
           amount: payment.amountPaid,
@@ -1335,8 +1351,10 @@ export const appointmentRouter = router({
           transactionId: payment.transactionId,
           createdAt: payment.createdAt,
           updatedAt: payment.updatedAt,
-        })),
-        ...appointment.tipCharges.map((tipCharge) => ({
+        }));
+
+      const tipChargeHistory: PaymentHistoryItem[] = appointment.tipCharges.map(
+        (tipCharge) => ({
           id: tipCharge.id,
           kind: "TIP_CHARGE" as const,
           amount: tipCharge.amount,
@@ -1345,9 +1363,12 @@ export const appointmentRouter = router({
           paymentMethod: tipCharge.paymentMethod,
           transactionId: tipCharge.transactionId,
           createdAt: tipCharge.createdAt,
-          updatedAt: tipCharge.createdAt,
-        })),
-      ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+          updatedAt: tipCharge.updatedAt,
+        }),
+      );
+
+      const paymentHistory = [...appointmentPaymentHistory, ...tipChargeHistory]
+        .sort(sortByCreatedAtDesc);
 
       const tipDetails = appointment.tipCharges
         .map((tipCharge) => ({
@@ -1357,6 +1378,7 @@ export const appointmentRouter = router({
           paymentMethod: tipCharge.paymentMethod,
           transactionId: tipCharge.transactionId,
           createdAt: tipCharge.createdAt,
+          updatedAt: tipCharge.updatedAt,
           recipient: tipCharge.locationEmployee
             ? {
                 id: tipCharge.locationEmployee.id,
@@ -1364,7 +1386,7 @@ export const appointmentRouter = router({
               }
             : null,
         }))
-        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        .sort(sortByCreatedAtDesc);
 
       return {
         ...appointment,
