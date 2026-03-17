@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -387,9 +388,16 @@ export function MedSpaBookingForm() {
                 There was an error booking your demo. Please try again.
               </p>
             )}
-            <p className="text-sm text-gray-500 text-center">
-              By booking a demo, you agree to our terms of service and privacy
-              policy. We&apos;ll contact you to confirm your demo appointment.
+            <p className="text-center text-sm text-gray-500">
+              By booking a demo, you agree to our{" "}
+              <Link href="/terms-of-service" className="text-violet-700 hover:text-violet-900 hover:underline">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy-policy" className="text-violet-700 hover:text-violet-900 hover:underline">
+                Privacy Policy
+              </Link>
+              . We&apos;ll contact you to confirm your demo appointment.
             </p>
           </form>
         </Form>
