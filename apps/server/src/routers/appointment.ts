@@ -483,6 +483,27 @@ const toDateValue = (value: unknown) => {
   return new Date(toStringValue(value));
 };
 
+const toTipRecipient = (value: unknown) => {
+  if (value == null || typeof value !== "object") {
+    return null;
+  }
+
+  const employee = value as {
+    id?: unknown;
+    user?: {
+      name?: unknown;
+    } | null;
+  };
+
+  return {
+    id: toStringValue(employee.id),
+    name:
+      employee.user && typeof employee.user === "object"
+        ? toNullableStringValue(employee.user.name)
+        : null,
+  };
+};
+
 const sortByCreatedAtDesc = <T extends { createdAt: Date }>(a: T, b: T) =>
   b.createdAt.getTime() - a.createdAt.getTime();
 
@@ -1401,19 +1422,14 @@ export const appointmentRouter = router({
 
       const tipDetails = appointment.tipCharges
         .map((tipCharge) => ({
-          id: tipCharge.id,
-          amount: tipCharge.amount,
-          status: tipCharge.status,
-          paymentMethod: tipCharge.paymentMethod,
-          transactionId: tipCharge.transactionId,
-          createdAt: tipCharge.createdAt,
-          updatedAt: tipCharge.updatedAt,
-          recipient: tipCharge.locationEmployee
-            ? {
-                id: tipCharge.locationEmployee.id,
-                name: tipCharge.locationEmployee.user?.name ?? null,
-              }
-            : null,
+          id: toStringValue(tipCharge.id),
+          amount: toNumberValue(tipCharge.amount),
+          status: toStringValue(tipCharge.status),
+          paymentMethod: toNullableStringValue(tipCharge.paymentMethod),
+          transactionId: toNullableStringValue(tipCharge.transactionId),
+          createdAt: toDateValue(tipCharge.createdAt),
+          updatedAt: toDateValue(tipCharge.updatedAt),
+          recipient: toTipRecipient(tipCharge.locationEmployee),
         }))
         .sort(sortByCreatedAtDesc);
 
