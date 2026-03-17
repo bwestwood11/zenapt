@@ -28,9 +28,9 @@ const page = () => {
           </div>
         </div>
 
-<Suspense>
-        <MedSpaBookingForm />
-</Suspense>
+        <Suspense fallback={<div className="text-center text-slate-500">Loading form...</div>}>
+          <MedSpaBookingForm />
+        </Suspense>
       </div>
     </main>
   );
