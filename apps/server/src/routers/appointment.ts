@@ -466,6 +466,23 @@ type PaymentHistoryItem = {
   updatedAt: Date;
 };
 
+const toStringValue = (value: unknown) =>
+  typeof value === "string" ? value : String(value);
+
+const toNullableStringValue = (value: unknown) =>
+  typeof value === "string" ? value : null;
+
+const toNumberValue = (value: unknown) =>
+  typeof value === "number" ? value : Number(value);
+
+const toDateValue = (value: unknown) => {
+  if (value instanceof Date) {
+    return value;
+  }
+
+  return new Date(toStringValue(value));
+};
+
 const sortByCreatedAtDesc = <T extends { createdAt: Date }>(a: T, b: T) =>
   b.createdAt.getTime() - a.createdAt.getTime();
 
@@ -1351,29 +1368,29 @@ export const appointmentRouter = router({
 
       const appointmentPaymentHistory: PaymentHistoryItem[] = [
         ...appointment.customerPayments.map((payment) => ({
-          id: payment.id,
+          id: toStringValue(payment.id),
           kind: "APPOINTMENT_PAYMENT" as const,
-          amount: payment.amountPaid,
-          paymentType: payment.paymentType,
-          status: payment.status,
-          paymentMethod: payment.paymentMethod,
-          transactionId: payment.transactionId,
-          createdAt: payment.createdAt,
-          updatedAt: payment.updatedAt,
+          amount: toNumberValue(payment.amountPaid),
+          paymentType: toStringValue(payment.paymentType),
+          status: toStringValue(payment.status),
+          paymentMethod: toNullableStringValue(payment.paymentMethod),
+          transactionId: toNullableStringValue(payment.transactionId),
+          createdAt: toDateValue(payment.createdAt),
+          updatedAt: toDateValue(payment.updatedAt),
         })),
       ];
 
       const tipChargeHistory: PaymentHistoryItem[] = appointment.tipCharges.map(
         (tipCharge) => ({
-          id: tipCharge.id,
+          id: toStringValue(tipCharge.id),
           kind: "TIP_CHARGE" as const,
-          amount: tipCharge.amount,
+          amount: toNumberValue(tipCharge.amount),
           paymentType: "TIP" as const,
-          status: tipCharge.status,
-          paymentMethod: tipCharge.paymentMethod,
-          transactionId: tipCharge.transactionId,
-          createdAt: tipCharge.createdAt,
-          updatedAt: tipCharge.updatedAt,
+          status: toStringValue(tipCharge.status),
+          paymentMethod: toNullableStringValue(tipCharge.paymentMethod),
+          transactionId: toNullableStringValue(tipCharge.transactionId),
+          createdAt: toDateValue(tipCharge.createdAt),
+          updatedAt: toDateValue(tipCharge.updatedAt),
         }),
       );
 
