@@ -171,7 +171,11 @@ async function getAppointmentCollectedAmount(appointmentId: string) {
 }
 
 type AppointmentStripeSyncResult = {
-  appointmentPaymentStatus: "PAID" | "PARTIALLY_PAID" | "PAYMENT_PENDING" | null;
+  appointmentPaymentStatus:
+    | "PAID"
+    | "PARTIALLY_PAID"
+    | "PAYMENT_PENDING"
+    | null;
   updatedPayments: number;
   updatedTipCharges: number;
   syncedTransactions: Array<{
@@ -224,9 +228,12 @@ async function syncAppointmentPaymentsAgainstStripe({
   const syncResults = await Promise.all(
     transactionIds.map(async (transactionId) => {
       try {
-        const paymentIntent = await stripe.paymentIntents.retrieve(transactionId, {
-          stripeAccount: stripeAccountId,
-        });
+        const paymentIntent = await stripe.paymentIntents.retrieve(
+          transactionId,
+          {
+            stripeAccount: stripeAccountId,
+          },
+        );
 
         return {
           transactionId,
@@ -298,9 +305,8 @@ async function syncAppointmentPaymentsAgainstStripe({
     0,
   );
 
-  const appointmentPaymentStatus = await syncAppointmentPaymentStatus(
-    appointmentId,
-  );
+  const appointmentPaymentStatus =
+    await syncAppointmentPaymentStatus(appointmentId);
 
   return {
     appointmentPaymentStatus,
@@ -584,7 +590,8 @@ async function attemptNoShowCharge({
   if (resolvedPaymentMethodId == null) {
     return {
       chargeStatus: "NOT_CHARGED",
-      chargeFailureReason: "No saved card is available to collect the no-show fee.",
+      chargeFailureReason:
+        "No saved card is available to collect the no-show fee.",
       chargedAmount: 0,
       paymentMethodLast4: appointment.paymentMethodLast4,
       updatedAppointment: null,
@@ -606,7 +613,8 @@ async function attemptNoShowCharge({
   if (paymentMethodCustomerId !== stripeCustomerId) {
     return {
       chargeStatus: "NOT_CHARGED",
-      chargeFailureReason: "Saved card could not be verified for this customer.",
+      chargeFailureReason:
+        "Saved card could not be verified for this customer.",
       chargedAmount: 0,
       paymentMethodLast4: appointment.paymentMethodLast4,
       updatedAppointment: null,
@@ -790,7 +798,8 @@ async function attemptCancellationCharge({
   if (paymentMethodCustomerId !== stripeCustomerId) {
     return {
       chargeStatus: "NOT_CHARGED",
-      chargeFailureReason: "Saved card could not be verified for this customer.",
+      chargeFailureReason:
+        "Saved card could not be verified for this customer.",
       chargedAmount: 0,
       paymentMethodLast4: appointment.paymentMethodLast4,
       updatedAppointment: null,
@@ -1324,7 +1333,19 @@ export const appointmentRouter = router({
         }
       }
 
-      const paymentHistory = [
+      type AppointmentPaymentHistoryEntry = {
+        id: string;
+        kind: "APPOINTMENT_PAYMENT" | "TIP_CHARGE";
+        amount: number;
+        paymentType: string;
+        status: string;
+        paymentMethod: string | null;
+        transactionId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+      };
+
+      const paymentHistory: AppointmentPaymentHistoryEntry[] = [
         ...appointment.customerPayments.map((payment) => ({
           id: payment.id,
           kind: "APPOINTMENT_PAYMENT" as const,
@@ -1541,9 +1562,7 @@ export const appointmentRouter = router({
         });
       }
 
-      if (
-        !isPendingAppointmentStatus(appointment.status)
-      ) {
+      if (!isPendingAppointmentStatus(appointment.status)) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Only pending appointments can be marked as no-show",
@@ -1619,17 +1638,17 @@ export const appointmentRouter = router({
       let updatedAppointment = chargeResult.updatedAppointment;
 
       updatedAppointment ??= await prisma.appointment.update({
-          where: { id: appointment.id },
-          data: {
-            status: "NO_SHOW",
-          },
-          select: {
-            id: true,
-            status: true,
-            paymentStatus: true,
-            updatedAt: true,
-          },
-        });
+        where: { id: appointment.id },
+        data: {
+          status: "NO_SHOW",
+        },
+        select: {
+          id: true,
+          status: true,
+          paymentStatus: true,
+          updatedAt: true,
+        },
+      });
 
       let activityDescription = `Appointment ${appointment.id} marked as NO_SHOW with no additional fee due.`;
 
