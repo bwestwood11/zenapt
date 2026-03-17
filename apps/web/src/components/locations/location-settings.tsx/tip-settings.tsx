@@ -27,6 +27,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { TipSettingsSkeleton } from "./skeletons";
 
 const QUICK_TIP_OPTIONS = [10, 15, 18, 20, 22, 25, 30];
 const MIN_TIP_PERCENTAGE = 1;
@@ -146,7 +147,7 @@ export function TipSettings({
 
   const tipEnabled = form.watch("tipEnabled");
 
-  if (isLoading) return "LOADING";
+  if (isLoading) return <TipSettingsSkeleton />;
 
   return (
     <Form {...form}>

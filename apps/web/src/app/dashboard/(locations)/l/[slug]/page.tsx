@@ -10,7 +10,13 @@ import {
 import { getDateKeyInTimeZone } from "@/components/calendar/timezone";
 import { getLocationAccess } from "@/lib/permissions/permission";
 import { serverTRPC } from "@/utils/server-trpc";
-import { CalendarDays, Settings, UserPlus, Users } from "lucide-react";
+import {
+  CalendarCheck2,
+  CalendarDays,
+  Settings,
+  UserPlus,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import SpecialistDashboardClient from "./_components/specialist-dashboard-client";
 import { forbidden } from "next/navigation";
@@ -97,7 +103,7 @@ const NonSpecialistDashboard = async ({
         </Badge>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Appointments today</CardDescription>
@@ -133,9 +139,19 @@ const NonSpecialistDashboard = async ({
               : "Visible for management roles"}
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>Location time zone</CardDescription>
+            <CardTitle className="text-2xl">{locationTimeZone}</CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">
+            Used for scheduling and daily dashboard metrics
+          </CardContent>
+        </Card>
       </div>
 
-      <Card>
+      <Card className="max-w-4xl">
         <CardHeader>
           <CardTitle>Quick Actions</CardTitle>
           <CardDescription>
@@ -144,11 +160,18 @@ const NonSpecialistDashboard = async ({
               : "Common actions for front desk operations"}
           </CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-3 sm:grid-cols-2">
+        <CardContent className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <Link href={`/dashboard/l/${slug}/customers`}>
             <Button variant="outline" className="w-full justify-start">
               <Users className="mr-2 h-4 w-4" />
               View Customers
+            </Button>
+          </Link>
+
+          <Link href={`/dashboard/l/${slug}/appointments`}>
+            <Button variant="outline" className="w-full justify-start">
+              <CalendarCheck2 className="mr-2 h-4 w-4" />
+              View Appointments
             </Button>
           </Link>
 

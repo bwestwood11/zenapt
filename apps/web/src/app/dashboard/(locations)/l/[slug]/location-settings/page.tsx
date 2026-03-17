@@ -4,11 +4,8 @@ import {
   Clock,
   CalendarDays,
   XCircle,
-  MessageSquare,
   Palette,
-  DollarSign,
   Shield,
-  Sparkles,
   HandCoins,
   TicketPercent,
 } from "lucide-react";
@@ -16,11 +13,8 @@ import {
 import { OperatingSchedulingSettings } from "@/components/locations/location-settings.tsx/operating-scheduling-settings";
 import { HolidayExceptionSettings } from "@/components/locations/location-settings.tsx/holiday-exception-settings";
 import { BookingCancellationSettings } from "@/components/locations/location-settings.tsx/booking-cancellation-settings";
-import { ClientCommunicationSettings } from "@/components/locations/location-settings.tsx/client-communication-settings";
 import { BrandingDisplaySettings } from "@/components/locations/location-settings.tsx/branding-display-settings";
-import { PaymentBusinessSettings } from "@/components/locations/location-settings.tsx/payment-business.settings";
 import { ComplianceConsentSettings } from "@/components/locations/location-settings.tsx/compliance-consent-settings";
-import { BonusSettings } from "@/components/locations/location-settings.tsx/bonus-settings";
 import { TipSettings } from "@/components/locations/location-settings.tsx/tip-settings";
 import { PromoCodeSettings } from "@/components/locations/location-settings.tsx/promo-code-settings";
 import { getLocationAccess } from "@/lib/permissions/permission";
@@ -98,26 +92,19 @@ export default async function LocationSettingsPage({
               <span className="hidden sm:inline">Booking</span>
             </TabsTrigger>
             <TabsTrigger
-              value="communication"
-              className="flex items-center gap-2 data-[state=active]:bg-background"
-            >
-              <MessageSquare className="size-4" />
-              <span className="hidden sm:inline">Communication</span>
-            </TabsTrigger>
-            <TabsTrigger
               value="branding"
               className="flex items-center gap-2 data-[state=active]:bg-background"
             >
               <Palette className="size-4" />
               <span className="hidden sm:inline">Branding</span>
             </TabsTrigger>
-            <TabsTrigger
+            {/* <TabsTrigger
               value="payment"
               className="flex items-center gap-2 data-[state=active]:bg-background"
             >
               <DollarSign className="size-4" />
               <span className="hidden sm:inline">Payment</span>
-            </TabsTrigger>
+            </TabsTrigger> */}
             <TabsTrigger
               value="tip"
               className="flex items-center gap-2 data-[state=active]:bg-background"
@@ -139,13 +126,6 @@ export default async function LocationSettingsPage({
               <Shield className="size-4" />
               <span className="hidden sm:inline">Compliance</span>
             </TabsTrigger>
-            <TabsTrigger
-              value="advanced"
-              className="flex items-center gap-2 data-[state=active]:bg-background"
-            >
-              <Sparkles className="size-4" />
-              <span className="hidden sm:inline">Advanced</span>
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="operating" className="space-y-6">
@@ -160,17 +140,13 @@ export default async function LocationSettingsPage({
             <BookingCancellationSettings />
           </TabsContent>
 
-          <TabsContent value="communication" className="space-y-6">
-            <ClientCommunicationSettings />
-          </TabsContent>
-
           <TabsContent value="branding" className="space-y-6">
-            <BrandingDisplaySettings />
+            <BrandingDisplaySettings locationId={locId.locationId} />
           </TabsContent>
 
-          <TabsContent value="payment" className="space-y-6">
+          {/* <TabsContent value="payment" className="space-y-6">
             <PaymentBusinessSettings />
-          </TabsContent>
+          </TabsContent> */}
 
           <TabsContent value="tip" className="space-y-6">
             <TipSettings locationId={locId.locationId} />
@@ -183,19 +159,8 @@ export default async function LocationSettingsPage({
           <TabsContent value="compliance" className="space-y-6">
             <ComplianceConsentSettings />
           </TabsContent>
-
-          <TabsContent value="advanced" className="space-y-6">
-            <BonusSettings />
-          </TabsContent>
         </Tabs>
 
-        {/* Sticky Bottom Save Button */}
-        {/* <div className="mt-8 flex justify-end border-t border-border pt-6">
-          <Button onClick={handleSaveSettings} disabled={isSaving} size="lg">
-            <Save className="mr-2 size-4" />
-            {isSaving ? "Saving..." : "Save All Changes"}
-          </Button>
-        </div> */}
       </div>
     </div>
   );

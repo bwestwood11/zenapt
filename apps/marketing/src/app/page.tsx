@@ -469,6 +469,23 @@ export default function MarketingLandingPage() {
           </div>
         </div>
       </section>
+
+      <footer className="border-t border-violet-100 bg-white/80">
+        <div className="container mx-auto flex flex-col gap-4 px-4 py-6 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between">
+          <p>© 2026 Zenapt. Booking management software for med spas.</p>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link href="/privacy-policy" className="transition hover:text-violet-700">
+              Privacy Policy
+            </Link>
+            <Link href="/terms-of-service" className="transition hover:text-violet-700">
+              Terms of Service
+            </Link>
+            <a href="mailto:support@zenapt.studio" className="transition hover:text-violet-700">
+              support@zenapt.studio
+            </a>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }

@@ -35,6 +35,7 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { MAJOR_HOLIDAYS } from "./constants";
 import { useHolidays } from "./hook";
+import { HolidayExceptionSettingsSkeleton } from "./skeletons";
 
 const isPast = (d: Date) => {
   const x = new Date(d);
@@ -106,7 +107,7 @@ export function HolidayExceptionSettings({
     );
   }, [holidays]);
 
-  if (isLoadingHolidays) return "LOADING";
+  if (isLoadingHolidays) return <HolidayExceptionSettingsSkeleton />;
 
   return (
     <Card>
@@ -243,16 +244,6 @@ export function HolidayExceptionSettings({
               <Plus className="mr-2 size-4" />
               Add Holiday
             </Button>
-          </div>
-        </div>
-
-        {/* Half-Day & Emergency Settings */}
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="flex items-center justify-between space-x-2 rounded-lg border border-border p-4">
-            <Label htmlFor="emergency-closure" className="cursor-pointer">
-              Weather/Emergency Closure
-            </Label>
-            <Switch id="emergency-closure" />
           </div>
         </div>
       </CardContent>

@@ -231,6 +231,7 @@ const getLocationBookingPolicy = publicProcedure
       select: {
         downpaymentPercentage: true,
         cancellationPercent: true,
+        noShowPercent: true,
         cancellationDuration: true,
       },
     });
@@ -238,6 +239,7 @@ const getLocationBookingPolicy = publicProcedure
     return {
       downpaymentPercentage: settings?.downpaymentPercentage ?? 0,
       cancellationPercent: settings?.cancellationPercent ?? 100,
+      noShowPercent: settings?.noShowPercent ?? 100,
       cancellationDuration: settings?.cancellationDuration ?? 60,
     };
   });

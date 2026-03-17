@@ -123,6 +123,88 @@ const getCustomerDetails = withPermissions("READ::CUSTOMERS")
     return customer;
   });
 
+const getCustomerAppointments = withPermissions("READ::CUSTOMERS")
+  .input(
+    z.object({
+      customerId: z.string(),
+      locationId: z.string(),
+    }),
+  )
+  .query(async ({ input }) => {
+    const { customerId, locationId } = input;
+
+    const customer = await prisma.customer.findFirst({
+      where: {
+        id: customerId,
+        OR: [
+          { location: { some: { id: locationId } } },
+          { appointments: { some: { locationId } } },
+        ],
+      },
+      select: { id: true },
+    });
+
+    if (!customer) {
+      return [];
+    }
+
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        customerId,
+        locationId,
+      },
+      orderBy: {
+        startTime: "desc",
+      },
+      select: {
+        id: true,
+        startTime: true,
+        endTime: true,
+        status: true,
+        paymentStatus: true,
+        price: true,
+        notes: true,
+        service: {
+          select: {
+            id: true,
+            serviceTerms: {
+              select: {
+                name: true,
+              },
+            },
+            locationEmployee: {
+              select: {
+                user: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return appointments.map((appointment) => ({
+      id: appointment.id,
+      startTime: appointment.startTime,
+      endTime: appointment.endTime,
+      status: appointment.status,
+      paymentStatus: appointment.paymentStatus,
+      price: appointment.price,
+      notes: appointment.notes,
+      serviceNames: appointment.service.map((service) => service.serviceTerms.name),
+      specialistNames: Array.from(
+        new Set(
+          appointment.service
+            .map((service) => service.locationEmployee?.user.name)
+            .filter((name): name is string => Boolean(name)),
+        ),
+      ),
+    }));
+  });
+
 const getCustomerAnalytics = withPermissions("READ::CUSTOMERS")
   .input(
     z.object({
@@ -484,6 +566,122 @@ const getSpecialistCustomerDetails = withPermissions(["READ::APPOINTMENTS"])
     return customer;
   });
 
+const getSpecialistCustomerAppointments = withPermissions(["READ::APPOINTMENTS"])
+  .input(
+    z.object({
+      customerId: z.string(),
+      locationId: z.string(),
+    }),
+  )
+  .query(async ({ ctx, input }) => {
+    const { customerId, locationId } = input;
+
+    const employeeAssignments = await prisma.locationEmployee.findMany({
+      where: {
+        locationId,
+        userId: ctx.session.user.id,
+      },
+      select: { id: true },
+    });
+
+    if (employeeAssignments.length === 0) {
+      return [];
+    }
+
+    const locationEmployeeIds = employeeAssignments.map((assignment) => assignment.id);
+
+    const customer = await prisma.customer.findFirst({
+      where: {
+        id: customerId,
+        appointments: {
+          some: {
+            locationId,
+            service: {
+              some: {
+                locationEmployeeId: {
+                  in: locationEmployeeIds,
+                },
+              },
+            },
+          },
+        },
+      },
+      select: { id: true },
+    });
+
+    if (!customer) {
+      return [];
+    }
+
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        customerId,
+        locationId,
+        service: {
+          some: {
+            locationEmployeeId: {
+              in: locationEmployeeIds,
+            },
+          },
+        },
+      },
+      orderBy: {
+        startTime: "desc",
+      },
+      select: {
+        id: true,
+        startTime: true,
+        endTime: true,
+        status: true,
+        paymentStatus: true,
+        price: true,
+        notes: true,
+        service: {
+          where: {
+            locationEmployeeId: {
+              in: locationEmployeeIds,
+            },
+          },
+          select: {
+            id: true,
+            serviceTerms: {
+              select: {
+                name: true,
+              },
+            },
+            locationEmployee: {
+              select: {
+                user: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return appointments.map((appointment) => ({
+      id: appointment.id,
+      startTime: appointment.startTime,
+      endTime: appointment.endTime,
+      status: appointment.status,
+      paymentStatus: appointment.paymentStatus,
+      price: appointment.price,
+      notes: appointment.notes,
+      serviceNames: appointment.service.map((service) => service.serviceTerms.name),
+      specialistNames: Array.from(
+        new Set(
+          appointment.service
+            .map((service) => service.locationEmployee?.user.name)
+            .filter((name): name is string => Boolean(name)),
+        ),
+      ),
+    }));
+  });
+
 const getSpecialistCustomerAnalytics = withPermissions(["READ::APPOINTMENTS"])
   .input(
     z.object({
@@ -654,8 +852,10 @@ const getSpecialistCustomerAnalytics = withPermissions(["READ::APPOINTMENTS"])
 export const customerRouter = router({
   getAllCustomers,
   getCustomerDetails,
+  getCustomerAppointments,
   getCustomerAnalytics,
   getSpecialistCustomers,
   getSpecialistCustomerDetails,
+  getSpecialistCustomerAppointments,
   getSpecialistCustomerAnalytics,
 });

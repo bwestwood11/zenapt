@@ -36,7 +36,15 @@ export type LocationMinAggregateOutputType = {
   timeZone: string | null
   email: string | null
   image: string | null
+  logo: string | null
+  brandPrimaryColor: string | null
+  brandAccentColor: string | null
   phoneNumber: string | null
+  wifiNetworkName: string | null
+  wifiPassword: string | null
+  parkingInstructions: string | null
+  arrivalNotes: string | null
+  mapLink: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -54,7 +62,15 @@ export type LocationMaxAggregateOutputType = {
   timeZone: string | null
   email: string | null
   image: string | null
+  logo: string | null
+  brandPrimaryColor: string | null
+  brandAccentColor: string | null
   phoneNumber: string | null
+  wifiNetworkName: string | null
+  wifiPassword: string | null
+  parkingInstructions: string | null
+  arrivalNotes: string | null
+  mapLink: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -72,7 +88,15 @@ export type LocationCountAggregateOutputType = {
   timeZone: number
   email: number
   image: number
+  logo: number
+  brandPrimaryColor: number
+  brandAccentColor: number
   phoneNumber: number
+  wifiNetworkName: number
+  wifiPassword: number
+  parkingInstructions: number
+  arrivalNotes: number
+  mapLink: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -92,7 +116,15 @@ export type LocationMinAggregateInputType = {
   timeZone?: true
   email?: true
   image?: true
+  logo?: true
+  brandPrimaryColor?: true
+  brandAccentColor?: true
   phoneNumber?: true
+  wifiNetworkName?: true
+  wifiPassword?: true
+  parkingInstructions?: true
+  arrivalNotes?: true
+  mapLink?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -110,7 +142,15 @@ export type LocationMaxAggregateInputType = {
   timeZone?: true
   email?: true
   image?: true
+  logo?: true
+  brandPrimaryColor?: true
+  brandAccentColor?: true
   phoneNumber?: true
+  wifiNetworkName?: true
+  wifiPassword?: true
+  parkingInstructions?: true
+  arrivalNotes?: true
+  mapLink?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -128,7 +168,15 @@ export type LocationCountAggregateInputType = {
   timeZone?: true
   email?: true
   image?: true
+  logo?: true
+  brandPrimaryColor?: true
+  brandAccentColor?: true
   phoneNumber?: true
+  wifiNetworkName?: true
+  wifiPassword?: true
+  parkingInstructions?: true
+  arrivalNotes?: true
+  mapLink?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -219,7 +267,15 @@ export type LocationGroupByOutputType = {
   timeZone: string | null
   email: string | null
   image: string | null
+  logo: string | null
+  brandPrimaryColor: string | null
+  brandAccentColor: string | null
   phoneNumber: string | null
+  wifiNetworkName: string | null
+  wifiPassword: string | null
+  parkingInstructions: string | null
+  arrivalNotes: string | null
+  mapLink: string | null
   createdAt: Date
   updatedAt: Date
   _count: LocationCountAggregateOutputType | null
@@ -258,7 +314,15 @@ export type LocationWhereInput = {
   timeZone?: Prisma.StringNullableFilter<"Location"> | string | null
   email?: Prisma.StringNullableFilter<"Location"> | string | null
   image?: Prisma.StringNullableFilter<"Location"> | string | null
+  logo?: Prisma.StringNullableFilter<"Location"> | string | null
+  brandPrimaryColor?: Prisma.StringNullableFilter<"Location"> | string | null
+  brandAccentColor?: Prisma.StringNullableFilter<"Location"> | string | null
   phoneNumber?: Prisma.StringNullableFilter<"Location"> | string | null
+  wifiNetworkName?: Prisma.StringNullableFilter<"Location"> | string | null
+  wifiPassword?: Prisma.StringNullableFilter<"Location"> | string | null
+  parkingInstructions?: Prisma.StringNullableFilter<"Location"> | string | null
+  arrivalNotes?: Prisma.StringNullableFilter<"Location"> | string | null
+  mapLink?: Prisma.StringNullableFilter<"Location"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Location"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Location"> | Date | string
   employees?: Prisma.LocationEmployeeListRelationFilter
@@ -286,7 +350,15 @@ export type LocationOrderByWithRelationInput = {
   timeZone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
+  logo?: Prisma.SortOrderInput | Prisma.SortOrder
+  brandPrimaryColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  brandAccentColor?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  wifiNetworkName?: Prisma.SortOrderInput | Prisma.SortOrder
+  wifiPassword?: Prisma.SortOrderInput | Prisma.SortOrder
+  parkingInstructions?: Prisma.SortOrderInput | Prisma.SortOrder
+  arrivalNotes?: Prisma.SortOrderInput | Prisma.SortOrder
+  mapLink?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   employees?: Prisma.LocationEmployeeOrderByRelationAggregateInput
@@ -318,7 +390,15 @@ export type LocationWhereUniqueInput = Prisma.AtLeast<{
   timeZone?: Prisma.StringNullableFilter<"Location"> | string | null
   email?: Prisma.StringNullableFilter<"Location"> | string | null
   image?: Prisma.StringNullableFilter<"Location"> | string | null
+  logo?: Prisma.StringNullableFilter<"Location"> | string | null
+  brandPrimaryColor?: Prisma.StringNullableFilter<"Location"> | string | null
+  brandAccentColor?: Prisma.StringNullableFilter<"Location"> | string | null
   phoneNumber?: Prisma.StringNullableFilter<"Location"> | string | null
+  wifiNetworkName?: Prisma.StringNullableFilter<"Location"> | string | null
+  wifiPassword?: Prisma.StringNullableFilter<"Location"> | string | null
+  parkingInstructions?: Prisma.StringNullableFilter<"Location"> | string | null
+  arrivalNotes?: Prisma.StringNullableFilter<"Location"> | string | null
+  mapLink?: Prisma.StringNullableFilter<"Location"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Location"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Location"> | Date | string
   employees?: Prisma.LocationEmployeeListRelationFilter
@@ -346,7 +426,15 @@ export type LocationOrderByWithAggregationInput = {
   timeZone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
+  logo?: Prisma.SortOrderInput | Prisma.SortOrder
+  brandPrimaryColor?: Prisma.SortOrderInput | Prisma.SortOrder
+  brandAccentColor?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  wifiNetworkName?: Prisma.SortOrderInput | Prisma.SortOrder
+  wifiPassword?: Prisma.SortOrderInput | Prisma.SortOrder
+  parkingInstructions?: Prisma.SortOrderInput | Prisma.SortOrder
+  arrivalNotes?: Prisma.SortOrderInput | Prisma.SortOrder
+  mapLink?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.LocationCountOrderByAggregateInput
@@ -370,7 +458,15 @@ export type LocationScalarWhereWithAggregatesInput = {
   timeZone?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
   email?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
   image?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
+  logo?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
+  brandPrimaryColor?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
+  brandAccentColor?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
   phoneNumber?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
+  wifiNetworkName?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
+  wifiPassword?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
+  parkingInstructions?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
+  arrivalNotes?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
+  mapLink?: Prisma.StringNullableWithAggregatesFilter<"Location"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Location"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Location"> | Date | string
 }
@@ -387,7 +483,15 @@ export type LocationCreateInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeCreateNestedManyWithoutLocationInput
@@ -415,7 +519,15 @@ export type LocationUncheckedCreateInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutLocationInput
@@ -441,7 +553,15 @@ export type LocationUpdateInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUpdateManyWithoutLocationNestedInput
@@ -469,7 +589,15 @@ export type LocationUncheckedUpdateInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutLocationNestedInput
@@ -496,7 +624,15 @@ export type LocationCreateManyInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -513,7 +649,15 @@ export type LocationUpdateManyMutationInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -531,7 +675,15 @@ export type LocationUncheckedUpdateManyInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -574,7 +726,15 @@ export type LocationCountOrderByAggregateInput = {
   timeZone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   image?: Prisma.SortOrder
+  logo?: Prisma.SortOrder
+  brandPrimaryColor?: Prisma.SortOrder
+  brandAccentColor?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
+  wifiNetworkName?: Prisma.SortOrder
+  wifiPassword?: Prisma.SortOrder
+  parkingInstructions?: Prisma.SortOrder
+  arrivalNotes?: Prisma.SortOrder
+  mapLink?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -592,7 +752,15 @@ export type LocationMaxOrderByAggregateInput = {
   timeZone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   image?: Prisma.SortOrder
+  logo?: Prisma.SortOrder
+  brandPrimaryColor?: Prisma.SortOrder
+  brandAccentColor?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
+  wifiNetworkName?: Prisma.SortOrder
+  wifiPassword?: Prisma.SortOrder
+  parkingInstructions?: Prisma.SortOrder
+  arrivalNotes?: Prisma.SortOrder
+  mapLink?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -610,7 +778,15 @@ export type LocationMinOrderByAggregateInput = {
   timeZone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   image?: Prisma.SortOrder
+  logo?: Prisma.SortOrder
+  brandPrimaryColor?: Prisma.SortOrder
+  brandAccentColor?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
+  wifiNetworkName?: Prisma.SortOrder
+  wifiPassword?: Prisma.SortOrder
+  parkingInstructions?: Prisma.SortOrder
+  arrivalNotes?: Prisma.SortOrder
+  mapLink?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -823,7 +999,15 @@ export type LocationCreateWithoutAppointmentsInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeCreateNestedManyWithoutLocationInput
@@ -850,7 +1034,15 @@ export type LocationUncheckedCreateWithoutAppointmentsInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutLocationInput
@@ -891,7 +1083,15 @@ export type LocationUpdateWithoutAppointmentsInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUpdateManyWithoutLocationNestedInput
@@ -918,7 +1118,15 @@ export type LocationUncheckedUpdateWithoutAppointmentsInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutLocationNestedInput
@@ -943,7 +1151,15 @@ export type LocationCreateWithoutPromoCodesInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeCreateNestedManyWithoutLocationInput
@@ -970,7 +1186,15 @@ export type LocationUncheckedCreateWithoutPromoCodesInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutLocationInput
@@ -1011,7 +1235,15 @@ export type LocationUpdateWithoutPromoCodesInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUpdateManyWithoutLocationNestedInput
@@ -1038,7 +1270,15 @@ export type LocationUncheckedUpdateWithoutPromoCodesInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutLocationNestedInput
@@ -1063,7 +1303,15 @@ export type LocationCreateWithoutLeaveRequestsInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeCreateNestedManyWithoutLocationInput
@@ -1090,7 +1338,15 @@ export type LocationUncheckedCreateWithoutLeaveRequestsInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutLocationInput
@@ -1131,7 +1387,15 @@ export type LocationUpdateWithoutLeaveRequestsInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUpdateManyWithoutLocationNestedInput
@@ -1158,7 +1422,15 @@ export type LocationUncheckedUpdateWithoutLeaveRequestsInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutLocationNestedInput
@@ -1183,7 +1455,15 @@ export type LocationCreateWithoutAppointmentSettingsInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeCreateNestedManyWithoutLocationInput
@@ -1210,7 +1490,15 @@ export type LocationUncheckedCreateWithoutAppointmentSettingsInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutLocationInput
@@ -1251,7 +1539,15 @@ export type LocationUpdateWithoutAppointmentSettingsInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUpdateManyWithoutLocationNestedInput
@@ -1278,7 +1574,15 @@ export type LocationUncheckedUpdateWithoutAppointmentSettingsInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutLocationNestedInput
@@ -1303,7 +1607,15 @@ export type LocationCreateWithoutOrganizationInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeCreateNestedManyWithoutLocationInput
@@ -1329,7 +1641,15 @@ export type LocationUncheckedCreateWithoutOrganizationInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutLocationInput
@@ -1385,7 +1705,15 @@ export type LocationScalarWhereInput = {
   timeZone?: Prisma.StringNullableFilter<"Location"> | string | null
   email?: Prisma.StringNullableFilter<"Location"> | string | null
   image?: Prisma.StringNullableFilter<"Location"> | string | null
+  logo?: Prisma.StringNullableFilter<"Location"> | string | null
+  brandPrimaryColor?: Prisma.StringNullableFilter<"Location"> | string | null
+  brandAccentColor?: Prisma.StringNullableFilter<"Location"> | string | null
   phoneNumber?: Prisma.StringNullableFilter<"Location"> | string | null
+  wifiNetworkName?: Prisma.StringNullableFilter<"Location"> | string | null
+  wifiPassword?: Prisma.StringNullableFilter<"Location"> | string | null
+  parkingInstructions?: Prisma.StringNullableFilter<"Location"> | string | null
+  arrivalNotes?: Prisma.StringNullableFilter<"Location"> | string | null
+  mapLink?: Prisma.StringNullableFilter<"Location"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Location"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Location"> | Date | string
 }
@@ -1402,7 +1730,15 @@ export type LocationCreateWithoutEmployeesInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutLocationsInput
@@ -1429,7 +1765,15 @@ export type LocationUncheckedCreateWithoutEmployeesInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   LocationInvitation?: Prisma.LocationInvitationUncheckedCreateNestedManyWithoutLocationInput
@@ -1470,7 +1814,15 @@ export type LocationUpdateWithoutEmployeesInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutLocationsNestedInput
@@ -1497,7 +1849,15 @@ export type LocationUncheckedUpdateWithoutEmployeesInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   LocationInvitation?: Prisma.LocationInvitationUncheckedUpdateManyWithoutLocationNestedInput
@@ -1522,7 +1882,15 @@ export type LocationCreateWithoutServiceInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeCreateNestedManyWithoutLocationInput
@@ -1549,7 +1917,15 @@ export type LocationUncheckedCreateWithoutServiceInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutLocationInput
@@ -1590,7 +1966,15 @@ export type LocationUpdateWithoutServiceInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUpdateManyWithoutLocationNestedInput
@@ -1617,7 +2001,15 @@ export type LocationUncheckedUpdateWithoutServiceInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutLocationNestedInput
@@ -1642,7 +2034,15 @@ export type LocationCreateWithoutCustomersInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeCreateNestedManyWithoutLocationInput
@@ -1669,7 +2069,15 @@ export type LocationUncheckedCreateWithoutCustomersInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutLocationInput
@@ -1715,7 +2123,15 @@ export type LocationCreateWithoutActivityLogInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeCreateNestedManyWithoutLocationInput
@@ -1742,7 +2158,15 @@ export type LocationUncheckedCreateWithoutActivityLogInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutLocationInput
@@ -1783,7 +2207,15 @@ export type LocationUpdateWithoutActivityLogInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUpdateManyWithoutLocationNestedInput
@@ -1810,7 +2242,15 @@ export type LocationUncheckedUpdateWithoutActivityLogInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutLocationNestedInput
@@ -1835,7 +2275,15 @@ export type LocationCreateWithoutLocationInvitationInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeCreateNestedManyWithoutLocationInput
@@ -1862,7 +2310,15 @@ export type LocationUncheckedCreateWithoutLocationInvitationInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   employees?: Prisma.LocationEmployeeUncheckedCreateNestedManyWithoutLocationInput
@@ -1903,7 +2359,15 @@ export type LocationUpdateWithoutLocationInvitationInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUpdateManyWithoutLocationNestedInput
@@ -1930,7 +2394,15 @@ export type LocationUncheckedUpdateWithoutLocationInvitationInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutLocationNestedInput
@@ -1955,7 +2427,15 @@ export type LocationCreateManyOrganizationInput = {
   timeZone?: string | null
   email?: string | null
   image?: string | null
+  logo?: string | null
+  brandPrimaryColor?: string | null
+  brandAccentColor?: string | null
   phoneNumber?: string | null
+  wifiNetworkName?: string | null
+  wifiPassword?: string | null
+  parkingInstructions?: string | null
+  arrivalNotes?: string | null
+  mapLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1972,7 +2452,15 @@ export type LocationUpdateWithoutOrganizationInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUpdateManyWithoutLocationNestedInput
@@ -1998,7 +2486,15 @@ export type LocationUncheckedUpdateWithoutOrganizationInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutLocationNestedInput
@@ -2024,7 +2520,15 @@ export type LocationUncheckedUpdateManyWithoutOrganizationInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2041,7 +2545,15 @@ export type LocationUpdateWithoutCustomersInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUpdateManyWithoutLocationNestedInput
@@ -2068,7 +2580,15 @@ export type LocationUncheckedUpdateWithoutCustomersInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employees?: Prisma.LocationEmployeeUncheckedUpdateManyWithoutLocationNestedInput
@@ -2094,7 +2614,15 @@ export type LocationUncheckedUpdateManyWithoutCustomersInput = {
   timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandPrimaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  brandAccentColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiNetworkName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wifiPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parkingInstructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  arrivalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mapLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2206,7 +2734,15 @@ export type LocationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   timeZone?: boolean
   email?: boolean
   image?: boolean
+  logo?: boolean
+  brandPrimaryColor?: boolean
+  brandAccentColor?: boolean
   phoneNumber?: boolean
+  wifiNetworkName?: boolean
+  wifiPassword?: boolean
+  parkingInstructions?: boolean
+  arrivalNotes?: boolean
+  mapLink?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   employees?: boolean | Prisma.Location$employeesArgs<ExtArgs>
@@ -2235,7 +2771,15 @@ export type LocationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   timeZone?: boolean
   email?: boolean
   image?: boolean
+  logo?: boolean
+  brandPrimaryColor?: boolean
+  brandAccentColor?: boolean
   phoneNumber?: boolean
+  wifiNetworkName?: boolean
+  wifiPassword?: boolean
+  parkingInstructions?: boolean
+  arrivalNotes?: boolean
+  mapLink?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -2254,7 +2798,15 @@ export type LocationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   timeZone?: boolean
   email?: boolean
   image?: boolean
+  logo?: boolean
+  brandPrimaryColor?: boolean
+  brandAccentColor?: boolean
   phoneNumber?: boolean
+  wifiNetworkName?: boolean
+  wifiPassword?: boolean
+  parkingInstructions?: boolean
+  arrivalNotes?: boolean
+  mapLink?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -2273,12 +2825,20 @@ export type LocationSelectScalar = {
   timeZone?: boolean
   email?: boolean
   image?: boolean
+  logo?: boolean
+  brandPrimaryColor?: boolean
+  brandAccentColor?: boolean
   phoneNumber?: boolean
+  wifiNetworkName?: boolean
+  wifiPassword?: boolean
+  parkingInstructions?: boolean
+  arrivalNotes?: boolean
+  mapLink?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type LocationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "organizationId" | "slug" | "address" | "city" | "state" | "country" | "zipCode" | "timeZone" | "email" | "image" | "phoneNumber" | "createdAt" | "updatedAt", ExtArgs["result"]["location"]>
+export type LocationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "organizationId" | "slug" | "address" | "city" | "state" | "country" | "zipCode" | "timeZone" | "email" | "image" | "logo" | "brandPrimaryColor" | "brandAccentColor" | "phoneNumber" | "wifiNetworkName" | "wifiPassword" | "parkingInstructions" | "arrivalNotes" | "mapLink" | "createdAt" | "updatedAt", ExtArgs["result"]["location"]>
 export type LocationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   employees?: boolean | Prisma.Location$employeesArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -2326,7 +2886,15 @@ export type $LocationPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     timeZone: string | null
     email: string | null
     image: string | null
+    logo: string | null
+    brandPrimaryColor: string | null
+    brandAccentColor: string | null
     phoneNumber: string | null
+    wifiNetworkName: string | null
+    wifiPassword: string | null
+    parkingInstructions: string | null
+    arrivalNotes: string | null
+    mapLink: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["location"]>
@@ -2774,7 +3342,15 @@ export interface LocationFieldRefs {
   readonly timeZone: Prisma.FieldRef<"Location", 'String'>
   readonly email: Prisma.FieldRef<"Location", 'String'>
   readonly image: Prisma.FieldRef<"Location", 'String'>
+  readonly logo: Prisma.FieldRef<"Location", 'String'>
+  readonly brandPrimaryColor: Prisma.FieldRef<"Location", 'String'>
+  readonly brandAccentColor: Prisma.FieldRef<"Location", 'String'>
   readonly phoneNumber: Prisma.FieldRef<"Location", 'String'>
+  readonly wifiNetworkName: Prisma.FieldRef<"Location", 'String'>
+  readonly wifiPassword: Prisma.FieldRef<"Location", 'String'>
+  readonly parkingInstructions: Prisma.FieldRef<"Location", 'String'>
+  readonly arrivalNotes: Prisma.FieldRef<"Location", 'String'>
+  readonly mapLink: Prisma.FieldRef<"Location", 'String'>
   readonly createdAt: Prisma.FieldRef<"Location", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Location", 'DateTime'>
 }

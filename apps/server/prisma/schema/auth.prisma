@@ -103,7 +103,15 @@ model Location {
   timeZone       String?
   email          String?
   image          String?
+  logo           String?
+  brandPrimaryColor String?
+  brandAccentColor  String?
   phoneNumber    String?
+  wifiNetworkName String?
+  wifiPassword String?
+  parkingInstructions String?
+  arrivalNotes String?
+  mapLink String?
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt
   employees      LocationEmployee[]

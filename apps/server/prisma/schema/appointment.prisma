@@ -185,6 +185,7 @@ model AppointmentSettings {
   bookingCutOff           Int      @default(60) // in minutes
   downpaymentPercentage   Int      @default(0) // in percent (0-100)
   cancellationPercent     Int      @default(100) // in percent (0-100)
+  noShowPercent           Int      @default(100) // in percent (0-100)
   cancellationDuration    Int      @default(60) // in minutes before appointment
   leaveRequestNoticeDays  Int      @default(1) // minimum notice in days before leave start
   tipEnabled              Boolean  @default(false)

@@ -28,6 +28,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { PromoCodeSettingsSkeleton } from "./skeletons";
 
 const promoSchema = z.object({
   code: z
@@ -114,9 +115,7 @@ export function PromoCodeSettings({ locationId }: Readonly<{ locationId: string 
   );
 
   if (isLoading) {
-    promoCodeListContent = (
-      <p className="text-sm text-muted-foreground">Loading promo codes...</p>
-    );
+    promoCodeListContent = <PromoCodeSettingsSkeleton />;
   } else if (promoCodes?.length) {
     promoCodeListContent = (
       <div className="space-y-2">
@@ -176,6 +175,10 @@ export function PromoCodeSettings({ locationId }: Readonly<{ locationId: string 
         ))}
       </div>
     );
+  }
+
+  if (isLoading) {
+    return <PromoCodeSettingsSkeleton />;
   }
 
   return (

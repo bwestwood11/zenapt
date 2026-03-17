@@ -1,15 +1,15 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type LeaveRequestsSkeletonProps = {
+type TimeoffRequestsSkeletonProps = {
   showSpecialistSections?: boolean;
   showApproverSections?: boolean;
 };
 
-export default function LeaveRequestsSkeleton({
+export default function TimeoffRequestsSkeleton({
   showSpecialistSections = true,
   showApproverSections = true,
-}: Readonly<LeaveRequestsSkeletonProps>) {
+}: Readonly<TimeoffRequestsSkeletonProps>) {
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
       <div className="space-y-3">

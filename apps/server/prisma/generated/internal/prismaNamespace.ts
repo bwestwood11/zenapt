@@ -2765,6 +2765,7 @@ export const AppointmentSettingsScalarFieldEnum = {
   bookingCutOff: 'bookingCutOff',
   downpaymentPercentage: 'downpaymentPercentage',
   cancellationPercent: 'cancellationPercent',
+  noShowPercent: 'noShowPercent',
   cancellationDuration: 'cancellationDuration',
   leaveRequestNoticeDays: 'leaveRequestNoticeDays',
   tipEnabled: 'tipEnabled',
@@ -2874,7 +2875,15 @@ export const LocationScalarFieldEnum = {
   timeZone: 'timeZone',
   email: 'email',
   image: 'image',
+  logo: 'logo',
+  brandPrimaryColor: 'brandPrimaryColor',
+  brandAccentColor: 'brandAccentColor',
   phoneNumber: 'phoneNumber',
+  wifiNetworkName: 'wifiNetworkName',
+  wifiPassword: 'wifiPassword',
+  parkingInstructions: 'parkingInstructions',
+  arrivalNotes: 'arrivalNotes',
+  mapLink: 'mapLink',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

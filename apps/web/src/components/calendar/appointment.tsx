@@ -24,7 +24,9 @@ import {
 } from "../ui/context-menu";
 import { Button } from "../ui/button";
 import { useLocationHours } from "./calendar";
+import { CancelAppointmentModal } from "./cancel-appointment-modal";
 import { ChargeBalanceModal } from "./charge-balance-modal";
+import { NoShowModal } from "./no-show-modal";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
 
@@ -135,6 +137,8 @@ export function Appointment({
   actorEmployeeIdAtLocation: string | null;
 }) {
   const queryClient = useQueryClient();
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [noShowModalOpen, setNoShowModalOpen] = useState(false);
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
     disabled: status !== "SCHEDULED" && status !== "RESCHEDULED",
@@ -170,6 +174,7 @@ export function Appointment({
 
   const isSpecialist = actorRoleAtLocation === "LOCATION_SPECIALIST";
   const canSyncPayments = !isSpecialist || actorEmployeeIdAtLocation === employeeId;
+  const canMarkCanceled = status === "SCHEDULED" || status === "RESCHEDULED";
   const canMarkNoShow = status === "SCHEDULED" || status === "RESCHEDULED";
 
   const { mutate: syncPayments, isPending: isSyncingPayments } = useMutation(
@@ -189,20 +194,6 @@ export function Appointment({
       },
       onError: (error) => {
         toast.error(error.message || "Failed to sync appointment payments");
-      },
-    }),
-  );
-
-  const { mutate: updateStatus, isPending: isUpdatingStatus } = useMutation(
-    trpc.appointment.updateAppointmentStatus.mutationOptions({
-      onSuccess: () => {
-        toast.success("Appointment marked as no-show");
-        queryClient.invalidateQueries({
-          queryKey: trpc.appointment.fetchAppointments.queryKey(),
-        });
-      },
-      onError: (error) => {
-        toast.error(error.message || "Failed to update appointment status");
       },
     }),
   );
@@ -263,15 +254,16 @@ export function Appointment({
         {/* Main Appointment */}
         <ControlledHoverCard
           appointment={appointmentData}
+          canMarkCanceled={canMarkCanceled}
           canMarkNoShow={canMarkNoShow}
           canSyncPayments={canSyncPayments}
           isSyncingPayments={isSyncingPayments}
-          isUpdatingStatus={isUpdatingStatus}
+          isUpdatingStatus={false}
+          onMarkCanceled={() => {
+            setCancelModalOpen(true);
+          }}
           onMarkNoShow={() => {
-            updateStatus({
-              appointmentId: id,
-              status: "NO_SHOW",
-            });
+            setNoShowModalOpen(true);
           }}
           onSyncPayments={() => {
             syncPayments({ appointmentId: id });
@@ -295,15 +287,16 @@ export function Appointment({
           >
             <ControlledContextMenu
               appointment={appointmentData}
+              canMarkCanceled={canMarkCanceled}
               canMarkNoShow={canMarkNoShow}
               canSyncPayments={canSyncPayments}
               isSyncingPayments={isSyncingPayments}
-              isUpdatingStatus={isUpdatingStatus}
+              isUpdatingStatus={false}
+              onMarkCanceled={() => {
+                setCancelModalOpen(true);
+              }}
               onMarkNoShow={() => {
-                updateStatus({
-                  appointmentId: id,
-                  status: "NO_SHOW",
-                });
+                setNoShowModalOpen(true);
               }}
               onSyncPayments={() => {
                 syncPayments({ appointmentId: id });
@@ -357,6 +350,17 @@ export function Appointment({
             )}
           </div>
         )}
+
+        <CancelAppointmentModal
+          open={cancelModalOpen}
+          onOpenChange={setCancelModalOpen}
+          appointmentId={id}
+        />
+        <NoShowModal
+          open={noShowModalOpen}
+          onOpenChange={setNoShowModalOpen}
+          appointmentId={id}
+        />
       </>
     </AppointmentProvider>
   );
@@ -365,19 +369,23 @@ export function Appointment({
 const ControlledHoverCard = ({
   children,
   appointment,
+  canMarkCanceled,
   canMarkNoShow,
   canSyncPayments,
   isSyncingPayments,
   isUpdatingStatus,
+  onMarkCanceled,
   onMarkNoShow,
   onSyncPayments,
 }: {
   children: React.ReactNode;
   appointment: Appointment;
+  canMarkCanceled: boolean;
   canMarkNoShow: boolean;
   canSyncPayments: boolean;
   isSyncingPayments: boolean;
   isUpdatingStatus: boolean;
+  onMarkCanceled: () => void;
   onMarkNoShow: () => void;
   onSyncPayments: () => void;
 }) => {
@@ -466,12 +474,11 @@ const ControlledHoverCard = ({
             </Button>
           </div>
 
-          <div className="pt-2 border-t flex gap-2">
+          <div className="pt-2 border-t grid gap-2">
             <Button
               type="button"
               size="sm"
               variant="outline"
-              className="flex-1"
               disabled={!canSyncPayments || isSyncingPayments}
               onClick={onSyncPayments}
             >
@@ -481,9 +488,23 @@ const ControlledHoverCard = ({
               type="button"
               size="sm"
               variant="destructive"
-              className="flex-1"
+              disabled={!canMarkCanceled || isUpdatingStatus}
+              onClick={() => {
+                setOpenHover(false);
+                onMarkCanceled();
+              }}
+            >
+              {isUpdatingStatus ? "Updating..." : "Mark Canceled"}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="secondary"
               disabled={!canMarkNoShow || isUpdatingStatus}
-              onClick={onMarkNoShow}
+              onClick={() => {
+                setOpenHover(false);
+                onMarkNoShow();
+              }}
             >
               {isUpdatingStatus ? "Updating..." : "Mark No Show"}
             </Button>
@@ -497,19 +518,23 @@ const ControlledHoverCard = ({
 const ControlledContextMenu = ({
   children,
   appointment,
+  canMarkCanceled,
   canMarkNoShow,
   canSyncPayments,
   isSyncingPayments,
   isUpdatingStatus,
+  onMarkCanceled,
   onMarkNoShow,
   onSyncPayments,
 }: {
   children: React.ReactNode;
   appointment: Appointment;
+  canMarkCanceled: boolean;
   canMarkNoShow: boolean;
   canSyncPayments: boolean;
   isSyncingPayments: boolean;
   isUpdatingStatus: boolean;
+  onMarkCanceled: () => void;
   onMarkNoShow: () => void;
   onSyncPayments: () => void;
 }) => {
@@ -545,8 +570,20 @@ const ControlledContextMenu = ({
           {isSyncingPayments ? "Syncing Payments..." : "Sync Payments"}
         </ContextMenuItem>
         <ContextMenuItem
+          disabled={!canMarkCanceled || isUpdatingStatus}
+          onClick={() => {
+            setOpenContextMenu(false);
+            onMarkCanceled();
+          }}
+        >
+          {isUpdatingStatus ? "Updating Status..." : "Mark Canceled"}
+        </ContextMenuItem>
+        <ContextMenuItem
           disabled={!canMarkNoShow || isUpdatingStatus}
-          onClick={onMarkNoShow}
+          onClick={() => {
+            setOpenContextMenu(false);
+            onMarkNoShow();
+          }}
         >
           {isUpdatingStatus ? "Updating Status..." : "Mark No Show"}
         </ContextMenuItem>
