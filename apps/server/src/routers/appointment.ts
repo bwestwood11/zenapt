@@ -171,7 +171,11 @@ async function getAppointmentCollectedAmount(appointmentId: string) {
 }
 
 type AppointmentStripeSyncResult = {
-  appointmentPaymentStatus: "PAID" | "PARTIALLY_PAID" | "PAYMENT_PENDING" | null;
+  appointmentPaymentStatus:
+    | "PAID"
+    | "PARTIALLY_PAID"
+    | "PAYMENT_PENDING"
+    | null;
   updatedPayments: number;
   updatedTipCharges: number;
   syncedTransactions: Array<{
@@ -224,9 +228,12 @@ async function syncAppointmentPaymentsAgainstStripe({
   const syncResults = await Promise.all(
     transactionIds.map(async (transactionId) => {
       try {
-        const paymentIntent = await stripe.paymentIntents.retrieve(transactionId, {
-          stripeAccount: stripeAccountId,
-        });
+        const paymentIntent = await stripe.paymentIntents.retrieve(
+          transactionId,
+          {
+            stripeAccount: stripeAccountId,
+          },
+        );
 
         return {
           transactionId,
@@ -298,9 +305,8 @@ async function syncAppointmentPaymentsAgainstStripe({
     0,
   );
 
-  const appointmentPaymentStatus = await syncAppointmentPaymentStatus(
-    appointmentId,
-  );
+  const appointmentPaymentStatus =
+    await syncAppointmentPaymentStatus(appointmentId);
 
   return {
     appointmentPaymentStatus,
@@ -448,6 +454,59 @@ const getSkippedCancellationChargeResult = (
   updatedAppointment: null,
 });
 
+type PaymentHistoryItem = {
+  id: string;
+  kind: "APPOINTMENT_PAYMENT" | "TIP_CHARGE";
+  amount: number;
+  paymentType: string;
+  status: string;
+  paymentMethod: string | null;
+  transactionId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+const toStringValue = (value: unknown) =>
+  typeof value === "string" ? value : String(value);
+
+const toNullableStringValue = (value: unknown) =>
+  typeof value === "string" ? value : null;
+
+const toNumberValue = (value: unknown) =>
+  typeof value === "number" ? value : Number(value);
+
+const toDateValue = (value: unknown) => {
+  if (value instanceof Date) {
+    return value;
+  }
+
+  return new Date(toStringValue(value));
+};
+
+const toTipRecipient = (value: unknown) => {
+  if (value == null || typeof value !== "object") {
+    return null;
+  }
+
+  const employee = value as {
+    id?: unknown;
+    user?: {
+      name?: unknown;
+    } | null;
+  };
+
+  return {
+    id: toStringValue(employee.id),
+    name:
+      employee.user && typeof employee.user === "object"
+        ? toNullableStringValue(employee.user.name)
+        : null,
+  };
+};
+
+const sortByCreatedAtDesc = <T extends { createdAt: Date }>(a: T, b: T) =>
+  b.createdAt.getTime() - a.createdAt.getTime();
+
 async function resolveCancellationChargeResult({
   appointment,
   chargeAmount,
@@ -584,7 +643,8 @@ async function attemptNoShowCharge({
   if (resolvedPaymentMethodId == null) {
     return {
       chargeStatus: "NOT_CHARGED",
-      chargeFailureReason: "No saved card is available to collect the no-show fee.",
+      chargeFailureReason:
+        "No saved card is available to collect the no-show fee.",
       chargedAmount: 0,
       paymentMethodLast4: appointment.paymentMethodLast4,
       updatedAppointment: null,
@@ -606,7 +666,8 @@ async function attemptNoShowCharge({
   if (paymentMethodCustomerId !== stripeCustomerId) {
     return {
       chargeStatus: "NOT_CHARGED",
-      chargeFailureReason: "Saved card could not be verified for this customer.",
+      chargeFailureReason:
+        "Saved card could not be verified for this customer.",
       chargedAmount: 0,
       paymentMethodLast4: appointment.paymentMethodLast4,
       updatedAppointment: null,
@@ -790,7 +851,8 @@ async function attemptCancellationCharge({
   if (paymentMethodCustomerId !== stripeCustomerId) {
     return {
       chargeStatus: "NOT_CHARGED",
-      chargeFailureReason: "Saved card could not be verified for this customer.",
+      chargeFailureReason:
+        "Saved card could not be verified for this customer.",
       chargedAmount: 0,
       paymentMethodLast4: appointment.paymentMethodLast4,
       updatedAppointment: null,
@@ -1271,6 +1333,7 @@ export const appointmentRouter = router({
               paymentMethod: true,
               transactionId: true,
               createdAt: true,
+              updatedAt: true,
               locationEmployee: {
                 select: {
                   id: true,
@@ -1324,47 +1387,51 @@ export const appointmentRouter = router({
         }
       }
 
-      const paymentHistory = [
+      const appointmentPaymentHistory: PaymentHistoryItem[] = [
         ...appointment.customerPayments.map((payment) => ({
-          id: payment.id,
+          id: toStringValue(payment.id),
           kind: "APPOINTMENT_PAYMENT" as const,
-          amount: payment.amountPaid,
-          paymentType: payment.paymentType,
-          status: payment.status,
-          paymentMethod: payment.paymentMethod,
-          transactionId: payment.transactionId,
-          createdAt: payment.createdAt,
-          updatedAt: payment.updatedAt,
+          amount: toNumberValue(payment.amountPaid),
+          paymentType: toStringValue(payment.paymentType),
+          status: toStringValue(payment.status),
+          paymentMethod: toNullableStringValue(payment.paymentMethod),
+          transactionId: toNullableStringValue(payment.transactionId),
+          createdAt: toDateValue(payment.createdAt),
+          updatedAt: toDateValue(payment.updatedAt),
         })),
-        ...appointment.tipCharges.map((tipCharge) => ({
-          id: tipCharge.id,
+      ];
+
+      const tipChargeHistory: PaymentHistoryItem[] = appointment.tipCharges.map(
+        (tipCharge) => ({
+          id: toStringValue(tipCharge.id),
           kind: "TIP_CHARGE" as const,
-          amount: tipCharge.amount,
+          amount: toNumberValue(tipCharge.amount),
           paymentType: "TIP" as const,
-          status: tipCharge.status,
-          paymentMethod: tipCharge.paymentMethod,
-          transactionId: tipCharge.transactionId,
-          createdAt: tipCharge.createdAt,
-          updatedAt: tipCharge.createdAt,
-        })),
-      ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+          status: toStringValue(tipCharge.status),
+          paymentMethod: toNullableStringValue(tipCharge.paymentMethod),
+          transactionId: toNullableStringValue(tipCharge.transactionId),
+          createdAt: toDateValue(tipCharge.createdAt),
+          updatedAt: toDateValue(tipCharge.updatedAt),
+        }),
+      );
+
+      const paymentHistory = [
+        ...appointmentPaymentHistory,
+        ...tipChargeHistory,
+      ].sort(sortByCreatedAtDesc);
 
       const tipDetails = appointment.tipCharges
         .map((tipCharge) => ({
-          id: tipCharge.id,
-          amount: tipCharge.amount,
-          status: tipCharge.status,
-          paymentMethod: tipCharge.paymentMethod,
-          transactionId: tipCharge.transactionId,
-          createdAt: tipCharge.createdAt,
-          recipient: tipCharge.locationEmployee
-            ? {
-                id: tipCharge.locationEmployee.id,
-                name: tipCharge.locationEmployee.user?.name ?? null,
-              }
-            : null,
+          id: toStringValue(tipCharge.id),
+          amount: toNumberValue(tipCharge.amount),
+          status: toStringValue(tipCharge.status),
+          paymentMethod: toNullableStringValue(tipCharge.paymentMethod),
+          transactionId: toNullableStringValue(tipCharge.transactionId),
+          createdAt: toDateValue(tipCharge.createdAt),
+          updatedAt: toDateValue(tipCharge.updatedAt),
+          recipient: toTipRecipient(tipCharge.locationEmployee),
         }))
-        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        .sort(sortByCreatedAtDesc);
 
       return {
         ...appointment,
@@ -1541,9 +1608,7 @@ export const appointmentRouter = router({
         });
       }
 
-      if (
-        !isPendingAppointmentStatus(appointment.status)
-      ) {
+      if (!isPendingAppointmentStatus(appointment.status)) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Only pending appointments can be marked as no-show",
@@ -1619,17 +1684,17 @@ export const appointmentRouter = router({
       let updatedAppointment = chargeResult.updatedAppointment;
 
       updatedAppointment ??= await prisma.appointment.update({
-          where: { id: appointment.id },
-          data: {
-            status: "NO_SHOW",
-          },
-          select: {
-            id: true,
-            status: true,
-            paymentStatus: true,
-            updatedAt: true,
-          },
-        });
+        where: { id: appointment.id },
+        data: {
+          status: "NO_SHOW",
+        },
+        select: {
+          id: true,
+          status: true,
+          paymentStatus: true,
+          updatedAt: true,
+        },
+      });
 
       let activityDescription = `Appointment ${appointment.id} marked as NO_SHOW with no additional fee due.`;
 

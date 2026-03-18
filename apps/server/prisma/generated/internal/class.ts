@@ -22,7 +22,7 @@ const config: runtime.GetPrismaClientConfig = {
       "value": "prisma-client"
     },
     "output": {
-      "value": "/home/diwanshu/Projects/zenapt-main/zenapt/apps/server/prisma/generated",
+      "value": "C:\\Users\\Owner\\Documents\\Projects\\med-spa-saas\\apps\\server\\prisma\\generated",
       "fromEnvVar": null
     },
     "config": {
@@ -32,12 +32,12 @@ const config: runtime.GetPrismaClientConfig = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "windows",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/diwanshu/Projects/zenapt-main/zenapt/apps/server/prisma/schema/schema.prisma",
+    "sourceFilePath": "C:\\Users\\Owner\\Documents\\Projects\\med-spa-saas\\apps\\server\\prisma\\schema\\schema.prisma",
     "isCustomOutput": true
   },
   "relativePath": "../schema",
