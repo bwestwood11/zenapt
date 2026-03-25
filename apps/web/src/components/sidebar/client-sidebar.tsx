@@ -15,7 +15,13 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { LayoutDashboard, ListChecks, Mail, Megaphone } from "lucide-react";
+import {
+  BarChart3,
+  LayoutDashboard,
+  ListChecks,
+  Mail,
+  Megaphone,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 
@@ -40,6 +46,11 @@ const data = {
           title: "Services",
           url: "/dashboard/services",
           icon: LayoutDashboard,
+        },
+        {
+          title: "Reports",
+          url: "/dashboard/reports",
+          icon: BarChart3,
         },
         {
           title: "Activity Log",

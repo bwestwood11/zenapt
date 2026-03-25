@@ -20,6 +20,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -59,6 +60,12 @@ const formSchema = z.object({
     message: "Please select a demo date",
   }),
   demoTime: z.string().min(1, "Please select a demo time"),
+  smsConsent: z.boolean().refine((value) => value, {
+    message: "You must explicitly consent to receive SMS messages",
+  }),
+  emailConsent: z.boolean().refine((value) => value, {
+    message: "You must explicitly consent to receive emails",
+  }),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -78,6 +85,8 @@ export function MedSpaBookingForm() {
       zipCode: "",
       websiteUrl: "",
       demoDate: new Date(),
+      smsConsent: false,
+      emailConsent: false,
     },
   });
 
@@ -369,6 +378,79 @@ export function MedSpaBookingForm() {
                   )}
                 />
               </div>
+            </div>
+
+            <div className="space-y-4 rounded-2xl border border-border bg-muted/20 p-4 sm:p-5">
+              <div className="space-y-1">
+                <h3 className="text-base font-semibold text-foreground">
+                  Communication consent
+                </h3>
+                <p className="text-sm leading-6 text-muted-foreground">
+                  Please provide explicit consent so we can contact you about your
+                  demo, account setup, onboarding, and support.
+                </p>
+              </div>
+
+              <FormField
+                control={form.control}
+                name="smsConsent"
+                render={({ field }) => (
+                  <FormItem className="rounded-xl border border-border bg-background p-4">
+                    <div className="flex items-start gap-3">
+                      <FormControl>
+                        <input
+                          type="checkbox"
+                          checked={field.value}
+                          onChange={(event) => field.onChange(event.target.checked)}
+                          className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-2 focus:ring-ring"
+                        />
+                      </FormControl>
+                      <div className="space-y-1">
+                        <FormLabel className="text-sm font-medium leading-6 text-foreground">
+                          SMS consent
+                        </FormLabel>
+                        <FormDescription className="text-sm leading-6 text-muted-foreground">
+                          I agree to receive SMS text messages from Zenapt regarding
+                          my account, onboarding, and support. Message frequency
+                          varies. Message &amp; data rates may apply. Reply STOP to
+                          opt out, HELP for help.
+                        </FormDescription>
+                      </div>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="emailConsent"
+                render={({ field }) => (
+                  <FormItem className="rounded-xl border border-border bg-background p-4">
+                    <div className="flex items-start gap-3">
+                      <FormControl>
+                        <input
+                          type="checkbox"
+                          checked={field.value}
+                          onChange={(event) => field.onChange(event.target.checked)}
+                          className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-2 focus:ring-ring"
+                        />
+                      </FormControl>
+                      <div className="space-y-1">
+                        <FormLabel className="text-sm font-medium leading-6 text-foreground">
+                          Email consent
+                        </FormLabel>
+                        <FormDescription className="text-sm leading-6 text-muted-foreground">
+                          I agree to receive emails from Zenapt regarding my demo,
+                          account, onboarding, and support. I understand I can
+                          unsubscribe from non-essential emails at any time.
+                        </FormDescription>
+                      </div>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
             <Button
