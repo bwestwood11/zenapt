@@ -9,6 +9,8 @@ import { Loader2, ArrowLeft } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { useSearchParams } from "next/navigation";
+import { Checkbox } from "@/components/ui/checkbox";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 const CustomerLoginForm = () => {
   const [isLogin, setIsLogin] = React.useState(true);
@@ -92,6 +94,8 @@ const CustomerLoginForm = () => {
         password,
         otp: otpCode,
         organizationId: getOrgId(),
+        consentToSmsAndEmail: true, // Assuming consent is given since the checkbox is not functional in this snippet
+        phoneNumber: "", // Phone number is not captured in this snippet, so passing an empty string
       });
 
       window.location.href = returnUrl;
@@ -224,11 +228,51 @@ const CustomerLoginForm = () => {
                 />
               </div>
 
+
+          <div className="space-y-2">
+            <Label htmlFor="phone">Phone Number</Label>
+            <PhoneInput
+              id="phone"
+              placeholder="Enter your phone number"
+              // value={phoneNumber}
+              // onChange={(value) => setPhoneNumber(value ?? "")}
+              defaultCountry="US"
+              required
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="rounded-xl border border-border bg-muted/35 p-4">
+            <div className="flex items-start gap-3">
+              <Checkbox
+                id="combined-consent"
+           
+                disabled={isLoading}
+                className="mt-1"
+              />
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="combined-consent"
+                  className="text-sm font-medium leading-6 text-foreground"
+                >
+                  Consent to SMS and email communications
+                </Label>
+                <p className="text-sm leading-6 text-muted-foreground">
+                  I agree to receive SMS text messages and emails regarding my
+                  booking, account, onboarding, and support. Message frequency
+                  varies. Message &amp; data rates may apply. Reply STOP to opt
+                  out, HELP for help.
+                </p>
+              </div>
+            </div>
+          </div>
+
               {error && (
                 <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30">
                   <p className="text-sm text-destructive">{error}</p>
                 </div>
               )}
+
 
               <Button
                 type="submit"

@@ -1,19 +1,26 @@
 import prisma from "../../../prisma";
 import {
   OrganizationEmailVerificationStatus,
+  type MarketingContactList,
   type OrganizationEmailDomain,
   type OrganizationSenderEmail,
+  type Prisma,
 } from "../../../prisma/generated/client";
 import { sesEmailService, SesApiError, type SendSesEmailInput } from "./ses";
 
-const marketingContactListDelegate = (prisma as unknown as {
+type MarketingContactListDelegate = {
   marketingContactList: {
-    findMany: (args: unknown) => Promise<any[]>;
-    create: (args: unknown) => Promise<any>;
-    findFirst: (args: unknown) => Promise<any>;
-    delete: (args: unknown) => Promise<any>;
+    findMany: (args: Prisma.MarketingContactListFindManyArgs) => Promise<MarketingContactList[]>;
+    create: (args: Prisma.MarketingContactListCreateArgs) => Promise<MarketingContactList>;
+    findFirst: (
+      args: Prisma.MarketingContactListFindFirstArgs,
+    ) => Promise<Pick<MarketingContactList, "id"> | MarketingContactList | null>;
+    delete: (args: Prisma.MarketingContactListDeleteArgs) => Promise<MarketingContactList>;
   };
-}).marketingContactList;
+};
+
+const marketingContactListDelegate = (prisma as unknown as MarketingContactListDelegate)
+  .marketingContactList;
 
 const VERIFIED_STATUS = OrganizationEmailVerificationStatus.SUCCESS;
 const DOMAIN_MAIL_FROM_LABEL = "mail";
