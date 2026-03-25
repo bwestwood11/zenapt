@@ -1,0 +1,58 @@
+enum OrganizationEmailVerificationStatus {
+  NOT_STARTED
+  PENDING
+  SUCCESS
+  FAILED
+  TEMPORARY_FAILURE
+}
+
+enum OrganizationEmailMailFromBehavior {
+  USE_DEFAULT_VALUE
+  REJECT_MESSAGE
+}
+
+model OrganizationEmailDomain {
+  id                       String                              @id @default(cuid()) @map("_id")
+  organizationId           String
+  domain                   String                              @unique
+  mailFromDomain           String?
+  mailFromBehavior         OrganizationEmailMailFromBehavior   @default(REJECT_MESSAGE)
+  verificationStatus       OrganizationEmailVerificationStatus @default(PENDING)
+  verifiedForSendingStatus Boolean                             @default(false)
+  dkimStatus               OrganizationEmailVerificationStatus @default(NOT_STARTED)
+  dkimTokens               String[]                            @default([])
+  mailFromStatus           OrganizationEmailVerificationStatus @default(NOT_STARTED)
+  verificationErrorType    String?
+  lastCheckedAt            DateTime?
+  lastVerifiedAt           DateTime?
+  createdAt                DateTime                            @default(now())
+  updatedAt                DateTime                            @updatedAt
+
+  organization Organization              @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  senderEmails OrganizationSenderEmail[]
+
+  @@index([organizationId])
+  @@index([organizationId, verificationStatus])
+}
+
+model OrganizationSenderEmail {
+  id                       String                              @id @default(cuid()) @map("_id")
+  organizationId           String
+  domainId                 String?
+  email                    String                              @unique
+  displayName              String?
+  isDefault                Boolean                             @default(false)
+  verificationStatus       OrganizationEmailVerificationStatus @default(PENDING)
+  verifiedForSendingStatus Boolean                             @default(false)
+  lastCheckedAt            DateTime?
+  lastVerifiedAt           DateTime?
+  createdAt                DateTime                            @default(now())
+  updatedAt                DateTime                            @updatedAt
+
+  organization Organization             @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  domain       OrganizationEmailDomain? @relation(fields: [domainId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([organizationId, isDefault])
+  @@index([domainId])
+}

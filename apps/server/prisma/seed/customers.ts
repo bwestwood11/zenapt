@@ -1,28 +1,75 @@
 import prisma from "..";
 import { Prisma } from "../generated/client";
 import crypto from "node:crypto";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 export async function createCustomers() {
   const now = new Date();
-  const users = new Array(100).fill(undefined).map((_, index) => ({
+  const users = Array.from({ length: 100 }, (_, index) => ({
     id: crypto.randomUUID(),
-    name: `Customer ${index + 1}`,
-    email: `customer${index + 1}@example.com`,
+    name: `Customer ${index + 200}`,
+    email: `customer${index + 200}@example.com`,
     emailVerified: false,
     createdAt: now,
     updatedAt: now,
   })) satisfies Prisma.UserCreateManyInput[];
-  const organization = await prisma.organization.findFirst();
-  const customers = users.map((user) => ({
-    userId: user.id,
-    phoneNumber: `555-010${Math.floor(Math.random() * 90 + 10)}`,
-    stripeCustomerId: `cus_${crypto.randomUUID().replace(/-/g, "").slice(0, 14)}`,
-    orgId: organization?.id || "",
-  })) satisfies Prisma.CustomerCreateManyInput[];
 
-  await prisma.user.createMany({ data: users });
-  await prisma.customer.createMany({ data: customers });
+  const organization = await prisma.organization.findFirst();
+
+  if (!organization) {
+    throw new Error("Cannot seed customers without an organization.");
+  }
+
+  await prisma.user.createMany({ data: users, skipDuplicates: true });
+
+  const persistedUsers = await prisma.user.findMany({
+    where: {
+      email: {
+        in: users.map((user) => user.email),
+      },
+    },
+    select: {
+      id: true,
+      email: true,
+    },
+  });
+
+  const userByEmail = new Map(
+    persistedUsers.map((user) => [user.email.toLowerCase(), user.id]),
+  );
+
+  await Promise.all(
+    users.map(async (user) => {
+      const userId = userByEmail.get(user.email.toLowerCase());
+
+      if (!userId) {
+        throw new Error(`Seeded user could not be loaded: ${user.email}`);
+      }
+
+      await prisma.customer.upsert({
+        where: {
+          userId_orgId: {
+            userId,
+            orgId: organization.id,
+          },
+        },
+        update: {
+          phoneNumber: buildPhoneNumber(),
+        },
+        create: {
+          userId,
+          phoneNumber: buildPhoneNumber(),
+          stripeCustomerId: buildStripeCustomerId(),
+          orgId: organization.id,
+        },
+      });
+    }),
+  );
 }
+
+const buildPhoneNumber = () => {
+  return `555-010${crypto.randomInt(10, 100)}`;
+};
+
+const buildStripeCustomerId = () => {
+  return `cus_${crypto.randomUUID().replaceAll("-", "").slice(0, 14)}`;
+};

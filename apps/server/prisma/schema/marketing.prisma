@@ -11,3 +11,78 @@ model DemoRequest {
     websiteUrl        String
     demoTime          DateTime
 }
+
+model MarketingEmailTemplate {
+    id             String   @id @default(cuid()) @map("_id")
+    organizationId String
+    title          String
+    description    String?
+    designJson     String
+    html           String?
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+
+    organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    campaigns    MarketingCampaign[]
+
+    @@unique([organizationId, title])
+    @@index([organizationId, updatedAt])
+}
+
+model MarketingContactList {
+    id             String   @id @default(cuid()) @map("_id")
+    organizationId String
+    name           String
+    description    String?
+    filterMode     String   @default("ALL")
+    filtersJson    String   @default("[]")
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+
+    organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    campaigns    MarketingCampaign[]
+
+    @@unique([organizationId, name])
+    @@index([organizationId, updatedAt])
+}
+
+model MarketingCampaign {
+    id                String   @id @default(cuid()) @map("_id")
+    organizationId    String
+    templateId        String
+    contactListId     String
+    title             String
+    description       String?
+    status            String   @default("DRAFT")
+    audienceSnapshotAt DateTime?
+    sentAt            DateTime?
+    deliveryError     String?
+    audienceCount     Int      @default(0)
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
+
+    organization Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    template     MarketingEmailTemplate @relation(fields: [templateId], references: [id], onDelete: Restrict)
+    contactList  MarketingContactList @relation(fields: [contactListId], references: [id], onDelete: Restrict)
+    audience     MarketingCampaignAudience[]
+
+    @@index([organizationId, updatedAt])
+    @@index([templateId])
+    @@index([contactListId])
+}
+
+model MarketingCampaignAudience {
+    id         String   @id @default(cuid()) @map("_id")
+    campaignId String
+    customerId String
+    email      String
+    name       String?
+    createdAt  DateTime @default(now())
+
+    campaign MarketingCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+    customer Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+    @@unique([campaignId, customerId])
+    @@index([campaignId, createdAt])
+    @@index([customerId])
+}

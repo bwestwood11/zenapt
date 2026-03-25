@@ -74,8 +74,13 @@ model Organization {
   OrganizationInvitation OrganizationInvitation[]
   ServiceTerms           ServiceTerms[]
   ServiceGroup           ServiceGroup[]
+  marketingEmailTemplates MarketingEmailTemplate[]
+  marketingContactLists  MarketingContactList[]
+  marketingCampaigns     MarketingCampaign[]
   customers              Customer[]
   customerAuths          CustomerAuth[]
+  emailDomains           OrganizationEmailDomain[]
+  senderEmails           OrganizationSenderEmail[]
 }
 
 model ManagementMembership {
@@ -214,6 +219,7 @@ model Customer {
   user             User                         @relation(fields: [userId], references: [id])
   orgId            String
   organization     Organization                 @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  campaignAudiences MarketingCampaignAudience[]
   auth             CustomerAuth?
 
   @@unique([userId, orgId])

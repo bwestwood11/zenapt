@@ -3,8 +3,8 @@ import {
   AppointmentBookedEmail,
   AppointmentRescheduledEmail,
 } from "transactional/emails";
-import { resend } from "../resend";
-import { resolveRecipient } from "./resolve-recipient";
+import { organizationEmailService } from "./organization-email";
+import { render } from "@react-email/render";
 
 const getAppointmentEmailContext = async (appointmentId: string) => {
   const appointment = await prisma.appointment.findUnique({
@@ -27,6 +27,7 @@ const getAppointmentEmailContext = async (appointmentId: string) => {
           email: true,
           organization: {
             select: {
+              id: true,
               name: true,
             },
           },
@@ -99,11 +100,13 @@ export const sendAppointmentBookedEmail = async (appointmentId: string) => {
     supportEmail,
   });
 
-  await resend.emails.send({
-    from: process.env.FROM_EMAIL || "support@zenapt.studio",
-    to: resolveRecipient(customerEmail),
+  const html = await render(EmailHtml)
+
+  await organizationEmailService.send({
+    organizationId: appointment.location.organization.id,
+    to: customerEmail,
     subject: `Appointment booked at ${appointment.location.name}`,
-    react: EmailHtml,
+    html: html,
   });
 };
 
@@ -130,9 +133,9 @@ export const sendAppointmentRescheduledEmail = async (
     supportEmail,
   });
 
-  await resend.emails.send({
-    from: process.env.FROM_EMAIL || "support@zenapt.studio",
-    to: resolveRecipient(customerEmail),
+  await organizationEmailService.send({
+    organizationId: appointment.location.organization.id,
+    to: customerEmail,
     subject: `Appointment rescheduled at ${appointment.location.name}`,
     react: EmailHtml,
   });

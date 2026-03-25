@@ -1,16 +1,14 @@
 import { InvitationEmail } from "transactional/emails";
 import { publicProcedure, router, withPermissions } from "../lib/trpc";
-import { resend } from "../lib/resend";
-import { resolveRecipient } from "../lib/email/resolve-recipient";
+import { organizationEmailService } from "../lib/email/organization-email";
 import { after } from "next/server";
 import prisma from "../../prisma";
 import { maskEmail, toSeconds } from "../lib/helpers/utils";
 import { ACTIVITY_LOG_ACTIONS, addActivityLog } from "../lib/activitylogs";
 import { decrypt, encrypt } from "../lib/helpers/encyrption";
 import { TRPCError } from "@trpc/server";
-import { createSignedToken, verifySignedToken } from "../lib/helpers/hash";
 import z from "zod";
-import crypto from "crypto";
+import crypto from "node:crypto";
 import { EmployeeRole, OrgRole } from "../../prisma/generated/enums";
 import { auth } from "../lib/auth";
 import {
@@ -18,6 +16,7 @@ import {
   INVITATION_TYPE,
   verifyInvitationToken,
 } from "../lib/invitationToken";
+import { render } from '@react-email/render';
 
 const INVITATION_EXPIRE_IN_HOURS = 48;
 
@@ -316,7 +315,8 @@ export const invitationRouter = router({
       role: z.enum(OrgRole).exclude([OrgRole.OWNER]),
     })
   ).mutation(async ({ ctx, input }) => {
-    const { email, name, role } = input;
+    try {
+          const { email, name, role } = input;
 
     if (!ctx.session.user.organizationId) {
       console.error(
@@ -429,11 +429,13 @@ export const invitationRouter = router({
 
     // Create and activity log the the user was invited
 
-    await resend.emails.send({
-      from: process.env.FROM_EMAIL || "support@zenapt.studio",
-      to: resolveRecipient(email),
+    const html = await render(EmailHtml)
+
+    await organizationEmailService.send({
+      organizationId: ctx.orgWithSub.id,
+      to: email,
       subject: "hello world",
-      react: EmailHtml,
+      html: html,
     });
 
     after(async () => {
@@ -452,6 +454,25 @@ export const invitationRouter = router({
     });
 
     return "OK";
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw error;
+      }
+
+      await prisma.organizationInvitation.deleteMany({
+        where: {
+          email: input.email,
+          organizationId: ctx.session.user.organizationId,
+          status: "PENDING",
+        },
+      });
+
+      console.error("Error in inviteOrganizationMember mutation", error);
+      throw new TRPCError({
+        message: "Failed to send invitation email. Please try again later.",
+        code: "INTERNAL_SERVER_ERROR",
+      });
+    }
   }),
   getInvitation: publicProcedure
     .input(z.object({ token: z.string() }))
@@ -617,11 +638,12 @@ export const invitationRouter = router({
 
     // Create and activity log the the user was invited
 
-    await resend.emails.send({
-      from: process.env.FROM_EMAIL || "support@zenapt.studio",
-      to: resolveRecipient(email),
+    const html = await render(EmailHtml)
+    await organizationEmailService.send({
+      organizationId: ctx.orgWithSub.id,
+      to: email,
       subject: "hello world",
-      react: EmailHtml,
+      html: html,
     });
 
     addActivityLog({

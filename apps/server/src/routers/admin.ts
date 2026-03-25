@@ -7,8 +7,7 @@ import type { AdminJWTPayload } from "../lib/types";
 import { cookies } from "next/headers";
 import bcrypt from "bcrypt";
 import { createInvitationToken, INVITATION_TYPE } from "../lib/invitationToken";
-import { resend } from "../lib/resend";
-import { resolveRecipient } from "../lib/email/resolve-recipient";
+import { sesEmailService } from "../lib/email/ses";
 import { toSeconds } from "../lib/helpers/utils";
 import { OrgRole } from "../../prisma/generated/enums";
 
@@ -72,7 +71,7 @@ const loginAdmin = publicProcedure
   });
 
 const sessionAdmin = adminProcedure.query(async ({ ctx }) => {
-  if (!ctx.admin || !ctx.admin.id) {
+  if (!ctx.admin?.id) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "Not authenticated",
@@ -95,24 +94,22 @@ const inviteUser = adminProcedure
 
     const url = `${process.env.DASHBOARD_URL}/sign-up/owner?token=${token}&email=${input.email}`;
 
+    if(process.env.NODE_ENV === "development"){
+      console.log("Invitation URL:", url);
+      return "OK (Development Mode - Check Console)";
+    }
+
     try {
-      const { data, error } = await resend.emails.send({
-        from: "Acme <onboarding@resend.dev>",
-        to: resolveRecipient(input.email),
+      await sesEmailService.send({
+        from: `Acme <${process.env.FROM_EMAIL || "support@zenapt.studio"}>`,
+        to: input.email,
         subject: "Hello world",
         html: `<strong>It works!</strong> <a href="${url}">Sign Up Here</a>`,
       });
 
-      if (error) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to send invitation email",
-          cause: error,
-        });
-      }
-
       return "OK";
     } catch (error) {
+      console.error("Failed to send invitation email:", error);
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to send invitation email",

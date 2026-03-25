@@ -1,12 +1,11 @@
 import bcrypt from "bcrypt";
-import crypto from "crypto";
+import crypto from "node:crypto";
 import { TRPCError } from "@trpc/server";
 import { cookies } from "next/headers";
 import { z } from "zod";
 import prisma from "../../prisma";
 import { stripe } from "../lib/stripe/server-stripe";
-import { resend } from "../lib/resend";
-import { resolveRecipient } from "../lib/email/resolve-recipient";
+import { organizationEmailService } from "../lib/email/organization-email";
 import {
   CUSTOMER_ACCESS_COOKIE,
   CUSTOMER_REFRESH_COOKIE,
@@ -81,11 +80,13 @@ const generateOtpCode = () =>
 
 const sendCustomerOtpEmail = async (input: {
   email: string;
+  organizationId: string;
   organizationName: string;
   otpCode: string;
   expiresInMinutes: number;
 }) => {
-  const { email, organizationName, otpCode, expiresInMinutes } = input;
+  const { email, organizationId, organizationName, otpCode, expiresInMinutes } =
+    input;
 
   if (process.env.NODE_ENV === "development") {
     console.log(
@@ -93,9 +94,9 @@ const sendCustomerOtpEmail = async (input: {
     );
   }
 
-  await resend.emails.send({
-    from: process.env.FROM_EMAIL || "support@zenapt.studio",
-    to: resolveRecipient(email),
+  await organizationEmailService.send({
+    organizationId,
+    to: email,
     subject: `${organizationName} verification code`,
     text: `Your ${organizationName} verification code is ${otpCode}. It expires in ${expiresInMinutes} minutes.`,
   });
@@ -171,6 +172,7 @@ const createAndSendSignupOtp = async (input: {
 
   await sendCustomerOtpEmail({
     email: normalizedEmail,
+    organizationId: organization.id,
     organizationName: organization.name,
     otpCode,
     expiresInMinutes: OTP_TTL_MINUTES,

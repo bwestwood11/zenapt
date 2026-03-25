@@ -15,6 +15,11 @@ import { deleteFile } from "../lib/s3/commands";
 import { revalidateTag } from "next/cache";
 import { stripe } from "../lib/stripe/server-stripe";
 import { ACTIVITY_LOG_ACTIONS, addActivityLog } from "../lib/activitylogs";
+import { OrgRole } from "../../prisma/generated/enums";
+import {
+  organizationEmailService,
+  type ContactListFilter,
+} from "../lib/email/organization-email";
 
 const promoCodeInputSchema = z.object({
   code: z
@@ -31,6 +36,81 @@ const promoCodeInputSchema = z.object({
 const CompanySizeSchema = z
   .enum(["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"])
   .optional();
+
+const organizationDomainSchema = z.object({
+  domain: z
+    .string()
+    .trim()
+    .min(3)
+    .max(255)
+    .regex(/^([a-z\d-]+\.)+[a-z]{2,}$/i, "Enter a valid domain."),
+});
+
+const organizationSenderEmailSchema = z.object({
+  email: z.email(),
+  displayName: z.string().trim().max(120).optional(),
+});
+
+const organizationEmailIdentityIdSchema = z.object({
+  id: z.string().min(1),
+});
+
+const organizationSendTestEmailSchema = z.object({
+  id: z.string().min(1),
+});
+
+const organizationContactListSchema = z.object({
+  name: z.string().trim().min(1, "Name is required.").max(120),
+  description: z.string().trim().max(500).optional(),
+  filterMode: z.enum(["ALL", "ANY"]).default("ALL"),
+  filters: z
+    .array(
+      z.discriminatedUnion("type", [
+        z.object({
+          type: z.literal("SERVICE_USED"),
+          serviceId: z.string().min(1, "Select a service."),
+        }),
+        z.object({
+          type: z.literal("NO_APPOINTMENT_IN_DAYS"),
+          days: z.number().int().min(1).max(3650),
+        }),
+        z.object({
+          type: z.literal("APPOINTMENT_STATUS"),
+          status: z.enum([
+            "SCHEDULED",
+            "COMPLETED",
+            "CANCELED",
+            "NO_SHOW",
+            "RESCHEDULED",
+          ]),
+        }),
+      ]),
+    )
+    .min(1, "Add at least one filter."),
+});
+
+const assertOrganizationEmailManager = async (
+  userId: string,
+  organizationId: string,
+) => {
+  const membership = await prisma.managementMembership.findFirst({
+    where: {
+      userId,
+      organizationId,
+      role: {
+        in: [OrgRole.OWNER, OrgRole.ADMIN],
+      },
+    },
+    select: { id: true },
+  });
+
+  if (!membership) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Only organization owners and admins can manage sender identities.",
+    });
+  }
+};
 
 export const organizationRouter = router({
   createOrganization: protectedProcedure
@@ -265,6 +345,127 @@ export const organizationRouter = router({
       return { ...organization, companySize };
     },
   ),
+  getOrganizationEmailSettings: withPermissions("UPDATE::ORGANIZATION").query(
+    async ({ ctx }) => {
+      await assertOrganizationEmailManager(ctx.session.user.id, ctx.orgWithSub.id);
+      return organizationEmailService.getSettings(ctx.orgWithSub.id);
+    },
+  ),
+  createOrganizationEmailDomain: withPermissions("UPDATE::ORGANIZATION")
+    .input(organizationDomainSchema)
+    .mutation(async ({ ctx, input }) => {
+      await assertOrganizationEmailManager(ctx.session.user.id, ctx.orgWithSub.id);
+      return organizationEmailService.createDomain({
+        organizationId: ctx.orgWithSub.id,
+        domain: input.domain,
+      });
+    }),
+  refreshOrganizationEmailDomain: withPermissions("UPDATE::ORGANIZATION")
+    .input(organizationEmailIdentityIdSchema)
+    .mutation(async ({ ctx, input }) => {
+      await assertOrganizationEmailManager(ctx.session.user.id, ctx.orgWithSub.id);
+      return organizationEmailService.refreshDomain({
+        organizationId: ctx.orgWithSub.id,
+        domainId: input.id,
+      });
+    }),
+  deleteOrganizationEmailDomain: withPermissions("UPDATE::ORGANIZATION")
+    .input(organizationEmailIdentityIdSchema)
+    .mutation(async ({ ctx, input }) => {
+      await assertOrganizationEmailManager(ctx.session.user.id, ctx.orgWithSub.id);
+      return organizationEmailService.deleteDomain({
+        organizationId: ctx.orgWithSub.id,
+        domainId: input.id,
+      });
+    }),
+  createOrganizationSenderEmail: withPermissions("UPDATE::ORGANIZATION")
+    .input(organizationSenderEmailSchema)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await assertOrganizationEmailManager(ctx.session.user.id, ctx.orgWithSub.id);
+        return organizationEmailService.createSenderEmail({
+          organizationId: ctx.orgWithSub.id,
+          email: input.email,
+          displayName: input.displayName,
+        });
+      } catch (error) {
+        console.error("Failed to create sender email identity:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create sender email identity",
+          cause: error,
+        });
+      }
+
+    }),
+  refreshOrganizationSenderEmail: withPermissions("UPDATE::ORGANIZATION")
+    .input(organizationEmailIdentityIdSchema)
+    .mutation(async ({ ctx, input }) => {
+      await assertOrganizationEmailManager(ctx.session.user.id, ctx.orgWithSub.id);
+      return organizationEmailService.refreshSenderEmail({
+        organizationId: ctx.orgWithSub.id,
+        senderEmailId: input.id,
+      });
+    }),
+  deleteOrganizationSenderEmail: withPermissions("UPDATE::ORGANIZATION")
+    .input(organizationEmailIdentityIdSchema)
+    .mutation(async ({ ctx, input }) => {
+      await assertOrganizationEmailManager(ctx.session.user.id, ctx.orgWithSub.id);
+      return organizationEmailService.deleteSenderEmail({
+        organizationId: ctx.orgWithSub.id,
+        senderEmailId: input.id,
+      });
+    }),
+  setOrganizationDefaultSenderEmail: withPermissions("UPDATE::ORGANIZATION")
+    .input(organizationEmailIdentityIdSchema)
+    .mutation(async ({ ctx, input }) => {
+      await assertOrganizationEmailManager(ctx.session.user.id, ctx.orgWithSub.id);
+      return organizationEmailService.setDefaultSenderEmail({
+        organizationId: ctx.orgWithSub.id,
+        senderEmailId: input.id,
+      });
+    }),
+  sendOrganizationTestEmail: withPermissions("UPDATE::ORGANIZATION")
+    .input(organizationSendTestEmailSchema)
+    .mutation(async ({ ctx, input }) => {
+      await assertOrganizationEmailManager(ctx.session.user.id, ctx.orgWithSub.id);
+
+      if (!ctx.session.user.email) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Your account does not have an email address for receiving test emails.",
+        });
+      }
+
+      return organizationEmailService.sendTestEmail({
+        organizationId: ctx.orgWithSub.id,
+        senderEmailId: input.id,
+        to: ctx.session.user.email,
+        organizationName: ctx.orgWithSub.name,
+        requestedByName: ctx.session.user.name,
+      });
+    }),
+  createOrganizationContactList: withPermissions("UPDATE::ORGANIZATION")
+    .input(organizationContactListSchema)
+    .mutation(async ({ ctx, input }) => {
+      await assertOrganizationEmailManager(ctx.session.user.id, ctx.orgWithSub.id);
+      return organizationEmailService.createContactList({
+        organizationId: ctx.orgWithSub.id,
+        name: input.name,
+        description: input.description,
+        filterMode: input.filterMode,
+        filters: input.filters as ContactListFilter[],
+      });
+    }),
+  deleteOrganizationContactList: withPermissions("UPDATE::ORGANIZATION")
+    .input(organizationEmailIdentityIdSchema)
+    .mutation(async ({ ctx, input }) => {
+      await assertOrganizationEmailManager(ctx.session.user.id, ctx.orgWithSub.id);
+      return organizationEmailService.deleteContactList({
+        organizationId: ctx.orgWithSub.id,
+        contactListId: input.id,
+      });
+    }),
   createStripeConnectAccount: withPermissions("UPDATE::SUBSCRIPTION").mutation(
     async ({ ctx }) => {
       const dashboardUrl = process.env.DASHBOARD_URL;

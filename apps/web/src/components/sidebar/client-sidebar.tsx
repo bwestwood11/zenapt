@@ -15,7 +15,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, ListChecks, Mail, Megaphone } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 
@@ -64,6 +64,27 @@ const data = {
         },
       ],
     },
+    {
+      title: "Marketing",
+      url: "#",
+      items: [
+        {
+          title: "Templates",
+          url: "/dashboard/marketing/templates",
+          icon: Mail,
+        },
+        {
+          title: "Contact Lists",
+          url: "/dashboard/marketing/contact-lists",
+          icon: ListChecks,
+        },
+        {
+          title: "Campaigns",
+          url: "/dashboard/marketing/campaigns",
+          icon: Megaphone,
+        },
+      ],
+    },
   ],
 };
 
@@ -93,7 +114,7 @@ export function ClientSidebar({
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
-                      isActive={pathName === item.url}
+                      isActive={pathName === item.url || pathName.startsWith(`${item.url}/`)}
                       // className="group/menu-button font-medium gap-3 h-9 rounded-md bg-gradient-to-r hover:bg-transparent hover:from-sidebar-accent hover:to-sidebar-accent/40 data-[active=true]:from-primary/20 data-[active=true]:to-primary/5 [&>svg]:size-auto"
                     >
                       <a href={item.url}>
