@@ -2,8 +2,10 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp";
 import { useCheckoutStore } from "../hooks/useStore";
 import { Loader2 } from "lucide-react";
@@ -12,6 +14,8 @@ import { useMutation } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { useCustomerSession } from "../hooks/useCustomerSession";
 
+type FormSubmitHandler = NonNullable<React.ComponentProps<"form">["onSubmit"]>;
+
 const AuthPage = () => {
   const [isLogin, setIsLogin] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -19,6 +23,8 @@ const AuthPage = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [name, setName] = React.useState("");
+  const [phoneNumber, setPhoneNumber] = React.useState("");
+  const [marketingConsent, setMarketingConsent] = React.useState(false);
   const [otpCode, setOtpCode] = React.useState("");
   const [otpSent, setOtpSent] = React.useState(false);
 
@@ -44,64 +50,82 @@ const AuthPage = () => {
     }
   }, [session.data?.customer, handleNext]);
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
+  const handleLoginSubmit: FormSubmitHandler = (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+    void (async () => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      await signIn({ email, password });
-      await session.refetch();
-      handleNext(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleRequestOtpSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      await requestOtp({ email, organizationId: orgId });
-      setOtpSent(true);
-      setOtpCode("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleVerifyOtpSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      if (!otpCode.trim()) {
-        setError("Enter the verification code to continue.");
-        return;
+      try {
+        await signIn({ email, password });
+        await session.refetch();
+        handleNext(true);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Something went wrong.");
+      } finally {
+        setIsLoading(false);
       }
+    })();
+  };
 
-      await signUp({
-        name,
-        email,
-        password,
-        otp: otpCode,
-        organizationId: orgId,
-      });
+  const handleRequestOtpSubmit: FormSubmitHandler = (e) => {
+    e.preventDefault();
+    void (async () => {
+      setIsLoading(true);
+      setError(null);
 
-      await session.refetch();
-      handleNext(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
-    } finally {
-      setIsLoading(false);
-    }
+      try {
+        if (!phoneNumber.trim()) {
+          setError("Enter your phone number to continue.");
+          return;
+        }
+
+        if (!marketingConsent) {
+          setError("You must provide consent before continuing.");
+          return;
+        }
+
+        await requestOtp({ email, organizationId: orgId });
+        setOtpSent(true);
+        setOtpCode("");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Something went wrong.");
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  };
+
+  const handleVerifyOtpSubmit: FormSubmitHandler = (e) => {
+    e.preventDefault();
+    void (async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        if (!otpCode.trim()) {
+          setError("Enter the verification code to continue.");
+          return;
+        }
+
+        await signUp({
+          name,
+          email,
+          password,
+          phoneNumber,
+          consentToSmsAndEmail: true,
+          otp: otpCode,
+          organizationId: orgId,
+        });
+
+        await session.refetch();
+        handleNext(true);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Something went wrong.");
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   };
 
   return (
@@ -205,6 +229,45 @@ const AuthPage = () => {
               disabled={isLoading}
               minLength={8}
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="phone">Phone Number</Label>
+            <PhoneInput
+              id="phone"
+              placeholder="Enter your phone number"
+              value={phoneNumber}
+              onChange={(value) => setPhoneNumber(value ?? "")}
+              defaultCountry="US"
+              required
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="rounded-xl border border-border bg-muted/35 p-4">
+            <div className="flex items-start gap-3">
+              <Checkbox
+                id="combined-consent"
+                checked={marketingConsent}
+                onCheckedChange={(checked) => setMarketingConsent(checked === true)}
+                disabled={isLoading}
+                className="mt-1"
+              />
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="combined-consent"
+                  className="text-sm font-medium leading-6 text-foreground"
+                >
+                  Consent to SMS and email communications
+                </Label>
+                <p className="text-sm leading-6 text-muted-foreground">
+                  I agree to receive SMS text messages and emails regarding my
+                  booking, account, onboarding, and support. Message frequency
+                  varies. Message &amp; data rates may apply. Reply STOP to opt
+                  out, HELP for help.
+                </p>
+              </div>
+            </div>
           </div>
 
           {error && (
@@ -330,6 +393,8 @@ const AuthPage = () => {
           onClick={() => {
             setIsLogin(!isLogin);
             setError(null);
+                setPhoneNumber("");
+                setMarketingConsent(false);
             setOtpCode("");
             setOtpSent(false);
           }}

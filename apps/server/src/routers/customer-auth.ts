@@ -252,12 +252,14 @@ export const customerAuthRouter = router({
         name: z.string().min(1),
         email: z.email(),
         password: z.string().min(8),
+        phoneNumber: z.string().min(1),
+        consentToSmsAndEmail: z.literal(true),
         otp: z.string().regex(/^\d{6}$/),
         organizationId: z.string().min(2).max(90),
       }),
     )
     .mutation(async ({ input }) => {
-      const { name, email, password, organizationId, otp } = input;
+      const { name, email, password, phoneNumber, organizationId, otp } = input;
       const normalizedEmail = normalizeEmail(email);
 
       const organization = await prisma.organization.findUnique({
@@ -345,6 +347,7 @@ export const customerAuthRouter = router({
         data: {
           userId: user.id,
           orgId: organizationId,
+          phoneNumber,
         },
       });
 
