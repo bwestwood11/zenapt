@@ -182,10 +182,40 @@ export type OrganizationInvitation = Prisma.OrganizationInvitationModel
  */
 export type LocationInvitation = Prisma.LocationInvitationModel
 /**
+ * Model OrganizationEmailDomain
+ * 
+ */
+export type OrganizationEmailDomain = Prisma.OrganizationEmailDomainModel
+/**
+ * Model OrganizationSenderEmail
+ * 
+ */
+export type OrganizationSenderEmail = Prisma.OrganizationSenderEmailModel
+/**
  * Model DemoRequest
  * 
  */
 export type DemoRequest = Prisma.DemoRequestModel
+/**
+ * Model MarketingEmailTemplate
+ * 
+ */
+export type MarketingEmailTemplate = Prisma.MarketingEmailTemplateModel
+/**
+ * Model MarketingContactList
+ * 
+ */
+export type MarketingContactList = Prisma.MarketingContactListModel
+/**
+ * Model MarketingCampaign
+ * 
+ */
+export type MarketingCampaign = Prisma.MarketingCampaignModel
+/**
+ * Model MarketingCampaignAudience
+ * 
+ */
+export type MarketingCampaignAudience = Prisma.MarketingCampaignAudienceModel
 
 export type AppointmentStatus = $Enums.AppointmentStatus
 export const AppointmentStatus = $Enums.AppointmentStatus
@@ -216,3 +246,9 @@ export const CustomerPaymentStatus = $Enums.CustomerPaymentStatus
 
 export type InvitationStatus = $Enums.InvitationStatus
 export const InvitationStatus = $Enums.InvitationStatus
+
+export type OrganizationEmailVerificationStatus = $Enums.OrganizationEmailVerificationStatus
+export const OrganizationEmailVerificationStatus = $Enums.OrganizationEmailVerificationStatus
+
+export type OrganizationEmailMailFromBehavior = $Enums.OrganizationEmailMailFromBehavior
+export const OrganizationEmailMailFromBehavior = $Enums.OrganizationEmailMailFromBehavior

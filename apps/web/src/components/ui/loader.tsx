@@ -2,7 +2,7 @@ import React from "react";
 
 export const Loader: React.FC = () => {
   return (
-    <svg className="w-[3.25em] loader-container" viewBox="25 25 50 50">
+    <svg className="w-[3.25em] loader-container text-red-400" viewBox="25 25 50 50">
       <defs>
         <linearGradient
           id="trailGradient"

@@ -227,6 +227,7 @@ export type CustomerWhereInput = {
   tipCharges?: Prisma.AppointmentTipChargeListRelationFilter
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  campaignAudiences?: Prisma.MarketingCampaignAudienceListRelationFilter
   auth?: Prisma.XOR<Prisma.CustomerAuthNullableScalarRelationFilter, Prisma.CustomerAuthWhereInput> | null
 }
 
@@ -247,6 +248,7 @@ export type CustomerOrderByWithRelationInput = {
   tipCharges?: Prisma.AppointmentTipChargeOrderByRelationAggregateInput
   user?: Prisma.UserOrderByWithRelationInput
   organization?: Prisma.OrganizationOrderByWithRelationInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceOrderByRelationAggregateInput
   auth?: Prisma.CustomerAuthOrderByWithRelationInput
 }
 
@@ -271,6 +273,7 @@ export type CustomerWhereUniqueInput = Prisma.AtLeast<{
   tipCharges?: Prisma.AppointmentTipChargeListRelationFilter
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  campaignAudiences?: Prisma.MarketingCampaignAudienceListRelationFilter
   auth?: Prisma.XOR<Prisma.CustomerAuthNullableScalarRelationFilter, Prisma.CustomerAuthWhereInput> | null
 }, "id" | "stripeCustomerId" | "userId_orgId">
 
@@ -321,6 +324,7 @@ export type CustomerCreateInput = {
   tipCharges?: Prisma.AppointmentTipChargeCreateNestedManyWithoutCustomerInput
   user: Prisma.UserCreateNestedOneWithoutCustomerInput
   organization: Prisma.OrganizationCreateNestedOneWithoutCustomersInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceCreateNestedManyWithoutCustomerInput
   auth?: Prisma.CustomerAuthCreateNestedOneWithoutCustomerInput
 }
 
@@ -339,6 +343,7 @@ export type CustomerUncheckedCreateInput = {
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutCustomerInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutCustomerInput
   tipCharges?: Prisma.AppointmentTipChargeUncheckedCreateNestedManyWithoutCustomerInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedCreateNestedManyWithoutCustomerInput
   auth?: Prisma.CustomerAuthUncheckedCreateNestedOneWithoutCustomerInput
 }
 
@@ -357,6 +362,7 @@ export type CustomerUpdateInput = {
   tipCharges?: Prisma.AppointmentTipChargeUpdateManyWithoutCustomerNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutCustomerNestedInput
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutCustomersNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUpdateManyWithoutCustomerNestedInput
   auth?: Prisma.CustomerAuthUpdateOneWithoutCustomerNestedInput
 }
 
@@ -375,6 +381,7 @@ export type CustomerUncheckedUpdateInput = {
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutCustomerNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutCustomerNestedInput
   tipCharges?: Prisma.AppointmentTipChargeUncheckedUpdateManyWithoutCustomerNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedUpdateManyWithoutCustomerNestedInput
   auth?: Prisma.CustomerAuthUncheckedUpdateOneWithoutCustomerNestedInput
 }
 
@@ -652,6 +659,20 @@ export type CustomerUpdateOneRequiredWithoutCustomerPaymentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutCustomerPaymentsInput, Prisma.CustomerUpdateWithoutCustomerPaymentsInput>, Prisma.CustomerUncheckedUpdateWithoutCustomerPaymentsInput>
 }
 
+export type CustomerCreateNestedOneWithoutCampaignAudiencesInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutCampaignAudiencesInput, Prisma.CustomerUncheckedCreateWithoutCampaignAudiencesInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutCampaignAudiencesInput
+  connect?: Prisma.CustomerWhereUniqueInput
+}
+
+export type CustomerUpdateOneRequiredWithoutCampaignAudiencesNestedInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutCampaignAudiencesInput, Prisma.CustomerUncheckedCreateWithoutCampaignAudiencesInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutCampaignAudiencesInput
+  upsert?: Prisma.CustomerUpsertWithoutCampaignAudiencesInput
+  connect?: Prisma.CustomerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutCampaignAudiencesInput, Prisma.CustomerUpdateWithoutCampaignAudiencesInput>, Prisma.CustomerUncheckedUpdateWithoutCampaignAudiencesInput>
+}
+
 export type CustomerCreateWithoutAppointmentsInput = {
   id?: string
   stripeCustomerId?: string | null
@@ -666,6 +687,7 @@ export type CustomerCreateWithoutAppointmentsInput = {
   tipCharges?: Prisma.AppointmentTipChargeCreateNestedManyWithoutCustomerInput
   user: Prisma.UserCreateNestedOneWithoutCustomerInput
   organization: Prisma.OrganizationCreateNestedOneWithoutCustomersInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceCreateNestedManyWithoutCustomerInput
   auth?: Prisma.CustomerAuthCreateNestedOneWithoutCustomerInput
 }
 
@@ -683,6 +705,7 @@ export type CustomerUncheckedCreateWithoutAppointmentsInput = {
   location?: Prisma.LocationUncheckedCreateNestedManyWithoutCustomersInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutCustomerInput
   tipCharges?: Prisma.AppointmentTipChargeUncheckedCreateNestedManyWithoutCustomerInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedCreateNestedManyWithoutCustomerInput
   auth?: Prisma.CustomerAuthUncheckedCreateNestedOneWithoutCustomerInput
 }
 
@@ -716,6 +739,7 @@ export type CustomerUpdateWithoutAppointmentsInput = {
   tipCharges?: Prisma.AppointmentTipChargeUpdateManyWithoutCustomerNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutCustomerNestedInput
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutCustomersNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUpdateManyWithoutCustomerNestedInput
   auth?: Prisma.CustomerAuthUpdateOneWithoutCustomerNestedInput
 }
 
@@ -733,6 +757,7 @@ export type CustomerUncheckedUpdateWithoutAppointmentsInput = {
   location?: Prisma.LocationUncheckedUpdateManyWithoutCustomersNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutCustomerNestedInput
   tipCharges?: Prisma.AppointmentTipChargeUncheckedUpdateManyWithoutCustomerNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedUpdateManyWithoutCustomerNestedInput
   auth?: Prisma.CustomerAuthUncheckedUpdateOneWithoutCustomerNestedInput
 }
 
@@ -750,6 +775,7 @@ export type CustomerCreateWithoutTipChargesInput = {
   customerPayments?: Prisma.CustomerAppointmentPaymentCreateNestedManyWithoutCustomerInput
   user: Prisma.UserCreateNestedOneWithoutCustomerInput
   organization: Prisma.OrganizationCreateNestedOneWithoutCustomersInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceCreateNestedManyWithoutCustomerInput
   auth?: Prisma.CustomerAuthCreateNestedOneWithoutCustomerInput
 }
 
@@ -767,6 +793,7 @@ export type CustomerUncheckedCreateWithoutTipChargesInput = {
   location?: Prisma.LocationUncheckedCreateNestedManyWithoutCustomersInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutCustomerInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutCustomerInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedCreateNestedManyWithoutCustomerInput
   auth?: Prisma.CustomerAuthUncheckedCreateNestedOneWithoutCustomerInput
 }
 
@@ -800,6 +827,7 @@ export type CustomerUpdateWithoutTipChargesInput = {
   customerPayments?: Prisma.CustomerAppointmentPaymentUpdateManyWithoutCustomerNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutCustomerNestedInput
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutCustomersNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUpdateManyWithoutCustomerNestedInput
   auth?: Prisma.CustomerAuthUpdateOneWithoutCustomerNestedInput
 }
 
@@ -817,6 +845,7 @@ export type CustomerUncheckedUpdateWithoutTipChargesInput = {
   location?: Prisma.LocationUncheckedUpdateManyWithoutCustomersNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutCustomerNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutCustomerNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedUpdateManyWithoutCustomerNestedInput
   auth?: Prisma.CustomerAuthUncheckedUpdateOneWithoutCustomerNestedInput
 }
 
@@ -834,6 +863,7 @@ export type CustomerCreateWithoutUserInput = {
   customerPayments?: Prisma.CustomerAppointmentPaymentCreateNestedManyWithoutCustomerInput
   tipCharges?: Prisma.AppointmentTipChargeCreateNestedManyWithoutCustomerInput
   organization: Prisma.OrganizationCreateNestedOneWithoutCustomersInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceCreateNestedManyWithoutCustomerInput
   auth?: Prisma.CustomerAuthCreateNestedOneWithoutCustomerInput
 }
 
@@ -851,6 +881,7 @@ export type CustomerUncheckedCreateWithoutUserInput = {
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutCustomerInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutCustomerInput
   tipCharges?: Prisma.AppointmentTipChargeUncheckedCreateNestedManyWithoutCustomerInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedCreateNestedManyWithoutCustomerInput
   auth?: Prisma.CustomerAuthUncheckedCreateNestedOneWithoutCustomerInput
 }
 
@@ -910,6 +941,7 @@ export type CustomerCreateWithoutOrganizationInput = {
   customerPayments?: Prisma.CustomerAppointmentPaymentCreateNestedManyWithoutCustomerInput
   tipCharges?: Prisma.AppointmentTipChargeCreateNestedManyWithoutCustomerInput
   user: Prisma.UserCreateNestedOneWithoutCustomerInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceCreateNestedManyWithoutCustomerInput
   auth?: Prisma.CustomerAuthCreateNestedOneWithoutCustomerInput
 }
 
@@ -927,6 +959,7 @@ export type CustomerUncheckedCreateWithoutOrganizationInput = {
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutCustomerInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutCustomerInput
   tipCharges?: Prisma.AppointmentTipChargeUncheckedCreateNestedManyWithoutCustomerInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedCreateNestedManyWithoutCustomerInput
   auth?: Prisma.CustomerAuthUncheckedCreateNestedOneWithoutCustomerInput
 }
 
@@ -970,6 +1003,7 @@ export type CustomerCreateWithoutLocationInput = {
   tipCharges?: Prisma.AppointmentTipChargeCreateNestedManyWithoutCustomerInput
   user: Prisma.UserCreateNestedOneWithoutCustomerInput
   organization: Prisma.OrganizationCreateNestedOneWithoutCustomersInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceCreateNestedManyWithoutCustomerInput
   auth?: Prisma.CustomerAuthCreateNestedOneWithoutCustomerInput
 }
 
@@ -987,6 +1021,7 @@ export type CustomerUncheckedCreateWithoutLocationInput = {
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutCustomerInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutCustomerInput
   tipCharges?: Prisma.AppointmentTipChargeUncheckedCreateNestedManyWithoutCustomerInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedCreateNestedManyWithoutCustomerInput
   auth?: Prisma.CustomerAuthUncheckedCreateNestedOneWithoutCustomerInput
 }
 
@@ -1026,6 +1061,7 @@ export type CustomerCreateWithoutAuthInput = {
   tipCharges?: Prisma.AppointmentTipChargeCreateNestedManyWithoutCustomerInput
   user: Prisma.UserCreateNestedOneWithoutCustomerInput
   organization: Prisma.OrganizationCreateNestedOneWithoutCustomersInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUncheckedCreateWithoutAuthInput = {
@@ -1043,6 +1079,7 @@ export type CustomerUncheckedCreateWithoutAuthInput = {
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutCustomerInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutCustomerInput
   tipCharges?: Prisma.AppointmentTipChargeUncheckedCreateNestedManyWithoutCustomerInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerCreateOrConnectWithoutAuthInput = {
@@ -1076,6 +1113,7 @@ export type CustomerUpdateWithoutAuthInput = {
   tipCharges?: Prisma.AppointmentTipChargeUpdateManyWithoutCustomerNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutCustomerNestedInput
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutCustomersNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerUncheckedUpdateWithoutAuthInput = {
@@ -1093,6 +1131,7 @@ export type CustomerUncheckedUpdateWithoutAuthInput = {
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutCustomerNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutCustomerNestedInput
   tipCharges?: Prisma.AppointmentTipChargeUncheckedUpdateManyWithoutCustomerNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerCreateWithoutCustomerPaymentsInput = {
@@ -1109,6 +1148,7 @@ export type CustomerCreateWithoutCustomerPaymentsInput = {
   tipCharges?: Prisma.AppointmentTipChargeCreateNestedManyWithoutCustomerInput
   user: Prisma.UserCreateNestedOneWithoutCustomerInput
   organization: Prisma.OrganizationCreateNestedOneWithoutCustomersInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceCreateNestedManyWithoutCustomerInput
   auth?: Prisma.CustomerAuthCreateNestedOneWithoutCustomerInput
 }
 
@@ -1126,6 +1166,7 @@ export type CustomerUncheckedCreateWithoutCustomerPaymentsInput = {
   location?: Prisma.LocationUncheckedCreateNestedManyWithoutCustomersInput
   appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutCustomerInput
   tipCharges?: Prisma.AppointmentTipChargeUncheckedCreateNestedManyWithoutCustomerInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedCreateNestedManyWithoutCustomerInput
   auth?: Prisma.CustomerAuthUncheckedCreateNestedOneWithoutCustomerInput
 }
 
@@ -1159,6 +1200,7 @@ export type CustomerUpdateWithoutCustomerPaymentsInput = {
   tipCharges?: Prisma.AppointmentTipChargeUpdateManyWithoutCustomerNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutCustomerNestedInput
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutCustomersNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUpdateManyWithoutCustomerNestedInput
   auth?: Prisma.CustomerAuthUpdateOneWithoutCustomerNestedInput
 }
 
@@ -1175,6 +1217,95 @@ export type CustomerUncheckedUpdateWithoutCustomerPaymentsInput = {
   orgId?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.LocationUncheckedUpdateManyWithoutCustomersNestedInput
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutCustomerNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedUpdateManyWithoutCustomerNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedUpdateManyWithoutCustomerNestedInput
+  auth?: Prisma.CustomerAuthUncheckedUpdateOneWithoutCustomerNestedInput
+}
+
+export type CustomerCreateWithoutCampaignAudiencesInput = {
+  id?: string
+  stripeCustomerId?: string | null
+  status?: string | null
+  phoneNumber?: string | null
+  dateOfBirth?: Date | string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  location?: Prisma.LocationCreateNestedManyWithoutCustomersInput
+  appointments?: Prisma.AppointmentCreateNestedManyWithoutCustomerInput
+  customerPayments?: Prisma.CustomerAppointmentPaymentCreateNestedManyWithoutCustomerInput
+  tipCharges?: Prisma.AppointmentTipChargeCreateNestedManyWithoutCustomerInput
+  user: Prisma.UserCreateNestedOneWithoutCustomerInput
+  organization: Prisma.OrganizationCreateNestedOneWithoutCustomersInput
+  auth?: Prisma.CustomerAuthCreateNestedOneWithoutCustomerInput
+}
+
+export type CustomerUncheckedCreateWithoutCampaignAudiencesInput = {
+  id?: string
+  stripeCustomerId?: string | null
+  status?: string | null
+  phoneNumber?: string | null
+  dateOfBirth?: Date | string | null
+  notes?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userId: string
+  orgId: string
+  location?: Prisma.LocationUncheckedCreateNestedManyWithoutCustomersInput
+  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutCustomerInput
+  customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedCreateNestedManyWithoutCustomerInput
+  tipCharges?: Prisma.AppointmentTipChargeUncheckedCreateNestedManyWithoutCustomerInput
+  auth?: Prisma.CustomerAuthUncheckedCreateNestedOneWithoutCustomerInput
+}
+
+export type CustomerCreateOrConnectWithoutCampaignAudiencesInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutCampaignAudiencesInput, Prisma.CustomerUncheckedCreateWithoutCampaignAudiencesInput>
+}
+
+export type CustomerUpsertWithoutCampaignAudiencesInput = {
+  update: Prisma.XOR<Prisma.CustomerUpdateWithoutCampaignAudiencesInput, Prisma.CustomerUncheckedUpdateWithoutCampaignAudiencesInput>
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutCampaignAudiencesInput, Prisma.CustomerUncheckedCreateWithoutCampaignAudiencesInput>
+  where?: Prisma.CustomerWhereInput
+}
+
+export type CustomerUpdateToOneWithWhereWithoutCampaignAudiencesInput = {
+  where?: Prisma.CustomerWhereInput
+  data: Prisma.XOR<Prisma.CustomerUpdateWithoutCampaignAudiencesInput, Prisma.CustomerUncheckedUpdateWithoutCampaignAudiencesInput>
+}
+
+export type CustomerUpdateWithoutCampaignAudiencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  location?: Prisma.LocationUpdateManyWithoutCustomersNestedInput
+  appointments?: Prisma.AppointmentUpdateManyWithoutCustomerNestedInput
+  customerPayments?: Prisma.CustomerAppointmentPaymentUpdateManyWithoutCustomerNestedInput
+  tipCharges?: Prisma.AppointmentTipChargeUpdateManyWithoutCustomerNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutCustomerNestedInput
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutCustomersNestedInput
+  auth?: Prisma.CustomerAuthUpdateOneWithoutCustomerNestedInput
+}
+
+export type CustomerUncheckedUpdateWithoutCampaignAudiencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  orgId?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.LocationUncheckedUpdateManyWithoutCustomersNestedInput
+  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutCustomerNestedInput
+  customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutCustomerNestedInput
   tipCharges?: Prisma.AppointmentTipChargeUncheckedUpdateManyWithoutCustomerNestedInput
   auth?: Prisma.CustomerAuthUncheckedUpdateOneWithoutCustomerNestedInput
 }
@@ -1205,6 +1336,7 @@ export type CustomerUpdateWithoutUserInput = {
   customerPayments?: Prisma.CustomerAppointmentPaymentUpdateManyWithoutCustomerNestedInput
   tipCharges?: Prisma.AppointmentTipChargeUpdateManyWithoutCustomerNestedInput
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutCustomersNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUpdateManyWithoutCustomerNestedInput
   auth?: Prisma.CustomerAuthUpdateOneWithoutCustomerNestedInput
 }
 
@@ -1222,6 +1354,7 @@ export type CustomerUncheckedUpdateWithoutUserInput = {
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutCustomerNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutCustomerNestedInput
   tipCharges?: Prisma.AppointmentTipChargeUncheckedUpdateManyWithoutCustomerNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedUpdateManyWithoutCustomerNestedInput
   auth?: Prisma.CustomerAuthUncheckedUpdateOneWithoutCustomerNestedInput
 }
 
@@ -1263,6 +1396,7 @@ export type CustomerUpdateWithoutOrganizationInput = {
   customerPayments?: Prisma.CustomerAppointmentPaymentUpdateManyWithoutCustomerNestedInput
   tipCharges?: Prisma.AppointmentTipChargeUpdateManyWithoutCustomerNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutCustomerNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUpdateManyWithoutCustomerNestedInput
   auth?: Prisma.CustomerAuthUpdateOneWithoutCustomerNestedInput
 }
 
@@ -1280,6 +1414,7 @@ export type CustomerUncheckedUpdateWithoutOrganizationInput = {
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutCustomerNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutCustomerNestedInput
   tipCharges?: Prisma.AppointmentTipChargeUncheckedUpdateManyWithoutCustomerNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedUpdateManyWithoutCustomerNestedInput
   auth?: Prisma.CustomerAuthUncheckedUpdateOneWithoutCustomerNestedInput
 }
 
@@ -1309,6 +1444,7 @@ export type CustomerUpdateWithoutLocationInput = {
   tipCharges?: Prisma.AppointmentTipChargeUpdateManyWithoutCustomerNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutCustomerNestedInput
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutCustomersNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUpdateManyWithoutCustomerNestedInput
   auth?: Prisma.CustomerAuthUpdateOneWithoutCustomerNestedInput
 }
 
@@ -1326,6 +1462,7 @@ export type CustomerUncheckedUpdateWithoutLocationInput = {
   appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutCustomerNestedInput
   customerPayments?: Prisma.CustomerAppointmentPaymentUncheckedUpdateManyWithoutCustomerNestedInput
   tipCharges?: Prisma.AppointmentTipChargeUncheckedUpdateManyWithoutCustomerNestedInput
+  campaignAudiences?: Prisma.MarketingCampaignAudienceUncheckedUpdateManyWithoutCustomerNestedInput
   auth?: Prisma.CustomerAuthUncheckedUpdateOneWithoutCustomerNestedInput
 }
 
@@ -1352,6 +1489,7 @@ export type CustomerCountOutputType = {
   appointments: number
   customerPayments: number
   tipCharges: number
+  campaignAudiences: number
 }
 
 export type CustomerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1359,6 +1497,7 @@ export type CustomerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensio
   appointments?: boolean | CustomerCountOutputTypeCountAppointmentsArgs
   customerPayments?: boolean | CustomerCountOutputTypeCountCustomerPaymentsArgs
   tipCharges?: boolean | CustomerCountOutputTypeCountTipChargesArgs
+  campaignAudiences?: boolean | CustomerCountOutputTypeCountCampaignAudiencesArgs
 }
 
 /**
@@ -1399,6 +1538,13 @@ export type CustomerCountOutputTypeCountTipChargesArgs<ExtArgs extends runtime.T
   where?: Prisma.AppointmentTipChargeWhereInput
 }
 
+/**
+ * CustomerCountOutputType without action
+ */
+export type CustomerCountOutputTypeCountCampaignAudiencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MarketingCampaignAudienceWhereInput
+}
+
 
 export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1417,6 +1563,7 @@ export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   tipCharges?: boolean | Prisma.Customer$tipChargesArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  campaignAudiences?: boolean | Prisma.Customer$campaignAudiencesArgs<ExtArgs>
   auth?: boolean | Prisma.Customer$authArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["customer"]>
@@ -1472,6 +1619,7 @@ export type CustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   tipCharges?: boolean | Prisma.Customer$tipChargesArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  campaignAudiences?: boolean | Prisma.Customer$campaignAudiencesArgs<ExtArgs>
   auth?: boolean | Prisma.Customer$authArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1493,6 +1641,7 @@ export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     tipCharges: Prisma.$AppointmentTipChargePayload<ExtArgs>[]
     user: Prisma.$UserPayload<ExtArgs>
     organization: Prisma.$OrganizationPayload<ExtArgs>
+    campaignAudiences: Prisma.$MarketingCampaignAudiencePayload<ExtArgs>[]
     auth: Prisma.$CustomerAuthPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1906,6 +2055,7 @@ export interface Prisma__CustomerClient<T, Null = never, ExtArgs extends runtime
   tipCharges<T extends Prisma.Customer$tipChargesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$tipChargesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AppointmentTipChargePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  campaignAudiences<T extends Prisma.Customer$campaignAudiencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$campaignAudiencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MarketingCampaignAudiencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auth<T extends Prisma.Customer$authArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$authArgs<ExtArgs>>): Prisma.Prisma__CustomerAuthClient<runtime.Types.Result.GetResult<Prisma.$CustomerAuthPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2435,6 +2585,30 @@ export type Customer$tipChargesArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.AppointmentTipChargeScalarFieldEnum | Prisma.AppointmentTipChargeScalarFieldEnum[]
+}
+
+/**
+ * Customer.campaignAudiences
+ */
+export type Customer$campaignAudiencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MarketingCampaignAudience
+   */
+  select?: Prisma.MarketingCampaignAudienceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MarketingCampaignAudience
+   */
+  omit?: Prisma.MarketingCampaignAudienceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MarketingCampaignAudienceInclude<ExtArgs> | null
+  where?: Prisma.MarketingCampaignAudienceWhereInput
+  orderBy?: Prisma.MarketingCampaignAudienceOrderByWithRelationInput | Prisma.MarketingCampaignAudienceOrderByWithRelationInput[]
+  cursor?: Prisma.MarketingCampaignAudienceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MarketingCampaignAudienceScalarFieldEnum | Prisma.MarketingCampaignAudienceScalarFieldEnum[]
 }
 
 /**

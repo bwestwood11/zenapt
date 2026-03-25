@@ -371,6 +371,40 @@ export type EnumInvitationStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumInvitationStatusFilter<$PrismaModel>
 }
 
+export type EnumOrganizationEmailMailFromBehaviorFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrganizationEmailMailFromBehavior | Prisma.EnumOrganizationEmailMailFromBehaviorFieldRefInput<$PrismaModel>
+  in?: $Enums.OrganizationEmailMailFromBehavior[] | Prisma.ListEnumOrganizationEmailMailFromBehaviorFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OrganizationEmailMailFromBehavior[] | Prisma.ListEnumOrganizationEmailMailFromBehaviorFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOrganizationEmailMailFromBehaviorFilter<$PrismaModel> | $Enums.OrganizationEmailMailFromBehavior
+}
+
+export type EnumOrganizationEmailVerificationStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrganizationEmailVerificationStatus | Prisma.EnumOrganizationEmailVerificationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OrganizationEmailVerificationStatus[] | Prisma.ListEnumOrganizationEmailVerificationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OrganizationEmailVerificationStatus[] | Prisma.ListEnumOrganizationEmailVerificationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOrganizationEmailVerificationStatusFilter<$PrismaModel> | $Enums.OrganizationEmailVerificationStatus
+}
+
+export type EnumOrganizationEmailMailFromBehaviorWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrganizationEmailMailFromBehavior | Prisma.EnumOrganizationEmailMailFromBehaviorFieldRefInput<$PrismaModel>
+  in?: $Enums.OrganizationEmailMailFromBehavior[] | Prisma.ListEnumOrganizationEmailMailFromBehaviorFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OrganizationEmailMailFromBehavior[] | Prisma.ListEnumOrganizationEmailMailFromBehaviorFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOrganizationEmailMailFromBehaviorWithAggregatesFilter<$PrismaModel> | $Enums.OrganizationEmailMailFromBehavior
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOrganizationEmailMailFromBehaviorFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOrganizationEmailMailFromBehaviorFilter<$PrismaModel>
+}
+
+export type EnumOrganizationEmailVerificationStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrganizationEmailVerificationStatus | Prisma.EnumOrganizationEmailVerificationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OrganizationEmailVerificationStatus[] | Prisma.ListEnumOrganizationEmailVerificationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OrganizationEmailVerificationStatus[] | Prisma.ListEnumOrganizationEmailVerificationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOrganizationEmailVerificationStatusWithAggregatesFilter<$PrismaModel> | $Enums.OrganizationEmailVerificationStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOrganizationEmailVerificationStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOrganizationEmailVerificationStatusFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -740,6 +774,40 @@ export type NestedEnumInvitationStatusWithAggregatesFilter<$PrismaModel = never>
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumInvitationStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumInvitationStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumOrganizationEmailMailFromBehaviorFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrganizationEmailMailFromBehavior | Prisma.EnumOrganizationEmailMailFromBehaviorFieldRefInput<$PrismaModel>
+  in?: $Enums.OrganizationEmailMailFromBehavior[] | Prisma.ListEnumOrganizationEmailMailFromBehaviorFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OrganizationEmailMailFromBehavior[] | Prisma.ListEnumOrganizationEmailMailFromBehaviorFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOrganizationEmailMailFromBehaviorFilter<$PrismaModel> | $Enums.OrganizationEmailMailFromBehavior
+}
+
+export type NestedEnumOrganizationEmailVerificationStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrganizationEmailVerificationStatus | Prisma.EnumOrganizationEmailVerificationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OrganizationEmailVerificationStatus[] | Prisma.ListEnumOrganizationEmailVerificationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OrganizationEmailVerificationStatus[] | Prisma.ListEnumOrganizationEmailVerificationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOrganizationEmailVerificationStatusFilter<$PrismaModel> | $Enums.OrganizationEmailVerificationStatus
+}
+
+export type NestedEnumOrganizationEmailMailFromBehaviorWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrganizationEmailMailFromBehavior | Prisma.EnumOrganizationEmailMailFromBehaviorFieldRefInput<$PrismaModel>
+  in?: $Enums.OrganizationEmailMailFromBehavior[] | Prisma.ListEnumOrganizationEmailMailFromBehaviorFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OrganizationEmailMailFromBehavior[] | Prisma.ListEnumOrganizationEmailMailFromBehaviorFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOrganizationEmailMailFromBehaviorWithAggregatesFilter<$PrismaModel> | $Enums.OrganizationEmailMailFromBehavior
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOrganizationEmailMailFromBehaviorFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOrganizationEmailMailFromBehaviorFilter<$PrismaModel>
+}
+
+export type NestedEnumOrganizationEmailVerificationStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OrganizationEmailVerificationStatus | Prisma.EnumOrganizationEmailVerificationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OrganizationEmailVerificationStatus[] | Prisma.ListEnumOrganizationEmailVerificationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OrganizationEmailVerificationStatus[] | Prisma.ListEnumOrganizationEmailVerificationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOrganizationEmailVerificationStatusWithAggregatesFilter<$PrismaModel> | $Enums.OrganizationEmailVerificationStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOrganizationEmailVerificationStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOrganizationEmailVerificationStatusFilter<$PrismaModel>
 }
 
 

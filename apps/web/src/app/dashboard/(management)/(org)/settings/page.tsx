@@ -1,6 +1,7 @@
 "use client";
 
 import { BusinessProfile } from "@/components/business-settings/general-settings";
+import { OrganizationEmailSettings } from "@/components/business-settings/email-settings";
 import { MembersTable } from "@/components/business-settings/members-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { parseAsString, useQueryState } from "nuqs";
@@ -17,6 +18,11 @@ const settingsTabs = [
     key: "general",
     label: "General",
     requiredPermissions: ["UPDATE::ORGANIZATION"] as Permission[], // everyone can access
+  },
+  {
+    key: "email",
+    label: "Email",
+    requiredPermissions: ["UPDATE::ORGANIZATION"] as Permission[],
   },
   {
     key: "billing",
@@ -107,6 +113,7 @@ export default function SettingsPage() {
               className="mt-12 space-y-12"
             >
               {tab.key === "general" && <BusinessProfile />}
+              {tab.key === "email" && <OrganizationEmailSettings />}
               {tab.key === "billing" && (
                 <div className="space-y-4">
                   <div>

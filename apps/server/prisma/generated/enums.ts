@@ -98,3 +98,22 @@ export const InvitationStatus = {
 } as const
 
 export type InvitationStatus = (typeof InvitationStatus)[keyof typeof InvitationStatus]
+
+
+export const OrganizationEmailVerificationStatus = {
+  NOT_STARTED: 'NOT_STARTED',
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED',
+  TEMPORARY_FAILURE: 'TEMPORARY_FAILURE'
+} as const
+
+export type OrganizationEmailVerificationStatus = (typeof OrganizationEmailVerificationStatus)[keyof typeof OrganizationEmailVerificationStatus]
+
+
+export const OrganizationEmailMailFromBehavior = {
+  USE_DEFAULT_VALUE: 'USE_DEFAULT_VALUE',
+  REJECT_MESSAGE: 'REJECT_MESSAGE'
+} as const
+
+export type OrganizationEmailMailFromBehavior = (typeof OrganizationEmailMailFromBehavior)[keyof typeof OrganizationEmailMailFromBehavior]

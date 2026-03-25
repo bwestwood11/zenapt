@@ -62,9 +62,9 @@ export default function InvitePage() {
     );
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    if (!z.string().email().safeParse(email).success) {
+    if (!z.email().safeParse(email).success) {
       setMessage("Invalid Email Use real email");
       return;
     }
@@ -79,7 +79,6 @@ export default function InvitePage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
-      {/* Sidebar with demo requests */}
       <aside className="w-full md:w-80 border-r border-border bg-card/50 overflow-y-auto p-4">
         <h2 className="text-lg font-semibold mb-4 text-foreground flex items-center gap-2">
           <Mail className="w-4 h-4 text-primary" /> Demo Requests
@@ -135,7 +134,6 @@ export default function InvitePage() {
         )}
       </aside>
 
-      {/* Main Invite Form */}
       <main className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-md">
           <Card className="shadow-lg border-0 bg-card">

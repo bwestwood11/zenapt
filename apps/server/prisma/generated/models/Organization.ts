@@ -229,8 +229,13 @@ export type OrganizationWhereInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationListRelationFilter
   ServiceTerms?: Prisma.ServiceTermsListRelationFilter
   ServiceGroup?: Prisma.ServiceGroupListRelationFilter
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateListRelationFilter
+  marketingContactLists?: Prisma.MarketingContactListListRelationFilter
+  marketingCampaigns?: Prisma.MarketingCampaignListRelationFilter
   customers?: Prisma.CustomerListRelationFilter
   customerAuths?: Prisma.CustomerAuthListRelationFilter
+  emailDomains?: Prisma.OrganizationEmailDomainListRelationFilter
+  senderEmails?: Prisma.OrganizationSenderEmailListRelationFilter
 }
 
 export type OrganizationOrderByWithRelationInput = {
@@ -252,8 +257,13 @@ export type OrganizationOrderByWithRelationInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationOrderByRelationAggregateInput
   ServiceTerms?: Prisma.ServiceTermsOrderByRelationAggregateInput
   ServiceGroup?: Prisma.ServiceGroupOrderByRelationAggregateInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateOrderByRelationAggregateInput
+  marketingContactLists?: Prisma.MarketingContactListOrderByRelationAggregateInput
+  marketingCampaigns?: Prisma.MarketingCampaignOrderByRelationAggregateInput
   customers?: Prisma.CustomerOrderByRelationAggregateInput
   customerAuths?: Prisma.CustomerAuthOrderByRelationAggregateInput
+  emailDomains?: Prisma.OrganizationEmailDomainOrderByRelationAggregateInput
+  senderEmails?: Prisma.OrganizationSenderEmailOrderByRelationAggregateInput
 }
 
 export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -278,8 +288,13 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   OrganizationInvitation?: Prisma.OrganizationInvitationListRelationFilter
   ServiceTerms?: Prisma.ServiceTermsListRelationFilter
   ServiceGroup?: Prisma.ServiceGroupListRelationFilter
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateListRelationFilter
+  marketingContactLists?: Prisma.MarketingContactListListRelationFilter
+  marketingCampaigns?: Prisma.MarketingCampaignListRelationFilter
   customers?: Prisma.CustomerListRelationFilter
   customerAuths?: Prisma.CustomerAuthListRelationFilter
+  emailDomains?: Prisma.OrganizationEmailDomainListRelationFilter
+  senderEmails?: Prisma.OrganizationSenderEmailListRelationFilter
 }, "id" | "stripeAccountId" | "slug">
 
 export type OrganizationOrderByWithAggregationInput = {
@@ -333,8 +348,13 @@ export type OrganizationCreateInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateInput = {
@@ -356,8 +376,13 @@ export type OrganizationUncheckedCreateInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUpdateInput = {
@@ -379,8 +404,13 @@ export type OrganizationUpdateInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateInput = {
@@ -402,8 +432,13 @@ export type OrganizationUncheckedUpdateInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateManyInput = {
@@ -636,6 +671,76 @@ export type OrganizationUpdateOneRequiredWithoutOrganizationInvitationNestedInpu
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutOrganizationInvitationInput, Prisma.OrganizationUpdateWithoutOrganizationInvitationInput>, Prisma.OrganizationUncheckedUpdateWithoutOrganizationInvitationInput>
 }
 
+export type OrganizationCreateNestedOneWithoutEmailDomainsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmailDomainsInput, Prisma.OrganizationUncheckedCreateWithoutEmailDomainsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmailDomainsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutEmailDomainsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmailDomainsInput, Prisma.OrganizationUncheckedCreateWithoutEmailDomainsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmailDomainsInput
+  upsert?: Prisma.OrganizationUpsertWithoutEmailDomainsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutEmailDomainsInput, Prisma.OrganizationUpdateWithoutEmailDomainsInput>, Prisma.OrganizationUncheckedUpdateWithoutEmailDomainsInput>
+}
+
+export type OrganizationCreateNestedOneWithoutSenderEmailsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutSenderEmailsInput, Prisma.OrganizationUncheckedCreateWithoutSenderEmailsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutSenderEmailsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutSenderEmailsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutSenderEmailsInput, Prisma.OrganizationUncheckedCreateWithoutSenderEmailsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutSenderEmailsInput
+  upsert?: Prisma.OrganizationUpsertWithoutSenderEmailsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutSenderEmailsInput, Prisma.OrganizationUpdateWithoutSenderEmailsInput>, Prisma.OrganizationUncheckedUpdateWithoutSenderEmailsInput>
+}
+
+export type OrganizationCreateNestedOneWithoutMarketingEmailTemplatesInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutMarketingEmailTemplatesInput, Prisma.OrganizationUncheckedCreateWithoutMarketingEmailTemplatesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutMarketingEmailTemplatesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutMarketingEmailTemplatesNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutMarketingEmailTemplatesInput, Prisma.OrganizationUncheckedCreateWithoutMarketingEmailTemplatesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutMarketingEmailTemplatesInput
+  upsert?: Prisma.OrganizationUpsertWithoutMarketingEmailTemplatesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutMarketingEmailTemplatesInput, Prisma.OrganizationUpdateWithoutMarketingEmailTemplatesInput>, Prisma.OrganizationUncheckedUpdateWithoutMarketingEmailTemplatesInput>
+}
+
+export type OrganizationCreateNestedOneWithoutMarketingContactListsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutMarketingContactListsInput, Prisma.OrganizationUncheckedCreateWithoutMarketingContactListsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutMarketingContactListsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutMarketingContactListsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutMarketingContactListsInput, Prisma.OrganizationUncheckedCreateWithoutMarketingContactListsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutMarketingContactListsInput
+  upsert?: Prisma.OrganizationUpsertWithoutMarketingContactListsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutMarketingContactListsInput, Prisma.OrganizationUpdateWithoutMarketingContactListsInput>, Prisma.OrganizationUncheckedUpdateWithoutMarketingContactListsInput>
+}
+
+export type OrganizationCreateNestedOneWithoutMarketingCampaignsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutMarketingCampaignsInput, Prisma.OrganizationUncheckedCreateWithoutMarketingCampaignsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutMarketingCampaignsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutMarketingCampaignsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutMarketingCampaignsInput, Prisma.OrganizationUncheckedCreateWithoutMarketingCampaignsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutMarketingCampaignsInput
+  upsert?: Prisma.OrganizationUpsertWithoutMarketingCampaignsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutMarketingCampaignsInput, Prisma.OrganizationUpdateWithoutMarketingCampaignsInput>, Prisma.OrganizationUncheckedUpdateWithoutMarketingCampaignsInput>
+}
+
 export type OrganizationCreateWithoutPromoCodesInput = {
   id?: string
   name: string
@@ -654,8 +759,13 @@ export type OrganizationCreateWithoutPromoCodesInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutPromoCodesInput = {
@@ -676,8 +786,13 @@ export type OrganizationUncheckedCreateWithoutPromoCodesInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutPromoCodesInput = {
@@ -714,8 +829,13 @@ export type OrganizationUpdateWithoutPromoCodesInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutPromoCodesInput = {
@@ -736,8 +856,13 @@ export type OrganizationUncheckedUpdateWithoutPromoCodesInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutSubscriptionInput = {
@@ -758,8 +883,13 @@ export type OrganizationCreateWithoutSubscriptionInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutSubscriptionInput = {
@@ -780,8 +910,13 @@ export type OrganizationUncheckedCreateWithoutSubscriptionInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutSubscriptionInput = {
@@ -818,8 +953,13 @@ export type OrganizationUpdateWithoutSubscriptionInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutSubscriptionInput = {
@@ -840,8 +980,13 @@ export type OrganizationUncheckedUpdateWithoutSubscriptionInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutManagementInput = {
@@ -862,8 +1007,13 @@ export type OrganizationCreateWithoutManagementInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutManagementInput = {
@@ -884,8 +1034,13 @@ export type OrganizationUncheckedCreateWithoutManagementInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutManagementInput = {
@@ -922,8 +1077,13 @@ export type OrganizationUpdateWithoutManagementInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutManagementInput = {
@@ -944,8 +1104,13 @@ export type OrganizationUncheckedUpdateWithoutManagementInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutLocationsInput = {
@@ -966,8 +1131,13 @@ export type OrganizationCreateWithoutLocationsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutLocationsInput = {
@@ -988,8 +1158,13 @@ export type OrganizationUncheckedCreateWithoutLocationsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutLocationsInput = {
@@ -1026,8 +1201,13 @@ export type OrganizationUpdateWithoutLocationsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutLocationsInput = {
@@ -1048,8 +1228,13 @@ export type OrganizationUncheckedUpdateWithoutLocationsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutServiceTermsInput = {
@@ -1070,8 +1255,13 @@ export type OrganizationCreateWithoutServiceTermsInput = {
   PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutServiceTermsInput = {
@@ -1092,8 +1282,13 @@ export type OrganizationUncheckedCreateWithoutServiceTermsInput = {
   PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutServiceTermsInput = {
@@ -1130,8 +1325,13 @@ export type OrganizationUpdateWithoutServiceTermsInput = {
   PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutServiceTermsInput = {
@@ -1152,8 +1352,13 @@ export type OrganizationUncheckedUpdateWithoutServiceTermsInput = {
   PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutServiceGroupInput = {
@@ -1174,8 +1379,13 @@ export type OrganizationCreateWithoutServiceGroupInput = {
   PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutServiceGroupInput = {
@@ -1196,8 +1406,13 @@ export type OrganizationUncheckedCreateWithoutServiceGroupInput = {
   PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutServiceGroupInput = {
@@ -1234,8 +1449,13 @@ export type OrganizationUpdateWithoutServiceGroupInput = {
   PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutServiceGroupInput = {
@@ -1256,8 +1476,13 @@ export type OrganizationUncheckedUpdateWithoutServiceGroupInput = {
   PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutCustomersInput = {
@@ -1279,7 +1504,12 @@ export type OrganizationCreateWithoutCustomersInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutCustomersInput = {
@@ -1301,7 +1531,12 @@ export type OrganizationUncheckedCreateWithoutCustomersInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutCustomersInput = {
@@ -1339,7 +1574,12 @@ export type OrganizationUpdateWithoutCustomersInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutCustomersInput = {
@@ -1361,7 +1601,12 @@ export type OrganizationUncheckedUpdateWithoutCustomersInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutCustomerAuthsInput = {
@@ -1383,7 +1628,12 @@ export type OrganizationCreateWithoutCustomerAuthsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutCustomerAuthsInput = {
@@ -1405,7 +1655,12 @@ export type OrganizationUncheckedCreateWithoutCustomerAuthsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutCustomerAuthsInput = {
@@ -1443,7 +1698,12 @@ export type OrganizationUpdateWithoutCustomerAuthsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutCustomerAuthsInput = {
@@ -1465,7 +1725,12 @@ export type OrganizationUncheckedUpdateWithoutCustomerAuthsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutActivityLogsInput = {
@@ -1486,8 +1751,13 @@ export type OrganizationCreateWithoutActivityLogsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutActivityLogsInput = {
@@ -1508,8 +1778,13 @@ export type OrganizationUncheckedCreateWithoutActivityLogsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutActivityLogsInput = {
@@ -1546,8 +1821,13 @@ export type OrganizationUpdateWithoutActivityLogsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutActivityLogsInput = {
@@ -1568,8 +1848,13 @@ export type OrganizationUncheckedUpdateWithoutActivityLogsInput = {
   OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationCreateWithoutOrganizationInvitationInput = {
@@ -1590,8 +1875,13 @@ export type OrganizationCreateWithoutOrganizationInvitationInput = {
   PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationUncheckedCreateWithoutOrganizationInvitationInput = {
@@ -1612,8 +1902,13 @@ export type OrganizationUncheckedCreateWithoutOrganizationInvitationInput = {
   PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedCreateNestedManyWithoutOrganizationInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
   customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedCreateNestedManyWithoutOrganizationInput
 }
 
 export type OrganizationCreateOrConnectWithoutOrganizationInvitationInput = {
@@ -1650,8 +1945,13 @@ export type OrganizationUpdateWithoutOrganizationInvitationInput = {
   PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUpdateManyWithoutOrganizationNestedInput
 }
 
 export type OrganizationUncheckedUpdateWithoutOrganizationInvitationInput = {
@@ -1672,8 +1972,633 @@ export type OrganizationUncheckedUpdateWithoutOrganizationInvitationInput = {
   PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
   ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedUpdateManyWithoutOrganizationNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
   customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutEmailDomainsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  stripeAccountId?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutEmailDomainsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  stripeAccountId?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationUncheckedCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutEmailDomainsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmailDomainsInput, Prisma.OrganizationUncheckedCreateWithoutEmailDomainsInput>
+}
+
+export type OrganizationUpsertWithoutEmailDomainsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmailDomainsInput, Prisma.OrganizationUncheckedUpdateWithoutEmailDomainsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmailDomainsInput, Prisma.OrganizationUncheckedCreateWithoutEmailDomainsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutEmailDomainsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmailDomainsInput, Prisma.OrganizationUncheckedUpdateWithoutEmailDomainsInput>
+}
+
+export type OrganizationUpdateWithoutEmailDomainsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutEmailDomainsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutSenderEmailsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  stripeAccountId?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutSenderEmailsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  stripeAccountId?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationUncheckedCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutSenderEmailsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutSenderEmailsInput, Prisma.OrganizationUncheckedCreateWithoutSenderEmailsInput>
+}
+
+export type OrganizationUpsertWithoutSenderEmailsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutSenderEmailsInput, Prisma.OrganizationUncheckedUpdateWithoutSenderEmailsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutSenderEmailsInput, Prisma.OrganizationUncheckedCreateWithoutSenderEmailsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutSenderEmailsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutSenderEmailsInput, Prisma.OrganizationUncheckedUpdateWithoutSenderEmailsInput>
+}
+
+export type OrganizationUpdateWithoutSenderEmailsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutSenderEmailsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutMarketingEmailTemplatesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  stripeAccountId?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutMarketingEmailTemplatesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  stripeAccountId?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationUncheckedCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutMarketingEmailTemplatesInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutMarketingEmailTemplatesInput, Prisma.OrganizationUncheckedCreateWithoutMarketingEmailTemplatesInput>
+}
+
+export type OrganizationUpsertWithoutMarketingEmailTemplatesInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutMarketingEmailTemplatesInput, Prisma.OrganizationUncheckedUpdateWithoutMarketingEmailTemplatesInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutMarketingEmailTemplatesInput, Prisma.OrganizationUncheckedCreateWithoutMarketingEmailTemplatesInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutMarketingEmailTemplatesInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutMarketingEmailTemplatesInput, Prisma.OrganizationUncheckedUpdateWithoutMarketingEmailTemplatesInput>
+}
+
+export type OrganizationUpdateWithoutMarketingEmailTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutMarketingEmailTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutMarketingContactListsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  stripeAccountId?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutMarketingContactListsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  stripeAccountId?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationUncheckedCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutMarketingContactListsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutMarketingContactListsInput, Prisma.OrganizationUncheckedCreateWithoutMarketingContactListsInput>
+}
+
+export type OrganizationUpsertWithoutMarketingContactListsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutMarketingContactListsInput, Prisma.OrganizationUncheckedUpdateWithoutMarketingContactListsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutMarketingContactListsInput, Prisma.OrganizationUncheckedCreateWithoutMarketingContactListsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutMarketingContactListsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutMarketingContactListsInput, Prisma.OrganizationUncheckedUpdateWithoutMarketingContactListsInput>
+}
+
+export type OrganizationUpdateWithoutMarketingContactListsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutMarketingContactListsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingCampaigns?: Prisma.MarketingCampaignUncheckedUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutMarketingCampaignsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  stripeAccountId?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutMarketingCampaignsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  companySize?: string | null
+  businessWebsite?: string | null
+  logo?: string | null
+  stripeAccountId?: string | null
+  slug: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  management?: Prisma.ManagementMembershipUncheckedCreateNestedManyWithoutOrganizationInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrganizationInput
+  locations?: Prisma.LocationUncheckedCreateNestedManyWithoutOrganizationInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOrganizationInput
+  PromoCodes?: Prisma.PromoCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedCreateNestedManyWithoutOrganizationInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedCreateNestedManyWithoutOrganizationInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedCreateNestedManyWithoutOrganizationInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+  customerAuths?: Prisma.CustomerAuthUncheckedCreateNestedManyWithoutOrganizationInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedCreateNestedManyWithoutOrganizationInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutMarketingCampaignsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutMarketingCampaignsInput, Prisma.OrganizationUncheckedCreateWithoutMarketingCampaignsInput>
+}
+
+export type OrganizationUpsertWithoutMarketingCampaignsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutMarketingCampaignsInput, Prisma.OrganizationUncheckedUpdateWithoutMarketingCampaignsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutMarketingCampaignsInput, Prisma.OrganizationUncheckedCreateWithoutMarketingCampaignsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutMarketingCampaignsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutMarketingCampaignsInput, Prisma.OrganizationUncheckedUpdateWithoutMarketingCampaignsInput>
+}
+
+export type OrganizationUpdateWithoutMarketingCampaignsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutMarketingCampaignsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  companySize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessWebsite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  management?: Prisma.ManagementMembershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrganizationNestedInput
+  locations?: Prisma.LocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  PromoCodes?: Prisma.PromoCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  OrganizationInvitation?: Prisma.OrganizationInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceTerms?: Prisma.ServiceTermsUncheckedUpdateManyWithoutOrganizationNestedInput
+  ServiceGroup?: Prisma.ServiceGroupUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingEmailTemplates?: Prisma.MarketingEmailTemplateUncheckedUpdateManyWithoutOrganizationNestedInput
+  marketingContactLists?: Prisma.MarketingContactListUncheckedUpdateManyWithoutOrganizationNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+  customerAuths?: Prisma.CustomerAuthUncheckedUpdateManyWithoutOrganizationNestedInput
+  emailDomains?: Prisma.OrganizationEmailDomainUncheckedUpdateManyWithoutOrganizationNestedInput
+  senderEmails?: Prisma.OrganizationSenderEmailUncheckedUpdateManyWithoutOrganizationNestedInput
 }
 
 
@@ -1689,8 +2614,13 @@ export type OrganizationCountOutputType = {
   OrganizationInvitation: number
   ServiceTerms: number
   ServiceGroup: number
+  marketingEmailTemplates: number
+  marketingContactLists: number
+  marketingCampaigns: number
   customers: number
   customerAuths: number
+  emailDomains: number
+  senderEmails: number
 }
 
 export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1701,8 +2631,13 @@ export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Exte
   OrganizationInvitation?: boolean | OrganizationCountOutputTypeCountOrganizationInvitationArgs
   ServiceTerms?: boolean | OrganizationCountOutputTypeCountServiceTermsArgs
   ServiceGroup?: boolean | OrganizationCountOutputTypeCountServiceGroupArgs
+  marketingEmailTemplates?: boolean | OrganizationCountOutputTypeCountMarketingEmailTemplatesArgs
+  marketingContactLists?: boolean | OrganizationCountOutputTypeCountMarketingContactListsArgs
+  marketingCampaigns?: boolean | OrganizationCountOutputTypeCountMarketingCampaignsArgs
   customers?: boolean | OrganizationCountOutputTypeCountCustomersArgs
   customerAuths?: boolean | OrganizationCountOutputTypeCountCustomerAuthsArgs
+  emailDomains?: boolean | OrganizationCountOutputTypeCountEmailDomainsArgs
+  senderEmails?: boolean | OrganizationCountOutputTypeCountSenderEmailsArgs
 }
 
 /**
@@ -1767,6 +2702,27 @@ export type OrganizationCountOutputTypeCountServiceGroupArgs<ExtArgs extends run
 /**
  * OrganizationCountOutputType without action
  */
+export type OrganizationCountOutputTypeCountMarketingEmailTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MarketingEmailTemplateWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountMarketingContactListsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MarketingContactListWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountMarketingCampaignsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MarketingCampaignWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
 export type OrganizationCountOutputTypeCountCustomersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.CustomerWhereInput
 }
@@ -1776,6 +2732,20 @@ export type OrganizationCountOutputTypeCountCustomersArgs<ExtArgs extends runtim
  */
 export type OrganizationCountOutputTypeCountCustomerAuthsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.CustomerAuthWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountEmailDomainsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrganizationEmailDomainWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountSenderEmailsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrganizationSenderEmailWhereInput
 }
 
 
@@ -1798,8 +2768,13 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   OrganizationInvitation?: boolean | Prisma.Organization$OrganizationInvitationArgs<ExtArgs>
   ServiceTerms?: boolean | Prisma.Organization$ServiceTermsArgs<ExtArgs>
   ServiceGroup?: boolean | Prisma.Organization$ServiceGroupArgs<ExtArgs>
+  marketingEmailTemplates?: boolean | Prisma.Organization$marketingEmailTemplatesArgs<ExtArgs>
+  marketingContactLists?: boolean | Prisma.Organization$marketingContactListsArgs<ExtArgs>
+  marketingCampaigns?: boolean | Prisma.Organization$marketingCampaignsArgs<ExtArgs>
   customers?: boolean | Prisma.Organization$customersArgs<ExtArgs>
   customerAuths?: boolean | Prisma.Organization$customerAuthsArgs<ExtArgs>
+  emailDomains?: boolean | Prisma.Organization$emailDomainsArgs<ExtArgs>
+  senderEmails?: boolean | Prisma.Organization$senderEmailsArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["organization"]>
 
@@ -1852,8 +2827,13 @@ export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   OrganizationInvitation?: boolean | Prisma.Organization$OrganizationInvitationArgs<ExtArgs>
   ServiceTerms?: boolean | Prisma.Organization$ServiceTermsArgs<ExtArgs>
   ServiceGroup?: boolean | Prisma.Organization$ServiceGroupArgs<ExtArgs>
+  marketingEmailTemplates?: boolean | Prisma.Organization$marketingEmailTemplatesArgs<ExtArgs>
+  marketingContactLists?: boolean | Prisma.Organization$marketingContactListsArgs<ExtArgs>
+  marketingCampaigns?: boolean | Prisma.Organization$marketingCampaignsArgs<ExtArgs>
   customers?: boolean | Prisma.Organization$customersArgs<ExtArgs>
   customerAuths?: boolean | Prisma.Organization$customerAuthsArgs<ExtArgs>
+  emailDomains?: boolean | Prisma.Organization$emailDomainsArgs<ExtArgs>
+  senderEmails?: boolean | Prisma.Organization$senderEmailsArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1870,8 +2850,13 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     OrganizationInvitation: Prisma.$OrganizationInvitationPayload<ExtArgs>[]
     ServiceTerms: Prisma.$ServiceTermsPayload<ExtArgs>[]
     ServiceGroup: Prisma.$ServiceGroupPayload<ExtArgs>[]
+    marketingEmailTemplates: Prisma.$MarketingEmailTemplatePayload<ExtArgs>[]
+    marketingContactLists: Prisma.$MarketingContactListPayload<ExtArgs>[]
+    marketingCampaigns: Prisma.$MarketingCampaignPayload<ExtArgs>[]
     customers: Prisma.$CustomerPayload<ExtArgs>[]
     customerAuths: Prisma.$CustomerAuthPayload<ExtArgs>[]
+    emailDomains: Prisma.$OrganizationEmailDomainPayload<ExtArgs>[]
+    senderEmails: Prisma.$OrganizationSenderEmailPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2286,8 +3271,13 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   OrganizationInvitation<T extends Prisma.Organization$OrganizationInvitationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$OrganizationInvitationArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ServiceTerms<T extends Prisma.Organization$ServiceTermsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$ServiceTermsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceTermsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ServiceGroup<T extends Prisma.Organization$ServiceGroupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$ServiceGroupArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  marketingEmailTemplates<T extends Prisma.Organization$marketingEmailTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$marketingEmailTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MarketingEmailTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  marketingContactLists<T extends Prisma.Organization$marketingContactListsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$marketingContactListsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MarketingContactListPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  marketingCampaigns<T extends Prisma.Organization$marketingCampaignsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$marketingCampaignsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MarketingCampaignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customers<T extends Prisma.Organization$customersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$customersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customerAuths<T extends Prisma.Organization$customerAuthsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$customerAuthsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerAuthPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  emailDomains<T extends Prisma.Organization$emailDomainsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$emailDomainsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationEmailDomainPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  senderEmails<T extends Prisma.Organization$senderEmailsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$senderEmailsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationSenderEmailPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2902,6 +3892,78 @@ export type Organization$ServiceGroupArgs<ExtArgs extends runtime.Types.Extensio
 }
 
 /**
+ * Organization.marketingEmailTemplates
+ */
+export type Organization$marketingEmailTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MarketingEmailTemplate
+   */
+  select?: Prisma.MarketingEmailTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MarketingEmailTemplate
+   */
+  omit?: Prisma.MarketingEmailTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MarketingEmailTemplateInclude<ExtArgs> | null
+  where?: Prisma.MarketingEmailTemplateWhereInput
+  orderBy?: Prisma.MarketingEmailTemplateOrderByWithRelationInput | Prisma.MarketingEmailTemplateOrderByWithRelationInput[]
+  cursor?: Prisma.MarketingEmailTemplateWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MarketingEmailTemplateScalarFieldEnum | Prisma.MarketingEmailTemplateScalarFieldEnum[]
+}
+
+/**
+ * Organization.marketingContactLists
+ */
+export type Organization$marketingContactListsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MarketingContactList
+   */
+  select?: Prisma.MarketingContactListSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MarketingContactList
+   */
+  omit?: Prisma.MarketingContactListOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MarketingContactListInclude<ExtArgs> | null
+  where?: Prisma.MarketingContactListWhereInput
+  orderBy?: Prisma.MarketingContactListOrderByWithRelationInput | Prisma.MarketingContactListOrderByWithRelationInput[]
+  cursor?: Prisma.MarketingContactListWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MarketingContactListScalarFieldEnum | Prisma.MarketingContactListScalarFieldEnum[]
+}
+
+/**
+ * Organization.marketingCampaigns
+ */
+export type Organization$marketingCampaignsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MarketingCampaign
+   */
+  select?: Prisma.MarketingCampaignSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MarketingCampaign
+   */
+  omit?: Prisma.MarketingCampaignOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MarketingCampaignInclude<ExtArgs> | null
+  where?: Prisma.MarketingCampaignWhereInput
+  orderBy?: Prisma.MarketingCampaignOrderByWithRelationInput | Prisma.MarketingCampaignOrderByWithRelationInput[]
+  cursor?: Prisma.MarketingCampaignWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MarketingCampaignScalarFieldEnum | Prisma.MarketingCampaignScalarFieldEnum[]
+}
+
+/**
  * Organization.customers
  */
 export type Organization$customersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2947,6 +4009,54 @@ export type Organization$customerAuthsArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   distinct?: Prisma.CustomerAuthScalarFieldEnum | Prisma.CustomerAuthScalarFieldEnum[]
+}
+
+/**
+ * Organization.emailDomains
+ */
+export type Organization$emailDomainsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrganizationEmailDomain
+   */
+  select?: Prisma.OrganizationEmailDomainSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrganizationEmailDomain
+   */
+  omit?: Prisma.OrganizationEmailDomainOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrganizationEmailDomainInclude<ExtArgs> | null
+  where?: Prisma.OrganizationEmailDomainWhereInput
+  orderBy?: Prisma.OrganizationEmailDomainOrderByWithRelationInput | Prisma.OrganizationEmailDomainOrderByWithRelationInput[]
+  cursor?: Prisma.OrganizationEmailDomainWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrganizationEmailDomainScalarFieldEnum | Prisma.OrganizationEmailDomainScalarFieldEnum[]
+}
+
+/**
+ * Organization.senderEmails
+ */
+export type Organization$senderEmailsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrganizationSenderEmail
+   */
+  select?: Prisma.OrganizationSenderEmailSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrganizationSenderEmail
+   */
+  omit?: Prisma.OrganizationSenderEmailOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrganizationSenderEmailInclude<ExtArgs> | null
+  where?: Prisma.OrganizationSenderEmailWhereInput
+  orderBy?: Prisma.OrganizationSenderEmailOrderByWithRelationInput | Prisma.OrganizationSenderEmailOrderByWithRelationInput[]
+  cursor?: Prisma.OrganizationSenderEmailWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrganizationSenderEmailScalarFieldEnum | Prisma.OrganizationSenderEmailScalarFieldEnum[]
 }
 
 /**
