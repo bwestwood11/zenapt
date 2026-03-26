@@ -1,7 +1,13 @@
 "use client";
 
+import { ReportDurationFilter } from "@/components/reports/report-duration-filter";
+import {
+  getReportDurationLabel,
+  REPORT_QUERY_OPTIONS,
+} from "@/components/reports/reporting";
 import { ReportsEmptyState, ReportsPermissionDeniedState, ReportsLoadingState } from "@/components/reports/reports-state";
 import { ReportsShell } from "@/components/reports/reports-shell";
+import { useReportDuration } from "@/components/reports/use-report-duration";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -21,10 +27,12 @@ const formatCurrency = (amountInCents: number) => currencyFormatter.format(amoun
 
 export default function CustomersReportPage() {
   const { checkPermission, isLoadingPermissions } = usePermissions();
+  const { duration, setDuration } = useReportDuration();
   const hasAccess = checkPermission(["READ::ORGANIZATION"]);
   const { data, isLoading } = useQuery(
-    trpc.organization.getCustomersReport.queryOptions(undefined, {
+    trpc.organization.getCustomersReport.queryOptions({ duration }, {
       enabled: hasAccess,
+      ...REPORT_QUERY_OPTIONS,
     }),
   );
 
@@ -41,6 +49,7 @@ export default function CustomersReportPage() {
   }
 
   const { summary, mostLoyalCustomer, customers } = data;
+  const durationLabel = getReportDurationLabel(duration);
   const metricCards = [
     {
       title: "Customers",
@@ -71,9 +80,10 @@ export default function CustomersReportPage() {
   return (
     <ReportsShell
       title="Customers"
-      description="Understand customer loyalty, pending balances, and who keeps coming back."
+      description={`Understand customer loyalty, pending balances, and who keeps coming back during ${durationLabel.toLowerCase()}.`}
       breadcrumbHref="/dashboard/reports/customers"
       breadcrumbLabel="Customers"
+      actions={<ReportDurationFilter value={duration} onChange={setDuration} />}
     >
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {metricCards.map((card) => {
@@ -100,7 +110,7 @@ export default function CustomersReportPage() {
         <CardHeader>
           <CardTitle>Most loyal customer</CardTitle>
           <CardDescription>
-            The customer with the strongest repeat history right now.
+            The customer with the strongest repeat history during {durationLabel.toLowerCase()}.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -136,7 +146,7 @@ export default function CustomersReportPage() {
         <CardHeader>
           <CardTitle>Customer list</CardTitle>
           <CardDescription>
-            Customers ranked by appointment activity and spending.
+            Customers ranked by appointment activity and spending in {durationLabel.toLowerCase()}.
           </CardDescription>
         </CardHeader>
         <CardContent>

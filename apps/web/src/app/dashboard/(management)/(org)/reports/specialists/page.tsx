@@ -1,8 +1,14 @@
 "use client";
 
 import { ReportBarChart } from "@/components/reports/report-bar-chart";
+import { ReportDurationFilter } from "@/components/reports/report-duration-filter";
+import {
+  getReportDurationLabel,
+  REPORT_QUERY_OPTIONS,
+} from "@/components/reports/reporting";
 import { ReportsEmptyState, ReportsPermissionDeniedState, ReportsLoadingState } from "@/components/reports/reports-state";
 import { ReportsShell } from "@/components/reports/reports-shell";
+import { useReportDuration } from "@/components/reports/use-report-duration";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -22,10 +28,12 @@ const formatCurrency = (amountInCents: number) => currencyFormatter.format(amoun
 
 export default function SpecialistsReportPage() {
   const { checkPermission, isLoadingPermissions } = usePermissions();
+  const { duration, setDuration } = useReportDuration();
   const hasAccess = checkPermission(["READ::ORGANIZATION"]);
   const { data, isLoading } = useQuery(
-    trpc.organization.getSpecialistsReport.queryOptions(undefined, {
+    trpc.organization.getSpecialistsReport.queryOptions({ duration }, {
       enabled: hasAccess,
+      ...REPORT_QUERY_OPTIONS,
     }),
   );
 
@@ -42,6 +50,7 @@ export default function SpecialistsReportPage() {
   }
 
   const { summary, chartData, specialists } = data;
+  const durationLabel = getReportDurationLabel(duration);
   const metricCards = [
     {
       title: "Specialists",
@@ -74,9 +83,10 @@ export default function SpecialistsReportPage() {
   return (
     <ReportsShell
       title="Specialists"
-      description="See top-performing specialists by attributed revenue and appointment volume."
+      description={`See top-performing specialists by attributed revenue and appointment volume for ${durationLabel.toLowerCase()}.`}
       breadcrumbHref="/dashboard/reports/specialists"
       breadcrumbLabel="Specialists"
+      actions={<ReportDurationFilter value={duration} onChange={setDuration} />}
     >
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {metricCards.map((card) => {
@@ -103,7 +113,7 @@ export default function SpecialistsReportPage() {
         <CardHeader>
           <CardTitle>Top specialists chart</CardTitle>
           <CardDescription>
-            Specialists ranked by attributed revenue.
+            Specialists ranked by attributed revenue during {durationLabel.toLowerCase()}.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -130,7 +140,7 @@ export default function SpecialistsReportPage() {
         <CardHeader>
           <CardTitle>Specialist ranking</CardTitle>
           <CardDescription>
-            Compare specialists by revenue, appointments, and recency.
+            Compare specialists by revenue, appointments, and recency for {durationLabel.toLowerCase()}.
           </CardDescription>
         </CardHeader>
         <CardContent>

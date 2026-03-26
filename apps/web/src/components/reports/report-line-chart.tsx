@@ -2,53 +2,42 @@
 
 import { cn } from "@/lib/utils";
 import {
-  Bar,
-  BarChart,
-  Cell,
   CartesianGrid,
+  Line,
+  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 
-const BAR_COLORS = [
-  "#8b5cf6",
-  "#06b6d4",
-  "#10b981",
-  "#f59e0b",
-  "#ef4444",
-  "#6366f1",
-];
-
-type ReportBarChartDatum = {
+type ReportLineChartDatum = {
   label: string;
   value: number;
   secondaryValue?: string;
 };
 
-type ReportBarChartProps = Readonly<{
-  data: ReportBarChartDatum[];
+type ReportLineChartProps = Readonly<{
+  data: ReportLineChartDatum[];
   valueFormatter?: (value: number) => string;
   axisValueFormatter?: (value: number) => string;
   tooltipLabel?: string;
-  barClassName?: string;
   className?: string;
   showSummary?: boolean;
 }>;
 
-type ReportBarChartTooltipProps = Readonly<{
+type ReportLineChartTooltipProps = Readonly<{
   active?: boolean;
   payload?: Array<{
     value?: number | string;
-    payload: ReportBarChartDatum;
+    payload: ReportLineChartDatum;
   }>;
   label?: string;
   tooltipLabel: string;
   valueFormatter: (value: number) => string;
 }>;
 
-function ReportBarChartTooltip(props: ReportBarChartTooltipProps) {
+function ReportLineChartTooltip(props: ReportLineChartTooltipProps) {
   const { active, payload, label, tooltipLabel, valueFormatter } = props;
 
   if (!active || !payload?.length) {
@@ -76,7 +65,7 @@ function ReportBarChartTooltip(props: ReportBarChartTooltipProps) {
   );
 }
 
-export function ReportBarChart(props: ReportBarChartProps) {
+export function ReportLineChart(props: ReportLineChartProps) {
   const {
     data,
     valueFormatter = (value) => value.toLocaleString(),
@@ -86,18 +75,11 @@ export function ReportBarChart(props: ReportBarChartProps) {
     showSummary = true,
   } = props;
 
-  let barFill = "hsl(var(--primary))";
-  if (props.barClassName?.includes("emerald")) {
-    barFill = "#10b981";
-  } else if (props.barClassName?.includes("violet")) {
-    barFill = "#8b5cf6";
-  }
-
   return (
     <div className={cn("w-full space-y-4", className)}>
       <div className="h-72 w-full overflow-hidden rounded-xl border border-border/50 bg-muted/10 p-3 sm:p-4">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} barCategoryGap={24} margin={{ top: 12, right: 8, left: 8, bottom: 0 }}>
+          <LineChart data={data} margin={{ top: 12, right: 8, left: 8, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
             <XAxis
               dataKey="label"
@@ -114,29 +96,24 @@ export function ReportBarChart(props: ReportBarChartProps) {
               tickFormatter={(value: number) => axisValueFormatter(value)}
             />
             <Tooltip
-              cursor={{ fill: "rgba(148, 163, 184, 0.10)" }}
+              cursor={{ stroke: "rgba(148, 163, 184, 0.35)", strokeDasharray: "4 4", strokeWidth: 1 }}
               wrapperStyle={{ outline: "none" }}
               content={
-                <ReportBarChartTooltip
+                <ReportLineChartTooltip
                   tooltipLabel={tooltipLabel}
                   valueFormatter={valueFormatter}
                 />
               }
             />
-            <Bar
+            <Line
+              type="monotone"
               dataKey="value"
-              radius={[10, 10, 0, 0]}
-              minPointSize={6}
-              activeBar={{ fillOpacity: 0.92, stroke: "rgba(255, 255, 255, 0.45)", strokeWidth: 1 }}
-            >
-              {data.map((item, index) => (
-                <Cell
-                  key={`${item.label}-${index}`}
-                  fill={props.barClassName ? barFill : BAR_COLORS[index % BAR_COLORS.length]}
-                />
-              ))}
-            </Bar>
-          </BarChart>
+              stroke="hsl(var(--primary))"
+              strokeWidth={3}
+              dot={{ r: 4, fill: "hsl(var(--primary))", stroke: "hsl(var(--background))", strokeWidth: 2 }}
+              activeDot={{ r: 7, fill: "hsl(var(--primary))", stroke: "hsl(var(--background))", strokeWidth: 3 }}
+            />
+          </LineChart>
         </ResponsiveContainer>
       </div>
       {showSummary ? (

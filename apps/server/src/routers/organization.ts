@@ -152,6 +152,85 @@ const getOrganizationAppointmentWhere = (organizationId: string) => ({
   },
 });
 
+const getStripeConnectOverview = async (organizationId: string) => {
+  const organization = await prisma.organization.findUnique({
+    where: {
+      id: organizationId,
+    },
+    select: {
+      stripeAccountId: true,
+    },
+  });
+
+  if (!organization) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Organization not found",
+    });
+  }
+
+  if (!organization.stripeAccountId) {
+    return {
+      stripeAccountId: null,
+      account: null,
+    };
+  }
+
+  try {
+    const account = await stripe.accounts.retrieve(organization.stripeAccountId);
+    const currentlyDue = account.requirements?.currently_due ?? [];
+    const eventuallyDue = account.requirements?.eventually_due ?? [];
+    const pastDue = account.requirements?.past_due ?? [];
+    const pendingVerification =
+      account.requirements?.pending_verification ?? [];
+    const onboardingComplete =
+      account.details_submitted &&
+      account.charges_enabled &&
+      account.payouts_enabled &&
+      currentlyDue.length === 0 &&
+      pastDue.length === 0;
+
+    return {
+      stripeAccountId: organization.stripeAccountId,
+      account: {
+        id: account.id,
+        email: account.email,
+        country: account.country,
+        defaultCurrency: account.default_currency,
+        businessType: account.business_type,
+        chargesEnabled: account.charges_enabled,
+        payoutsEnabled: account.payouts_enabled,
+        detailsSubmitted: account.details_submitted,
+        onboardingComplete,
+        requirements: {
+          currentlyDue,
+          eventuallyDue,
+          pastDue,
+          pendingVerification,
+          disabledReason: account.requirements?.disabled_reason ?? null,
+        },
+      },
+    };
+  } catch (error) {
+    console.error("Failed to retrieve Stripe Connect account", {
+      organizationId,
+      stripeAccountId: organization.stripeAccountId,
+      error:
+        error instanceof Error
+          ? {
+              message: error.message,
+              name: error.name,
+            }
+          : error,
+    });
+
+    return {
+      stripeAccountId: organization.stripeAccountId,
+      account: null,
+    };
+  }
+};
+
 type SpecialistAssignment = {
   userId: string;
   user: {
@@ -667,6 +746,9 @@ export const organizationRouter = router({
 
       return { ...organization, companySize };
     },
+  ),
+  getStripeConnectOverview: withPermissions("UPDATE::SUBSCRIPTION").query(
+    async ({ ctx }) => getStripeConnectOverview(ctx.orgWithSub.id),
   ),
   getReportsOverview: withPermissions("READ::ORGANIZATION").query(
     async ({ ctx }) => {
@@ -1565,6 +1647,27 @@ export const organizationRouter = router({
       return {
         accountId: stripeAccountId,
         url: accountLink.url,
+      };
+    },
+  ),
+  getStripeDashboardLink: withPermissions("UPDATE::SUBSCRIPTION").mutation(
+    async ({ ctx }) => {
+      const stripeOverview = await getStripeConnectOverview(ctx.orgWithSub.id);
+
+      if (!stripeOverview.stripeAccountId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Stripe is not connected for this organization",
+        });
+      }
+
+      const loginLink = await stripe.accounts.createLoginLink(
+        stripeOverview.stripeAccountId,
+      );
+
+      return {
+        accountId: stripeOverview.stripeAccountId,
+        url: loginLink.url,
       };
     },
   ),
