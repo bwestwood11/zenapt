@@ -626,6 +626,9 @@ export const invitationRouter = router({
       toSeconds({ hours: INVITATION_EXPIRE_IN_HOURS })
     );
 
+
+    console.log(`${process.env.DASHBOARD_URL || "http://localhost:3000"}/invitation?token=${token}`)
+
     const EmailHtml = InvitationEmail({
       inviteLink: `${process.env.DASHBOARD_URL || "http://localhost:3000"}/invitation?token=${token}`,
       logoUrl: `${process.env.DASHBOARD_URL || "http://localhost:3000"}/logo`,

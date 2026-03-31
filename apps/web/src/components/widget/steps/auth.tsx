@@ -57,7 +57,7 @@ const AuthPage = () => {
       setError(null);
 
       try {
-        await signIn({ email, password });
+        await signIn({ email, password, organizationId: orgId });
         await session.refetch();
         handleNext(true);
       } catch (err) {

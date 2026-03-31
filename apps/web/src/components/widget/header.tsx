@@ -14,6 +14,7 @@ import { useCustomerSession } from "./hooks/useCustomerSession";
 import { useMutation } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { ThemeToggleOptions } from "../theme-toggle-options";
+import { useOrgId } from "./hooks/useOrgId";
 
 type UserType = "customer" | "guest" | "unauthorized";
 
@@ -47,6 +48,7 @@ const useCustomSession = () => {
 };
 const Header = () => {
   const organization = useOrganization().organization;
+  const orgId = useOrgId();
   const { step } = useCheckoutStore();
   const currentPageIndex = STEPS.findIndex((v) => v.id === step);
   const currentStep = STEPS.find((v) => v.id === step);
@@ -70,7 +72,7 @@ const Header = () => {
     // Get current widget URL to return to after login
     const returnUrl = globalThis.window.location.href;
     globalThis.window.open(
-      `${globalThis.window.location.origin}/customer-login?return=${encodeURIComponent(returnUrl)}`,
+      `${globalThis.window.location.origin}/c/${orgId}/login?return=${encodeURIComponent(returnUrl)}`,
       "_blank",
     );
   };
@@ -184,9 +186,9 @@ const Header = () => {
                       variant="outline"
                       className="justify-start"
                     >
-                      <Link href="/dashboard/manage-account">
+                      <Link href={`/c/${orgId}/dashboard`} target="_blank" rel="noreferrer">
                         <Settings className="mr-2 h-4 w-4" />
-                        Manage account
+                        Open portal dashboard
                       </Link>
                     </Button>
                     <Button
@@ -196,7 +198,7 @@ const Header = () => {
                       onClick={() => {
                         void logout().then(() => {
                           session.refetch?.();
-                          router.push("/");
+                          router.push(`/c/${orgId}/login`);
                         });
                       }}
                     >

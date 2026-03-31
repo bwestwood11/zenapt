@@ -30,13 +30,13 @@ const CHARGEABLE_PAYMENT_TYPES = [
   "CANCELLATION",
 ] as const;
 
-const isPendingAppointmentStatus = (status: string) =>
+export const isPendingAppointmentStatus = (status: string) =>
   status === "SCHEDULED" || status === "RESCHEDULED";
 
 const calculatePercentageAmount = (amount: number, percentage: number) =>
   Math.round((amount * percentage) / 100);
 
-const isCancellationFeeApplicable = ({
+export const isCancellationFeeApplicable = ({
   appointmentStartTime,
   cancellationDurationMinutes,
   now = new Date(),
@@ -48,7 +48,7 @@ const isCancellationFeeApplicable = ({
   appointmentStartTime.getTime() - now.getTime() <=
   cancellationDurationMinutes * 60 * 1000;
 
-const resolveDiscountAmount = ({
+export const resolveDiscountAmount = ({
   price,
   discountAmountApplied,
   promoDiscountPercentage,
@@ -151,7 +151,7 @@ async function syncAppointmentPaymentStatus(appointmentId: string) {
   return paymentStatus;
 }
 
-async function getAppointmentCollectedAmount(appointmentId: string) {
+export async function getAppointmentCollectedAmount(appointmentId: string) {
   const payments = await prisma.customerAppointmentPayment.aggregate({
     where: {
       appointmentId,
@@ -326,7 +326,7 @@ async function syncAppointmentPaymentsAgainstStripe({
   };
 }
 
-async function syncAppointmentPaymentsIfPossible({
+export async function syncAppointmentPaymentsIfPossible({
   appointmentId,
   stripeAccountId,
 }: {
@@ -507,7 +507,7 @@ const toTipRecipient = (value: unknown) => {
 const sortByCreatedAtDesc = <T extends { createdAt: Date }>(a: T, b: T) =>
   b.createdAt.getTime() - a.createdAt.getTime();
 
-async function resolveCancellationChargeResult({
+export async function resolveCancellationChargeResult({
   appointment,
   chargeAmount,
   cancellationPercent,
@@ -548,6 +548,106 @@ async function resolveCancellationChargeResult({
     alreadyChargedAmount,
   });
 }
+
+const getStripeCustomerDefaultPaymentMethodId = (
+  customer: Stripe.Customer,
+): string | null => {
+  const defaultPaymentMethod = customer.invoice_settings?.default_payment_method;
+
+  if (!defaultPaymentMethod) {
+    return null;
+  }
+
+  return typeof defaultPaymentMethod === "string"
+    ? defaultPaymentMethod
+    : defaultPaymentMethod.id;
+};
+
+const resolvePreferredChargeablePaymentMethod = async ({
+  stripeCustomerId,
+  stripeAccountId,
+  requestedPaymentMethodId,
+}: {
+  stripeCustomerId: string;
+  stripeAccountId: string;
+  requestedPaymentMethodId: string | null;
+}) => {
+  if (requestedPaymentMethodId) {
+    const paymentMethod = await stripe.paymentMethods.retrieve(
+      requestedPaymentMethodId,
+      {
+        stripeAccount: stripeAccountId,
+      },
+    );
+
+    return {
+      paymentMethodId: requestedPaymentMethodId,
+      paymentMethod,
+    };
+  }
+
+  const stripeCustomer = await stripe.customers.retrieve(
+    stripeCustomerId,
+    {
+      expand: ["invoice_settings.default_payment_method"],
+    },
+    {
+      stripeAccount: stripeAccountId,
+    },
+  );
+
+  if ("deleted" in stripeCustomer && stripeCustomer.deleted) {
+    return {
+      paymentMethodId: null,
+      paymentMethod: null,
+    };
+  }
+
+  const defaultPaymentMethod = stripeCustomer.invoice_settings?.default_payment_method;
+
+  if (defaultPaymentMethod && typeof defaultPaymentMethod !== "string") {
+    return {
+      paymentMethodId: defaultPaymentMethod.id,
+      paymentMethod: defaultPaymentMethod,
+    };
+  }
+
+  const defaultPaymentMethodId = getStripeCustomerDefaultPaymentMethodId(
+    stripeCustomer,
+  );
+
+  if (defaultPaymentMethodId) {
+    const paymentMethod = await stripe.paymentMethods.retrieve(
+      defaultPaymentMethodId,
+      {
+        stripeAccount: stripeAccountId,
+      },
+    );
+
+    return {
+      paymentMethodId: defaultPaymentMethodId,
+      paymentMethod,
+    };
+  }
+
+  const savedCards = await stripe.paymentMethods.list(
+    {
+      customer: stripeCustomerId,
+      type: "card",
+      limit: 1,
+    },
+    {
+      stripeAccount: stripeAccountId,
+    },
+  );
+
+  const paymentMethod = savedCards.data[0] ?? null;
+
+  return {
+    paymentMethodId: paymentMethod?.id ?? null,
+    paymentMethod,
+  };
+};
 
 const getCancellationActivityDescription = ({
   appointmentId,
@@ -621,24 +721,14 @@ async function attemptNoShowCharge({
     };
   }
 
-  let resolvedPaymentMethodId = appointment.paymentMethodId;
-  let resolvedPaymentMethod: Stripe.PaymentMethod | null = null;
+  const preferredPaymentMethod = await resolvePreferredChargeablePaymentMethod({
+    stripeCustomerId,
+    stripeAccountId: organization.stripeAccountId,
+    requestedPaymentMethodId: appointment.paymentMethodId,
+  });
 
-  if (resolvedPaymentMethodId == null) {
-    const savedCards = await stripe.paymentMethods.list(
-      {
-        customer: stripeCustomerId,
-        type: "card",
-        limit: 1,
-      },
-      {
-        stripeAccount: organization.stripeAccountId,
-      },
-    );
-
-    resolvedPaymentMethod = savedCards.data[0] ?? null;
-    resolvedPaymentMethodId = resolvedPaymentMethod?.id ?? null;
-  }
+  let resolvedPaymentMethodId = preferredPaymentMethod.paymentMethodId;
+  let resolvedPaymentMethod = preferredPaymentMethod.paymentMethod;
 
   if (resolvedPaymentMethodId == null) {
     return {
@@ -806,24 +896,14 @@ async function attemptCancellationCharge({
     };
   }
 
-  let resolvedPaymentMethodId = appointment.paymentMethodId;
-  let resolvedPaymentMethod: Stripe.PaymentMethod | null = null;
+  const preferredPaymentMethod = await resolvePreferredChargeablePaymentMethod({
+    stripeCustomerId,
+    stripeAccountId: organization.stripeAccountId,
+    requestedPaymentMethodId: appointment.paymentMethodId,
+  });
 
-  if (resolvedPaymentMethodId == null) {
-    const savedCards = await stripe.paymentMethods.list(
-      {
-        customer: stripeCustomerId,
-        type: "card",
-        limit: 1,
-      },
-      {
-        stripeAccount: organization.stripeAccountId,
-      },
-    );
-
-    resolvedPaymentMethod = savedCards.data[0] ?? null;
-    resolvedPaymentMethodId = resolvedPaymentMethod?.id ?? null;
-  }
+  let resolvedPaymentMethodId = preferredPaymentMethod.paymentMethodId;
+  let resolvedPaymentMethod = preferredPaymentMethod.paymentMethod;
 
   if (resolvedPaymentMethodId == null) {
     return {

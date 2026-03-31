@@ -12,7 +12,67 @@ import {
   resolveActivePromoCode,
 } from "../lib/payments/promo";
 
-const getSavedCardSummary = async (
+type SavedCardSummary = {
+  id: string;
+  brand: string;
+  last4: string;
+  expMonth: number;
+  expYear: number;
+  isDefault: boolean;
+};
+
+const ensureCardCanBeRedisplayed = async (
+  paymentMethod: Stripe.PaymentMethod,
+  stripeAccountId: string,
+) => {
+  if (paymentMethod.allow_redisplay === "always") {
+    return;
+  }
+
+  await stripe.paymentMethods.update(
+    paymentMethod.id,
+    {
+      allow_redisplay: "always",
+    },
+    {
+      stripeAccount: stripeAccountId,
+    },
+  );
+};
+
+const getDefaultPaymentMethodId = (
+  customer: Stripe.Customer,
+): string | null => {
+  const defaultPaymentMethod = customer.invoice_settings?.default_payment_method;
+
+  if (!defaultPaymentMethod) {
+    return null;
+  }
+
+  return typeof defaultPaymentMethod === "string"
+    ? defaultPaymentMethod
+    : defaultPaymentMethod.id;
+};
+
+const toSavedCardSummary = (
+  paymentMethod: Stripe.PaymentMethod,
+  defaultPaymentMethodId: string | null,
+): SavedCardSummary | null => {
+  if (!paymentMethod.card) {
+    return null;
+  }
+
+  return {
+    id: paymentMethod.id,
+    brand: paymentMethod.card.brand,
+    last4: paymentMethod.card.last4,
+    expMonth: paymentMethod.card.exp_month,
+    expYear: paymentMethod.card.exp_year,
+    isDefault: paymentMethod.id === defaultPaymentMethodId,
+  };
+};
+
+const getSavedCardsState = async (
   stripeCustomerId: string,
   stripeAccountId: string,
 ) => {
@@ -27,97 +87,113 @@ const getSavedCardSummary = async (
   );
 
   if ("deleted" in customer && customer.deleted) {
-    return null;
-  }
-
-  const defaultPaymentMethod =
-    customer.invoice_settings?.default_payment_method &&
-    typeof customer.invoice_settings.default_payment_method !== "string"
-      ? customer.invoice_settings.default_payment_method
-      : null;
-
-  if (defaultPaymentMethod?.card) {
-    if (defaultPaymentMethod.allow_redisplay !== "always") {
-      await stripe.paymentMethods.update(
-        defaultPaymentMethod.id,
-        {
-          allow_redisplay: "always",
-        },
-        {
-          stripeAccount: stripeAccountId,
-        },
-      );
-    }
     return {
-      id: defaultPaymentMethod.id,
-      brand: defaultPaymentMethod.card.brand,
-      last4: defaultPaymentMethod.card.last4,
+      savedCard: null,
+      allSavedCards: [] as SavedCardSummary[],
+      defaultPaymentMethodId: null,
     };
   }
 
+  const defaultPaymentMethodId = getDefaultPaymentMethodId(customer);
+
   const paymentMethods = await stripe.paymentMethods.list(
     {
       customer: stripeCustomerId,
       type: "card",
-      limit: 1,
+      limit: 20,
     },
     {
       stripeAccount: stripeAccountId,
     },
   );
 
-  const firstPaymentMethod = paymentMethods.data[0];
-  const card = firstPaymentMethod?.card;
-  if (!card) {
-    return null;
-  }
+  await Promise.all(
+    paymentMethods.data
+      .filter((paymentMethod) => paymentMethod.card)
+      .map((paymentMethod) =>
+        ensureCardCanBeRedisplayed(paymentMethod, stripeAccountId),
+      ),
+  );
 
-  if (firstPaymentMethod.allow_redisplay !== "always") {
-    await stripe.paymentMethods.update(
-      firstPaymentMethod.id,
-      {
-        allow_redisplay: "always",
-      },
-      {
-        stripeAccount: stripeAccountId,
-      },
-    );
-  }
+  const allSavedCards = paymentMethods.data
+    .map((paymentMethod) =>
+      toSavedCardSummary(paymentMethod, defaultPaymentMethodId),
+    )
+    .filter((paymentMethod): paymentMethod is SavedCardSummary =>
+      Boolean(paymentMethod),
+    )
+    .sort((left, right) => Number(right.isDefault) - Number(left.isDefault));
 
   return {
-    id: firstPaymentMethod.id,
-    brand: card.brand,
-    last4: card.last4,
-  }
+    savedCard: allSavedCards[0] ?? null,
+    allSavedCards,
+    defaultPaymentMethodId,
+  };
 };
 
-const getAllSavedCards = async (
-  stripeCustomerId: string,
-  stripeAccountId: string,
-) => {
-  const paymentMethods = await stripe.paymentMethods.list(
-    {
-      customer: stripeCustomerId,
-      type: "card",
-      limit: 10,
-    },
-    {
-      stripeAccount: stripeAccountId,
-    },
-  );
+const getSavedCards = customerJwtProcedure
+  .input(
+    z.object({
+      organizationId: z.string().min(2).max(90).optional(),
+    }),
+  )
+  .query(async ({ ctx, input }) => {
+    const organizationId = input.organizationId ?? ctx.customer.orgId;
+    const customer = ctx.customer;
 
-  const cards = paymentMethods.data
-    .filter((pm) => pm.card)
-    .map((pm) => ({
-      id: pm.id,
-      brand: pm.card!.brand,
-      last4: pm.card!.last4,
-      expMonth: pm.card!.exp_month,
-      expYear: pm.card!.exp_year,
-    }));
+    if (!customer?.id) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Customer record not found",
+      });
+    }
 
-  return cards;
-};
+    if (customer.orgId !== organizationId) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Customer record not found",
+      });
+    }
+
+    const organization = await prisma.organization.findUnique({
+      where: {
+        id: organizationId,
+      },
+    });
+
+    if (!organization) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Organization not found",
+      });
+    }
+
+    if (!organization.stripeAccountId) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Organization is not set up",
+      });
+    }
+
+    if (!customer.stripeCustomerId) {
+      return {
+        savedCard: null,
+        allSavedCards: [] as SavedCardSummary[],
+        defaultPaymentMethodId: null,
+        stripeAccountId: organization.stripeAccountId,
+      };
+    }
+
+    const savedCardsState = await getSavedCardsState(
+      customer.stripeCustomerId,
+      organization.stripeAccountId,
+    );
+
+    return {
+      ...savedCardsState,
+      stripeAccountId: organization.stripeAccountId,
+    };
+  });
 
 const createSetupIntent = customerJwtProcedure
   .input(
@@ -228,20 +304,16 @@ const createSetupIntent = customerJwtProcedure
       });
     }
 
-    const savedCard = await getSavedCardSummary(
-      stripeCustomerId,
-      organization.stripeAccountId,
-    );
-
-    const allSavedCards = await getAllSavedCards(
+    const savedCardsState = await getSavedCardsState(
       stripeCustomerId,
       organization.stripeAccountId,
     );
 
     return {
       clientSecret: setupIntent.client_secret,
-      savedCard,
-      allSavedCards,
+      savedCard: savedCardsState.savedCard,
+      allSavedCards: savedCardsState.allSavedCards,
+      defaultPaymentMethodId: savedCardsState.defaultPaymentMethodId,
       customerSessionClientSecret: customerSession.client_secret,
       stripeAccountId: organization.stripeAccountId,
     };
@@ -343,6 +415,7 @@ const finalizeSetupIntent = customerJwtProcedure
       await stripe.paymentMethods.detach(newPaymentMethod.id, {
         stripeAccount: organization.stripeAccountId,
       });
+
       await stripe.customers.update(
         stripeCustomerId,
         {
@@ -367,21 +440,160 @@ const finalizeSetupIntent = customerJwtProcedure
         );
       }
 
+      const savedCardsState = await getSavedCardsState(
+        stripeCustomerId,
+        organization.stripeAccountId,
+      );
+
+      const duplicateCard =
+        savedCardsState.allSavedCards.find((card) => card.id === duplicate.id) ??
+        null;
+
       return {
         deduped: true,
-        card: {
-          id: duplicate.id,
-          brand: duplicate.card?.brand ?? null,
-          last4: duplicate.card?.last4 ?? null,
-        },
+        card: duplicateCard,
       };
     }
 
-    if (newPaymentMethod.allow_redisplay !== "always") {
-      await stripe.paymentMethods.update(
-        newPaymentMethod.id,
+    await ensureCardCanBeRedisplayed(
+      newPaymentMethod,
+      organization.stripeAccountId,
+    );
+
+    await stripe.customers.update(
+      stripeCustomerId,
+      {
+        invoice_settings: {
+          default_payment_method: newPaymentMethod.id,
+        },
+      },
+      {
+        stripeAccount: organization.stripeAccountId,
+      },
+    );
+
+    const savedCardsState = await getSavedCardsState(
+      stripeCustomerId,
+      organization.stripeAccountId,
+    );
+
+    const addedCard =
+      savedCardsState.allSavedCards.find(
+        (card) => card.id === newPaymentMethod.id,
+      ) ?? null;
+
+    return {
+      deduped: false,
+      card: addedCard,
+    };
+  });
+
+const removeSavedCard = customerJwtProcedure
+  .input(
+    z.object({
+      paymentMethodId: z.string().min(1),
+      organizationId: z.string().min(2).max(90).optional(),
+    }),
+  )
+  .mutation(async ({ ctx, input }) => {
+    const organizationId = input.organizationId ?? ctx.customer.orgId;
+    const customer = ctx.customer;
+
+    if (!customer?.id) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Customer record not found",
+      });
+    }
+
+    if (customer.orgId !== organizationId) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Customer record not found",
+      });
+    }
+
+    const organization = await prisma.organization.findUnique({
+      where: {
+        id: organizationId,
+      },
+    });
+
+    if (!organization) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Organization not found",
+      });
+    }
+
+    if (!organization.stripeAccountId) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Organization is not set up",
+      });
+    }
+
+    if (!customer.stripeCustomerId) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "No saved cards were found",
+      });
+    }
+
+    const stripeCustomer = await stripe.customers.retrieve(
+      customer.stripeCustomerId,
+      {
+        expand: ["invoice_settings.default_payment_method"],
+      },
+      {
+        stripeAccount: organization.stripeAccountId,
+      },
+    );
+
+    if ("deleted" in stripeCustomer && stripeCustomer.deleted) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "No saved cards were found",
+      });
+    }
+
+    const paymentMethods = await stripe.paymentMethods.list(
+      {
+        customer: customer.stripeCustomerId,
+        type: "card",
+        limit: 20,
+      },
+      {
+        stripeAccount: organization.stripeAccountId,
+      },
+    );
+
+    const paymentMethod = paymentMethods.data.find(
+      (candidate) => candidate.id === input.paymentMethodId,
+    );
+
+    if (!paymentMethod?.card) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Card not found",
+      });
+    }
+
+    const defaultPaymentMethodId = getDefaultPaymentMethodId(stripeCustomer);
+    const remainingPaymentMethod = paymentMethods.data.find(
+      (candidate) => candidate.id !== input.paymentMethodId && candidate.card,
+    );
+
+    if (
+      defaultPaymentMethodId === input.paymentMethodId &&
+      remainingPaymentMethod?.id
+    ) {
+      await stripe.customers.update(
+        customer.stripeCustomerId,
         {
-          allow_redisplay: "always",
+          invoice_settings: {
+            default_payment_method: remainingPaymentMethod.id,
+          },
         },
         {
           stripeAccount: organization.stripeAccountId,
@@ -389,13 +601,18 @@ const finalizeSetupIntent = customerJwtProcedure
       );
     }
 
+    await stripe.paymentMethods.detach(input.paymentMethodId, {
+      stripeAccount: organization.stripeAccountId,
+    });
+
+    const savedCardsState = await getSavedCardsState(
+      customer.stripeCustomerId,
+      organization.stripeAccountId,
+    );
+
     return {
-      deduped: false,
-      card: {
-        id: newPaymentMethod.id,
-        brand: newPaymentMethod.card?.brand ?? null,
-        last4: newPaymentMethod.card?.last4 ?? null,
-      },
+      removedPaymentMethodId: input.paymentMethodId,
+      ...savedCardsState,
     };
   });
 
@@ -830,7 +1047,9 @@ const createAppointment = customerJwtProcedure
   });
 
 export const customerPaymentsRouter = router({
+  getSavedCards,
   createSetupIntent,
   finalizeSetupIntent,
+  removeSavedCard,
   createAppointment,
 });

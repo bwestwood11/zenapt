@@ -16,7 +16,7 @@ type WidgetProps = {
 const Widget = ({ orgId }: WidgetProps) => {
   return (
     <OrganizationProvider orgId={orgId}>
-      <div className="h-svh w-full flex flex-col" data-org-id={orgId}>
+      <div className="h-svh w-full max-w-2xl mx-auto flex flex-col" data-org-id={orgId}>
         <Header />
         <WidgetBody />
       </div>
