@@ -1,4 +1,5 @@
 import z from "zod";
+import { TRPCError } from "@trpc/server";
 import { withPermissions } from "../lib/trpc";
 import prisma from "../../prisma";
 import { getServices } from "../lib/service/group";
@@ -120,6 +121,39 @@ const deleteServiceTerm = withPermissions(
   }),
 ).mutation(async ({ ctx, input }) => {
   const { serviceId } = input;
+
+  const appointmentCount = await prisma.appointment.count({
+    where: {
+      location: {
+        organizationId: ctx.orgWithSub.id,
+      },
+      OR: [
+        {
+          service: {
+            some: {
+              serviceId,
+            },
+          },
+        },
+        {
+          addOns: {
+            some: {
+              serviceTermId: serviceId,
+            },
+          },
+        },
+      ],
+    },
+  });
+
+  if (appointmentCount > 0) {
+    throw new TRPCError({
+      code: "CONFLICT",
+      message:
+        "This service cannot be deleted because it is linked to existing appointments.",
+    });
+  }
+
   await prisma.serviceTerms.delete({
     where: {
       id: serviceId,

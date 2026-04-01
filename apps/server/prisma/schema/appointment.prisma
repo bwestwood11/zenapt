@@ -21,9 +21,9 @@ enum LeaveRequestStatus {
 model Appointment {
   id         String            @id @default(cuid()) @map("_id")
   locationId String
-  location   Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  location   Location          @relation(fields: [locationId], references: [id], onDelete: Restrict)
   customerId String
-  customer   Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer   Customer          @relation(fields: [customerId], references: [id], onDelete: Restrict)
   startTime  DateTime
   endTime    DateTime
   bufferTime Int               @default(0) // in minutes - max from selected services
