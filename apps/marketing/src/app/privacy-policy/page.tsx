@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Mail, ShieldCheck } from "lucide-react";
+import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
 import { navItems } from "@/components/landing/landing-data";
 
@@ -133,7 +134,7 @@ export default function PrivacyPolicyPage() {
                 Effective date: March 24, 2026
               </div>
               <Link
-                href="mailto:support@zenapt.studio"
+                href="mailto:brett@zenapt.studio"
                 className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-sm font-medium text-foreground transition hover:border-primary/30 hover:text-primary"
               >
                 Contact support
@@ -230,7 +231,7 @@ export default function PrivacyPolicyPage() {
               </p>
               <p>
                 Recipients can get help by replying HELP or by contacting
-                support@zenapt.studio for Zenapt clients, or the relevant med
+                brett@zenapt.studio for Zenapt clients, or the relevant med
                 spa directly for end users.
               </p>
               <p>
@@ -306,11 +307,11 @@ export default function PrivacyPolicyPage() {
                 </p>
                 <div className="mt-5 space-y-3 text-sm text-muted-foreground">
                   <a
-                    href="mailto:support@zenapt.studio"
+                    href="mailto:brett@zenapt.studio"
                     className="flex items-center gap-3 transition hover:text-foreground"
                   >
                     <Mail className="h-4 w-4 text-primary" />
-                    support@zenapt.studio
+                    brett@zenapt.studio
                   </a>
                   <Link
                     href="/get-demo"
@@ -326,25 +327,7 @@ export default function PrivacyPolicyPage() {
         </div>
       </section>
 
-      <footer className="border-t border-border bg-card/50 px-6 py-8 sm:px-8">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 Zenapt. Privacy-forward booking operations for med spas.</p>
-          <div className="flex flex-wrap items-center gap-4">
-            <Link href="/privacy-policy" className="transition hover:text-foreground">
-              Privacy Policy
-            </Link>
-            <Link href="/terms-of-service" className="transition hover:text-foreground">
-              Terms of Service
-            </Link>
-            <a
-              href="mailto:support@zenapt.studio"
-              className="transition hover:text-foreground"
-            >
-              support@zenapt.studio
-            </a>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter className="bg-card/50" />
     </main>
   );
 }

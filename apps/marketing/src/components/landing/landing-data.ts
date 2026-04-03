@@ -185,7 +185,7 @@ export const faqs: FaqItem[] = [
   {
     question: "How do we get in touch or book a demo?",
     answer:
-      "Use the demo request flow to share your business details and preferred time, or email support@zenapt.studio for direct help from the team.",
+      "Use the demo request flow to share your business details and preferred time, or email brett@zenapt.studio for direct help from the team.",
   },
 ];
 
@@ -199,7 +199,7 @@ export const contactOptions: ContactItem[] = [
   {
     title: "Email the team",
     description:
-      "Reach support@zenapt.studio for product, onboarding, or partnership questions.",
+      "Reach brett@zenapt.studio for product, onboarding, or partnership questions.",
     icon: Mail,
   },
   {
