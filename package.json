@@ -10,7 +10,7 @@
     "prepare": "husky",
     "dev": "turbo dev",
     "start": "turbo start",
-    "build": "turbo build",
+    "build": "turbo build --env-mode=loose",
     "check-types": "turbo check-types",
     "dev:native": "turbo -F native dev",
     "dev:web": "turbo -F web dev",
