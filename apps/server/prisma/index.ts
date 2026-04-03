@@ -13,17 +13,32 @@ declare global {
     var prisma: PrismaClient | undefined;
 }
 
-if (!process.env.DATABASE_URL) {
-    throw new Error(
-        "DATABASE_URL is not set. Ensure the server process loads apps/server/.env before initializing Prisma.",
-    );
-}
+const createPrismaClient = () => {
+    if (!process.env.DATABASE_URL) {
+        throw new Error(
+            "DATABASE_URL is not set. Ensure it is configured in Vercel Project Settings (Environment Variables) or apps/server/.env before Prisma is used.",
+        );
+    }
 
-const prisma = process.env.NODE_ENV === "production"
-    ? new PrismaClient()
-    : (() => {
-        globalThis.prisma ??= new PrismaClient();
-        return globalThis.prisma;
-    })();
+    if (process.env.NODE_ENV === "production") {
+        return new PrismaClient();
+    }
+
+    globalThis.prisma ??= new PrismaClient();
+    return globalThis.prisma;
+};
+
+const prisma = new Proxy({} as PrismaClient, {
+    get(_target, prop, receiver) {
+        const client = createPrismaClient();
+        const value = Reflect.get(client, prop, receiver);
+
+        if (typeof value === "function") {
+            return value.bind(client);
+        }
+
+        return value;
+    },
+});
 
 export default prisma;
