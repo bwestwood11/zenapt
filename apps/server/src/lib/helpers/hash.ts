@@ -3,8 +3,16 @@ import crypto from "crypto";
 
 // REQUIRED ENV:
 // process.env.SIGNING_KEY -> any secret used for HMAC signing
-const SIGNING_KEY = process.env.SIGNING_KEY || "";
-if (!SIGNING_KEY) throw new Error("SIGNING_KEY must be set in env.");
+const getSigningKey = () => {
+  const signingKey = process.env.SIGNING_KEY || "";
+  if (!signingKey) {
+    throw new Error(
+      "SIGNING_KEY must be set in env. Configure it in Vercel Project Settings (Environment Variables)."
+    );
+  }
+
+  return signingKey;
+};
 
 /**
  * Pack an object with optional expAt into JSON string.
@@ -32,7 +40,7 @@ function buildPayload(obj: unknown, expAt?: Date | number | string) {
  */
 function signHex(data: string): string {
   return crypto
-    .createHmac("sha256", SIGNING_KEY)
+    .createHmac("sha256", getSigningKey())
     .update(Buffer.from(data, "utf8"))
     .digest("hex");
 }
