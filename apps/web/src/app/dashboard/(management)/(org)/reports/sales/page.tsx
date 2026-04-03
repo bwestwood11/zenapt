@@ -1,8 +1,14 @@
 "use client";
 
 import { ReportBarChart } from "@/components/reports/report-bar-chart";
+import { ReportDurationFilter } from "@/components/reports/report-duration-filter";
+import {
+  getReportDurationLabel,
+  REPORT_QUERY_OPTIONS,
+} from "@/components/reports/reporting";
 import { ReportsEmptyState, ReportsPermissionDeniedState, ReportsLoadingState } from "@/components/reports/reports-state";
 import { ReportsShell } from "@/components/reports/reports-shell";
+import { useReportDuration } from "@/components/reports/use-report-duration";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -23,10 +29,12 @@ const formatCurrency = (amountInCents: number) => currencyFormatter.format(amoun
 
 export default function SalesReportPage() {
   const { checkPermission, isLoadingPermissions } = usePermissions();
+  const { duration, setDuration } = useReportDuration();
   const hasAccess = checkPermission(["READ::ORGANIZATION"]);
   const { data, isLoading } = useQuery(
-    trpc.organization.getSalesReport.queryOptions(undefined, {
+    trpc.organization.getSalesReport.queryOptions({ duration }, {
       enabled: hasAccess,
+      ...REPORT_QUERY_OPTIONS,
     }),
   );
 
@@ -43,6 +51,7 @@ export default function SalesReportPage() {
   }
 
   const { summary, monthlySales, sales } = data;
+  const durationLabel = getReportDurationLabel(duration);
   const metricCards = [
     {
       title: "Total sales",
@@ -73,9 +82,10 @@ export default function SalesReportPage() {
   return (
     <ReportsShell
       title="Sales"
-      description="Review sales KPIs, monthly performance, and the latest sales list."
+      description={`Review sales KPIs, monthly performance, and the latest sales list for ${durationLabel.toLowerCase()}.`}
       breadcrumbHref="/dashboard/reports/sales"
       breadcrumbLabel="Sales"
+      actions={<ReportDurationFilter value={duration} onChange={setDuration} />}
     >
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {metricCards.map((card) => {
@@ -102,7 +112,7 @@ export default function SalesReportPage() {
         <CardHeader>
           <CardTitle>Monthly sales trend</CardTitle>
           <CardDescription>
-            Revenue closed over the last six months.
+            Revenue closed over {durationLabel.toLowerCase()}.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -121,7 +131,7 @@ export default function SalesReportPage() {
         <CardHeader>
           <CardTitle>Sales list</CardTitle>
           <CardDescription>
-            Latest paid and partially paid appointments.
+            Latest paid and partially paid appointments within {durationLabel.toLowerCase()}.
           </CardDescription>
         </CardHeader>
         <CardContent>

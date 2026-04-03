@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Mail, Scale } from "lucide-react";
+import { SiteFooter } from "@/components/site-footer";
 import { navItems } from "@/components/landing/landing-data";
 import { Button } from "@/components/ui/button";
 
@@ -140,7 +141,7 @@ export default function TermsOfServicePage() {
                 Effective date: March 24, 2026
               </div>
               <Link
-                href="mailto:support@zenapt.studio"
+                href="mailto:brett@zenapt.studio"
                 className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-sm font-medium text-foreground transition hover:border-primary/30 hover:text-primary"
               >
                 Contact support
@@ -238,7 +239,7 @@ export default function TermsOfServicePage() {
               </div>
               <p>
                 Recipients may reply STOP at any time to unsubscribe. They may
-                reply HELP for assistance or contact support@zenapt.studio for
+                reply HELP for assistance or contact brett@zenapt.studio for
                 clients, or the relevant med spa directly for end users.
                 Standard carrier message and data rates may apply.
               </p>
@@ -347,11 +348,11 @@ export default function TermsOfServicePage() {
                 </p>
                 <div className="mt-5 space-y-3 text-sm text-muted-foreground">
                   <a
-                    href="mailto:support@zenapt.studio"
+                    href="mailto:brett@zenapt.studio"
                     className="flex items-center gap-3 transition hover:text-foreground"
                   >
                     <Mail className="h-4 w-4 text-primary" />
-                    support@zenapt.studio
+                    brett@zenapt.studio
                   </a>
                   <Link
                     href="/get-demo"
@@ -367,25 +368,7 @@ export default function TermsOfServicePage() {
         </div>
       </section>
 
-      <footer className="border-t border-border bg-card/50 px-6 py-8 sm:px-8">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 Zenapt. Privacy-forward booking operations for med spas.</p>
-          <div className="flex flex-wrap items-center gap-4">
-            <Link href="/privacy-policy" className="transition hover:text-foreground">
-              Privacy Policy
-            </Link>
-            <Link href="/terms-of-service" className="transition hover:text-foreground">
-              Terms of Service
-            </Link>
-            <a
-              href="mailto:support@zenapt.studio"
-              className="transition hover:text-foreground"
-            >
-              support@zenapt.studio
-            </a>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter className="bg-card/50" />
     </main>
   );
 }

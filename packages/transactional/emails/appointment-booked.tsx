@@ -294,18 +294,49 @@ export default function AppointmentBookedEmail({
             style={{
               marginTop: "20px",
               textAlign: "center",
-              padding: "20px 30px",
+              padding: "20px 30px 24px",
               borderTop: "1px solid oklch(0.8765 0.0295 82.5897)",
+              backgroundColor: "oklch(0.9736 0.0082 85.532)",
             }}
           >
             <Text
               style={{
-                fontSize: "13px",
-                color: "oklch(0.5534 0.0116 58.0708)",
-                marginBottom: "6px",
+                margin: "0 0 6px",
+                fontSize: "14px",
+                fontWeight: 700,
+                color: "oklch(0.4015 0.0436 37.9587)",
               }}
             >
-              {organizationName} • We look forward to seeing you
+              Zenapt LLC
+            </Text>
+            <Text
+              style={{
+                margin: "0 0 6px",
+                fontSize: "13px",
+                lineHeight: "1.7",
+                color: "oklch(0.5534 0.0116 58.0708)",
+              }}
+            >
+              Contact us at{" "}
+              <a
+                href={`mailto:${supportEmail}`}
+                style={{
+                  color: "oklch(0.5212 0.0823 62.3839)",
+                  textDecoration: "underline",
+                }}
+              >
+                {supportEmail}
+              </a>
+            </Text>
+            <Text
+              style={{
+                margin: 0,
+                fontSize: "13px",
+                lineHeight: "1.7",
+                color: "oklch(0.5534 0.0116 58.0708)",
+              }}
+            >
+              Tampa, Florida
             </Text>
           </Section>
         </Container>

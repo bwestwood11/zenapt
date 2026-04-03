@@ -2,8 +2,14 @@
 
 import Link from "next/link";
 import { ReportBarChart } from "@/components/reports/report-bar-chart";
+import { ReportDurationFilter } from "@/components/reports/report-duration-filter";
+import {
+  getReportDurationLabel,
+  REPORT_QUERY_OPTIONS,
+} from "@/components/reports/reporting";
 import { ReportsPermissionDeniedState, ReportsLoadingState } from "@/components/reports/reports-state";
 import { ReportsShell } from "@/components/reports/reports-shell";
+import { useReportDuration } from "@/components/reports/use-report-duration";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -38,12 +44,21 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 const formatCurrency = (amountInCents: number) =>
   currencyFormatter.format(amountInCents / 100);
 
+const compactNumberFormatter = new Intl.NumberFormat("en-US", {
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+
+const formatCompactNumber = (value: number) => compactNumberFormatter.format(value);
+
 export default function ReportsPage() {
   const { checkPermission, isLoadingPermissions } = usePermissions();
+  const { duration, setDuration } = useReportDuration();
   const hasAccess = checkPermission(["READ::ORGANIZATION"]);
   const { data, isLoading } = useQuery(
-    trpc.organization.getReportsOverview.queryOptions(undefined, {
+    trpc.organization.getReportsOverview.queryOptions({ duration }, {
       enabled: hasAccess,
+      ...REPORT_QUERY_OPTIONS,
     }),
   );
 
@@ -60,30 +75,31 @@ export default function ReportsPage() {
   }
 
   const { summary, recentCustomers, paymentsAwaiting } = data;
+  const durationLabel = getReportDurationLabel(duration);
 
   const summaryCards = [
     {
       title: "Sales",
       value: formatCurrency(summary.totalSales),
-      description: "Revenue generated across your organization",
+      description: `${durationLabel} revenue generated across your organization`,
       icon: DollarSign,
     },
     {
       title: "Customers",
       value: summary.totalCustomers.toLocaleString(),
-      description: "Customers currently tracked across locations",
+      description: `${durationLabel} customer additions`,
       icon: Users,
     },
     {
       title: "Metrics",
       value: summary.totalAppointments.toLocaleString(),
-      description: "Appointments recorded across locations",
+      description: `${durationLabel} appointments recorded across locations`,
       icon: Activity,
     },
     {
       title: "Payment awaiting",
       value: summary.paymentsAwaitingCount.toLocaleString(),
-      description: "Appointments still waiting for payment",
+      description: `${durationLabel} appointments still waiting for payment`,
       icon: CreditCard,
     },
   ];
@@ -119,26 +135,44 @@ export default function ReportsPage() {
     },
   ];
 
-  const snapshotChartData = [
-    {
-      label: "Sales",
-      value: summary.totalSales / 100,
-      secondaryValue: formatCurrency(summary.totalSales),
-    },
+  const operationalSnapshotData = [
     {
       label: "Customers",
       value: summary.totalCustomers,
-      secondaryValue: summary.totalCustomers.toLocaleString(),
+      secondaryValue: `${summary.totalCustomers.toLocaleString()} new profiles`,
     },
     {
       label: "Appointments",
       value: summary.totalAppointments,
-      secondaryValue: summary.totalAppointments.toLocaleString(),
+      secondaryValue: `${summary.totalAppointments.toLocaleString()} total booked`,
+    },
+    {
+      label: "Completed",
+      value: summary.completedAppointments,
+      secondaryValue: `${summary.completedAppointments.toLocaleString()} finished visits`,
     },
     {
       label: "Pending",
       value: summary.paymentsAwaitingCount,
-      secondaryValue: summary.paymentsAwaitingCount.toLocaleString(),
+      secondaryValue: `${summary.paymentsAwaitingCount.toLocaleString()} awaiting payment`,
+    },
+  ];
+
+  const revenueSnapshotData = [
+    {
+      label: "Captured",
+      value: summary.totalSales / 100,
+      secondaryValue: formatCurrency(summary.totalSales),
+    },
+    {
+      label: "This month",
+      value: summary.monthlySales / 100,
+      secondaryValue: formatCurrency(summary.monthlySales),
+    },
+    {
+      label: "Awaiting",
+      value: summary.paymentsAwaitingAmount / 100,
+      secondaryValue: formatCurrency(summary.paymentsAwaitingAmount),
     },
   ];
 
@@ -148,6 +182,7 @@ export default function ReportsPage() {
       description="Use the reporting workspace to move from high-level KPIs into metrics, sales, customers, and specialist performance."
       breadcrumbHref="/dashboard/reports"
       breadcrumbLabel="Reports"
+      actions={<ReportDurationFilter value={duration} onChange={setDuration} />}
     >
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {summaryCards.map((card) => {
@@ -170,21 +205,24 @@ export default function ReportsPage() {
           })}
         </section>
 
-        <section className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+        <section className="grid gap-4 xl:grid-cols-2">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BarChart3 className="h-5 w-5 text-primary" />
-                Snapshot
+                Operational snapshot
               </CardTitle>
               <CardDescription>
-                A quick read on the health of the organization before drilling into each report page.
+                Compare customer growth, booking activity, completed visits, and pending payments for {durationLabel.toLowerCase()}.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ReportBarChart
-                data={snapshotChartData}
+                data={operationalSnapshotData}
                 valueFormatter={(value) => value.toLocaleString()}
+                axisValueFormatter={formatCompactNumber}
+                tooltipLabel="Count"
+                showSummary={false}
               />
             </CardContent>
           </Card>
@@ -192,42 +230,27 @@ export default function ReportsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <ArrowRight className="h-5 w-5 text-primary" />
-                Explore reports
+                <DollarSign className="h-5 w-5 text-primary" />
+                Revenue snapshot
               </CardTitle>
               <CardDescription>
-                Jump directly into the report you need.
+                Review recognized revenue, current-month performance, and money still awaiting collection.
               </CardDescription>
             </CardHeader>
-            <CardContent className="grid gap-3">
-              {reportSections.map((section) => {
-                const Icon = section.icon;
-
-                return (
-                  <div key={section.href} className="rounded-xl border p-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <Icon className="h-4 w-4 text-primary" />
-                          <p className="font-medium text-foreground">{section.title}</p>
-                        </div>
-                        <p className="mt-2 text-sm text-muted-foreground">
-                          {section.description}
-                        </p>
-                        <p className="mt-3 text-sm font-medium text-foreground">
-                          {section.value}
-                        </p>
-                      </div>
-                      <Button asChild size="sm" variant="outline">
-                        <Link href={section.href}>Open</Link>
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
+            <CardContent>
+              <ReportBarChart
+                data={revenueSnapshotData}
+                valueFormatter={(value) => currencyFormatter.format(value)}
+                axisValueFormatter={(value) => currencyFormatter.format(value)}
+                tooltipLabel="Revenue"
+                barClassName="emerald"
+                showSummary={false}
+              />
             </CardContent>
           </Card>
         </section>
+
+   
 
         <section className="grid gap-4 xl:grid-cols-2">
           <Card>
@@ -237,7 +260,7 @@ export default function ReportsPage() {
                 Recent customers snapshot
               </CardTitle>
               <CardDescription>
-                A quick look at recently added customers.
+                A quick look at customers added during {durationLabel.toLowerCase()}.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -274,7 +297,7 @@ export default function ReportsPage() {
                 Payment awaiting snapshot
               </CardTitle>
               <CardDescription>
-                Upcoming appointments still waiting for payment.
+                Upcoming appointments still waiting for payment in {durationLabel.toLowerCase()}.
               </CardDescription>
             </CardHeader>
             <CardContent>

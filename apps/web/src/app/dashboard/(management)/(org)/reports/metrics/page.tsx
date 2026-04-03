@@ -1,8 +1,17 @@
 "use client";
 
 import { ReportBarChart } from "@/components/reports/report-bar-chart";
+import { ReportDurationFilter } from "@/components/reports/report-duration-filter";
+import { ReportLocationFilter } from "@/components/reports/report-location-filter";
+import { ReportLineChart } from "@/components/reports/report-line-chart";
+import {
+  getReportDurationLabel,
+  REPORT_QUERY_OPTIONS,
+} from "@/components/reports/reporting";
 import { ReportsPermissionDeniedState, ReportsLoadingState } from "@/components/reports/reports-state";
 import { ReportsShell } from "@/components/reports/reports-shell";
+import { useReportDuration } from "@/components/reports/use-report-duration";
+import { DEFAULT_REPORT_LOCATION, useReportLocation } from "@/components/reports/use-report-location";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePermissions } from "@/lib/permissions/usePermissions";
 import { trpc } from "@/utils/trpc";
@@ -19,10 +28,20 @@ const formatCurrency = (amountInCents: number) => currencyFormatter.format(amoun
 
 export default function MetricsReportPage() {
   const { checkPermission, isLoadingPermissions } = usePermissions();
+  const { duration, setDuration } = useReportDuration();
+  const { locationId, setLocationId } = useReportLocation();
   const hasAccess = checkPermission(["READ::ORGANIZATION"]);
+  const selectedLocationId = locationId === DEFAULT_REPORT_LOCATION ? undefined : locationId;
   const { data, isLoading } = useQuery(
-    trpc.organization.getMetricsReport.queryOptions(undefined, {
+    trpc.organization.getMetricsReport.queryOptions({ duration, locationId: selectedLocationId }, {
       enabled: hasAccess,
+      ...REPORT_QUERY_OPTIONS,
+    }),
+  );
+  const { data: locations, isLoading: isLoadingLocations } = useQuery(
+    trpc.organization.getReportLocations.queryOptions(undefined, {
+      enabled: hasAccess,
+      ...REPORT_QUERY_OPTIONS,
     }),
   );
 
@@ -34,35 +53,43 @@ export default function MetricsReportPage() {
     return <ReportsPermissionDeniedState />;
   }
 
-  if (isLoading || !data) {
+  if (isLoading || isLoadingLocations || !data || !locations) {
     return <ReportsLoadingState message="Loading metrics report..." />;
   }
 
-  const { summary, monthlySeries, statusBreakdown, paymentBreakdown } = data;
+  const { selectedLocation, summary, monthlySeries, statusBreakdown, paymentBreakdown } = data;
+  const durationLabel = getReportDurationLabel(duration);
+  const locationLabel = selectedLocation?.name ?? "all locations";
+  const selectedLocationMeta = [selectedLocation?.city, selectedLocation?.state]
+    .filter(Boolean)
+    .join(", ");
+  const locationDescription = selectedLocation
+    ? [selectedLocation.name, selectedLocationMeta].filter(Boolean).join(" • ")
+    : "All locations combined";
 
   const summaryCards = [
     {
       title: "Appointments",
       value: summary.totalAppointments.toLocaleString(),
-      description: "Total appointments recorded",
+      description: `Total appointments recorded for ${locationLabel}`,
       icon: Activity,
     },
     {
       title: "Completion rate",
       value: percentFormatter(summary.completionRate),
-      description: "Completed appointments as a share of all appointments",
+      description: `Completed appointments as a share of all appointments at ${locationLabel}`,
       icon: CalendarCheck2,
     },
     {
       title: "Revenue",
       value: formatCurrency(summary.totalRevenue),
-      description: "Paid and partially paid appointment revenue",
+      description: `Paid and partially paid appointment revenue for ${locationLabel}`,
       icon: CircleDollarSign,
     },
     {
       title: "No-show rate",
       value: percentFormatter(summary.noShowRate),
-      description: "Share of appointments marked as no-show",
+      description: `Share of appointments marked as no-show at ${locationLabel}`,
       icon: ShieldAlert,
     },
   ];
@@ -70,9 +97,19 @@ export default function MetricsReportPage() {
   return (
     <ReportsShell
       title="Metrics"
-      description="Understand operational trends with appointment graphs, status distribution, and payment health."
+      description={`Understand operational trends with appointment graphs, status distribution, and payment health for ${durationLabel.toLowerCase()}. ${locationDescription}.`}
       breadcrumbHref="/dashboard/reports/metrics"
       breadcrumbLabel="Metrics"
+      actions={(
+        <div className="flex flex-wrap justify-end gap-2">
+          <ReportLocationFilter
+            value={locationId}
+            onChange={setLocationId}
+            locations={locations}
+          />
+          <ReportDurationFilter value={duration} onChange={setDuration} />
+        </div>
+      )}
     >
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {summaryCards.map((card) => {
@@ -100,11 +137,11 @@ export default function MetricsReportPage() {
           <CardHeader>
             <CardTitle>Appointment trend</CardTitle>
             <CardDescription>
-              Appointment volume over the last six months.
+              Appointment volume across {durationLabel.toLowerCase()}.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ReportBarChart
+            <ReportLineChart
               data={monthlySeries.map((item) => ({
                 label: item.label,
                 value: item.appointments,
@@ -118,7 +155,7 @@ export default function MetricsReportPage() {
           <CardHeader>
             <CardTitle>Revenue trend</CardTitle>
             <CardDescription>
-              Paid revenue recognized over the last six months.
+              Paid revenue recognized during {durationLabel.toLowerCase()}.
             </CardDescription>
           </CardHeader>
           <CardContent>

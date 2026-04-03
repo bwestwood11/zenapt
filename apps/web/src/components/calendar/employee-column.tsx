@@ -167,7 +167,7 @@ export function Break({ start, end, title, type }: Break) {
       className="col-span-full flex px-1 w-full"
     >
       <div
-        className={`bg-red-500 flex justify-center items-center gap-1 text-white text-xs z-20 w-full ${
+        className={`flex justify-center items-center gap-1 text-white text-xs z-20 w-full ${
           noOfSpans === 1 ? "rounded-sm" : "rounded-lg"
         }
 
@@ -175,7 +175,7 @@ export function Break({ start, end, title, type }: Break) {
         
         `}
         style={{
-          backgroundColor: `hsl(from var(--color-red-500) h s calc(l * 0.5))`,
+          backgroundColor: `hsla(from var(--color-red-500) h s calc(l * 0.5) / 0.8)`,
         }}
       >
         <Icon

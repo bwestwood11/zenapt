@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BarChart3, BriefcaseBusiness, DollarSign, Sparkles, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const reportLinks = [
   {
@@ -37,7 +37,8 @@ export function ReportsNavigation() {
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="overflow-x-auto pb-1">
+      <div className="inline-flex min-w-max items-center gap-1 rounded-2xl border border-border/60 bg-muted/20 p-1.5">
       {reportLinks.map((item) => {
         const Icon = item.icon;
         const isActive =
@@ -46,19 +47,23 @@ export function ReportsNavigation() {
             : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
         return (
-          <Button
+          <Link
             key={item.href}
-            asChild
-            variant={isActive ? "default" : "outline"}
-            size="sm"
+            href={item.href}
+            className={cn(
+              "inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              isActive
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:bg-background hover:text-foreground",
+            )}
           >
-            <Link href={item.href}>
-              <Icon className="h-4 w-4" />
-              {item.label}
-            </Link>
-          </Button>
+            <Icon className="h-4 w-4" />
+            <span>{item.label}</span>
+          </Link>
         );
       })}
+      </div>
     </div>
   );
 }

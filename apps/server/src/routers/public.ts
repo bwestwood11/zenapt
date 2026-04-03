@@ -58,6 +58,8 @@ const getOrganization = publicProcedure
         },
       });
 
+      console.log(await prisma.organization.findMany());
+
       if (!organization) {
         throw new TRPCError({
           code: "NOT_FOUND",

@@ -15,6 +15,7 @@ import { deleteFile } from "../lib/s3/commands";
 import { revalidateTag } from "next/cache";
 import { stripe } from "../lib/stripe/server-stripe";
 import { ACTIVITY_LOG_ACTIONS, addActivityLog } from "../lib/activitylogs";
+import { Prisma } from "../../prisma/generated/client";
 import {
   EmployeeRole,
   AppointmentPaymentStatus,
@@ -94,6 +95,14 @@ const organizationContactListSchema = z.object({
     .min(1, "Add at least one filter."),
 });
 
+const reportDurationSchema = z.enum(["7d", "30d", "90d", "180d", "365d"]);
+const reportDurationInputSchema = z.object({
+  duration: reportDurationSchema,
+});
+const reportMetricsInputSchema = reportDurationInputSchema.extend({
+  locationId: z.string().min(1).optional(),
+});
+
 const assertOrganizationEmailManager = async (
   userId: string,
   organizationId: string,
@@ -117,7 +126,8 @@ const assertOrganizationEmailManager = async (
   }
 };
 
-const REPORT_MONTH_WINDOW = 6;
+type ReportDuration = z.infer<typeof reportDurationSchema>;
+
 const reportMonthLabelFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",
 });
@@ -125,16 +135,46 @@ const PAID_APPOINTMENT_STATUSES: AppointmentPaymentStatus[] = [
   AppointmentPaymentStatus.PAID,
   AppointmentPaymentStatus.PARTIALLY_PAID,
 ];
+const REPORT_DURATION_DAYS: Record<ReportDuration, number> = {
+  "7d": 7,
+  "30d": 30,
+  "90d": 90,
+  "180d": 180,
+  "365d": 365,
+};
+const reportLocationSelect = {
+  id: true,
+  name: true,
+  city: true,
+  state: true,
+} satisfies Prisma.LocationSelect;
 
 const formatMonthKey = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 
-const getReportMonthBuckets = (count = REPORT_MONTH_WINDOW) => {
-  const now = new Date();
+const getReportStartDate = (duration: ReportDuration) => {
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  start.setDate(start.getDate() - REPORT_DURATION_DAYS[duration] + 1);
 
-  return Array.from({ length: count }, (_, index) => {
-    const monthOffset = count - index - 1;
-    const start = new Date(now.getFullYear(), now.getMonth() - monthOffset, 1);
+  return start;
+};
+
+const getReportMonthBuckets = (startDate: Date, endDate = new Date()) => {
+  const normalizedStart = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+  const normalizedEnd = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
+  const monthCount =
+    (normalizedEnd.getFullYear() - normalizedStart.getFullYear()) * 12 +
+    normalizedEnd.getMonth() -
+    normalizedStart.getMonth() +
+    1;
+
+  return Array.from({ length: monthCount }, (_, index) => {
+    const start = new Date(
+      normalizedStart.getFullYear(),
+      normalizedStart.getMonth() + index,
+      1,
+    );
     const end = new Date(start.getFullYear(), start.getMonth() + 1, 1);
 
     return {
@@ -146,11 +186,132 @@ const getReportMonthBuckets = (count = REPORT_MONTH_WINDOW) => {
   });
 };
 
-const getOrganizationAppointmentWhere = (organizationId: string) => ({
+const getOrganizationAppointmentWhere = (
+  organizationId: string,
+  options: {
+    locationId?: string;
+    startTimeGte?: Date;
+    startTimeLt?: Date;
+  } = {},
+): Prisma.AppointmentWhereInput => ({
   location: {
     organizationId,
+    ...(options.locationId ? { id: options.locationId } : {}),
   },
+  ...(options.startTimeGte || options.startTimeLt
+    ? {
+        startTime: {
+          ...(options.startTimeGte ? { gte: options.startTimeGte } : {}),
+          ...(options.startTimeLt ? { lt: options.startTimeLt } : {}),
+        },
+      }
+    : {}),
 });
+
+const getOrganizationReportLocation = async (
+  organizationId: string,
+  locationId?: string,
+) => {
+  if (!locationId) {
+    return null;
+  }
+
+  const location = await prisma.location.findFirst({
+    where: {
+      id: locationId,
+      organizationId,
+    },
+    select: reportLocationSelect,
+  });
+
+  if (!location) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Report location not found.",
+    });
+  }
+
+  return location;
+};
+
+const getStripeConnectOverview = async (organizationId: string) => {
+  const organization = await prisma.organization.findUnique({
+    where: {
+      id: organizationId,
+    },
+    select: {
+      stripeAccountId: true,
+    },
+  });
+
+  if (!organization) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Organization not found",
+    });
+  }
+
+  if (!organization.stripeAccountId) {
+    return {
+      stripeAccountId: null,
+      account: null,
+    };
+  }
+
+  try {
+    const account = await stripe.accounts.retrieve(organization.stripeAccountId);
+    const currentlyDue = account.requirements?.currently_due ?? [];
+    const eventuallyDue = account.requirements?.eventually_due ?? [];
+    const pastDue = account.requirements?.past_due ?? [];
+    const pendingVerification =
+      account.requirements?.pending_verification ?? [];
+    const onboardingComplete =
+      account.details_submitted &&
+      account.charges_enabled &&
+      account.payouts_enabled &&
+      currentlyDue.length === 0 &&
+      pastDue.length === 0;
+
+    return {
+      stripeAccountId: organization.stripeAccountId,
+      account: {
+        id: account.id,
+        email: account.email,
+        country: account.country,
+        defaultCurrency: account.default_currency,
+        businessType: account.business_type,
+        chargesEnabled: account.charges_enabled,
+        payoutsEnabled: account.payouts_enabled,
+        detailsSubmitted: account.details_submitted,
+        onboardingComplete,
+        requirements: {
+          currentlyDue,
+          eventuallyDue,
+          pastDue,
+          pendingVerification,
+          disabledReason: account.requirements?.disabled_reason ?? null,
+        },
+      },
+    };
+  } catch (error) {
+    console.error("Failed to retrieve Stripe Connect account", {
+      organizationId,
+      stripeAccountId: organization.stripeAccountId,
+      error:
+        error instanceof Error
+          ? {
+              message: error.message,
+              name: error.name,
+            }
+          : error,
+    });
+
+    return {
+      stripeAccountId: organization.stripeAccountId,
+      account: null,
+    };
+  }
+};
 
 type SpecialistAssignment = {
   userId: string;
@@ -668,6 +829,9 @@ export const organizationRouter = router({
       return { ...organization, companySize };
     },
   ),
+  getStripeConnectOverview: withPermissions("UPDATE::SUBSCRIPTION").query(
+    async ({ ctx }) => getStripeConnectOverview(ctx.orgWithSub.id),
+  ),
   getReportsOverview: withPermissions("READ::ORGANIZATION").query(
     async ({ ctx }) => {
       const now = new Date();
@@ -845,12 +1009,30 @@ export const organizationRouter = router({
       };
     },
   ),
-  getMetricsReport: withPermissions("READ::ORGANIZATION").query(
-    async ({ ctx }) => {
+  getReportLocations: withPermissions("READ::ORGANIZATION").query(
+    async ({ ctx }) =>
+      prisma.location.findMany({
+        where: {
+          organizationId: ctx.orgWithSub.id,
+        },
+        select: reportLocationSelect,
+        orderBy: [{ name: "asc" }, { createdAt: "asc" }],
+      }),
+  ),
+  getMetricsReport: withPermissions("READ::ORGANIZATION")
+    .input(reportMetricsInputSchema)
+    .query(async ({ ctx, input }) => {
       const organizationId = ctx.orgWithSub.id;
-      const appointmentWhere = getOrganizationAppointmentWhere(organizationId);
-      const monthBuckets = getReportMonthBuckets();
-      const monthStart = monthBuckets[0]?.start ?? new Date();
+      const selectedLocation = await getOrganizationReportLocation(
+        organizationId,
+        input.locationId,
+      );
+      const reportStart = getReportStartDate(input.duration);
+      const appointmentWhere = getOrganizationAppointmentWhere(organizationId, {
+        locationId: selectedLocation?.id,
+        startTimeGte: reportStart,
+      });
+      const monthBuckets = getReportMonthBuckets(reportStart);
 
       const [
         totalAppointments,
@@ -911,12 +1093,7 @@ export const organizationRouter = router({
           },
         }),
         prisma.appointment.findMany({
-          where: {
-            ...appointmentWhere,
-            startTime: {
-              gte: monthStart,
-            },
-          },
+          where: appointmentWhere,
           select: {
             startTime: true,
             status: true,
@@ -978,6 +1155,7 @@ export const organizationRouter = router({
         totalAppointments > 0 ? (noShowAppointments / totalAppointments) * 100 : 0;
 
       return {
+        selectedLocation,
         summary: {
           totalAppointments,
           completedAppointments,
@@ -999,14 +1177,16 @@ export const organizationRouter = router({
           count: item._count._all,
         })),
       };
-    },
-  ),
-  getSalesReport: withPermissions("READ::ORGANIZATION").query(
-    async ({ ctx }) => {
+    }),
+  getSalesReport: withPermissions("READ::ORGANIZATION")
+    .input(reportDurationInputSchema)
+    .query(async ({ ctx, input }) => {
       const organizationId = ctx.orgWithSub.id;
-      const appointmentWhere = getOrganizationAppointmentWhere(organizationId);
-      const monthBuckets = getReportMonthBuckets();
-      const monthStart = monthBuckets[0]?.start ?? new Date();
+      const reportStart = getReportStartDate(input.duration);
+      const appointmentWhere = getOrganizationAppointmentWhere(organizationId, {
+        startTimeGte: reportStart,
+      });
+      const monthBuckets = getReportMonthBuckets(reportStart);
       const currentMonthStart = new Date(
         new Date().getFullYear(),
         new Date().getMonth(),
@@ -1035,12 +1215,17 @@ export const organizationRouter = router({
         }),
         prisma.appointment.aggregate({
           where: {
-            ...appointmentWhere,
             paymentStatus: {
               in: PAID_APPOINTMENT_STATUSES,
             },
             startTime: {
-              gte: currentMonthStart,
+              gte:
+                reportStart.getTime() > currentMonthStart.getTime()
+                  ? reportStart
+                  : currentMonthStart,
+            },
+            location: {
+              organizationId,
             },
           },
           _sum: {
@@ -1080,9 +1265,6 @@ export const organizationRouter = router({
             ...appointmentWhere,
             paymentStatus: {
               in: PAID_APPOINTMENT_STATUSES,
-            },
-            startTime: {
-              gte: monthStart,
             },
           },
           select: {
@@ -1149,12 +1331,15 @@ export const organizationRouter = router({
         monthlySales: buildMonthlySalesSeries(monthBuckets, monthlySales),
         sales: mapRecentSales(recentSales),
       };
-    },
-  ),
-  getCustomersReport: withPermissions("READ::ORGANIZATION").query(
-    async ({ ctx }) => {
+    }),
+  getCustomersReport: withPermissions("READ::ORGANIZATION")
+    .input(reportDurationInputSchema)
+    .query(async ({ ctx, input }) => {
       const organizationId = ctx.orgWithSub.id;
-      const appointmentWhere = getOrganizationAppointmentWhere(organizationId);
+      const reportStart = getReportStartDate(input.duration);
+      const appointmentWhere = getOrganizationAppointmentWhere(organizationId, {
+        startTimeGte: reportStart,
+      });
 
       const [totalCustomers, customerStats, pendingStats, fallbackCustomers] =
         await Promise.all([
@@ -1305,12 +1490,15 @@ export const organizationRouter = router({
         mostLoyalCustomer,
         customers: customerRows,
       };
-    },
-  ),
-  getSpecialistsReport: withPermissions("READ::ORGANIZATION").query(
-    async ({ ctx }) => {
+    }),
+  getSpecialistsReport: withPermissions("READ::ORGANIZATION")
+    .input(reportDurationInputSchema)
+    .query(async ({ ctx, input }) => {
       const organizationId = ctx.orgWithSub.id;
-      const appointmentWhere = getOrganizationAppointmentWhere(organizationId);
+      const reportStart = getReportStartDate(input.duration);
+      const appointmentWhere = getOrganizationAppointmentWhere(organizationId, {
+        startTimeGte: reportStart,
+      });
 
       const [specialistAssignments, appointmentAssignments] = await Promise.all([
         prisma.locationEmployee.findMany({
@@ -1380,8 +1568,7 @@ export const organizationRouter = router({
       ]);
 
       return buildSpecialistReport(specialistAssignments, appointmentAssignments);
-    },
-  ),
+    }),
   getOrganizationEmailSettings: withPermissions("UPDATE::ORGANIZATION").query(
     async ({ ctx }) => {
       await assertOrganizationEmailManager(ctx.session.user.id, ctx.orgWithSub.id);
@@ -1565,6 +1752,27 @@ export const organizationRouter = router({
       return {
         accountId: stripeAccountId,
         url: accountLink.url,
+      };
+    },
+  ),
+  getStripeDashboardLink: withPermissions("UPDATE::SUBSCRIPTION").mutation(
+    async ({ ctx }) => {
+      const stripeOverview = await getStripeConnectOverview(ctx.orgWithSub.id);
+
+      if (!stripeOverview.stripeAccountId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Stripe is not connected for this organization",
+        });
+      }
+
+      const loginLink = await stripe.accounts.createLoginLink(
+        stripeOverview.stripeAccountId,
+      );
+
+      return {
+        accountId: stripeOverview.stripeAccountId,
+        url: loginLink.url,
       };
     },
   ),
