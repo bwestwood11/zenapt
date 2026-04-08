@@ -56,7 +56,7 @@ export default function ReportsPage() {
   const { duration, setDuration } = useReportDuration();
   const hasAccess = checkPermission(["READ::ORGANIZATION"]);
   const { data, isLoading } = useQuery(
-    trpc.organization.getReportsOverview.queryOptions({ duration }, {
+    trpc.organization.getReportsOverview.queryOptions(undefined, {
       enabled: hasAccess,
       ...REPORT_QUERY_OPTIONS,
     }),
