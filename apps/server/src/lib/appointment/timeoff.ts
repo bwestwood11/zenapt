@@ -1,5 +1,5 @@
 import { parseISO, isValid, startOfDay, endOfDay } from "date-fns";
-import { ScheduleTargetType } from "../../../prisma/generated/enums";
+import { ScheduleTargetType } from "@prisma/client";
 import prisma from "../../../prisma";
 
 export class TimeOffService {

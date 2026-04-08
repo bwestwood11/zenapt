@@ -1,5 +1,5 @@
 import prisma from "..";
-import { Prisma } from "../generated/client";
+import { Prisma } from "@prisma/client";
 import crypto from "node:crypto";
 
 export async function createCustomers() {

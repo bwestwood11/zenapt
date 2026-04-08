@@ -1,5 +1,5 @@
 import prisma from "../../../prisma";
-import { ScheduleTargetType } from "../../../prisma/generated/enums";
+import { ScheduleTargetType } from "@prisma/client";
 
 const WORK_RULE_TYPE = ScheduleTargetType.LOCATION; // adjust if enum requires uppercase
 const EMPLOYEE_RULE_TYPE = ScheduleTargetType.EMPLOYEE;

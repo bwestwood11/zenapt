@@ -1,4 +1,4 @@
-import type { Subscription } from "../../../prisma/generated/client";
+import type { Subscription } from "@prisma/client";
 
 const DAY_IN_MS = 86_400_000; // 1 Day
 

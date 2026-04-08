@@ -9,7 +9,7 @@ import bcrypt from "bcrypt";
 import { createInvitationToken, INVITATION_TYPE } from "../lib/invitationToken";
 import { sesEmailService } from "../lib/email/ses";
 import { toSeconds } from "../lib/helpers/utils";
-import { OrgRole } from "../../prisma/generated/enums";
+import { OrgRole } from "@prisma/client";
 
 const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET!;
 

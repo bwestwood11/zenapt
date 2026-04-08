@@ -1,4 +1,4 @@
-import { EmployeeRole, OrgRole } from "../../prisma/generated/enums";
+import { EmployeeRole, OrgRole } from "@prisma/client";
 import {
   createSignedToken,
   createTokenWithTTL,

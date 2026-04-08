@@ -1,7 +1,7 @@
 import { config as loadEnv } from "dotenv";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { PrismaClient } from "./generated/client";
+import { PrismaClient } from "@prisma/client";
 
 const prismaDir = path.dirname(fileURLToPath(import.meta.url));
 const serverRoot = path.resolve(prismaDir, "..");

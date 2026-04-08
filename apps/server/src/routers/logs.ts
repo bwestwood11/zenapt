@@ -1,7 +1,7 @@
 import { z } from "zod";
 import prisma from "../../prisma";
 import { router, withPermissions } from "../lib/trpc";
-import { Prisma } from "../../prisma/generated/client";
+import { Prisma } from "@prisma/client";
 
 const filters = z.object({
   actions: z.array(z.string()).optional(),

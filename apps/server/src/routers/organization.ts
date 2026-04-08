@@ -15,13 +15,13 @@ import { deleteFile } from "../lib/s3/commands";
 import { revalidateTag } from "next/cache";
 import { stripe } from "../lib/stripe/server-stripe";
 import { ACTIVITY_LOG_ACTIONS, addActivityLog } from "../lib/activitylogs";
-import { Prisma } from "../../prisma/generated/client";
 import {
-  EmployeeRole,
   AppointmentPaymentStatus,
   AppointmentStatus,
+  EmployeeRole,
   OrgRole,
-} from "../../prisma/generated/enums";
+  Prisma,
+} from "@prisma/client";
 import {
   organizationEmailService,
   type ContactListFilter,
