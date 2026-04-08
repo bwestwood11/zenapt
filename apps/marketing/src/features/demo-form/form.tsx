@@ -48,15 +48,15 @@ const formSchema = z.object({
   cellPhone: z.string().min(10, "Please enter a valid phone number"),
   numberOfLocations: z.string().min(1, "Please select number of locations"),
   zipCode: z.string().min(5, "Please enter a valid zip code"),
-  websiteUrl: z.union([z.url("Please enter a valid website URL"), z.literal("")]),
+  websiteUrl: z.union([z.url("Please enter a valid website URL"), z.literal("")]).optional(),
   demoDate: z.date({
     message: "Please select a demo date",
   }),
   demoTime: z.string().min(1, "Please select a demo time"),
-  smsConsent: z.boolean().refine((value) => value, {
+  smsConsent: z.preprocess((value) => value === true || value === "true" || value === "on", z.boolean()).refine((value) => value, {
     message: "You must explicitly consent to receive SMS messages",
   }),
-  emailConsent: z.boolean().refine((value) => value, {
+  emailConsent: z.preprocess((value) => value === true || value === "true" || value === "on", z.boolean()).refine((value) => value, {
     message: "You must explicitly consent to receive emails",
   }),
 });
@@ -142,6 +142,15 @@ export function MedSpaBookingForm() {
     })
   );
 
+  const globalErrorMessages = [
+    form.formState.errors.root?.message,
+    ...Object.entries(form.formState.errors)
+      .filter(([fieldName]) => fieldName !== "root")
+      .map(([, error]) => error?.message),
+  ].filter((message, index, messages): message is string => {
+    return typeof message === "string" && messages.indexOf(message) === index;
+  });
+
   const onSubmit = async (data: FormData) => {
     createBooking({
       firstName: data.firstName,
@@ -161,6 +170,21 @@ export function MedSpaBookingForm() {
     <div className="mx-auto w-full max-w-[29rem] rounded-[2rem] border border-border bg-card/95 p-6 shadow-sm sm:max-w-[46rem] sm:p-8 lg:p-9">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 sm:space-y-7">
+          {globalErrorMessages.length > 0 && (
+            <div
+              role="alert"
+              aria-live="polite"
+              className="rounded-xl border border-destructive/25 bg-destructive/5 p-4 text-sm text-destructive"
+            >
+              <p className="font-medium">Please fix the following before submitting:</p>
+              <ul className="mt-2 list-disc space-y-1 pl-5">
+                {globalErrorMessages.map((message) => (
+                  <li key={message}>{message}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <FormField
               control={form.control}
@@ -390,14 +414,17 @@ export function MedSpaBookingForm() {
 
           <FormField
             control={form.control}
-            name="emailConsent"
+            name="smsConsent"
             render={({ field }) => (
               <FormItem className="rounded-xl border border-border/70 bg-background p-4">
                 <div className="flex items-start gap-3">
                   <FormControl>
                     <input
+                      ref={field.ref}
+                      name={field.name}
                       type="checkbox"
                       checked={field.value}
+                      onBlur={field.onBlur}
                       onChange={(event) => field.onChange(event.target.checked)}
                       className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-2 focus:ring-ring"
                     />
@@ -408,8 +435,40 @@ export function MedSpaBookingForm() {
                     </FormLabel>
                     <FormDescription className="text-sm leading-6 text-muted-foreground">
                       I consent to receive non-marketing text messages from Zenapt
-                      LLC about my order updates, appointment reminders, and related
+                      LLC about my demo updates, appointment reminders, and related
                       service notifications. Message &amp; data rates may apply.
+                    </FormDescription>
+                  </div>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="emailConsent"
+            render={({ field }) => (
+              <FormItem className="rounded-xl border border-border/70 bg-background p-4">
+                <div className="flex items-start gap-3">
+                  <FormControl>
+                    <input
+                      ref={field.ref}
+                      name={field.name}
+                      type="checkbox"
+                      checked={field.value}
+                      onBlur={field.onBlur}
+                      onChange={(event) => field.onChange(event.target.checked)}
+                      className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-2 focus:ring-ring"
+                    />
+                  </FormControl>
+                  <div className="space-y-1">
+                    <FormLabel className="text-sm font-medium leading-6 text-foreground">
+                      Email consent
+                    </FormLabel>
+                    <FormDescription className="text-sm leading-6 text-muted-foreground">
+                      I consent to receive emails from Zenapt LLC about my demo,
+                      onboarding, account setup, and related support updates.
                     </FormDescription>
                   </div>
                 </div>
