@@ -12,7 +12,8 @@
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
     "typecheck": "tsc --noEmit",
-    "seed": "tsx prisma/seed/index.ts"
+    "seed": "tsx prisma/seed/index.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.878.0",
