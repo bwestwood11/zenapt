@@ -118,7 +118,7 @@ const BookDemo = publicProcedure
       zipCode: z.string().min(5, "Please enter a valid zip code"),
       websiteUrl: z.union([
         z.url({ message: "Please enter a valid website URL" }),
-        z.literal(""),
+        z.literal("").optional(),
       ]),
       demoTime: z
         .date({
