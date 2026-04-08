@@ -92,7 +92,8 @@ const formatPaymentType = (paymentType: string) =>
     .replaceAll("_", " ")
     .replaceAll(/\b\w/g, (char) => char.toUpperCase());
 
-const formatPaymentMethod = (paymentMethod: string) =>
+const formatPaymentMethod = (paymentMethod: string | undefined | null) =>
+  !paymentMethod ? "No payment method" :
   paymentMethod
     .replaceAll("_", " ")
     .replaceAll(/\b\w/g, (char) => char.toUpperCase());

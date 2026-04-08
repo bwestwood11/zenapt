@@ -641,19 +641,21 @@ const PaymentPage = () => {
                   setupIntentId,
                   organizationId: orgId,
                 });
+                const card = result.card;
 
-                if (result?.card?.last4) {
+                if (card?.last4) {
                   const nextCard = {
-                    id: result.card.id ?? null,
-                    brand: result.card.brand ?? null,
-                    last4: result.card.last4 ?? null,
-                  };
+                    id: card.id ?? null,
+                    brand: card.brand ?? null,
+                    last4: card.last4 ?? null,
+                  }
+                  
                   setSavedCard(nextCard);
                   setAllSavedCards((prev) => [
                     {
-                      id: result.card.id,
-                      brand: result.card.brand ?? "card",
-                      last4: result.card.last4 ?? "****",
+                      id: card.id,
+                      brand: card.brand ?? "card",
+                      last4: card.last4 ?? "****",
                       expMonth: 12,
                       expYear: new Date().getFullYear() + 5,
                     },
