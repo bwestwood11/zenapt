@@ -1,5 +1,5 @@
 import prisma from "../../../prisma";
-import { AppointmentStatus } from "../../../prisma/generated/enums";
+import { AppointmentStatus } from "@prisma/client";
 import {
   dateAtMinutesInTimeZone,
   getDayBitInTimeZone,

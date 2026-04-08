@@ -25,7 +25,7 @@ import {
   getZonedDayRangeUtc,
   zonedDateTimeToUtc,
 } from "../lib/datetime/timezone";
-import { LeaveRequestStatus, ScheduleTargetType } from "../../prisma/generated/enums";
+import { LeaveRequestStatus, ScheduleTargetType } from "@prisma/client";
 import { S3client } from "../lib/s3/index";
 import { checkFile, keyToFileUrl, mimeTypeToExtension } from "../lib/s3/utils";
 

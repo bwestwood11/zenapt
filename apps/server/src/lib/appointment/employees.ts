@@ -2,7 +2,7 @@ import prisma from "../../../prisma";
 import {
   AppointmentPaymentStatus,
   AppointmentStatus,
-} from "../../../prisma/generated/enums";
+} from "@prisma/client";
 import {
   getDateKeyInTimeZone,
   getDayBitInTimeZone,

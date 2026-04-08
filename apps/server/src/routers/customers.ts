@@ -1,5 +1,5 @@
 import prisma from "../../prisma";
-import { Prisma } from "../../prisma/generated/client";
+import { Prisma } from "@prisma/client";
 import { router, withPermissions } from "../lib/trpc";
 import { z } from "zod";
 

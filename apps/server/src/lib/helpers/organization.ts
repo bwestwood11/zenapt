@@ -1,6 +1,6 @@
 import { unstable_cacheLife, unstable_cacheTag } from "next/cache";
 import prisma from "../../../prisma";
-import { EmployeeRole, OrgRole } from "../../../prisma/generated/enums";
+import { EmployeeRole, OrgRole } from "@prisma/client";
 import { CACHE_KEYS } from "./cache";
 
 type Response =

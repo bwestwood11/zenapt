@@ -5,7 +5,7 @@ import {
   type OrganizationEmailDomain,
   type OrganizationSenderEmail,
   type Prisma,
-} from "../../../prisma/generated/client";
+} from "@prisma/client";
 import { sesEmailService, SesApiError, type SendSesEmailInput } from "./ses";
 
 type MarketingContactListDelegate = {

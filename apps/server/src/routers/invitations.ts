@@ -9,7 +9,7 @@ import { decrypt, encrypt } from "../lib/helpers/encyrption";
 import { TRPCError } from "@trpc/server";
 import z from "zod";
 import crypto from "node:crypto";
-import { EmployeeRole, OrgRole } from "../../prisma/generated/enums";
+import { EmployeeRole, OrgRole } from "@prisma/client";
 import { auth } from "../lib/auth";
 import {
   createInvitationToken,

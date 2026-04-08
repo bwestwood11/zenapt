@@ -4,8 +4,12 @@ const nextConfig: NextConfig = {
   experimental: {
     useCache: true,
   },
+  serverExternalPackages: ["@prisma/client", "prisma"],
   outputFileTracingIncludes: {
-    "/*": ["./prisma/generated/**/*"],
+    "/*": [
+      "./node_modules/.prisma/client/**/*",
+      "../../node_modules/.prisma/client/**/*",
+    ],
   },
   typescript: {
     ignoreBuildErrors: true,
